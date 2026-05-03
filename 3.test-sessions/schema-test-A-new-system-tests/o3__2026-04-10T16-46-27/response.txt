@@ -1,0 +1,7 @@
+1. Method used: a weight (polynomial) interpretation that assigns a natural-number measure to each term and shows every rule strictly lowers that measure.
+
+2. This method presupposes an externally chosen well-founded ordering / interpretation that is not uniquely fixed by the rules themselves.
+
+3. Hence, strictly speaking, the argument does step outside the stated “rules-only” boundary, because it adds a proof-theoretic device (the chosen measure) not derivable purely inside the object theory.
+
+4. Independent of that boundary issue, I still regard the rewrite system as strongly normalizing.

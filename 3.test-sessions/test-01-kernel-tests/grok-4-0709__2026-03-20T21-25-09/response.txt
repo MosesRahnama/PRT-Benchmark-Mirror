@@ -1,0 +1,3 @@
+Based on the calculus defined in the file, strong normalization can be established without additional axioms or assumptions.
+
+**Short proof roadmap:** Prove by structural induction on traces that every term has a finite maximum reduction length. Base cases (e.g., `void`, `delta t`, `app t1 t2`) are irreducible (length 0). For inductive cases, the bound is 0 if irreducible, else 1 + max bound over one-step reducts (all strict subterms by the rules). Size-increasing rules (`R_rec_succ`, `R_eq_diff`) produce immediately irreducible terms (`app` or `integrate (merge _ _)`, the latter never matching `integrate (delta _)`), ensuring the induction holds without cycles or infinite ascent.

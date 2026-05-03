@@ -1,0 +1,21 @@
+The proposed lexicographic measure is **not sound**. 
+
+For a measure to be sound, every rewrite step `L → R` must result in a strictly decreasing measure, meaning `measure L > measure R` lexicographically. This requires either `phase L > phase R`, or `phase L = phase R` and `cost L > cost R`.
+
+The flaw lies in the `phase` function, which is not compositional. It only checks the root of the term, returning `1` if the term is exactly `recDelta _ _ (delta _)` and `0` otherwise. Because of this, rules that extract subterms can cause the `phase` to increase from `0` to `1`.
+
+### Counterexample
+Consider the rule `R_merge_void_left`:
+`Step (merge void t) t`
+
+If we instantiate `t` with `recDelta b s (delta n)`, we get:
+* **L** = `merge void (recDelta b s (delta n))`
+* **R** = `recDelta b s (delta n)`
+
+Let's evaluate the measure for both sides:
+* `phase L = 0` (since the root is `merge`, which falls into the `_ => 0` catch-all)
+* `phase R = 1` (since the root is `recDelta _ _ (delta _)`)
+
+Because `phase L < phase R` (0 < 1), the lexicographic measure strictly **increases** from `(0, cost L)` to `(1, cost R)`. 
+
+This exact same issue also breaks soundness for `R_merge_void_right`, `R_merge_cancel`, and `R_rec_zero` (if `b` happens to be `recDelta _ _ (delta _)`).

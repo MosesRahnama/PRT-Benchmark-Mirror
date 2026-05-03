@@ -1,0 +1,38 @@
+Now I have the full file. Let me analyze this rewrite system:
+
+**Syntax (Terms):**
+- `plum` : constant (base)
+- `grape : Trace → Trace` : unary constructor
+- `mango : Trace → Trace` : unary constructor
+- `peach : Trace → Trace → Trace` : binary constructor
+- `pear : Trace → Trace → Trace` : binary constructor
+- `banana : Trace → Trace → Trace → Trace` : ternary constructor
+- `cherry : Trace → Trace → Trace` : binary constructor
+
+**Rewrite Rules:**
+1. `mango (grape t) → plum`
+2. `peach plum t → t`
+3. `peach t plum → t`
+4. `peach t t → t`
+5. `banana b s plum → b`
+6. `banana b s (grape n) → pear s (banana b s n)`
+7. `cherry a a → plum`
+8. `cherry a b → mango (peach a b)` when `a ≠ b`
+
+Now let me assess whether strong normalization can be established.
+
+**Key observations:**
+
+1. **Rule 6 is problematic**: `banana b s (grape n) → pear s (banana b s n)` - the RHS contains `banana b s n`, which is structurally smaller than the LHS `banana b s (grape n)` in the third argument. But the RHS also adds a `pear` wrapper and duplicates `s`. This could potentially create issues if we're not careful.
+
+2. **Rule 8 has a side condition**: `a ≠ b` is a side condition/guard. The prompt specifically says "without... guards, side conditions". This is a problem - the rule `R_cherry_diff` has a side condition `a ≠ b`.
+
+Wait, but the prompt says "without importing structural axioms or object-level assumptions beyond what is derivable from the given syntax and rewrite rules". 
+
+The side condition `a ≠ b` is about decidable equality on terms, which is derivable from the syntax itself (structural equality on the inductive type). So this might be acceptable.
+
+Let me reconsider the strong normalization question. I need to find a well-founded measure that decreases with each rewrite step. Looking at the rules, most reduce term size directly—`mango (grape t) → plum` eliminates structure, `peach plum t → t` removes the peach wrapper, and so on. Rule 6 is the tricky one since it replaces `grape n` with `banana b s n` while adding `pear`, but the third argument strictly decreases.
+
+The critical observation is that rule 6 removes a `grape` wrapper from the third position of `banana`, even though `s` gets duplicated. This means the "grape depth" in that position is strictly reduced. A lexicographic measure combining grape-depth-in-banana with overall term size should work. Since each `banana b s (grape n)` application reduces the grape depth in that specific position, and the initial term has finite grape depth, the process must terminate.
+
+The system is first-order with no lambda binding, and there's no self-embedding that would cause unbounded growth. A polynomial interpretation or recursive path ordering with appropriate precedence should establish termination, though the side condition `a ≠ b` does require decidable equality checking.

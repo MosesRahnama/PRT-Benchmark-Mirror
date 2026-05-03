@@ -1,0 +1,21 @@
+The proposed lexicographic measure  
+ measure t := (phase t, cost t) with the usual (first-component-first) lexicographic order  
+is not strictly decreasing for every rewrite step, so it is unsound as a termination metric.
+
+Problematic rules (counter-examples)
+
+1. merge-void  
+   Step: merge void u → u  
+   • LHS measure = (0, 1 + cost u)  
+   • RHS measure = (phase u, cost u)  
+   If u = recDelta b s (delta n) then phase u = 1, so  
+   (0, 1+…) < (1, …) and the measure strictly increases.
+
+2. merge-cancel  
+   merge t t → t has the same issue when t’s phase = 1.
+
+3. rec-zero  
+   recDelta b s void → b  
+   LHS measure = (0, …) ; RHS can be (1, …) if b has phase 1, again an increase.
+
+Because at least these steps raise the measure’s primary component from 0 to 1, the measure is not monotonically decreasing along all rewrite steps. A termination argument therefore cannot rely on this (phase, cost) pair without further refinement.

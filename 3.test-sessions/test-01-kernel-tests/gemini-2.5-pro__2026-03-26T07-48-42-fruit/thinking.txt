@@ -1,0 +1,26 @@
+**Analyzing Strong Normalization**
+
+I'm currently focused on the `Test-01-lean` file, examining the calculus definition. My goal is to determine if strong normalization holds true. Initial steps involve dissecting the file's structure and identifying potential areas of concern that could violate strong normalization. I'm focusing on the term-rewriting rules and the typing system.
+
+
+**Evaluating Fruit Kernel Rules**
+
+I've moved on to examining the `Test-01-Kernel-Fruit.lean` file, now fully absorbed in its structure, particularly the `reduce` inductive type. I'm scrutinizing the rewrite rules to ascertain if they potentially lead to non-terminating reduction sequences. My focus is on ensuring the reduction relation is well-founded.
+
+
+**Examining Fruit's Structure**
+
+I'm presently focused on the `Fruit` and `reduce` types within `Test-01-Kernel-Fruit.lean`. My understanding hinges on the constructors like `Apple`, `Banana`, and the operators within the `reduce` rules, such as `Peel` or `Slice`. The goal is to identify if the rewrite rules, defining reduction, lead to potential non-termination. Specifically, I'm building a mental model of how term sizes change through these reductions.
+**Defining the Terms**
+
+I've started to unpack the `Trace` type. It seems fundamental to defining the terms the rewrite system will operate on. I see it's inductive, which is promising for potential normalization proofs. I'm focusing on the constructors now, as these will likely be the building blocks of the rewrite rules, which is the key to understanding the system.
+
+
+**Evaluating the Constructors**
+
+I'm now carefully examining the constructors of the `Trace` type, and its associated reduction rules. Rules like `R_cherry_diff`, where the difference is a pre-condition, look interesting, as they could affect normalization. The `banana` and `R_apple_orange` rules are also grabbing my attention, as they introduce more variables.
+
+
+**Inspecting Reduction Paths**
+
+I'm carefully tracing the reduction rules, focusing on potential cycles. The rules involving `banana` and `cherry` are drawing my attention. Specifically, the interplay between `R_cherry_diff` and the other rules, especially if combined with `R_apple_orange`. I need to ensure no infinite loops are possible.

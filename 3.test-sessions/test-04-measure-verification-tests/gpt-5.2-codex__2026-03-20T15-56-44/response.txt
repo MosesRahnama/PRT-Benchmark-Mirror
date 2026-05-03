@@ -1,0 +1,46 @@
+## ✅ Termination measure assessment
+
+I reviewed the file and checked the lexicographic measure $m(t)=(\text{phase}(t),\text{cost}(t))$ against each rewrite rule.
+
+### Key observations
+- $\text{phase}(t)=1$ **only** for terms of the form `recDelta _ _ (delta _)`.
+- All other terms have phase $0$.
+- The intended ordering is lexicographic on $\mathbb{N}\times\mathbb{N}$:  
+  $(p_1,c_1) < (p_2,c_2)$ iff $p_1<p_2$ or $p_1=p_2$ and $c_1<c_2$.
+
+### Rule-by-rule check
+- **R_rec_succ**:  
+  `recDelta b s (delta n)` → `app s (recDelta b s n)`  
+  Phase drops from $1$ to $0$. Lexicographic decrease holds regardless of cost.
+
+All other rules have phase $0$ on both sides, so we need cost to strictly decrease:
+
+- **R_int_delta**: `integrate (delta t)` → `void`  
+  $2+\text{cost}(t)$ → $0$ (decrease)
+
+- **R_merge_void_left/right**: `merge void t` / `merge t void` → `t`  
+  $1+\text{cost}(t)$ → $\text{cost}(t)$ (decrease)
+
+- **R_merge_cancel**: `merge t t` → `t`  
+  $1+2\text{cost}(t)$ → $\text{cost}(t)$ (decrease)
+
+- **R_rec_zero**: `recDelta b s void` → `b`  
+  $1+\text{cost}(b)+\text{cost}(s)$ → $\text{cost}(b)$ (decrease)
+
+- **R_eq_refl**: `eqW a a` → `void`  
+  $3+2\text{cost}(a)$ → $0$ (decrease)
+
+- **R_eq_diff**: `eqW a b` → `integrate (merge a b)`  
+  $3+\text{cost}(a)+\text{cost}(b)$ → $2+\text{cost}(a)+\text{cost}(b)$ (decrease)
+
+### Verdict
+**The lexicographic measure is sound.**  
+Every rewrite rule strictly decreases the measure: either by lowering phase (only `R_rec_succ`) or by strictly lowering cost when phase is unchanged. Hence the system is terminating with respect to this measure.
+
+---
+
+## ✅ Updated todo list
+
+- [x] Read the target Lean file  
+- [x] Check each rewrite rule vs measure  
+- [x] Summarize whether measure is sound

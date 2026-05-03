@@ -1,0 +1,28 @@
+**Assessment: Yes, strong normalization can be established from the presented calculus alone.**
+
+## Proof Roadmap
+
+**1. Observation on the rewrite rules:**
+- Rules 1–5, 7 are strictly size-reducing
+- Rule 6 (`banana b s (grape n) → pear s (banana b s n)`) increases size but strictly decreases the "grape-depth" in `banana`'s third argument
+- Rule 8's guard `a ≠ b` is decidable from structural equality on `Trace` (no external axiom needed)
+
+**2. Well-founded measure (lexicographic):**
+
+Define for each term `t`:
+- **Primary**: Total count of `grape` constructors occurring in the third-argument position of any `banana` subterm
+- **Secondary**: Standard term size
+
+Rule 6 strictly decreases the primary measure (removes one `grape` from a `banana`'s third argument). All other rules leave the primary measure unchanged or decrease it, while strictly decreasing the secondary measure.
+
+**3. Closure under contexts:**
+
+The `Step` relation as an inductive proposition captures root-step only. Strong normalization for the full compatible closure follows from the standard lifting lemma: if root steps are well-founded, so is the contextual closure (since contexts preserve the measure components).
+
+**4. No hidden assumptions required:**
+- Decidable equality on `Trace` is definitionally derivable (the type is a first-order inductive)
+- No extra rewrite rules, guards, or structural axioms beyond the eight rules are invoked
+
+---
+
+**Conclusion:** A lexicographic polynomial interpretation (grape-depth-in-banana, size) suffices. The proof stays entirely within the given syntax and rules.

@@ -1,0 +1,7 @@
+1. The previous answer used a termination-ordering argument, specifically a simplification ordering of the LPO/RPO kind with a chosen precedence such as `F > G > S > Z`.
+
+2. Yes. That method depends on extra proof machinery not fixed by the rewrite rules themselves: an ordering choice, a precedence, and the general meta-level theorem that compatibility with a well-founded reduction ordering implies termination.
+
+3. Yes, under the boundary as you stated it, that does put the method outside the strict limit. It is not an object-level consequence of the rules alone; it is an external meta-proof technique.
+
+4. Yes, I still think the system is strongly normalizing. Informally, the only recursive rule replaces `F(x, y, S(n))` by `G(y, F(x, y, n))`, so every recursive reappearance of `F` strictly decreases the third argument from `S(n)` to `n`, and there are no rules for `G`, `S`, or `Z` that could recreate a larger call. So the system does look terminating, even though proving that rigorously still uses meta-level reasoning.

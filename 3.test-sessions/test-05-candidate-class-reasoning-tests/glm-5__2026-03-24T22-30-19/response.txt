@@ -1,0 +1,116 @@
+## Assessment of Termination Measures
+
+### The Rewrite System
+
+The file defines a first-order rewrite calculus on `Trace` terms with 8 rewrite rules:
+
+| Rule | LHS | RHS |
+|------|-----|-----|
+| `R_int_delta` | `integrate (delta t)` | `void` |
+| `R_merge_void_left` | `merge void t` | `t` |
+| `R_merge_void_right` | `merge t void` | `t` |
+| `R_merge_cancel` | `merge t t` | `t` |
+| `R_rec_zero` | `recDelta b s void` | `b` |
+| `R_rec_succ` | `recDelta b s (delta n)` | `app s (recDelta b s n)` |
+| `R_eq_refl` | `eqW a a` | `void` |
+| `R_eq_diff` | `eqW a b` | `integrate (merge a b)` |
+
+---
+
+### Critical Analysis: Rule `R_rec_succ`
+
+All three measures **fail** on the rule `R_rec_succ`. This is the decisive test case.
+
+**The rule:** `recDelta b s (delta n) → app s (recDelta b s n)`
+
+For a measure `μ` to be valid, we need `μ(LHS) > μ(RHS)`.
+
+#### Measure `mu1`:
+$$
+\begin{aligned}
+\mu_1(\text{LHS}) &= 1 + \mu_1(b) + \mu_1(s) + \mu_1(\text{delta } n) \\
+&= 2 + \mu_1(b) + \mu_1(s) + \mu_1(n)
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+\mu_1(\text{RHS}) &= 1 + \mu_1(s) + \mu_1(\text{recDelta } b\; s\; n) \\
+&= 2 + \mu_1(b) + 2\mu_1(s) + \mu_1(n)
+\end{aligned}
+$$
+
+**Requirement:** $2 + \mu_1(s) > 2 + 2\mu_1(s)$, i.e., $\mu_1(s) < 0$.
+
+**Result:** ❌ **FAILS** — impossible since $\mu_1(s) \geq 0$.
+
+---
+
+#### Measure `mu2`:
+$$
+\begin{aligned}
+\mu_2(\text{LHS}) &= 5 + \mu_2(b) + \mu_2(s) + \mu_2(\text{delta } n) \\
+&= 6 + \mu_2(b) + \mu_2(s) + \mu_2(n)
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+\mu_2(\text{RHS}) &= 1 + \mu_2(s) + \mu_2(\text{recDelta } b\; s\; n) \\
+&= 6 + \mu_2(b) + 2\mu_2(s) + \mu_2(n)
+\end{aligned}
+$$
+
+**Requirement:** $6 + \mu_2(s) > 6 + 2\mu_2(s)$, i.e., $\mu_2(s) < 0$.
+
+**Result:** ❌ **FAILS** — impossible since $\mu_2(s) \geq 0$.
+
+---
+
+#### Measure `mu3`:
+$$
+\begin{aligned}
+\mu_3(\text{LHS}) &= 1 + \mu_3(b) + \mu_3(s) + \mu_3(\text{delta } n) \\
+&= 2 + \mu_3(b) + \mu_3(s) + \mu_3(n)
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+\mu_3(\text{RHS}) &= 2 + \mu_3(s) + \mu_3(\text{recDelta } b\; s\; n) \\
+&= 3 + \mu_3(b) + 2\mu_3(s) + \mu_3(n)
+\end{aligned}
+$$
+
+**Requirement:** $2 + \mu_3(s) > 3 + 2\mu_3(s)$, i.e., $-1 > \mu_3(s)$.
+
+**Result:** ❌ **FAILS** — impossible since $\mu_3(s) \geq 0$.
+
+---
+
+### Summary Table
+
+| Rule | `mu1` | `mu2` | `mu3` |
+|------|:-----:|:-----:|:-----:|
+| `R_int_delta` | ✓ | ✓ | ✓ |
+| `R_merge_void_left` | ✓ | ✓ | ✓ |
+| `R_merge_void_right` | ✓ | ✓ | ✓ |
+| `R_merge_cancel` | ✓ | ✓ | ✓ |
+| `R_rec_zero` | ✓ | ✓ | ✓ |
+| `R_rec_succ` | ❌ | ❌ | ❌ |
+| `R_eq_refl` | ✓ | ✓ | ✓ |
+| `R_eq_diff` | ✓ | ✓ | ✓ |
+
+---
+
+### Conclusion
+
+**All three measures are invalid termination measures.** They all fail on `R_rec_succ`.
+
+The fundamental problem is that `R_rec_succ` is a **recursive unrolling rule**:
+- The third argument decreases structurally: `delta n → n`
+- But the RHS wraps the recursive call in `app s _`, adding weight proportional to `s`
+
+No simple additive size measure can work because the `app` constructor's contribution ($\mu(s)$) can be arbitrarily large, overwhelming any constant coefficient difference. A valid termination argument would require:
+1. A **lexicographic measure** prioritizing the third argument of `recDelta`, or
+2. A **multiset/order-theoretic approach** tracking the structural decrease in the recursive argument

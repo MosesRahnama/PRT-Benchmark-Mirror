@@ -1,0 +1,38 @@
+To complete the remaining cases in the `mu_decreases` theorem, follow this proof skeleton leveraging ordinal arithmetic properties:
+
+**Case: `Step.R_rec_succ b s n`**
+```lean4
+| _, _, Step.R_rec_succ b s n => by
+  simp 
+  -- Key inequality: omega^(omega^5 * (mu(n) + 1) + ...) > omega^3 * (mu(s) + 1) + ...
+  apply lt_of_lt_of_le _ (add_le_add_right (add_le_add_left (opow_le_opow_right omega_pos (le_add_left _ _)) _) _)
+  -- Use ordinal properties: omega^k > omega^m for k > m
+  exact opow_lt_opow_iff_right omega_pos (by linarith )
+```
+
+**Case: `Step.R_eq_refl a`**
+```lean4
+| _, _, Step.R_eq_refl a => by
+  simp 
+  -- Positivity: 0 < omega^(2*mu(a) + 9) + 1
+  apply add_pos_left
+  exact opow_pos _ omega_pos
+```
+
+**Case: `Step.R_eq_diff a b`**
+```lean4
+| _, _, Step.R_eq_diff a b => by
+  simp 
+  -- Dominance: omega^(mu(a) + mu(b) + 9) > omega^4 * (...)
+  apply lt_of_lt_of_le _ (add_le_add_right (opow_le_opow_right omega_pos (by linarith )) _)
+  -- Leverage: omega^(k + 9) > omega^4 * omega^k
+  simpa using opow_lt_opow_iff_right omega_pos (by linarith)
+```
+
+**Key Ordinal Properties Needed:**
+1. `opow_pos : 0 < omega`
+2. `opow_le_opow_right : a ≤ b → omega^a ≤ omega^b`
+3. `opow_lt_opow_iff_right : omega^a < omega^b ↔ a < b`
+4. Additive/multiplicative properties of ordinals
+
+This skeleton provides the core inequality arguments needed to discharge the `sorry` cases using Lean's ordinal library. Each case reduces to showing the RHS ordinal dominates the LHS through careful exponent comparison.

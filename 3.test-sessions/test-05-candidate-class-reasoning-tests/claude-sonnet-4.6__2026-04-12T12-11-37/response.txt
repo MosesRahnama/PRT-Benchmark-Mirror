@@ -1,0 +1,72 @@
+I'll work through each rewrite rule against all three measures systematically.
+
+---
+
+## The Rewrite Rules
+
+Eight rules to check. For each measure $\mu$, every rule $\text{Step}(s, t)$ must satisfy $\mu(s) > \mu(t)$.
+
+---
+
+## Measure $\mu_1$
+
+| Rule | LHS $\mu_1$ | RHS $\mu_1$ | Decrease? |
+|---|---|---|---|
+| `R_int_delta(t)` | `1 + (1 + mu1 t)` = 2 + n | 0 | Yes |
+| `R_merge_void_left(t)` | `1 + 0 + mu1 t` = 1 + n | n | Yes |
+| `R_merge_void_right(t)` | `1 + mu1 t + 0` = 1 + n | n | Yes |
+| `R_merge_cancel(t)` | `1 + mu1 t + mu1 t` = 1 + 2n | n | Yes |
+| `R_rec_zero(b,s)` | `1 + mu1 b + mu1 s + 0` = 1 + b + s | b | Yes (s ≥ 0, so 1 + s > 0) |
+| `R_rec_succ(b,s,n)` | `1 + b + s + (1 + n)` = 2 + b + s + n | `(1 + s + (1 + b + s + n))` = 2 + b + 2s + n | **Fails**: LHS = 2+b+s+n, RHS = 2+b+2s+n. RHS exceeds LHS by s. |
+| `R_eq_refl(a)` | `3 + mu1 a + mu1 a` = 3 + 2n | 0 | Yes |
+| `R_eq_diff(a,b)` | `3 + a + b` | `1 + (1 + (2 + a + b))` = 4 + a + b | **Fails**: RHS exceeds LHS by 1. |
+
+**$\mu_1$ fails** on `R_rec_succ` and `R_eq_diff`.
+
+---
+
+## Measure $\mu_2$
+
+| Rule | LHS $\mu_2$ | RHS $\mu_2$ | Decrease? |
+|---|---|---|---|
+| `R_int_delta(t)` | `2 + (1 + t)` = 3 + n | 0 | Yes |
+| `R_merge_void_left(t)` | `2 + 0 + t` = 2 + n | n | Yes |
+| `R_merge_void_right(t)` | `2 + t + 0` = 2 + n | n | Yes |
+| `R_merge_cancel(t)` | `2 + t + t` = 2 + 2n | n | Yes |
+| `R_rec_zero(b,s)` | `5 + b + s + 0` = 5 + b + s | b | Yes |
+| `R_rec_succ(b,s,n)` | `5 + b + s + (1+n)` = 6 + b + s + n | `1 + s + (5 + b + s + n)` = 6 + b + 2s + n | **Fails**: RHS exceeds LHS by s. |
+| `R_eq_refl(a)` | `5 + a + a` = 5 + 2n | 0 | Yes |
+| `R_eq_diff(a,b)` | `5 + a + b` | `2 + (2 + a + b)` = 4 + a + b | Yes (5 > 4) |
+
+**$\mu_2$ fails** on `R_rec_succ` only. The `app` weight of 1 is too low: the recursive call expands `recDelta` into `app s (recDelta ...)`, so the `app` node costs 1 but contributes an extra copy of `mu2 s`. The fix would require `mu2(.app a b) ≥ 1 + a + b + (weight of s)`, which is structurally impossible for a size-only measure.
+
+The deeper issue: any purely additive-size measure over `Trace` cannot handle `R_rec_succ` because the rule replaces one `recDelta` node with an `app` wrapping a new `recDelta` plus an extra copy of `s`. The `s` subterm is duplicated. A valid termination proof for recursion must instead use a **lexicographic** or **multiset** ordering on the `n` argument alone (the `delta n` shrinks to `n`), not global size.
+
+---
+
+## Measure $\mu_3$
+
+| Rule | LHS $\mu_3$ | RHS $\mu_3$ | Decrease? |
+|---|---|---|---|
+| `R_int_delta(t)` | `2 + (1 + t)` = 3 + n | 0 | Yes |
+| `R_merge_void_left(t)` | `1 + 0 + t` = 1 + n | n | Yes |
+| `R_merge_void_right(t)` | `1 + t + 0` = 1 + n | n | Yes |
+| `R_merge_cancel(t)` | `1 + t + t` = 1 + 2n | n | Yes |
+| `R_rec_zero(b,s)` | `1 + b + s + 0` = 1 + b + s | b | Yes |
+| `R_rec_succ(b,s,n)` | `1 + b + s + (1+n)` = 2 + b + s + n | `2 + s + (1 + b + s + n)` = 3 + b + 2s + n | **Fails**: RHS exceeds LHS by 1 + s. |
+| `R_eq_refl(a)` | `4 + a + a` = 4 + 2n | 0 | Yes |
+| `R_eq_diff(a,b)` | `4 + a + b` | `2 + (1 + a + b)` = 3 + a + b | Yes (4 > 3) |
+
+**$\mu_3$ fails** on `R_rec_succ`. $\mu_3$ fixes the `R_eq_diff` issue that $\mu_1$ had (by raising the `eqW` head weight to 4, enough to cover `integrate` weight 2 + `merge` weight 1 + 1), but it still cannot handle the subterm-duplication problem in `R_rec_succ`.
+
+---
+
+## Summary
+
+| Candidate | `R_rec_succ` | `R_eq_diff` | Valid termination measure? |
+|---|---|---|---|
+| $\mu_1$ | **Fails** | **Fails** | No |
+| $\mu_2$ | **Fails** | Passes | No |
+| $\mu_3$ | **Fails** | Passes | No |
+
+All three candidates fail. The common root cause is `R_rec_succ`: the rule duplicates the subterm `s` (it appears in both the new `app` node and the new `recDelta` node), so any measure that sums subterm sizes linearly will see the RHS exceed the LHS whenever `mu s > 0`. A correct termination argument requires either a **lexicographic order** on the `n` argument of `recDelta` in isolation (ignoring `b` and `s`, which are stable), or a **path-order / RPO** that handles the shrinking of `delta n → n` structurally.

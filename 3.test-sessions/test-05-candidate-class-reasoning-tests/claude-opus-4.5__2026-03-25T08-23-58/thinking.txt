@@ -1,0 +1,76 @@
+Now I have the full file. Let me analyze the three termination measure candidates (mu1, mu2, mu3) against the rewrite rules defined in the `Step` relation.
+
+The rewrite rules are:
+1. `R_int_delta`: `integrate (delta t)` → `void`
+2. `R_merge_void_left`: `merge void t` → `t`
+3. `R_merge_void_right`: `merge t void` → `t`
+4. `R_merge_cancel`: `merge t t` → `t`
+5. `R_rec_zero`: `recDelta b s void` → `b`
+6. `R_rec_succ`: `recDelta b s (delta n)` → `app s (recDelta b s n)`
+7. `R_eq_refl`: `eqW a a` → `void`
+8. `R_eq_diff`: `eqW a b` → `integrate (merge a b)`
+
+For a measure to be valid for termination, every rewrite rule must strictly decrease the measure. Let me analyze each candidate:
+
+### mu1 Analysis:
+| void => 0
+| delta t => 1 + mu1 t
+| integrate t => 1 + mu1 t
+| merge a b => 1 + mu1 a + mu1 b
+| app a b => 1 + mu1 a + mu1 b
+| recDelta b s n => 1 + mu1 b + mu1 s + mu1 n
+| eqW a b => 3 + mu1 a + mu1 b
+
+1. **R_int_delta**: `integrate (delta t)` → `void`
+   - LHS: `mu1(integrate (delta t)) = 1 + mu1(delta t) = 1 + 1 + mu1 t = 2 + mu1 t`
+   - RHS: `mu1(void) = 0`
+   - Decreases by `2 + mu1 t > 0` ✓
+
+2. **R_merge_void_left**: `merge void t` → `t`
+   - LHS: `mu1(merge void t) = 1 + mu1(void) + mu1 t = 1 + 0 + mu1 t = 1 + mu1 t`
+   - RHS: `mu1 t`
+   - Decreases by 1 ✓
+
+3. **R_merge_void_right**: `merge t void` → `t`
+   - LHS: `mu1(merge t void) = 1 + mu1 t + mu1(void) = 1 + mu1 t + 0 = 1 + mu1 t`
+   - RHS: `mu1 t`
+   - Decreases by 1 ✓
+
+4. **R_merge_cancel**: `merge t t` → `t`
+   - LHS: `mu1(merge t t) = 1 + 2 * mu1 t`
+   - RHS: `mu1 t`
+   - Decreases by `1 + mu1 t > 0` ✓
+
+5. **R_rec_zero**: `recDelta b s void` → `b`
+   - LHS: `mu1(recDelta b s void) = 1 + mu1 b + mu1 s`
+   - RHS: `mu1 b`
+   - Decreases by `1 + mu1 s > 0` ✓
+
+6. **R_rec_succ**: `recDelta b s (delta n)` → `app s (recDelta b s n)`
+   - LHS: `2 + mu1 b + mu1 s + mu1 n`
+   - RHS: `2 + 2 * mu1 s + mu1 b + mu1 n`
+   - Difference: `-mu1 s`, which is negative when s is non-void ✗
+
+**mu1 fails on R_rec_succ** when the second argument has positive measure.
+
+### mu2 Analysis:
+Testing with weights: void=0, delta=1+, integrate=2+, merge=2+, app=1+, recDelta=5+, eqW=5+
+
+Rules 1-5 all pass. For R_rec_succ:
+   - LHS: `6 + mu2 b + mu2 s + mu2 n`
+   - RHS: `6 + 2 * mu2 s + mu2 b + mu2 n`
+   - Difference: `-mu2 s` ✗
+
+**mu2 also fails on R_rec_succ** for the same reason.
+
+### mu3 Analysis:
+With weights: void=0, delta=1+, integrate=2+, merge=1+, app=2+, recDelta=1+, eqW=4+
+
+Rules 1-5 pass. For R_rec_succ:
+   - LHS: `2 + mu3 b + mu3 s + mu3 n`
+   - RHS: `3 + 2 * mu3 s + mu3 b + mu3 n`
+   - Difference: `-1 - mu3 s`, always negative ✗
+
+**mu3 always fails on R_rec_succ**, even when s is void.
+
+The core issue: R_rec_succ duplicates the `s` argument on the RHS (once explicitly in app, once inside the recursive call), creating a net increase in measure that no constant weights can overcome. All three candidates fail termination.

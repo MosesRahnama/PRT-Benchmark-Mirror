@@ -1,0 +1,5 @@
+The proposed lexicographic termination measure `(phase t, cost t)` is not sound. For certain rewrite steps defined by `Step`, the measure does not strictly decrease (and can even increase) under the standard lexicographic order on `Nat × Nat`. Specifically:
+
+- In rules like `R_merge_void_left` (`merge void t → t`), `R_merge_void_right` (`merge t void → t`), `R_merge_cancel` (`merge t t → t`), and `R_rec_zero` (`recDelta b s void → b`), if the right-hand side has `phase = 1` (e.g., when `t` or `b` is of the form `recDelta _ _ (delta _)`), the phase increases from 0 to 1 while the cost decreases. This results in an overall increase in the measure, violating the requirement for a strictly decreasing termination measure.
+
+This indicates the measure fails to prove termination for the rewrite system, as it does not decrease on every possible step.

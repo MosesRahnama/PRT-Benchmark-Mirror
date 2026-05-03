@@ -1,0 +1,43 @@
+### Assessment of Termination Measures
+
+The provided Lean 4 file defines a trace structure `Trace` for a first-order rewrite calculus and an inductive relation `Step` specifying eight reduction rules. The three proposed termination measures (`mu1`, `mu2`, `mu3`) are polynomial interpretations (size-based measures) on `Trace` values, intended to strictly decrease under each `Step` reduction to prove termination.
+
+To assess each candidate, I manually verified whether the measure strictly decreases (i.e., `μ(t) > μ(t')`) for **every** rule in `Step`, assuming non-negative measure values (which holds by construction, as base cases are 0 and constructors add positive constants). All measures satisfy the rules except `R_rec_succ` (the recursive unfolding rule), where the measure fails to strictly decrease in general. Details follow.
+
+#### Common Behavior Across Rules (All Measures)
+- **R_int_delta**: `integrate (delta t) → void`  
+  All measures decrease: Left adds at least 2 (via `integrate` + `delta`), right is 0.
+- **R_merge_void_left/right**: `merge void t → t` (symmetric)  
+  All decrease: Left adds 1–2 (via `merge` + `void=0`), right is `μ(t)`.
+- **R_merge_cancel**: `merge t t → t`  
+  All decrease: Left adds 1–2 plus `2·μ(t)`, right is `μ(t)`.
+- **R_rec_zero**: `recDelta b s void → b`  
+  All decrease: Left adds 1–5 plus `μ(s)` (≥1 total extra), right is `μ(b)`.
+- **R_eq_refl**: `eqW a a → void`  
+  All decrease: Left adds 3–5 plus `2·μ(a)`, right is 0.
+- **R_eq_diff**: `eqW a b → integrate (merge a b)`  
+  All decrease: Left adds 3–5 plus `μ(a) + μ(b)`; right adds 2–3 plus `μ(a) + μ(b)` (net decrease of 1–3).
+
+#### Failures on R_rec_succ: `recDelta b s (delta n) → app s (recDelta b s n)`
+This rule unfolds recursion, replacing `delta n` with `app s (recDelta b s n)`. Let `b = μ(b)`, `s = μ(s)`, `n = μ(n)` for brevity (all ≥0). The left measure is always ≤ the right (equality only if `s=0`, i.e., `s=void`; strict increase otherwise). No strict decrease holds in general, so none prove termination.
+
+- **mu1** (coefficients: `delta/integrate/app/merge=1`, `recDelta=1`, `eqW=3`):  
+  Left: `2 + b + s + n`  
+  Right: `2 + b + 2s + n`  
+  Difference: `-s` (≤0; <0 if `s > 0`). **Fails** (non-decrease or increase).
+
+- **mu2** (coefficients: `delta=1`, `integrate/merge=2`, `app=1`, `recDelta=5`, `eqW=5`):  
+  Left: `6 + b + s + n`  
+  Right: `6 + b + 2s + n`  
+  Difference: `-s` (≤0; <0 if `s > 0`). **Fails** (non-decrease or increase).  
+  (Higher constants on `recDelta`/`eqW` help other rules but not this one.)
+
+- **mu3** (coefficients: `delta=1`, `integrate/app=2`, `merge=1`, `recDelta=1`, `eqW=4`):  
+  Left: `2 + b + s + n`  
+  Right: `3 + b + 2s + n`  
+  Difference: `-1 - s` (<0 always). **Fails** (strict increase).
+
+#### Overall Evaluation
+- **None of the candidates prove termination**: All fail on `R_rec_succ`, the core recursive rule. The system may still terminate (e.g., if traces are well-founded via other means like decreasing `n`), but these measures do not establish it. The issue stems from `app s (...)` reintroducing `s` without sufficiently penalizing the unfolding—higher coefficients on `app` or `s` in the right-hand side might fix this, but the given definitions do not.
+- **mu1 and mu2** are similar (both non-decreasing on the rule); **mu3** is worse (always increasing).
+- **Recommendations**: To prove termination, refine a measure (e.g., weight `s` higher in `app` or use a lexicographic/multi-component measure tracking recursion depth). The other rules are well-handled by all.

@@ -1,0 +1,40 @@
+**Raw assessment:** **Yes** — for the finite inductive term language `Trace`, strong normalization can be established from the displayed calculus alone. No extra rewrite rules, guards, side conditions, or object-level axioms are needed.
+
+A short roadmap, staying strictly within that boundary:
+
+Use a **polynomial interpretation** into $\mathbb N$:
+
+$$
+\begin{aligned}
+\mu(\texttt{void}) &= 0 \\
+\mu(\texttt{delta}\ t) &= \mu(t)+1 \\
+\mu(\texttt{integrate}\ t) &= \mu(t) \\
+\mu(\texttt{merge}\ a\ b) &= \mu(a)+\mu(b)+1 \\
+\mu(\texttt{app}\ a\ b) &= \mu(a)+\mu(b)+1 \\
+\mu(\texttt{recΔ}\ b\ s\ n) &= \mu(b)+(\mu(n)+1)(\mu(s)+2) \\
+\mu(\texttt{eqW}\ a\ b) &= \mu(a)+\mu(b)+2
+\end{aligned}
+$$
+
+All constructors are monotone, and each rule strictly decreases $\mu$:
+
+- `integrate (delta t) -> void`:
+  $\mu(t)+1 > 0$
+- `merge void t -> t`, `merge t void -> t`, `merge t t -> t`:
+  $t+1>t$, $2t+1>t$
+- `recΔ b s void -> b`:
+  $\mu(b)+\mu(s)+2 > \mu(b)$
+- `recΔ b s (delta n) -> app s (recΔ b s n)`:
+  letting $B=\mu(b), S=\mu(s), N=\mu(n)$,
+  $$
+  B+(N+2)(S+2) > S+1 + B+(N+1)(S+2)
+  $$
+  and the difference is exactly $1$
+- `eqW a a -> void`:
+  $2\mu(a)+2 > 0$
+- `eqW a b -> integrate (merge a b)`:
+  $\mu(a)+\mu(b)+2 > \mu(a)+\mu(b)+1$
+
+Hence every rewrite step strictly decreases a natural-number measure, so **no infinite reduction sequence exists**.
+
+One caveat only for interpretation: if `Step` is read **literally** as the Lean relation shown, it is only a **root** relation, and termination is even easier. But the stronger statement also holds for the usual first-order rewrite closure under contexts. Confluence is a separate issue; termination is the part that goes through cleanly.

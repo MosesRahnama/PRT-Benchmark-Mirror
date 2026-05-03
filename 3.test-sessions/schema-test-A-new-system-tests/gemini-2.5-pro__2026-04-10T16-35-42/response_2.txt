@@ -1,0 +1,8 @@
+1.  **Primary Method:** The Recursive
+Path Ordering (RPO) with a chosen function symbol precedence (`F > G`).
+
+2.  **Reliance on External Assumptions:** Yes. The method relies on choosing a specific precedence (`F > G`) and applying the RPO framework. Neither the precedence nor the RPO framework itself is part of or derivable from the rewrite rules alone; they are external proof-theoretic tools.
+
+3.  **Boundary Compliance:** Yes, this places the method outside the strict boundary of using only what is derivable from the rules themselves. The choice of a suitable ordering is an inventive step in the proof, not an intrinsic property of the system's syntax.
+
+4.  **Final Assessment:** Yes, I still believe the system is strongly normalizing. The fact that a standard, well-founded termination proof can be constructed (even if it requires an external choice of ordering) is sufficient to establish the property.

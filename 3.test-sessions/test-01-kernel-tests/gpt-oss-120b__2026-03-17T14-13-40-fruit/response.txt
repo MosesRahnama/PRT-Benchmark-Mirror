@@ -1,0 +1,45 @@
+**Assessment**
+
+Yes – strong normalization can be proved for the presented rewrite calculus using only the given syntax and the eight unconditional root rules. No extra structural axioms, guards, side‑conditions, or hidden assumptions are needed.
+
+**Why termination holds**
+
+All rules act on the *root* of a term; there are no context‑sensitive or deep‑inside reductions.  
+Define a size function `|·|` that counts one for each constructor occurrence (e.g. `|plum| = 1`, `|grape t| = 1 + |t|`, etc.).  
+
+| Rule | Left‑hand side size | Right‑hand side size | Effect |
+|------|--------------------|----------------------|--------|
+| R_mango_grape | 2 + |t| | 1 | decrease |
+| R_peach_plum_left | 2 + |t| | |t| | decrease |
+| R_peach_plum_right | 2 + |t| | |t| | decrease |
+| R_peach_cancel | 1 + 2·|t| | |t| | decrease |
+| R_banana_zero | 3 + |b| + |s| | |b| | decrease |
+| R_cherry_refl | 2 | 1 | decrease |
+| R_cherry_diff | 2 | 2 + |a| + |b| | increase (but see below) |
+| R_apple_orange | 4 + |b| + |s| + |n| | 4 + |b| + 2·|s| + |n| | **increase** |
+
+Only `R_apple_orange` (the “banana‑grape” rule) can increase the size, and it does so by exactly `|s|` (the size of the second argument of the original `banana`). Crucially:
+
+* After applying `R_apple_orange` the resulting term’s root is `pear`.  
+* No rule has a `pear` on the left‑hand side, so a term whose root is `pear` is **already in normal form**.  
+
+Thus `R_apple_orange` can be used at most **once** in any reduction sequence (it cannot be re‑triggered because the root changes). All other rules strictly decrease the size, and they cannot be applied after `R_apple_orange` because the root is no longer a `banana`.
+
+Consequently every reduction sequence is finite: a term either
+
+1. reduces by a size‑decreasing rule repeatedly until no rule matches, or  
+2. performs a single `R_apple_orange` step (which may increase size) and then stops because the new root `pear` is irreducible.
+
+Since the reduction relation is well‑founded on the lexicographic order  
+`(size, 0/1)` (where the second component records whether the term is a `banana … (grape …)` that could still fire `R_apple_orange`), every rewrite chain terminates.
+
+**Proof roadmap (within the given boundary)**  
+
+1. **Define a measure** `μ(t) = (|t|, b)` where `|t|` is the constructor count and `b = 1` iff `t` matches the left‑hand side of `R_apple_orange` (i.e. `t = banana b s (grape n)`), otherwise `b = 0`.  
+2. Show that the lexicographic order on `ℕ × {0,1}` is well‑founded.  
+3. Verify for each rule that `μ` strictly decreases:
+   * For the seven size‑decreasing rules, `b` stays the same (or becomes 0) and `|t|` drops, so `μ` drops.
+   * For `R_apple_orange`, `|t|` may increase, but the rule changes the root from `banana` to `pear`, so the second component flips from `1` to `0`. Hence `(size',0) < (size,1)` lexicographically.
+4. Conclude that no infinite descending chain exists, i.e. the system is strongly normalising.
+
+Thus strong normalization follows solely from the given constructors and rewrite rules.

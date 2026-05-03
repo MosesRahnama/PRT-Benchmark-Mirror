@@ -1,0 +1,30 @@
+I'll read the specified Lean 4 file to analyze the rewrite calculus.
+**Raw Assessment: Strong normalization CAN be established from this calculus alone.**
+
+## Why:
+
+1. **The rule structure is acyclic**: `eqW` and other constructors never appear in any rewrite RHS except reductions that eliminate them. This prevents rewrite-induced cycles.
+
+2. **The problematic rule is `R_rec_succ`**: 
+   - `recΔ b s (delta n) → app s (recΔ b s n)`
+   - While this seems to grow the term (adding `app`), the interior `recΔ b s n` has a **strictly smaller argument** (`n` vs. `delta n`)
+   - Since `app` is inert (never reduced), the crucial observation is that the recursive structure *inside* the rewrite strictly decreases.
+
+3. **Single measure works**: Define a lexicographic order on:
+   - **Primary**: Number of active constructors (`delta`, `integrate`, `merge`, `recΔ`, `eqW`)
+   - **Secondary**: Total term size
+
+   - `R_int_delta`, `R_merge_*`, `R_rec_zero`, `R_eq_refl`: All strictly decrease active constructors
+   - `R_rec_succ`: Preserves active constructor count at top level but strictly decreases the argument to `recΔ`, blocking infinite descent
+   - `R_eq_diff`: Replaces one `eqW` with `integrate+merge`; no new `eqW` introduced anywhere, so this can only fire finitely often per root term
+
+4. **No external axioms needed**: The measure is purely structural—no guards, side conditions, or object-level assumptions required.
+
+## Proof roadmap:
+
+1. Define `ω(t)` := (count of {`delta`, `integrate`, `merge`, `recΔ`, `eqW`} in t, size(t))
+2. Show each `Step t u` satisfies `ω(u) < ω(t)` in lexicographic order
+3. For `R_rec_succ`, show that even though RHS has `app`, the term *inside* the recursion strictly decreases in measure
+4. Well-foundedness of `<` on pairs gives SN
+
+**Caveat**: The measure works because `app` is a structural sink. If `app` were ever reduced (e.g., by an additional rule), the analysis would need to be reconsidered.

@@ -1,0 +1,87 @@
+## Analysis
+
+**The System**
+- Rule 1: `F(x, y, Z) → x`
+- Rule 2: `F(x, y, S(n)) → G(y, F(x, y, n))`
+
+G has no rules, so it is a constructor. The only defined symbol is F.
+
+---
+
+### Method A — LPO with F > G > S > Z
+
+**Rule 1:** `F(x, y, Z) >_lpo x`
+x is a proper subterm of the LHS. ✓
+
+**Rule 2:** `F(x, y, S(n)) >_lpo G(y, F(x, y, n))`
+F > G in precedence, so it suffices to show F(x, y, S(n)) strictly dominates each argument of the RHS.
+- `F(x, y, S(n)) >_lpo y`: y is a proper subterm of the LHS. ✓
+- `F(x, y, S(n)) >_lpo F(x, y, n)`: same root; compare lexicographically. First two arguments are equal; S(n) >_lpo n since n is a strict subterm of S(n). ✓
+
+**Condition 1:** Succeeds. **Condition 2:** Pure syntactic/structural criterion; no external axioms. ✓
+
+---
+
+### Method B — Polynomial interpretation
+
+Rule 1: `[F(x, y, Z)] = x + 0 + 1 = x + 1 > x` ✓ for all x ∈ ℕ.
+Rule 2: `[F(x, y, S(n))] = x + (n+1) + 1 = x+n+2` vs `[G(y, F(x,y,n))] = [F(x,y,n)] = x+n+1`. Strict decrease by 1. ✓
+
+All polynomials have non-negative coefficients (F ignoring y is weakly monotone in y with coefficient 0). Both rules are strictly oriented for all assignments.
+
+**Condition 1:** Succeeds. **Condition 2:** Arithmetic over ℕ; no external structural axioms. ✓
+
+---
+
+### Method C — KBO with uniform weights
+
+KBO requires: every variable occurring in the RHS must occur *at least as often* in the LHS.
+
+**Rule 2:** y occurs **once** in the LHS but **twice** in the RHS (as the first argument of G and as the second argument of the inner F). This violates the KBO variable condition. Weight check confirms it: `w(F(x, y, S(n))) = 5` while `w(G(y, F(x, y, n))) = 6`; the weight **increases**.
+
+**Condition 1:** Fails. KBO cannot orient Rule 2 in this configuration.
+
+---
+
+### Method D — Dependency pairs + subterm criterion, projecting to argument 3 of F
+
+G has no rules, so only F generates dependency pairs. From Rule 2:
+
+$$\text{DP}: \left(F^\#(x,\, y,\, S(n)),\; F^\#(x,\, y,\, n)\right)$$
+
+Projection π₃(F#(·,·,·)) = third argument.
+- Left projected: π₃(F#(x, y, S(n))) = S(n)
+- Right projected: π₃(F#(x, y, n)) = n
+
+n is a **strict subterm** of S(n), so the pair is strictly decreasing under the subterm criterion. There is only one DP; it is strictly oriented; the DP problem is finite, establishing no infinite chains.
+
+**Condition 1:** Succeeds. **Condition 2:** Purely syntactic; no external axioms. ✓
+
+---
+
+### Method E — Direct descent measure on depth_S
+
+The argument assigns mu(x) = 0 for variables and infers Rule 1 decreases the measure: mu(F(x,y,Z)) = 1 > 0 = mu(x) symbolically.
+
+This symbolic argument fails for ground instances. Consider the ground term `F(F(a, b, S(Z)), y, Z)`, which matches Rule 1 with x = F(a, b, S(Z)):
+
+$$\mu\!\left(F(F(a,b,S(Z)),\, y,\, Z)\right) = \mathrm{depth}_S(Z) + 1 = 1$$
+$$\mu\!\left(F(a,\, b,\, S(Z))\right) = \mathrm{depth}_S(S(Z)) + 1 = 2$$
+
+The measure **strictly increases** (1 → 2). The stated measure is not monotone with respect to the rewrite relation when variables are substituted with non-trivial F-terms.
+
+**Condition 1:** Fails. The measure does not decrease on all ground rewrite steps.
+
+---
+
+## Conclusion
+
+| Method | Proves termination? | Within boundary? |
+|--------|-------------------|-----------------|
+| A (LPO) | ✓ | ✓ |
+| B (Polynomial) | ✓ | ✓ |
+| C (KBO) | ✗ (variable/weight condition violated) | — |
+| D (Dependency pairs) | ✓ | ✓ |
+| E (Direct measure) | ✗ (non-monotone under Rule 1) | — |
+
+**Methods A, B, and D** satisfy both conditions.

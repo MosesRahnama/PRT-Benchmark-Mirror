@@ -1,0 +1,33 @@
+## Assessment of the three candidates ✅
+
+I reviewed the rewrite rules and checked each measure for strict decrease on every rule. All rules decrease **except** `R_rec_succ`, which breaks every candidate.
+
+### The problematic rule
+`recDelta b s (delta n) → app s (recDelta b s n)`
+
+Let $m_b=\mu(b)$, $m_s=\mu(s)$, $m_n=\mu(n)$.
+
+- **$\mu_1$**
+  - LHS: $2 + m_b + m_s + m_n$
+  - RHS: $2 + m_b + 2m_s + m_n$
+  - So LHS $\le$ RHS (equal when $m_s=0$, larger when $m_s>0$). **Not strictly decreasing.**
+
+- **$\mu_2$**
+  - LHS: $6 + m_b + m_s + m_n$
+  - RHS: $6 + m_b + 2m_s + m_n$
+  - Same issue: LHS $\le$ RHS. **Not strictly decreasing.**
+
+- **$\mu_3$**
+  - LHS: $2 + m_b + m_s + m_n$
+  - RHS: $3 + m_b + 2m_s + m_n$
+  - LHS is **strictly smaller** than RHS for all $m_s\ge0$, so the measure **increases**. **Fails outright.**
+
+### Summary by candidate
+- **$\mu_1$**: Fails on `R_rec_succ` (no strict decrease; can be equal or increase).
+- **$\mu_2$**: Same failure on `R_rec_succ`.
+- **$\mu_3$**: Also fails on `R_rec_succ` (strict increase).
+
+### Note on the rest of the system
+All other rules do decrease under all three measures (e.g., the `eqW` rules and `merge` simplifications), so the failure is isolated to the recursion/expansion rule.
+
+If you want, I can suggest a corrected measure or a lexicographic/structural ordering that handles the duplication of $s$ in the RHS.

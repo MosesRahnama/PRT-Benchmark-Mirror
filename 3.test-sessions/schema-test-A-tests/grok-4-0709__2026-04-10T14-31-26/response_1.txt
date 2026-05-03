@@ -1,0 +1,3 @@
+No, strong normalization cannot be established from the presented rewrite system alone.
+
+Reasoning: The system defines a recursive unwinding of F over the third argument, but proving termination for all terms requires induction over the structure of the third argument (assuming it behaves like a natural number via S and Z). The given rules provide no basis for such induction or properties of S/Z (e.g., no Peano-like axioms or derivation of well-foundedness), so external structural assumptions are needed.

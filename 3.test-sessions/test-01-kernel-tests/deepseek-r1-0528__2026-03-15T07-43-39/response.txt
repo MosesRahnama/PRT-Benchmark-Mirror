@@ -1,0 +1,33 @@
+Based solely on the provided calculus definitions, I assess that **strong normalization cannot be established for this system without additional assumptions or proof techniques**. Here's why:
+
+### Key Obstacles
+1. **Non-size-decreasing recursion**:  
+   The `R_rec_succ` rule expands `recΔ b s (δn)` to `app s (recΔ b s n)`, which *increases* term size when `s` is non-trivial. This creates potential for unbounded growth.
+
+2. **Lack of termination guards**:  
+   No conditions prevent degenerate cases like:
+   ```lean
+   Ω := recΔ void (δ void) (δ void)
+   → app (δ void) (recΔ void (δ void) void)
+   → app (δ void) void  // No reduction rule for this
+   ```
+   While this halts, other configurations could loop if `s` in `recΔ` produces new `recΔ` redexes.
+
+3. **Equality-induced expansion**:  
+   `R_eq_diff` expands `eqW a b` to `integrate (merge a b)`, which may create new reducible subterms if `a`/`b` contain redexes. Without monotonicity guarantees, this could feed cyclic behavior.
+
+### Proof Roadmap Boundary
+A normalization proof would require techniques **outside the given system**:
+- **Lexicographic orders** (to handle `recΔ`'s non-monotonicity)
+- **Computability predicates** (to handle open terms)
+- **Explicit termination metrics** (e.g., ordinals for recursion depth)
+
+Since you prohibited external axioms/guards, no self-contained roadmap exists. The core issue is that `recΔ` and `eqW` rules can theoretically generate unbounded reduction sequences without additional constraints.
+
+### Recommendation
+To pursue normalization:
+1. Add positivity checks to `recΔ` (e.g., require `s` strictly size-decreasing)
+2. Introduce lexical precedence for `δ`/`recΔ`
+3. Prove termination for the restricted system first
+
+Would you like me to formalize these extensions?

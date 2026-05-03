@@ -1,0 +1,69 @@
+## Assessment of the three termination candidates
+
+I read only
+and checked each `Step` rule against each measure.
+
+For a valid one-step ranking into `Nat`, each rule must satisfy:
+\[
+\mu(\text{LHS}) > \mu(\text{RHS})
+\]
+
+All three candidates pass **7 out of 8** rules, but all fail on `R_rec_succ`.
+
+### `mu1` ❌
+
+Critical rule:
+- LHS: `recDelta b s (delta n)`  
+  \[
+  \mu_1 = 2 + \mu_1(b) + \mu_1(s) + \mu_1(n)
+  \]
+- RHS: `app s (recDelta b s n)`  
+  \[
+  \mu_1 = 2 + \mu_1(b) + 2\mu_1(s) + \mu_1(n)
+  \]
+
+So RHS = LHS + \(\mu_1(s)\).  
+If \( \mu_1(s)=0 \), tie; if \(>0\), it increases. Not strictly decreasing.
+
+### `mu2` ❌
+
+Critical rule:
+- LHS:
+  \[
+  6 + \mu_2(b) + \mu_2(s) + \mu_2(n)
+  \]
+- RHS:
+  \[
+  6 + \mu_2(b) + 2\mu_2(s) + \mu_2(n)
+  \]
+
+Same issue: RHS = LHS + \(\mu_2(s)\). Not strictly decreasing.
+
+### `mu3` ❌
+
+Critical rule:
+- LHS:
+  \[
+  2 + \mu_3(b) + \mu_3(s) + \mu_3(n)
+  \]
+- RHS:
+  \[
+  3 + \mu_3(b) + 2\mu_3(s) + \mu_3(n)
+  \]
+
+Here RHS = LHS + \(1+\mu_3(s)\), so it is **always larger**.
+
+## Verdict
+
+- `mu1`: **invalid** as a global termination measure.
+- `mu2`: **invalid**.
+- `mu3`: **invalid**.
+
+The obstruction is structural: `R_rec_succ` duplicates the `s` contribution on the RHS via `app s (...)`, so these additive scalar measures cannot orient that step strictly downward.
+
+## Updated checklist
+
+- ✅ Read target Lean file fully  
+- ✅ Identify three measure candidates  
+- ✅ Assess soundness and obligations  
+- ✅ Summarize verdict per candidate

@@ -1,0 +1,20 @@
+Looking at this rewrite system, I can provide a direct assessment:
+
+**Strong normalization cannot be easily established** from the presented calculus alone using standard methods.
+
+**Key obstacles:**
+
+1. **Size-increasing rules**: Rule `R_cherry_diff` transforms `cherry a b` (when a ≠ b) into `mango (peach a b)`, increasing term size from `1 + |a| + |b|` to `3 + |a| + |b|`.
+
+2. **Complex unfolding**: Rule `R_apple_orange` (banana rule) transforms `banana b s (grape n)` into `pear s (banana b s n)`, which can increase size when `s` is large, since the RHS duplicates the `s` subterm.
+
+3. **No obvious complexity measure**: Standard termination techniques (size measures, multiset orderings) fail because these rules can strictly increase term complexity.
+
+**Why standard approaches fail:**
+- Simple size/weight measures are defeated by rules that grow terms
+- The system lacks obvious type discipline or stratification  
+- No clear structural invariant emerges from the reduction rules alone
+
+**Assessment**: The system likely requires additional structure (typing, complexity assignments, or semantic methods with external ordinals) to establish termination. A direct combinatorial proof using only the syntactic rewrite rules appears intractable with standard methods.
+
+The presence of size-increasing reductions suggests this system may actually have infinite reduction sequences, though proving non-termination would also require constructing a specific counterexample.

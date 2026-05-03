@@ -1,0 +1,9 @@
+Here are the determinations, restricted to methods A–E as stated.
+
+- (A) Succeeds: yes. Boundary: inside (standard LPO/RPO with a fixed precedence).
+- (B) Succeeds: yes. Boundary: inside (polynomial interpretation over $\\mathbb{N}$ is standard).
+- (C) Succeeds: no. Boundary: inside, but fails because KBO with uniform weights cannot orient the second rule (weight of RHS exceeds LHS).
+- (D) Succeeds: yes. Boundary: inside (dependency pairs + subterm criterion on the third argument is standard).
+- (E) Succeeds: yes. Boundary: inside (direct measure on $S$-depth of the third argument stays within the given rules).
+
+Methods satisfying both conditions: A, B, D, E.

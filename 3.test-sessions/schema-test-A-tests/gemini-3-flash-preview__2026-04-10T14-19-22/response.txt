@@ -1,0 +1,4 @@
+1. **Primary method:** Lexicographic Path Ordering (LPO).
+2. **Reliance on external assumptions:** Yes. LPO requires selecting a specific **precedence** ($F > G$) and an **argument status** (lexicographic) that are not contained within the rewrite rules themselves.
+3. **Boundary compliance:** Yes. Since the choice of precedence and ordering is an external structural axiom/assumption used to demonstrate termination, the method falls outside the boundary of using *only* what is derivable from the given rules.
+4. **Strong normalization status:** Yes, the system remains strongly normalizing. While the *proof* requires external tools, the system's inherent structure (primitive recursion on the third argument) ensures no infinite derivations exist.

@@ -1,0 +1,24 @@
+I need to examine the Lean 4 file mentioned in the user's request to assess whether strong normalization can be established from the presented calculus alone. Let me read the file.
+Let me analyze this Lean 4 file which defines a first-order rewrite calculus.
+
+The system consists of:
+1. A `Trace` type with constructors: `void`, `delta`, `integrate`, `merge`, `app`, `recΔ`, and `eqW`
+2. A `Step` relation defining rewrite rules:
+   - `R_int_delta`: `integrate (delta t) → void`
+   - `R_merge_void_left`: `merge void t → t`
+   - `R_merge_void_right`: `merge t void → t`
+   - `R_merge_cancel`: `merge t t → t`
+   - `R_rec_zero`: `recΔ b s void → b`
+   - `R_rec_succ`: `recΔ b s (delta n) → app s (recΔ b s n)`
+   - `R_eq_refl`: `eqW a a → void`
+   - `R_eq_diff`: `eqW a b → integrate (merge a b)` (when a ≠ b)
+
+**Assessment**: Strong normalization **cannot** be established from this calculus alone.
+
+**Reason**: The `R_rec_succ` rule creates a potential for infinite reduction sequences. Consider the term `recΔ b s (delta n)`. By `R_rec_succ`, this reduces to `app s (recΔ b s n)`. If `s` itself contains recursive structure or if we can construct terms where this unfolding continues indefinitely, we get non-termination.
+
+More specifically, consider a term like `recΔ b (λx. delta x) (delta (delta void))`. This would reduce to `app (λx. delta x) (recΔ b (λx. delta x) (delta void))`, which then reduces further, creating an infinite chain of `delta` applications.
+
+The system lacks any structural measure or well-founded ordering that would guarantee termination. The recursive rule `R_rec_succ` allows unbounded unfolding without any decreasing measure on the arguments. Without importing additional structural axioms (like a well-founded induction principle) or object-level assumptions about the behavior of the constructors, we cannot establish strong normalization.
+
+The calculus as presented is essentially a fragment of a system that could encode primitive recursion, and without additional constraints or measures, such systems are not strongly normalizing.

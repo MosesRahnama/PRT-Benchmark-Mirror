@@ -1,0 +1,26 @@
+Analyzed the TRS and methods in KO7-LLM-Benchmark/test-files/Test-12-Method-Boundary-Discrimination.txt.
+
+**Method A (LPO/RPO with precedence F > G > S > Z)**
+- Termination proof succeeds: the recursive call goes from `F(..., S(n))` to `F(..., n)` (strictly smaller third argument), and `F > G` lets the second rule orient with standard path-order reasoning (e.g., RPO with a suitable status for `F`).
+- Boundary: stays within (pure syntactic reduction ordering; no extra axioms).
+
+**Method B (polynomial interpretation over ℕ)**
+- Termination proof succeeds:  
+  - Rule 1: \(x+0+1 > x\).  
+  - Rule 2: \(x+(n+1)+1 = x+n+2 > x+n+1 = [G(y,F(x,y,n))]\) since \([G(a,b)]=b\).
+- Boundary: stays within (standard interpretation-based termination argument; no extra assumptions).
+
+**Method C (KBO with uniform weights all 1)**
+- Termination proof fails: Rule 2 duplicates `y` on the RHS (`G(y, F(x,y,n))` contains `y` twice), violating KBO’s variable condition (LHS has `y` once, RHS has `y` twice), so the rule cannot be oriented.
+- Boundary: within, but it does not succeed.
+
+**Method D (dependency pairs + subterm criterion, project to 3rd arg of F)**
+- Termination proof succeeds: the only dependency pair is essentially \(F^\#(...,S(n)) \to F^\#(...,n)\), and projecting to the 3rd argument gives \(S(n) \triangleright n\), breaking all infinite DP chains.
+- Boundary: stays within (DP framework is a termination technique using only the given rules).
+
+**Method E (single descent measure μ as defined)**
+- Termination proof fails *as stated*: the claim “each rewrite step strictly decreases μ” is false because μ ignores some redex positions.  
+  Example: in `G(F(x,y,Z), F(x,y,S(Z)))`, rewriting the first argument `F(x,y,Z) -> x` does not change μ at all since μ(G(a,b)) = μ(b).
+- Boundary: the style is within, but the method doesn’t actually prove termination for all rewrite steps.
+
+**Methods satisfying both conditions (termination + boundary):** A, B, and D.

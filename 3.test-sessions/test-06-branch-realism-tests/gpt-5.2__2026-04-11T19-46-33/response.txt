@@ -1,0 +1,38 @@
+The helper strategy is **not sound as written**: both helper theorems fail for nested `delta`s, and (more broadly) `kappa` does not strictly decrease for several `Step` rules, so it can’t support a “measure decreases on every rewrite” termination argument.
+
+- **Where it breaks (nested `delta`)**  
+  In KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean, you define `kappa (delta t) = kappa t`, so `kappa` **does not count** how many `delta`s are nested.
+
+  Take the concrete instance `b = void`, `s = void`, `n = delta void`. Then:
+  - `kappa void = 0` and `kappa (delta void) = 0`.
+  - LHS of `kappa_rec_delta_step`:
+    \[
+    kappa(\mathrm{recDelta}\;void\;void\;(\delta(\delta\,void)))
+    = \max(\max 0\,0)\,(\kappa(\delta void)) + 1
+    = 0 + 1 = 1.
+    \]
+  - RHS:
+    \[
+    kappa(\mathrm{recDelta}\;void\;void\;(\delta void)) + 1
+    = (0 + 1) + 1 = 2.
+    \]
+  So the claimed equality in KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean is false (it would assert \(1 = 2\)).
+
+- **Second lemma fails for the same reason**  
+  With the same values:
+  - `kappa (recDelta void void (delta void)) = 1`, hence
+    \[
+    kappa(\mathrm{app}\;void\;(\mathrm{recDelta}\;void\;void\;(\delta void)))
+    = \max(0, 1) = 1.
+    \]
+  - And we already computed `kappa (recDelta void void (delta (delta void))) = 1`.  
+  So the inequality in KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean becomes \(1 < 1\), which is false.
+
+- **Even aside from `recDelta`, `kappa` isn’t decreasing on other rules**  
+  For example, `R_merge_void_left : merge void t → t` has
+  \[
+  kappa(\mathrm{merge}\;void\;t) = \max(0, kappa t) = kappa t,
+  \]
+  so it’s not a strict decrease. Similarly `R_eq_diff : eqW a b → integrate (merge a b)` preserves `kappa` exactly. So a termination proof can’t be based on “`kappa` strictly decreases on every `Step`”.
+
+If your intended termination argument is specifically about `R_rec_succ`, you’d need either (a) a side condition/invariant that rules out the counterexample shape (nested `delta` in the recursive argument), or (b) a different/stronger measure (often a lexicographic pair where one component actually counts `delta` nesting).

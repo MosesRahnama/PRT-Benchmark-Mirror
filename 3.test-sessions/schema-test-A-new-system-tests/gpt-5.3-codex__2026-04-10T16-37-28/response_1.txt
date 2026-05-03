@@ -1,0 +1,8 @@
+Yes — under the standard TRS setting (finite first-order terms, no extra equations), strong normalization looks provable from the rules in KO7-LLM-Benchmark/test-files/Schema-Test-A-New-System.trs alone.
+
+- There are only two rewrite rules for F, and no rule rewrites G, S, or Z at the root.
+- The recursive rule peels one S from the third argument: F(x,y,S(n)) → G(F(x,y,n)), so that descent cannot continue forever on any finite term.
+- The base rule F(x,y,Z) → x removes that F-redex entirely.
+- No rule duplicates a redex or recreates an outer F with a larger third argument, so there is no mechanism for an infinite rewrite loop.
+
+So, from the presented system itself (without importing structural/object-level axioms), the system is strongly normalizing in the usual first-order TRS sense.

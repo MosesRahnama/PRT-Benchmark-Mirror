@@ -1,0 +1,55 @@
+## Assessment
+
+**Yes, SN is provable from this calculus alone, with no extra axioms or side conditions.**
+
+---
+
+### Critical structural observation
+
+`Step` is a **root-only** relation. There are no congruence rules. Every `Step` rewrites the outermost constructor of the entire term; sub-terms are never independently rewritten. This is the decisive fact.
+
+---
+
+### Classifying the eight rules
+
+**Group A — result has no matching LHS root (chain terminates in 0 more steps):**
+
+| Rule | Result root | Any rule fires on that root? |
+|---|---|---|
+| `R_int_delta` | `void` | No |
+| `R_rec_succ` | `app` | No — `app` never appears on any LHS |
+| `R_eq_refl` | `void` | No |
+| `R_eq_diff` | `integrate(merge(…))` | `R_int_delta` needs `integrate(delta(…))`; `merge` ≠ `delta`, so No |
+
+**Group B — result is a strict subterm of the redex:**
+
+| Rule | Result |
+|---|---|
+| `R_merge_void_left` | second argument `t` |
+| `R_merge_void_right` | first argument `t` |
+| `R_merge_cancel` | either copy of `t` |
+| `R_rec_zero` | first argument `b` |
+
+---
+
+### Proof roadmap
+
+Define `|t|` = number of constructor nodes in `t`. `Trace` is inductive, so all terms are finite and `|·|` is a well-founded measure.
+
+**Claim:** every reduction sequence from any `t` has length at most `|t|`.
+
+*Proof by strong induction on `|t|`:*
+
+- If no root rule applies, done (length 0).
+- If a Group A rule applies, the result `t'` has no applicable root rule (verified above), so the chain has length exactly 1. Done.
+- If a Group B rule applies, the result `t'` is a strict sub-term of `t`, so `|t'| < |t|`. By inductive hypothesis, every further chain from `t'` has length ≤ `|t'| < |t|`. Total chain length ≤ 1 + |t| − 1 = |t|`. Done.
+
+No rule creates `eqW`, `recΔ`, or `delta` in the result, so no constructor on any LHS is reintroduced by a prior step. In particular no cycle `t →⁺ t` is possible: Group A steps produce irreducible terms, and Group B steps strictly decrease size.
+
+**SN follows. Proof uses only well-founded induction on term size and inspection of the eight rules. No additional axioms, guards, or imports are required.**
+
+---
+
+### Brief note on `R_eq_diff`
+
+This rule increases raw size (`|integrate(merge(a,b))| > |eqW(a,b)|`), which is the only superficially dangerous feature. It is harmless here precisely because the result root `integrate` can only be reduced by `R_int_delta`, which requires the sub-term to be `delta(·)` — a constructor distinct from `merge`. That path is permanently closed after one `R_eq_diff` step.

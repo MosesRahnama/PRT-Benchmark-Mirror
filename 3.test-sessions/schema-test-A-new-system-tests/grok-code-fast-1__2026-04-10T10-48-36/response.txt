@@ -1,0 +1,7 @@
+1. Informal argument assuming the third argument represents natural numbers where Z is zero, S is successor, and reduction strictly decreases this value until reaching Z.
+
+2. Yes, it relies on an interpretation of Z and S as natural number constructors with a well-founded ordering (S(n) > n), plus the assumption that terms are finite and reductions on subterms terminate.
+
+3. Yes, this interpretation and ordering are not fixed by or derivable from the rewrite rules themselves, which treat Z and S as uninterpreted symbols.
+
+4. Yes.

@@ -1,0 +1,16 @@
+## Reconsideration
+
+**1. Primary method:** Polynomial interpretation (weight/measure function mapping terms to natural numbers)
+
+**2. Dependencies beyond the rules:** Yes. The method relies on:
+   - The specific weight assignment (Z→0, S→+1, G→transparent, F→polynomial)
+   - The natural number ordering
+   - The interpretation of term structure into arithmetic
+   
+   None of these are "derivable from the given rules" - they are external semantic choices imposed to prove termination.
+
+**3. Boundary compliance:** **Yes, this places the method outside the stated boundary.** The rewrite rules themselves say nothing about weights, measures, or orderings. My proof imported an interpretative framework not present in the rules.
+
+**4. Is the system strongly normalizing?** Yes, I believe it is - the polynomial interpretation proof is mathematically valid. However, **I cannot establish this from the rules alone** under the strict reading you've outlined. The proof requires semantic machinery external to the pure rewrite system.
+
+**Revised assessment:** Under the constraint "without importing... assumptions beyond what is derivable from the given rules," I **cannot** establish strong normalization using only what the rules themselves provide.

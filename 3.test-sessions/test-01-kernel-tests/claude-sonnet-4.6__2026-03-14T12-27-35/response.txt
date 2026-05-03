@@ -1,0 +1,62 @@
+## Raw Assessment
+
+**Yes — strong normalization is derivable from the presented calculus alone**, without additional axioms, guards, or structural imports. The standard proof method is Lexicographic Path Ordering (LPO).
+
+---
+
+## Termination Order
+
+**Precedence:**
+$$\mathtt{eqW} \succ \mathtt{rec\Delta} \succ \mathtt{app} \succ \mathtt{integrate} \succ \mathtt{merge} \succ \mathtt{delta} \succ \mathtt{void}$$
+
+Under LPO with this precedence, every rule strictly decreases the term measure.
+
+---
+
+## Proof Roadmap (rules checked in pairs by difficulty)
+
+**Rules 1–5, 7 — trivial (subterm or top-symbol drop):**
+
+| Rule | Argument |
+|---|---|
+| R_int_delta | `integrate > void`; unique arg `delta(t)` is gone → head drops |
+| R_merge_void_left/right | RHS is a proper subterm (case 1 of LPO) |
+| R_merge_cancel | RHS `t` is a proper subterm of `merge(t,t)` (case 1) |
+| R_rec_zero | RHS `b` is a proper subterm of `recΔ(b,s,void)` |
+| R_eq_refl | `eqW > void`; constant RHS, head drops |
+
+**Rule 6 — R_rec_succ (the only size-increasing rule, requires case 3):**
+
+$$\mathtt{rec\Delta}(b,s,\mathtt{delta}(n)) \succ_{\mathrm{lpo}} \mathtt{app}(s,\,\mathtt{rec\Delta}(b,s,n))$$
+
+- $\mathtt{rec\Delta} \succ \mathtt{app}$, so case 2 applies; need both args of RHS $\prec$ LHS:
+  - $s$ is a direct subterm of LHS ✓
+  - $\mathtt{rec\Delta}(b,s,n) \prec_{\mathrm{lpo}} \mathtt{rec\Delta}(b,s,\mathtt{delta}(n))$: same head, lex comparison reaches the third argument, where $n \prec_{\mathrm{lpo}} \mathtt{delta}(n)$ by the subterm property ✓
+
+**Rule 8 — R_eq_diff (also size-increasing, requires case 2 twice):**
+
+$$\mathtt{eqW}(a,b) \succ_{\mathrm{lpo}} \mathtt{integrate}(\mathtt{merge}(a,b))$$
+
+- $\mathtt{eqW} \succ \mathtt{integrate}$; need the sole arg $\mathtt{merge}(a,b) \prec_{\mathrm{lpo}} \mathtt{eqW}(a,b)$:
+  - $\mathtt{eqW} \succ \mathtt{merge}$; args of $\mathtt{merge}(a,b)$ are $a,b$, both proper subterms of LHS ✓
+
+---
+
+## Subtleties That Raise No Obstruction
+
+**Non-linear patterns** (R_merge_cancel `merge(t,t)→t`, R_eq_refl `eqW(a,a)→void`): LPO-orientation relies only on the subterm property of LHS; non-linearity in the LHS pattern is not a problem because the subterm argument holds regardless of whether variables coincide.
+
+**Overlap of R_eq_refl and R_eq_diff**: Both rules apply to `eqW(t,t)`. For SN we need every single step to decrease the LPO measure — both do, independently. Confluence is a separate question and not required here.
+
+**No rule produces `eqW`**: the `eqW` constructor is monotone-decreasing over any reduction, providing an additional witness that the system cannot cycle through `eqW`-headed terms.
+
+---
+
+## Boundary Check
+
+The entire proof uses only:
+- The 7 constructors as they are declared
+- The 8 root rules as they are stated
+- Standard LPO theory (a type-theoretic / combinatorial theorem about term algebras, not an object-level axiom of the calculus)
+
+No extra rewrite rules, side conditions, guards, or imported structural axioms are needed. The system is **strongly normalizing**.

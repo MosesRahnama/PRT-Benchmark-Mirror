@@ -1,0 +1,95 @@
+Here’s a clean proof skeleton for the five remaining cases. I’m not modifying any files or running the compiler—this is just the structure you can paste in to replace the `sorry`s.
+
+## Proof skeletons for the remaining cases
+
+### `R_int_delta`
+Use a split on whether $kappa\,t = 0$. If it’s zero, use `drop_right`; otherwise `drop_left`.
+
+```
+| _, _, Step.R_int_delta t => by
+    by_cases hk : kappa t = 0
+    · have hk' : kappa void = kappa (integrate (delta t)) := by
+        simp [kappa, hk]
+      have hmu : mu void < mu (integrate (delta t)) := by
+        simp [mu]
+      exact drop_right hmu hk'
+    · have hkpos : 0 < kappa t := Nat.pos_of_ne_zero hk
+      have hk' : kappa void < kappa (integrate (delta t)) := by
+        simpa [kappa] using hkpos
+      exact drop_left hk'
+```
+
+### `R_rec_zero`
+Split on whether $kappa\,s \le kappa\,b$.  
+- If yes, $kappa$ ties → `drop_right`.  
+- If no, $kappa$ drops → `drop_left`.
+
+```
+| _, _, Step.R_rec_zero b s => by
+    by_cases hk : kappa s ≤ kappa b
+    · have hkmax : Nat.max (kappa b) (kappa s) = kappa b := Nat.max_eq_left hk
+      have hk' : kappa b = kappa (recDelta b s void) := by
+        simp [kappa, hkmax]
+      have hmu : mu b < mu (recDelta b s void) := by
+        simp [mu]; omega
+      exact drop_right hmu hk'
+    · have hlt : kappa b < kappa s := Nat.lt_of_not_ge hk
+      have hkmax : Nat.max (kappa b) (kappa s) = kappa s := Nat.max_eq_right (le_of_lt hlt)
+      have hk' : kappa b < kappa (recDelta b s void) := by
+        simpa [kappa, hkmax] using hlt
+      exact drop_left hk'
+```
+
+### `R_rec_succ`
+Here $kappa$ strictly drops because the LHS has a `+1` and the RHS does not.
+
+```
+| _, _, Step.R_rec_succ b s n => by
+    have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+      -- Let M = max (max (kappa b) (kappa s)) (kappa n)
+      have hks : kappa s ≤ Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) :=
+        le_trans (Nat.le_max_right _ _) (Nat.le_max_left _ _)
+      have hle : Nat.max (kappa s) (Nat.max (Nat.max (kappa b) (kappa s)) (kappa n))
+                 ≤ Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) :=
+        Nat.max_le_iff.mpr ⟨hks, le_rfl⟩
+      have hlt : Nat.max (kappa s) (Nat.max (Nat.max (kappa b) (kappa s)) (kappa n))
+                 < Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1 :=
+        Nat.lt_succ_of_le hle
+      simpa [kappa] using hlt
+    exact drop_left hk
+```
+
+### `R_eq_refl`
+Same pattern as `R_int_delta`.
+
+```
+| _, _, Step.R_eq_refl a => by
+    by_cases hk : kappa a = 0
+    · have hk' : kappa void = kappa (eqW a a) := by
+        simp [kappa, hk]
+      have hmu : mu void < mu (eqW a a) := by
+        simp [mu]
+      exact drop_right hmu hk'
+    · have hkpos : 0 < kappa a := Nat.pos_of_ne_zero hk
+      have hk' : kappa void < kappa (eqW a a) := by
+        simpa [kappa] using hkpos
+      exact drop_left hk'
+```
+
+### `R_eq_diff`
+Here $kappa$ ties and $mu$ drops by $1$.
+
+```
+| _, _, Step.R_eq_diff a b => by
+    have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by
+      simp [kappa]
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by
+      simp [mu]; omega
+    exact drop_right hmu hk
+```
+
+## ✅ Todo list (completed)
+- Analyze remaining rule cases
+- Draft Lean proof skeletons
+
+If you want, I can tighten any of these into a more “simp-only” style or replace the `omega` calls with explicit arithmetic lemmas.

@@ -1,0 +1,46 @@
+Now I need to analyze whether this lexicographic termination measure `(phase t, cost t)` is sound for the rewrite system defined by the `Step` relation.
+
+For the measure to be sound, every rewrite rule must strictly decrease the measure in the lexicographic ordering on `Nat × Nat`. That means for each step `t → t'`, we need either:
+1. `phase t' < phase t`, OR
+2. `phase t' = phase t` AND `cost t' < cost t`
+
+Let me analyze each rule:
+
+**Rule R_int_delta**: `integrate (delta t) → void`
+- LHS: `integrate (delta t)`
+  - phase: 0 (doesn't match the pattern `.recDelta _ _ (.delta _)`)
+  - cost: 1 + (1 + cost t) = 2 + cost t
+- RHS: `void`
+  - phase: 0
+  - cost: 0
+- Check: phase equal (0 = 0), cost strictly decreases (0 < 2 + cost t). ✓
+
+**Rule R_merge_void_left**: `merge void t → t`
+- LHS: `merge void t`
+  - phase: 0
+  - cost: 1 + 0 + cost t = 1 + cost t
+- RHS: `t`
+  - phase: depends on t, but at most 1 if t is `recDelta _ _ (delta _)`
+  - cost: cost t
+- If t = `recDelta _ _ (delta _)`, then phase goes from 0 to 1, which is an INCREASE! This is problematic.
+
+Wait, let me re-check. The phase function is:
+```
+def phase : Trace → Nat
+| .recDelta _ _ (.delta _) => 1
+| _ => 0
+```
+
+So for `merge void t`:
+- phase(merge void t) = 0 (it doesn't match the recDelta pattern)
+
+
+- For `t` where `t = recDelta b s (delta n)`: phase(t) = 1
+
+This creates a problem: the measure goes from (0, 1 + cost(recDelta b s (delta n))) to (1, cost(recDelta b s (delta n))). Since 1 > 0 in the first component, the measure increases lexicographically. The same issue affects R_merge_void_right and R_merge_cancel—all can expose a recDelta term hidden under a merge, causing phase to jump from 0 to 1.
+
+R_rec_zero has a similar flaw: `recDelta b s void → b` has phase 0 on the left, but if b itself is `recDelta b' s' (delta n')`, the right side has phase 1, again increasing the measure.
+
+Checking the remaining rules: R_rec_succ decreases phase from 1 to 0. R_eq_refl and R_eq_diff both maintain phase 0 while decreasing cost.
+
+The fundamental problem is that the measure design allows nested recDelta terms to be exposed, violating the soundness requirement. Rules R_merge_void_left, R_merge_void_right, R_merge_cancel, and R_rec_zero all exhibit this counterexample pattern.

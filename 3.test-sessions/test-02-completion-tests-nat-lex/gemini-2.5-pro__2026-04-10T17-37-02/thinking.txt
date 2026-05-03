@@ -1,0 +1,8 @@
+**Reviewing the Lean file**
+
+I'm focused on the five remaining "sorry" cases in that Lean 4 file. Right now, I'm sketching out a proof skeleton. Specifically, I'm tackling `Step.R_`. It's a bit tedious, but the end result will be cleaner code overall. I aim for minimal repetition and clear structure, so my progress is slow but steady.
+
+
+**Outlining the Proof Structure**
+
+I'm now zeroing in on the first "sorry" case: `Step.R_ int_delta t`. I've calculated the `kappa` values, and it looks like a `drop_left` strategy might not work. This means I need to carefully examine the relationship between the `mu` values to see if a decrease is achievable. It seems like a more complicated proof is necessary.

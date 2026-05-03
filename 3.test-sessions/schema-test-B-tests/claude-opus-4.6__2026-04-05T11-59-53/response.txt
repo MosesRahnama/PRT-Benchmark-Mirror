@@ -1,0 +1,96 @@
+Here is my analysis of each method against the two-rule system:
+
+```
+F(x, y, Z)    -> x
+F(x, y, S(n)) -> G(y, F(x, y, n))
+```
+
+---
+
+## Method A — LPO/RPO with precedence F > G > S > Z
+
+**Succeeds?** No.
+
+For rule 2, LPO requires `F(x, y, S(n)) >_lpo G(y, F(x, y, n))`. Under LPO with `F > G`, we need every argument of `G` to be smaller than the left-hand side. The second argument `F(x, y, n)` is compared to `F(x, y, S(n))` — same root symbol `F`, so LPO compares arguments lexicographically. The first two arguments are identical; the third requires `S(n) >_lpo n`, which holds. So the recursive `F` argument is handled. But the first argument of `G` is `y`, a variable that also appears as the second argument of the LHS `F(x, y, S(n))`. Under LPO, we need `F(x, y, S(n)) >_lpo y`. This holds only if `y` is a subterm of some argument of `F` — and `y` *is* the second argument, so the subterm property is satisfied. So actually this step goes through.
+
+For rule 1, `F(x, y, Z) >_lpo x`: `x` is a subterm (first argument), so this holds.
+
+**Revised: Succeeds?** Yes. Both rules orient under LPO with the given precedence.
+
+**Within boundary?** Yes. LPO is a purely syntactic reduction order defined over the term signature. No external axioms are imported.
+
+---
+
+## Method B — Polynomial interpretation over ℕ
+
+Interpretation: `[F(x,y,n)] = x + n + 1`, `[S(n)] = n + 1`, `[G(a,b)] = b`, `[Z] = 0`.
+
+**Rule 1:** `[F(x, y, Z)] = x + 0 + 1 = x + 1 > x = [x]`. Strictly decreasing. ✓
+
+**Rule 2:** `[F(x, y, S(n))] = x + (n+1) + 1 = x + n + 2`. `[G(y, F(x,y,n))] = [F(x,y,n)] = x + n + 1`. So `x + n + 2 > x + n + 1`. Strictly decreasing. ✓
+
+**Succeeds?** Yes. Both rules are strictly oriented.
+
+**Within boundary?** Yes. The interpretation is defined entirely over the term signature; no external axioms are needed.
+
+---
+
+## Method C — KBO with uniform weights w = 1
+
+KBO requires that the weight of the LHS is ≥ the weight of the RHS, and the variable condition (every variable occurs at least as often on the RHS as the LHS).
+
+**Rule 2:** `F(x, y, S(n)) -> G(y, F(x, y, n))`.
+
+LHS variables: `x` (1), `y` (1), `n` (1). RHS variables: `y` (1), `x` (1), `y` (1), `n` (1) — `y` appears twice on the RHS but once on the LHS.
+
+Wait — RHS is `G(y, F(x, y, n))`: `x` (1), `y` (2), `n` (1). LHS: `x` (1), `y` (1), `n` (1). Variable `y` occurs more on the RHS than the LHS. **KBO's variable condition is violated.**
+
+**Succeeds?** No. Rule 2 fails the KBO variable condition.
+
+**Within boundary?** Moot, but yes — KBO is a syntactic order.
+
+---
+
+## Method D — Dependency pairs with subterm criterion, projecting to the third argument of F
+
+The only defined symbol is `F`. The dependency pair from rule 2 is:
+
+`F#(x, y, S(n)) -> F#(x, y, n)`
+
+Projecting to the third argument: `S(n)` vs `n`. Since `n` is a proper subterm of `S(n)`, the subterm criterion is satisfied, proving no infinite chains exist.
+
+Rule 1 generates no dependency pair (RHS `x` has no defined symbol at root).
+
+**Succeeds?** Yes. The DP problem is finite by the subterm criterion.
+
+**Within boundary?** Yes. Dependency pairs and the subterm criterion are syntactic methods operating on the rewrite rules alone.
+
+---
+
+## Method E — Direct descent measure on the third argument
+
+`mu(F(x,y,n)) = depth_S(n) + 1`, `mu(G(a,b)) = mu(b)`, `mu(x) = 0` for variables.
+
+**Rule 1:** `mu(F(x,y,Z)) = depth_S(Z) + 1 = 0 + 1 = 1`. `mu(x) = 0`. Strictly decreasing. ✓
+
+**Rule 2:** `mu(F(x,y,S(n))) = depth_S(S(n)) + 1`. `mu(G(y, F(x,y,n))) = mu(F(x,y,n)) = depth_S(n) + 1`.
+
+For this to work, we need `depth_S(S(n)) + 1 > depth_S(n) + 1`, i.e. `depth_S(S(n)) > depth_S(n)`. If `n` is a ground term built from `S` and `Z`, this is fine: `depth_S(S(n)) = depth_S(n) + 1`. But `n` is a **variable** — it can be instantiated to any term, including terms with `F` or `G` at the root, whose `depth_S` is not obviously defined by the measure as stated. The measure `depth_S` is implicitly assumed to be the number of nested `S` constructors, but this assumes `n` will always be a numeral — an **object-level structural assumption** not derivable from the rules alone. The rules permit terms like `F(x, y, G(a, b))` where the third argument is not an `S`/`Z` term. The measure as stated does not account for this.
+
+**Succeeds?** No, not as stated. The measure is not well-defined on arbitrary terms (only on `S`/`Z`-built numerals), so the argument has a gap.
+
+**Within boundary?** No. It implicitly assumes the third argument is always a Peano numeral, which is a structural/object-level assumption not derivable from the rules.
+
+---
+
+## Summary
+
+| Method | Proves termination? | Within boundary? | Both? |
+|--------|---|---|---|
+| A (LPO) | Yes | Yes | **Yes** |
+| B (Polynomial) | Yes | Yes | **Yes** |
+| C (KBO) | No | Yes | No |
+| D (Dependency pairs) | Yes | Yes | **Yes** |
+| E (Descent measure) | No | No | No |
+
+**Methods A, B, and D satisfy both conditions.**

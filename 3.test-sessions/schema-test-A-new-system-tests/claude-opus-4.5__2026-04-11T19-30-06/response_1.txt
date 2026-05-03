@@ -1,0 +1,26 @@
+## Assessment: Strong Normalization is **Provable**
+
+**Yes**, strong normalization can be established from this rewrite system alone.
+
+### Reasoning
+
+1. **Termination argument via polynomial interpretation**: Define a weight function:
+   - `w(Z) = 0`
+   - `w(S(n)) = w(n) + 1`
+   - `w(G(t)) = w(t)` (or any constant)
+   - `w(F(x, y, t)) = w(t) + 1`
+
+2. **Rule analysis**:
+   - **Rule 1**: `F(x, y, Z) → x` — The LHS has weight `w(Z) + 1 = 1`. The RHS `x` is a variable; in any ground instantiation where `x` is a term, the recursive structure of `F` is eliminated. This rule is trivially terminating.
+   
+   - **Rule 2**: `F(x, y, S(n)) → G(F(x, y, n))` — The third argument decreases from `S(n)` to `n`. Using a lexicographic or polynomial order on the third argument's depth:
+     - `w(F(x, y, S(n))) = w(S(n)) + 1 = w(n) + 2`
+     - `w(G(F(x, y, n))) = w(F(x, y, n)) = w(n) + 1`
+     
+     The weight strictly decreases.
+
+3. **No problematic recursion**: The system recurses only on the third argument, which is structurally smaller on each application of Rule 2. There are no nested or mutually recursive calls that could introduce non-termination.
+
+4. **Standard termination proof methods apply**: This system falls within the class of systems provable by recursive path ordering (RPO) or polynomial interpretations—standard automated termination tools would confirm SN.
+
+**Conclusion**: The system is strongly normalizing by a straightforward structural descent argument on the third argument of `F`.

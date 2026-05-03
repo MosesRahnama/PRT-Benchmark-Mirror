@@ -1,0 +1,105 @@
+Looking at the three remaining `sorry` cases, here are proof skeletons for completing them:
+
+---
+
+## Case 1: `R_rec_succ` (lines 128-140)
+
+```lean
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- Key inequality: omega^(omega^5*(mu(n)+1) + mu(s) + 7) dominates omega^3*(mu(s)+1)
+    -- and also dominates omega^2 * omega^(mu(n) + mu(s) + 6)
+    --
+    -- Strategy: Show that the LHS exponent omega^5*(mu(n)+1) + mu(s) + 7
+    -- is strictly greater than mu(n) + mu(s) + 6, making the LHS tower taller.
+    have h_exp : mu n + mu s + 6 < (5 : Ordinal) ^ omega0 * (mu n + 1) + mu s + 7 := by
+      -- omega^5 * (mu(n) + 1) >= omega^5 > mu(n) for all n
+      -- This follows from opow_pos and ordinal arithmetic
+      sorry  -- ordinal comparison lemma
+    have h_tower : omega0 ^ (mu n + mu s + 6) < omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + mu s + 7) := by
+      apply opow_strict_mono_left omega0_pos
+      exact h_exp
+    -- Now show RHS < LHS by comparing dominant terms
+    calc omega0 ^ (3 : Ordinal) * (mu s + 1) + omega0 ^ (2 : Ordinal) * (omega0 ^ (mu n + mu s + 6) + omega0 * (mu b + 1) + 2) + 1
+      _ < omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + mu s + 7) + omega0 * (mu b + 1) + 1 := by
+        sorry  -- combine the inequalities above
+```
+
+---
+
+## Case 2: `R_eq_refl` (lines 142-147)
+
+```lean
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- Need: 0 < omega^(2*mu(a) + 9) + 1
+    -- This is trivial by positivity of ordinal exponentiation
+    have h_pos : 0 < omega0 ^ (mu a + mu a + 9) := by
+      apply opow_pos
+      · exact omega0_pos
+      · -- Show mu a + mu a + 9 > 0
+        have : 0 ≤ mu a := Ordinal.zero_le _
+        exact add_pos_right (add_left_nonneg this) (by norm_num : (9 : Ordinal) > 0)
+    exact lt_add_right _ _ _ h_pos
+```
+
+---
+
+## Case 3: `R_eq_diff` (lines 149-162)
+
+```lean
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- Need: omega^4 * (omega^3*(mu a + 1) + omega^2*(mu b + 1) + 2) + 1
+    --       < omega^(mu a + mu b + 9) + 1
+    --
+    -- Key insight: omega^4 * omega^3 = omega^7, omega^4 * omega^2 = omega^6
+    -- But RHS has omega^(mu a + mu b + 9) which dominates when mu a + mu b >= 0
+    --
+    -- Strategy: Show omega^7 * (mu a + 1) + omega^6 * (mu b + 1) + omega^4 * 2
+    --           < omega^(mu a + mu b + 9)
+    have h1 : omega0 ^ (7 : Ordinal) * (mu a + 1) ≤ omega0 ^ (mu a + mu b + 9) := by
+      -- omega^7 <= omega^(mu a + mu b + 9) when mu a + mu b + 9 >= 7
+      -- Since mu a >= 0 and mu b >= 0, we have mu a + mu b + 9 >= 9 > 7
+      have h_le : (7 : Ordinal) ≤ mu a + mu b + 9 := by
+        have ha : 0 ≤ mu a := Ordinal.zero_le _
+        have hb : 0 ≤ mu b := Ordinal.zero_le _
+        calc (7 : Ordinal)
+          _ ≤ 9 := by norm_num
+          _ ≤ mu a + mu b + 9 := add_le_add_right (add_nonneg ha hb) _
+      exact le_mul_right_of_le (opow_le_opow_right omega0_pos h_le) _
+    have h2 : omega0 ^ (6 : Ordinal) * (mu b + 1) ≤ omega0 ^ (mu a + mu b + 9) := by
+      -- Similar argument: 6 < mu a + mu b + 9
+      sorry  -- same pattern as h1
+    have h3 : omega0 ^ (4 : Ordinal) * 2 ≤ omega0 ^ (mu a + mu b + 9) := by
+      sorry  -- same pattern
+    calc omega0 ^ (4 : Ordinal) * (omega0 ^ (3 : Ordinal) * (mu a + 1) + omega0 ^ (2 : Ordinal) * (mu b + 1) + 2) + 1
+      _ = omega0 ^ (7 : Ordinal) * (mu a + 1) + omega0 ^ (6 : Ordinal) * (mu b + 1) + omega0 ^ (4 : Ordinal) * 2 + 1 := by ring_nf
+      _ < omega0 ^ (mu a + mu b + 9) + omega0 ^ (mu a + mu b + 9) + omega0 ^ (mu a + mu b + 9) + 1 := by
+        sorry  -- apply h1, h2, h3
+      _ ≤ omega0 ^ (mu a + mu b + 9) + 1 := by
+        sorry  -- ordinal absorption: omega^x + omega^x + omega^x = omega^x
+```
+
+---
+
+## Summary of Key Lemmas Needed
+
+You'll likely need these helper lemmas (add them before `mu_decreases`):
+
+```lean
+/-- omega^k * n < omega^(k+1) for k >= 1 and n < omega -/
+lemma opow_mul_lt_opow_succ (k n : Ordinal) (hk : 1 ≤ k) (hn : n < omega0) :
+    omega0 ^ k * n < omega0 ^ (k + 1) := by
+  sorry
+
+/-- omega^x + omega^x = omega^x for x > 0 (ordinal absorption) -/
+lemma opow_self_add (x : Ordinal) (hx : 0 < x) :
+    omega0 ^ x + omega0 ^ x = omega0 ^ x := by
+  sorry
+```
+
+The core insight is that the ordinal measure is designed so that each rewrite rule's LHS has a **taller omega-power tower** than its RHS, guaranteeing strict decrease via the Cantor normal form comparison principle.

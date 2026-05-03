@@ -1,0 +1,40 @@
+Yes — strong normalization is establishable from the presented calculus alone.
+
+Two readings both come out terminating:
+
+1) **If `Step` is the whole reduction relation (root-only, as written)**: SN is almost immediate. Every rule either collapses to a proper subterm (`peach_*`, `banana_zero`) or changes the head constructor to one that has no rules (`plum`, `pear`), so you can’t cycle.
+
+2) **If you mean the “usual” first-order rewrite calculus (i.e., the contextual closure of these rules, rewriting allowed inside any constructor)**: SN is still provable *without* adding any axioms/rules/side conditions beyond what’s already there, by a standard decreasing-measure argument.
+
+### Short proof roadmap (stays within your boundary)
+
+Define three computable measures on `Trace` terms:
+
+- $C(t)$ = number of occurrences of the constructor `cherry` in `t`
+- $G(t)$ = number of occurrences of the constructor `grape` in `t`
+- $S(t)$ = syntactic size (total constructor nodes) of `t`
+
+Now order terms by the **lexicographic** measure
+$$\mu(t) := (C(t),\, G(t),\, S(t)) \in \mathbb{N}^3$$
+with lex order (first compare $C$, then $G$, then $S$). This order is well-founded.
+
+Check each rewrite rule decreases $\mu$:
+
+- `R_cherry_refl : cherry a a → plum`  
+  Decreases $C$ by 1 (the root `cherry` disappears).
+- `R_cherry_diff : cherry a b → mango (peach a b)`  
+  Also decreases $C$ by 1 (again, root `cherry` disappears). No rule ever creates a new `cherry`.
+- `R_mango_grape : mango (grape t) → plum`  
+  Decreases $G$ by 1 (removes that `grape`).
+- `R_apple_orange : banana b s (grape n) → pear s (banana b s n)`  
+  Decreases $G$ by 1 (strips one `grape`), even though it can increase raw size.
+- `R_peach_*` and `R_peach_cancel`, `R_banana_zero`  
+  They rewrite to a proper subterm (`t` or `b`), so $S$ strictly decreases; $C,G$ do not increase.
+
+Therefore every single step strictly decreases $\mu$, so **no infinite reduction sequence exists** (whether you use `Step` directly or its context-closure). That’s exactly strong normalization.
+
+## Todo list (final)
+- 1. Read the rewrite rules — **completed**
+- 2. Check for rewrite loops — **completed**
+- 3. Assess SN proof measure — **completed**
+- 4. Write concise assessment — **completed**

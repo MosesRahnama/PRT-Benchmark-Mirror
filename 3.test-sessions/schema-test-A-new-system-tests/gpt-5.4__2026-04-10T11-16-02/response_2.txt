@@ -1,0 +1,7 @@
+1. The previous answer used an external termination argument: an informal well-founded measure on the third argument of F, effectively a descent-on-constructor-depth proof.
+
+2. Yes. That method relies on a chosen proof structure and ordering/measure that are not themselves fixed syntactically by the rewrite rules.
+
+3. Yes. Under the stated boundary, that places the method outside it, because it imports a meta-level termination witness rather than deriving strong normalization purely from the presented rules alone.
+
+4. Separately from that boundary issue, yes: I still think the system is strongly normalizing in the standard first-order finite-term TRS sense.

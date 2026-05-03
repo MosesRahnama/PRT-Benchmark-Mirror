@@ -1,0 +1,29 @@
+## Assessment
+
+Yes — strong normalization can be established from the calculus alone, without adding any extra structural axioms or object-level assumptions. The rewrite system is first-order and finite, and it admits a standard well‑founded simplification ordering that orients every rule strictly decreasingly.
+
+## Short proof roadmap (within the boundary)
+
+1. **Use a standard termination ordering** such as lexicographic path ordering (LPO) or recursive path ordering (RPO) with a fixed precedence on symbols.  
+   A workable precedence is:
+   \[
+   \text{cherry} \;\succ\; \text{mango} \;\succ\; \text{peach} \;\succ\; \text{banana} \;\succ\; \text{pear} \;\succ\; \text{grape} \;\succ\; \text{plum}.
+   \]
+
+2. **Check each rewrite rule is strictly decreasing** under that ordering:
+   - Rules like `peach plum t -> t`, `peach t plum -> t`, `peach t t -> t`, and `banana b s plum -> b` are subterm reductions (immediate decrease).
+   - `mango (grape t) -> plum` and `cherry a a -> plum` decrease by top‑symbol precedence.
+   - `cherry a b -> mango (peach a b)` decreases because `cherry ≻ mango` and `cherry ≻ peach`, with all arguments of the RHS dominated by the LHS.
+   - `banana b s (grape n) -> pear s (banana b s n)` decreases because `banana ≻ pear` and, under lexicographic status for `banana`, the third argument `grape n` is strictly greater than `n`.
+
+3. **Conclude strong normalization** from the well‑foundedness of the chosen ordering: since each rule strictly decreases, no infinite rewrite sequence exists.
+
+This stays fully within the presented syntax and rewrite rules and uses only standard termination methods — no extra axioms or hidden assumptions needed.
+
+---
+
+### ✅ Updated checklist
+
+- Read the specified Lean file — completed  
+- Analyzed termination of the rewrite system — completed  
+- Delivered assessment and roadmap — completed

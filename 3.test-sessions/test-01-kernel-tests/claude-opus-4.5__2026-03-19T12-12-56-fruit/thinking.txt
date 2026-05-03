@@ -1,0 +1,44 @@
+Now I have the full content of the Lean file. Let me analyze this rewrite system for strong normalization.
+
+The system has:
+- **Terms (Trace)**: `plum` (constant), `grape t`, `mango t`, `peach t₁ t₂`, `pear t₁ t₂`, `banana t₁ t₂ t₃`, `cherry t₁ t₂`
+
+- **Rewrite rules (Step)**:
+  1. `mango (grape t) → plum`
+  2. `peach plum t → t`
+  3. `peach t plum → t`
+  4. `peach t t → t`
+  5. `banana b s plum → b`
+  6. `banana b s (grape n) → pear s (banana b s n)`
+  7. `cherry a a → plum`
+  8. `cherry a b → mango (peach a b)` when `a ≠ b`
+
+To assess strong normalization, I need to determine if every reduction sequence terminates.
+
+**Key observations:**
+
+1. **Rule 6 is problematic**: `banana b s (grape n) → pear s (banana b s n)`
+   - The RHS contains `banana b s n` as a subterm
+   - The RHS also introduces `pear s (...)`, wrapping the recursive call
+   - This rule doesn't clearly decrease any obvious measure
+
+2. **Looking for a termination measure:**
+   - Simple term size doesn't work because rule 6 can increase size
+   - Rule 8 (`cherry a b → mango (peach a b)`) also increases size when `a ≠ b`
+
+3. **Could we use a polynomial interpretation or lexicographic path ordering?**
+   - Rule 6: `banana b s (grape n) → pear s (banana b s n)`
+     - Left side has `grape n` in third position
+     - Right side has `n` in the third position of banana
+     - The `grape` is "consumed" but `pear` is introduced
+
+4. **Attempting to find a decreasing measure:**
+
+   For rule 6 to terminate, the recursive `banana b s n` calls must eventually bottom out. Since `n` is strictly smaller than `grape n`, repeated applications of rule 6 should decrease the third argument. However, there's no guarantee that `n` consists only of `grape` and `plum` constructors—the third argument could be any term, potentially containing more `grape` wrappers that would allow further reductions.
+
+5. **Can rule 8 create cycles?**
+   - `cherry a b → mango (peach a b)` when `a ≠ b` introduces `mango` and `peach`
+   - `peach` reduces only in specific cases via rules 2-4
+   - `mango` only reduces when applied to `grape t`
+
+   If `a` or `b` reduces to something that feeds back into the system, could this generate more cherries or bananas? The critical observation is that **no rule creates `grape` constructors on the right-hand side**—they only appear in the original term and get consumed by rules 1 and 6. This means `grape` depth strictly decreases, providing a natural termination measure. A polynomial interpretation assigning weights to each constructor such that all eight rules strictly decrease the interpretation should work, with the key insight being that `grape` is never introduced, only consumed.

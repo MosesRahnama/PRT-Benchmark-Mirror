@@ -1,0 +1,33 @@
+**Assessment:** **Yes** — strong normalization can be established from
+**from the presented rewrite calculus alone**, with no extra structural axioms and no added object-level assumptions.
+
+Two readings:
+
+1. **If `Step` is taken literally as only the root-step relation**, termination is immediate/trivial.
+2. **If one takes the usual contextual closure of first-order rewriting** (the standard meaning for strong normalization of a TRS), it is **still strongly normalizing**.
+
+### Short proof roadmap
+Use a standard **lexicographic path ordering / recursive path ordering** with a precedence such as
+$$
+\mathrm{rec}\Delta \;\succ\; \mathrm{eqW} \;\succ\; \mathrm{app} \;\succ\; \mathrm{integrate} \;\succ\; \mathrm{merge} \;\succ\; \mathrm{delta} \;\succ\; \mathrm{void}.
+$$
+
+This orients all rules strictly left-to-right:
+
+- `integrate (delta t) → void`
+- `merge void t → t`, `merge t void → t`, `merge t t → t`
+- `recΔ b s void → b`
+- `recΔ b s (delta n) → app s (recΔ b s n)`  
+  because `recΔ ≻ app`, and also
+  `recΔ b s (delta n) > recΔ b s n` by comparing the third argument `delta n > n`.
+- `eqW a a → void`
+- `eqW a b → integrate (merge a b)`  
+  because `eqW ≻ integrate ≻ merge`, and the left side dominates `a` and `b` by the subterm property.
+
+Since LPO/RPO is well-founded and stable under contexts, every rewrite step strictly decreases in that order. Hence **no infinite reduction sequence exists**.
+
+### Boundary note
+This argument does **not** use associativity, commutativity, cancellation axioms, guards, side conditions, or hidden semantics. It is purely syntactic.
+
+### One caution
+This says **termination**, not **confluence**. The overlap at `eqW a a` means uniqueness of normal forms is a separate issue.

@@ -1,0 +1,12 @@
+**Analyzing Step rules**
+
+In my analysis of Step rules, I see mixed outcomes for phases and costs. For instance, when the phase is initially 0 for `merge void`, it increases to 1 if t matches `recDelta`, which seems unsound. 
+
+But for the `R_rec_succ`, the phase decreases from 1 to 0, which is sound. 
+
+However, rules like `R_merge_void` and `R_merge_cancel` present potential issues where phases might increase, leading to unsound results. I'll need to analyze more carefully, especially for rules involving cost calculations and their impacts to determine consistency in measures.
+**Assessing measure soundness**
+
+I need to compare costs related to different cases. If b is not a `recDelta`, the phase stays at 0, and the cost decreases. This leads to a decrease in measure, which is good. However, if b is a `recDelta`, the phase increases from 0 to 1, making it unsound. 
+
+It seems there are rules that can potentially increase the phase, making the measure not sound. Specifically, rules like `merge_void` and `merge_cancel` can violate the expected order of measures. Thus, the measure is ultimately deemed unsound.

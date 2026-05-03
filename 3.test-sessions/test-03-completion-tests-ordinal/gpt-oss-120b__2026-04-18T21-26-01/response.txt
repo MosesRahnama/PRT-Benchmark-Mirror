@@ -1,0 +1,161 @@
+**Proof skeleton for the remaining `sorry` cases**
+
+Below are outlines of the arguments that can be used to finish the three unfinished branches of `mu_decreases`.  The goal in each case is to show  
+
+```
+mu (rhs) < mu (lhs)
+```
+
+where `lhs` and `rhs` are the two sides of the corresponding `Step` rule.
+
+---
+
+### 1. `Step.R_rec_succ`  
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+  -- Goal: mu (app s (recDelta b s n)) < mu (recDelta b s (delta n))
+```
+
+**Key observations**
+
+* `mu (recDelta b s (delta n))` expands to  
+
+  ```
+  ω₀ ^ (mu (delta n) + mu s + 6) + ω₀ * (mu b + 1) + 1
+  ```
+  and `mu (delta n) = ω₀ ^ 5 * (mu n + 1) + 1`.
+
+* `mu (app s (recDelta b s n))` expands to  
+
+  ```
+  ω₀ ^ (3) * (mu s + 1) + ω₀ ^ (2) * (mu (recDelta b s n) + 1) + 1
+  ```
+
+* The exponent in the first term of the LHS,
+  `mu (delta n) + mu s + 6 = ω₀ ^ 5 * (mu n + 1) + 1 + mu s + 6`,
+  dominates the exponent `mu n + mu s + 6` that appears inside
+  `mu (recDelta b s n)` (the second term of the RHS).
+
+**Skeleton steps**
+
+1. `simp [mu]` to unfold both sides.
+2. Use `have h_exp : ω₀ ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6
+      > mu n + mu s + 6` by
+   - apply `lt_of_lt_of_le` with `lt_of_lt_of_le (lt_of_lt_of_le ...)`.
+   - `omega0_pow_pos` and `add_pos_right` give positivity.
+3. From `h_exp` obtain  
+   `ω₀ ^ (μ (delta n) + μ s + 6) > ω₀ ^ (μ n + μ s + 6)`.
+4. Show that the remaining additive terms (`ω₀ * (μ b + 1) + 1`) are
+   bounded above by the dominant term on the RHS, using
+   `le_of_lt` together with `opow_pos` and `le_mul_right`.
+5. Conclude with `calc`:
+   ```
+   mu (app s (recDelta b s n))
+       ≤ ω₀ ^ (3) * (mu s + 1) + ω₀ ^ (2) * (ω₀ ^ (mu n + mu s + 6) + …) + 1
+       < ω₀ ^ (mu (delta n) + mu s + 6) + ω₀ * (mu b + 1) + 1
+       = mu (recDelta b s (delta n))
+   ```
+   where the strict inequality follows from step 3 and monotonicity of
+   `ω₀ ^ _`.
+
+---
+
+### 2. `Step.R_eq_refl`  
+
+```lean
+| _, _, Step.R_eq_refl a => by
+  -- Goal: mu void < mu (eqW a a)
+```
+
+**Key observation**
+
+* `mu void = 0`.
+* `mu (eqW a a) = ω₀ ^ (mu a + mu a + 9) + 1 = ω₀ ^ (2 * mu a + 9) + 1`.
+
+Since any ordinal of the form `ω₀ ^ α + 1` with `α > 0` is strictly
+positive, we have `0 < ω₀ ^ (2 * mu a + 9) + 1`.
+
+**Skeleton steps**
+
+1. `simp [mu]`.
+2. Apply `Ordinal.pos_iff_ne_zero.mpr`.
+3. Show `ω₀ ^ (2 * mu a + 9) + 1 ≠ 0` by `apply ne_of_gt`.
+4. Use `add_pos_right` together with `opow_pos` (the exponent is
+   `2 * mu a + 9 > 0`) to obtain a positive lower bound.
+5. Finish with `exact` the positivity proof.
+
+---
+
+### 3. `Step.R_eq_diff`  
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+  -- Goal: mu (integrate (merge a b)) < mu (eqW a b)
+```
+
+**Unfolded measures**
+
+* `mu (integrate (merge a b))`  
+  ```
+  = ω₀ ^ (4) * (mu (merge a b) + 1) + 1
+  = ω₀ ^ 4 * (ω₀ ^ 3 * (mu a + 1) + ω₀ ^ 2 * (mu b + 1) + 2) + 1
+  ```
+
+* `mu (eqW a b)`  
+  ```
+  = ω₀ ^ (mu a + mu b + 9) + 1
+  ```
+
+**Strategy**
+
+1. `simp [mu]`.
+2. Observe that the exponent on the RHS,
+   `mu a + mu b + 9`, dominates the largest exponent appearing on the
+   LHS, namely `4 + 3 = 7`.  More precisely,
+   ```
+   mu a + mu b + 9 ≥ 5   (since mu a, mu b ≥ 0)
+   ```
+   and `ω₀ ^ (mu a + mu b + 9)` strictly dominates any term of the
+   form `ω₀ ^ k * (…)` with `k ≤ 7`.
+3. Prove a lemma:
+   ```lean
+   lemma pow_dominates (k : ℕ) (α β : Ordinal) (hα : α ≤ β) :
+     ω₀ ^ (β) > ω₀ ^ (k) * (α + 1) :=
+   ```
+   using `opow_lt_opow_iff` and monotonicity of multiplication by a
+   positive ordinal.
+4. Apply the lemma with `k = 4` and `β = mu a + mu b + 9`.
+5. Use `calc` to chain the inequalities:
+   ```
+   mu (integrate (merge a b))
+       = ω₀ ^ 4 * (… ) + 1
+       < ω₀ ^ (mu a + mu b + 9) + 1
+       = mu (eqW a b)
+   ```
+   where the strict `<` comes from the lemma and the fact that adding
+   `1` preserves the inequality.
+
+---
+
+### General helper lemmas (useful for all three cases)
+
+```lean
+-- Positivity of ω₀ ^ α when α > 0
+lemma opow_pos (α : Ordinal) (hα : 0 < α) : 0 < ω₀ ^ α :=
+  opow_pos _ hα
+
+-- Monotonicity of exponentiation
+lemma opow_lt_opow_iff {α β γ : Ordinal} (hγ : 0 < γ) :
+  ω₀ ^ α < ω₀ ^ β ↔ α < β :=
+  opow_lt_opow_iff _ hγ
+
+-- Multiplication by a positive ordinal preserves strict inequality
+lemma mul_lt_mul_of_pos_left {a b c : Ordinal} (h : a < b) (hc : 0 < c) :
+  c * a < c * b :=
+  mul_lt_mul_of_pos_left h hc
+```
+
+Insert these lemmas (or similar ones from `Mathlib`) into the `by` blocks
+above, replace the `sorry` placeholders with the `calc` chains, and the
+proof of `mu_decreases` will be complete.

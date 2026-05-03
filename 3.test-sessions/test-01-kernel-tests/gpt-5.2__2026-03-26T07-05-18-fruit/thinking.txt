@@ -1,0 +1,3 @@
+**Evaluating strong normalization**
+
+I need to maintain my to-do list, which includes reading files, analyzing termination, and providing a roadmap. I will mark tasks as completed and update the list. I wonder if strong normalization could fail when applying a rule like `R_peach_plum_left` where `t` might equal the left-hand side. However, rewriting usually follows syntactic matching, allowing `t` to match any term, so it's unlikely to lead to infinite rewrites. Overall, I can show that this approach works for proving strong normalization.

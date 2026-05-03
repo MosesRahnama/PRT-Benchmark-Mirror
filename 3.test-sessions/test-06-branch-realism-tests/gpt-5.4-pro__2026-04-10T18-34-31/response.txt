@@ -1,0 +1,155 @@
+No. The helper strategy is **not sound as written**.
+
+Let
+
+$$
+B := \kappa b,\quad S := \kappa s,\quad N := \kappa n,\quad M := \max(\max(B,S),N).
+$$
+
+From the definition of `kappa`:
+
+- if the third argument of `recDelta` is **not** syntactically `delta _`, then
+  $$
+  \kappa(\mathrm{recDelta}\ b\ s\ n)=M;
+  $$
+- if it **is** syntactically `delta _`, then
+  $$
+  \kappa(\mathrm{recDelta}\ b\ s\ n)=M+1.
+  $$
+
+Also `kappa` ignores `delta` internally:
+
+$$
+\kappa(\delta t)=\kappa(t).
+$$
+
+## 1. `kappa_rec_delta_step` is false in general
+
+The claimed theorem is
+
+$$
+\kappa(\mathrm{recDelta}\ b\ s\ (\delta n))
+=
+\kappa(\mathrm{recDelta}\ b\ s\ n)+1.
+$$
+
+This works only when `n` is **not** already of the form `delta _`.
+
+If `n = delta m`, then:
+
+- left side:
+  $$
+  \kappa(\mathrm{recDelta}\ b\ s\ (\delta(\delta m))) = M+1;
+  $$
+- right side:
+  $$
+  \kappa(\mathrm{recDelta}\ b\ s\ (\delta m))+1 = (M+1)+1 = M+2.
+  $$
+
+So the theorem asserts
+
+$$
+M+1 = M+2,
+$$
+
+which is impossible.
+
+### Concrete counterexample
+Take `b = void`, `s = void`, `n = delta void`.
+
+Then:
+
+- $\kappa(void)=0$,
+- $\kappa(\delta void)=0$.
+
+Hence
+
+$$
+\kappa(\mathrm{recDelta}\ void\ void\ (\delta(\delta void))) = 1,
+$$
+
+but
+
+$$
+\kappa(\mathrm{recDelta}\ void\ void\ (\delta void))+1 = 1+1 = 2.
+$$
+
+So the theorem would say $1=2$.
+
+---
+
+## 2. `kappa_rec_succ_drop` is also false in general
+
+The claimed theorem is
+
+$$
+\kappa(\mathrm{app}\ s\ (\mathrm{recDelta}\ b\ s\ n))
+<
+\kappa(\mathrm{recDelta}\ b\ s\ (\delta n)).
+$$
+
+But in fact, for all `b s n`,
+
+$$
+\kappa(\mathrm{app}\ s\ (\mathrm{recDelta}\ b\ s\ n))
+=
+\kappa(\mathrm{recDelta}\ b\ s\ n),
+$$
+
+because `kappa(app a b) = max (kappa a) (kappa b)` and `\kappa(recDelta b s n) \ge \kappa s`.
+
+So the inequality reduces to asking whether
+
+$$
+\kappa(\mathrm{recDelta}\ b\ s\ n)
+<
+\kappa(\mathrm{recDelta}\ b\ s\ (\delta n)).
+$$
+
+Again, this fails when `n` is already `delta m`.
+
+If `n = delta m`, then both sides are exactly $M+1$:
+
+- source of `R_rec_succ`:
+  $$
+  \kappa(\mathrm{recDelta}\ b\ s\ (\delta(\delta m))) = M+1;
+  $$
+- target:
+  $$
+  \kappa(\mathrm{app}\ s\ (\mathrm{recDelta}\ b\ s\ (\delta m)))
+  =
+  \kappa(\mathrm{recDelta}\ b\ s\ (\delta m))
+  =
+  M+1.
+  $$
+
+So there is **no strict drop**.
+
+### Same concrete counterexample
+With `b = void`, `s = void`, `n = delta void`:
+
+$$
+\kappa(\mathrm{app}\ void\ (\mathrm{recDelta}\ void\ void\ (\delta void))) = 1
+$$
+
+and
+
+$$
+\kappa(\mathrm{recDelta}\ void\ void\ (\delta(\delta void))) = 1.
+$$
+
+So the theorem would say $1<1$.
+
+---
+
+## Conclusion
+
+The helper strategy fails on the `R_rec_succ` branch when the recursive argument is already `delta`-headed.
+
+So, as written:
+
+- `kappa_rec_delta_step` is **false**;
+- `kappa_rec_succ_drop` is **false**;
+- therefore `kappa` is **not** a sound strictly decreasing measure for `R_rec_succ` in full generality.
+
+At best, the intended argument works under an extra side condition like “`n` is not of the form `delta _`”. Without that, the measure can stay **constant** across the step.

@@ -1,0 +1,3 @@
+Yes, strong normalization can be established from the rules alone.
+
+**Proof roadmap:** Define a measure μ(t) as the size (number of symbols) of the third argument of the outermost F in t (or 0 if no F). The rules strictly decrease μ, and the system is orthogonal with no critical pairs, ensuring termination via a standard reduction ordering (e.g., lexicographic path ordering with F > G > S > Z > variables).

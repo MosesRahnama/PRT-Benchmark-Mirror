@@ -1,0 +1,24 @@
+Raw assessment  
+Yes – the rewrite system is strongly normalising with no need for extra axioms or side-conditions.
+
+Sketch of a direct proof (one possible route)  
+1. Define two measures on terms  
+   a. Δ(t) = total number of `delta` constructors occurring in t.  
+   b. σ(t) = ordinary tree size (number of nodes).
+
+2. Order terms lexicographically by (Δ, σ) with the usual < on ℕ×ℕ.  
+   This order is well-founded because ℕ×ℕ with lexicographic order is well-founded.
+
+3. Check every rule:  
+   • `integrate (delta t) → void`              Δ drops by 1.  
+   • `merge void t`, `merge t void`, `merge t t`  Δ unchanged, σ drops.  
+   • `recΔ b s void → b`                        Δ unchanged, σ drops.  
+   • `recΔ b s (delta n) → app s (recΔ b s n)`   Δ drops by 1 (one outer delta is removed; no rule ever introduces a new delta).  
+   • `eqW a a → void`                           Δ unchanged, σ drops.  
+   • `eqW a b → integrate (merge a b)`          Δ unchanged, σ drops (one constructor disappears).
+
+   In every case the pair (Δ, σ) strictly decreases, so no infinite reduction sequence exists.
+
+4. By well-foundedness, every sequence of one-step rewrites is finite; hence the system is strongly normalising.
+
+No additional structural axioms or hidden assumptions are used.

@@ -1,0 +1,7 @@
+1. Demonstrating a non-terminating reduction sequence by choosing a substitution for variables that creates an infinite chain.
+
+2. Yes, it relies on choosing a specific substitution (an ordering choice) for the variables, which is not fixed by the rewrite rules themselves but selected externally to construct the counterexample.
+
+3. Yes, that places the method outside the stated boundary, as the substitution choice imports an object-level assumption not derivable solely from the given rules.
+
+4. No.

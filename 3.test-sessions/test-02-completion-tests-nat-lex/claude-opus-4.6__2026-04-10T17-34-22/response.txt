@@ -1,0 +1,107 @@
+Here is a proof skeleton for each of the five remaining `sorry` cases, with the measure-gap reasoning annotated.
+
+---
+
+### Case 1: `R_int_delta` — `integrate (delta t) ⟶ void`
+
+**Measures:** LHS `kappa = kappa t`, `mu = 1 + mu t`. RHS `kappa = 0`, `mu = 0`.
+
+Two sub-cases on whether `kappa t = 0`:
+- If `kappa t > 0`, kappa drops strictly → use `drop_left`.
+- If `kappa t = 0`, kappa ties at 0 and mu drops (`0 < 1 + mu t`) → use `drop_right`.
+
+```lean
+| _, _, Step.R_int_delta t => by
+    simp only [measure, kappa_integrate, kappa_delta, kappa_void,
+               mu_integrate, mu_delta, mu_void]
+    by_cases h : kappa t = 0
+    · -- kappa ties at 0, mu drops: 0 < 1 + mu t
+      apply drop_right <;> simp [mu, kappa, h] <;> omega
+    · -- kappa drops strictly: 0 < kappa t
+      apply drop_left; simp [kappa]; omega
+```
+
+### Case 2: `R_rec_zero` — `recDelta b s void ⟶ b`
+
+**Measures:** LHS `kappa = max (max (kappa b) (kappa s)) 0 = max (kappa b) (kappa s)`, `mu = 3 + mu b + mu s + 0`. RHS `kappa = kappa b`, `mu = mu b`.
+
+Two sub-cases:
+- If `kappa s > kappa b`, then LHS kappa = `kappa s > kappa b` = RHS kappa → `drop_left`.
+- Otherwise `kappa b ≥ kappa s`, so kappa ties (`max (kappa b) (kappa s) = kappa b`), and mu drops (`mu b < 3 + mu b + mu s`) → `drop_right`.
+
+```lean
+| _, _, Step.R_rec_zero b s => by
+    simp only [measure, kappa_void, mu_void, mu_recDelta, Nat.max_zero]
+    by_cases h : kappa b < kappa s
+    · -- kappa drops: kappa b < max(kappa b, kappa s)
+      apply drop_left; simp [kappa]; omega
+    · -- kappa ties, mu drops: mu b < 3 + mu b + mu s
+      push_neg at h
+      have hk : kappa b = Nat.max (kappa b) (kappa s) := by omega
+      apply drop_right
+      · simp [mu]; omega
+      · simp [kappa]; omega
+```
+
+### Case 3: `R_rec_succ` — `recDelta b s (delta n) ⟶ app s (recDelta b s n)`
+
+**Measures:** LHS `kappa = max (max (kappa b) (kappa s)) (kappa n) + 1`, `mu = 3 + mu b + mu s + mu n`. RHS `kappa = max (kappa s) (max (max (kappa b) (kappa s)) (kappa n))`, `mu = 1 + mu s + 3 + mu b + mu s + mu n`.
+
+kappa drops strictly: the RHS kappa is `max (kappa s) (max (max (kappa b) (kappa s)) (kappa n))` which equals `max (max (kappa b) (kappa s)) (kappa n)`, and the LHS kappa is that value `+ 1`. So `drop_left` applies.
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    apply drop_left
+    simp only [kappa_app, kappa_rec_delta, kappa_delta]
+    -- RHS kappa = max (kappa s) (max (max (kappa b) (kappa s)) (kappa n))
+    --           = max (max (kappa b) (kappa s)) (kappa n)
+    -- LHS kappa = max (max (kappa b) (kappa s)) (kappa n) + 1
+    -- Need: max(kappa s, max(max(kappa b, kappa s), kappa n))
+    --        < max(max(kappa b, kappa s), kappa n) + 1
+    omega
+```
+
+### Case 4: `R_eq_refl` — `eqW a a ⟶ void`
+
+**Measures:** LHS `kappa = max (kappa a) (kappa a) = kappa a`, `mu = 4 + mu a + mu a`. RHS `kappa = 0`, `mu = 0`.
+
+Same shape as `R_int_delta`: branch on `kappa a`:
+- If `kappa a > 0` → `drop_left`.
+- If `kappa a = 0` → kappa ties, mu drops (`0 < 4 + 2 * mu a`) → `drop_right`.
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp only [measure, kappa_eqW, kappa_void, mu_eqW, mu_void]
+    by_cases h : kappa a = 0
+    · apply drop_right <;> simp [mu, kappa, h] <;> omega
+    · apply drop_left; simp [kappa]; omega
+```
+
+### Case 5: `R_eq_diff` — `eqW a b ⟶ integrate (merge a b)`
+
+**Measures:** LHS `kappa = max (kappa a) (kappa b)`, `mu = 4 + mu a + mu b`. RHS `kappa = max (kappa a) (kappa b)`, `mu = 1 + 2 + mu a + mu b = 3 + mu a + mu b`.
+
+kappa is identical on both sides. mu drops: `3 + mu a + mu b < 4 + mu a + mu b`. Pure `drop_right`.
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    apply drop_right
+    · -- mu: 1 + (2 + mu a + mu b) < 4 + mu a + mu b
+      simp [mu]; omega
+    · -- kappa: max(kappa a, kappa b) = max(kappa a, kappa b)
+      simp [kappa]
+```
+
+---
+
+### Summary of proof obligations
+
+| Rule | kappa relationship | mu relationship | Strategy |
+|---|---|---|---|
+| `R_int_delta` | drops or ties at 0 | drops `0 < 1 + mu t` | case split, `drop_left` / `drop_right` |
+| `R_rec_zero` | drops or ties | drops `mu b < 3 + mu b + mu s` | case split on `kappa b` vs `kappa s` |
+| `R_rec_succ` | **strict drop** (peels off +1) | — | `drop_left` + `omega` |
+| `R_eq_refl` | drops or ties at 0 | drops `0 < 4 + 2·mu a` | case split, `drop_left` / `drop_right` |
+| `R_eq_diff` | ties exactly | drops `3 + … < 4 + …` | `drop_right` + `omega` |
+
+The key insight for `R_rec_succ` is that `kappa` on `recDelta b s (delta n)` is the *only* case that adds `+1`, and that `+1` is consumed by the reduction, giving a strict kappa decrease regardless of mu. All other cases hold kappa constant (or reduce it) and rely on mu shrinking.

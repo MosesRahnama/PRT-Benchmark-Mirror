@@ -1,0 +1,4 @@
+1. Informal structural/shape-based reasoning about the third argument.  
+2. Yes — it implicitly assumes a well-founded measure on the third argument (finite S-chain to Z).  
+3. Yes, that goes beyond what the rules alone fix.  
+4. From the rules alone, strong normalization is not established.

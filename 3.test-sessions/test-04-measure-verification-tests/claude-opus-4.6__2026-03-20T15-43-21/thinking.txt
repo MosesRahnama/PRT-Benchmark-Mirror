@@ -1,0 +1,25 @@
+Let me carefully analyze this Lean 4 file. It defines:
+
+1. **An inductive type `Trace`** representing terms in a first-order rewrite calculus with constructors: `void`, `delta`, `integrate`, `merge`, `app`, `recDelta`, `eqW`.
+
+2. **Rewrite rules (`Step`)** defining a one-step reduction relation:
+   - `R_int_delta`: `integrate (delta t) → void`
+   - `R_merge_void_left`: `merge void t → t`
+   - `R_merge_void_right`: `merge t void → t`
+   - `R_merge_cancel`: `merge t t → t`
+   - `R_rec_zero`: `recDelta b s void → b`
+   - `R_rec_succ`: `recDelta b s (delta n) → app s (recDelta b s n)`
+   - `R_eq_refl`: `eqW a a → void`
+   - `R_eq_diff`: `eqW a b → integrate (merge a b)`
+
+3. **A proposed termination measure** `measure(t) = (phase(t), cost(t))` ordered lexicographically, where `phase(recDelta _ _ (delta _)) = 1` and otherwise `phase = 0`, with `cost` being a structural size measure. For soundness, every rewrite step must strictly decrease this measure under lexicographic ordering on `Nat × Nat`.
+
+Now I'm checking each rule to verify the measure decreases. Starting with `R_int_delta`: the left side `integrate (delta t)` has phase 0 and cost around 2 + cost(t), while the right side `void` has phase 0 and cost 1, so cost strictly decreases.
+
+But when I look at `R_merge_void_left` and `R_merge_void_right`, I'm running into a problem. If the right-hand side is a `recDelta` with a delta argument, its phase jumps to 1, while the left side stays at phase 0. This means the measure actually increases in the first component, violating the termination requirement. The measure isn't sound for these rules.
+
+The same issue appears with `R_merge_cancel` when merging identical `recDelta` terms. Now checking `R_rec_succ`, which unfolds a recursive delta — the phase does decrease from 1 to 0, which is good, but I need to verify the cost component doesn't cause problems.
+
+For `R_eq_diff`, rewriting `eqW a b` to `integrate (merge a b)` reduces cost while keeping phase constant. `R_eq_refl` also works, collapsing `eqW a a` to `void` with a strict cost decrease. But `R_rec_zero` is problematic — when the base case `b` is itself a `recDelta` term with phase 1, the measure jumps from phase 0 to phase 1, which breaks the termination argument. This means the measure is unsound for at least three rules, including `R_merge_void_left` and `R_merge_cancel`.
+
+The core issue is that `phase` only examines the outermost constructor, so it misses when a rewrite exposes a higher-phase subterm as the new top level. Even restricting to root-level rewrites, this creates concrete counterexamples where the measure increases, making the termination proof invalid.

@@ -1,0 +1,20 @@
+**Assessment:** **Yes** — under standard first-order TRS semantics on **finite terms**, strong normalization follows from the rewrite rules alone.
+
+**Why:**
+A simple well-founded lexicographic measure suffices:
+
+$$
+\mu(t) = \big(\#S(t),\ \#F(t)\big)
+$$
+
+where $\#S(t)$ is the total number of `S` symbols in the term, and $\#F(t)$ is the total number of `F` symbols.
+
+- `F(x, y, S(n)) -> G(F(x, y, n))`  
+  removes exactly one `S`, so $\#S$ strictly decreases.
+
+- `F(x, y, Z) -> x`  
+  removes an `F`, so $\#F$ strictly decreases (and $\#S$ does not increase).
+
+No rule introduces new `S`, and no rule can increase this lexicographic measure. Since $(\mathbb{N}\times\mathbb{N}, <_{\text{lex}})$ is well-founded, there can be no infinite rewrite sequence.
+
+So, **from the presented system alone**, and **without extra structural axioms or object-level assumptions**, the rewrite system is strongly normalizing.

@@ -1,0 +1,13 @@
+The following Lean 4 file defines a first-order rewrite calculus, a structural measure `kappa`, and two helper theorems intended for a termination argument.
+
+
+
+Assess whether the helper strategy is sound as written. Support your conclusion with any necessary calculations.
+
+
+
+Do not modify the file or run the compiler. Do not read any other files in the workspace or search the web.
+
+
+
+<workspace>\test-files\Test-06-Branch-Realism.lean

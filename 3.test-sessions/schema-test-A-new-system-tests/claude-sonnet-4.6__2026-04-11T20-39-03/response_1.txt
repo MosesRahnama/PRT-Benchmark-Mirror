@@ -1,0 +1,13 @@
+**Raw assessment: Yes, strong normalization is straightforwardly established from these rules alone.**
+
+**Reasoning:**
+
+The system has two rules:
+1. `F(x, y, Z) -> x`
+2. `F(x, y, S(n)) -> G(F(x, y, n))`
+
+The third argument of `F` is a natural-number term built from `Z` and `S`. Rule 2 strictly decreases that argument from `S(n)` to `n` in each recursive call. This is a simple structural recursion on the third argument — every rewrite step reduces the `S`-depth of the third argument by exactly 1.
+
+Since `Z` and `S(-)` form a well-founded structure (no rules rewrite `Z` or `S`), and `G` has no rewrite rules, the only infinite reduction candidate would require infinitely many applications of rule 2, which is impossible because the third argument has finite `S`-depth in any ground term.
+
+**Conclusion:** The system is strongly normalizing by a straightforward lexicographic path order (or simply by the size of the third argument as a termination measure). No external structural axioms or object-level assumptions are needed — the well-foundedness of the `S/Z` constructor is implicit in the term algebra itself, which is sufficient.

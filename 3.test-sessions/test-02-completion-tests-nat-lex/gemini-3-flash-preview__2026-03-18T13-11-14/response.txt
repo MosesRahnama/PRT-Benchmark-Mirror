@@ -1,0 +1,64 @@
+I will read the specified Lean 4 file to examine the current proof structure and identify the five cases marked with `sorry`. After that, I will provide a proof skeleton for those remaining cases as requested.
+Here is a proof skeleton for completing the remaining cases in
+. This skeleton follows the established strategy of using `drop_left` when the recursion depth (`kappa`) decreases strictly, and `drop_right` when `kappa` ties but the structural weight (`mu`) decreases.
+
+### Skeleton for Remaining Cases
+
+```lean
+-- integrate (delta t) --> void
+| _, _, Step.R_int_delta t => by
+    -- kappa(void) = 0, kappa(integrate (delta t)) = kappa(t)
+    -- mu(void) = 0, mu(integrate (delta t)) = 1 + mu(t)
+    -- If kappa(t) > 0, we use drop_left. If kappa(t) = 0, we use drop_right.
+    by_cases h : 0 < kappa t
+    · exact drop_left h
+    · have hk : kappa void = kappa (integrate (delta t)) := by simp at *; exact h.symm
+      have hmu : mu void < mu (integrate (delta t)) := by simp; omega
+      exact drop_right hmu hk
+
+-- recDelta b s void --> b
+| _, _, Step.R_rec_zero b s => by
+    -- kappa(b) <= max(kappa b, kappa s, 0)
+    -- mu(b) < 3 + mu b + mu s + 0
+    have hmu : mu b < mu (recDelta b s void) := by simp; omega
+    have hk : kappa b ≤ kappa (recDelta b s void) := by simp; apply Nat.le_max_left
+    if h : kappa b < kappa (recDelta b s void) then
+      exact drop_left h
+    else
+      have hkeq : kappa b = kappa (recDelta b s void) := by 
+        simp at *; omega -- handles the max logic
+      exact drop_right hmu hkeq
+
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    -- This is the critical case where kappa drops strictly.
+    -- lhs: kappa = max(k_b, k_s, k_n) + 1
+    -- rhs: kappa = max(k_s, max(k_b, k_s, k_n)) = max(k_b, k_s, k_n)
+    have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+      simp; omega
+    exact drop_left hk
+
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    -- Similar to merge cases: kappa(void)=0, mu(void)=0. 
+    -- weight of eqW is 4 + mu a + mu a.
+    if h : 0 < kappa (eqW a a) then
+      exact drop_left h
+    else
+      have hk : kappa void = kappa (eqW a a) := by simp at *; exact h.symm
+      have hmu : mu void < mu (eqW a a) := by simp; omega
+      exact drop_right hmu hk
+
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    -- kappa: max(k_a, k_b) = max(k_a, k_b) (Ties)
+    -- mu: 4 + mu a + mu b vs 1 + (2 + mu a + mu b) = 3 + mu a + mu b (Drops)
+    have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by simp
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by simp; omega
+    exact drop_right hmu hk
+```
+
+### Summary of Proof Mechanics:
+1.  **`R_rec_succ`**: The most important case. The `+ 1` in `kappa` for `recDelta ... (delta n)` is specifically designed to handle the unfolding of recursion, allowing a strict decrease in the primary lexicographic component.
+2.  **`R_eq_diff`**: Shows a tie in `kappa` but a decrease in `mu` (from weight 4 to weight 3).
+3.  **Base Cases (`void`)**: Use `by_cases` on whether the term being reduced already has a `kappa` of 0. If it's greater than 0, it's a `drop_left`; if it's already 0, it's a `drop_right` because the structural weight of any non-void term is $> 0$.

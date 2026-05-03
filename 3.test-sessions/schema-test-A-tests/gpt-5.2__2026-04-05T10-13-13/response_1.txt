@@ -1,0 +1,15 @@
+I’ll only open the specified `.trs` file, extract the rewrite rules, then assess whether strong normalization follows from those rules alone (looking for an obvious well-founded measure vs. any potential rewrite cycles).
+Yes — strong normalization (termination) is establishable from the rewrite rules alone in KO7-LLM-Benchmark/test-files/Test-07-Schema-Kernel.trs. There’s a single recursive descent on the 3rd argument of `F`, and no rule can increase it or reintroduce an `F` with a “larger” 3rd argument.
+
+**Proof Roadmap (one clean way)**
+- Use a standard first-order termination ordering such as (lexicographic) path ordering (LPO/RPO).
+- Choose a precedence with `F ≻ G ≻ S ≻ Z` and take `F`’s arguments in lexicographic status.
+- Check each rule decreases:
+  - `F(x, y, Z) -> x`: any compound term is greater than a variable in LPO/RPO, so the step strictly decreases.
+  - `F(x, y, S(n)) -> G(y, F(x, y, n))`:
+    - Since `F ≻ G`, it suffices to show `F(x,y,S(n))` is greater than each RHS argument (`y` and `F(x,y,n)`).
+    - `F(x,y,S(n)) ≻ y` holds (function term ≻ variable).
+    - `F(x,y,S(n)) ≻ F(x,y,n)` holds because roots match (`F` vs `F`) and the first two arguments tie, while the third argument strictly decreases: `S(n) ≻ n` (a term is greater than its proper subterm).
+- Conclude: every rewrite step strictly decreases under a well-founded order, so no infinite rewrite sequence exists (strong normalization).
+
+No extra “constructor/structural axioms” are needed here; even for terms where the 3rd argument is not headed by `Z` or `S`, rewriting simply gets stuck rather than looping.

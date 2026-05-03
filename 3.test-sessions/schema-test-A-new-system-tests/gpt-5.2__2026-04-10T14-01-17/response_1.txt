@@ -1,0 +1,12 @@
+Yes — strong normalization (termination of all rewrite sequences) follows from the two rules alone; no extra “object-level” axioms are needed.
+
+Reason: every rewrite step strictly decreases a simple well‑founded syntactic measure on terms. One convenient choice is the lexicographic pair
+\[
+(\#S(t),\ \#F(t))
+\]
+where $\#S(t)$ is the total number of occurrences of the symbol `S` in the whole term, and $\#F(t)$ is the total number of occurrences of `F`.
+
+- Rule `F(x,y,S(n)) -> G(F(x,y,n))` removes exactly one `S` and introduces no new `S`, so $\#S$ strictly decreases.
+- Rule `F(x,y,Z) -> x` removes the outer `F` redex and does not introduce new `F`s, so $\#F$ strictly decreases (and $\#S$ does not increase).
+
+Since $(\#S,\#F)$ decreases on every step and ranges over $\mathbb{N}\times\mathbb{N}$ with lex order (well‑founded), there cannot be an infinite reduction sequence. The rules in KO7-LLM-Benchmark/test-files/Schema-Test-A-New-System.trs are therefore strongly normalizing as a rewrite system on first-order terms.

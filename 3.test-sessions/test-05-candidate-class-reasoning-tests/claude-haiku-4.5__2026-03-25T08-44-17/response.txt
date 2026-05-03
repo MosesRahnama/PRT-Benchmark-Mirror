@@ -1,0 +1,40 @@
+# Assessment of Three Termination Measures
+
+I've analyzed the three candidate measures (`mu1`, `mu2`, `mu3`) against the eight rewrite rules. Here's my assessment:
+
+## Summary
+**None of the three measures successfully establish termination.** All three fail on the critical **Rule 6: recDelta b s (delta n) → app s (recDelta b s n)**, where the measure strictly increases rather than decreases.
+
+## Detailed Analysis
+
+### Rules 1–5, 7–8 (Pass All Three)
+All three measures correctly decrease on:
+- **R_int_delta**: Replaces `integrate (delta t)` with `void` ✓
+- **R_merge_void_left/right**: Eliminates void from merge branches ✓
+- **R_merge_cancel**: Simplifies identical merge arguments ✓
+- **R_rec_zero**: Base case unwinding ✓
+- **R_eq_refl**: Identity elimination ✓
+- **R_eq_diff**: Rewrites equality comparison ✓
+
+### Rule 6 (Fail All Three) — The Critical Issue
+
+**recDelta b s (delta n) → app s (recDelta b s n)**
+
+For any measure `mu`:
+
+| Measure | LHS | RHS | Result |
+|---------|-----|-----|--------|
+| `mu1` | `2 + b + s + n` | `2 + b + 2s + n` | **Increases by `s`** ✗ |
+| `mu2` | `6 + b + s + n` | `6 + b + 2s + n` | **Increases by `s`** ✗ |
+| `mu3` | `2 + b + s + n` | `3 + b + 2s + n` | **Increases by `1 + s`** ✗ |
+
+Rule 6 is an **expansion rule** that duplicates the `s` component and preserves the recursive structure `recDelta b s n`. This creates a fundamental mismatch: the right-hand side is always at least as large (and typically larger) than the left-hand side.
+
+## Conclusion
+
+All three candidates fail to establish termination because they cannot handle Rule 6's expansion pattern. This rewrite rule requires either:
+1. A fundamentally different measure design (e.g., multiset ordering, lexicographic combination)
+2. A structural property analysis beyond simple numeric measures
+3. Recognition that this rule may be problematic for the calculus itself
+
+The difference between the three measures is mainly in their constant scaling, but this doesn't resolve the underlying issue with Rule 6.

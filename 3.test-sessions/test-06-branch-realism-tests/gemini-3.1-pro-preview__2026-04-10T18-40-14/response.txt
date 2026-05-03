@@ -1,0 +1,32 @@
+The helper strategy is **unsound as written**. The foundational structural measure `kappa` fails to decrease strictly through the recursive definitions as claimed by both helper theorems.
+
+### 1. `kappa_rec_delta_step` is false
+The theorem claims: 
+`kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`
+
+Consider the counterexample where `n = delta void`, `b = void`, and `s = void`:
+* **LHS (`kappa (recDelta void void (delta (delta void)))`)**: 
+  The definition of `kappa` pattern matches on `.recDelta b s (.delta n')` where `n' = delta void`. 
+  It yields `max(max(kappa void, kappa void), kappa (delta void)) + 1`. 
+  Since `kappa void = 0` and `kappa (delta void) = 0`, the LHS evaluates to **1**.
+* **RHS (`kappa (recDelta void void (delta void)) + 1`)**: 
+  We first evaluate the inner term matching `n' = void`. 
+  This yields `max(max(0, 0), kappa void) + 1 = 1`. 
+  Adding 1 to this result means the RHS evaluates to **2**.
+
+Since **1 ≠ 2**, the theorem statement is false.
+
+### 2. `kappa_rec_succ_drop` is false
+The theorem claims:
+`kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`
+
+Let's evaluate this using the same parameters `n = delta void`, `b = void`, and `s = void`:
+* **RHS**: As calculated above for `kappa (recDelta void void (delta (delta void)))`, the RHS evaluates to **1**.
+* **LHS (`kappa (app void (recDelta void void (delta void)))`)**: 
+  By definition, this is `max(kappa void, kappa (recDelta void void (delta void)))`. 
+  This evaluates to `max(0, 1)`, which is **1**. 
+
+Since **1 < 1 is false**, `kappa_rec_succ_drop` is also invalid.
+
+### Conclusion
+The fundamental flaw lies in how `kappa` handles nesting of the `.delta` constructor: `kappa (delta t) = kappa t` discards depth information, meaning `kappa (delta (delta t))` produces the identical underlying score as `kappa (delta t)`. This breaks the expected monotonic increment of `+ 1` required for the termination lemmas.

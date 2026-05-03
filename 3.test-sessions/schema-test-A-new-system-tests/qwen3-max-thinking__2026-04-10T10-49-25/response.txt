@@ -1,0 +1,7 @@
+1. **Primary method**: My previous answer used informal reasoning about reduction sequences and noted the absence of rules for `G`, but implicitly relied on assumptions about the signature and term structure.
+
+2. **External assumptions**: Yes. The reasoning assumed that `G` cannot produce terms that could create feedback loops with `F`, which requires assumptions about the function symbol `G`'s behavior that aren't derivable from the given rules alone.
+
+3. **Boundary compliance**: Yes. This places the method outside the stated boundary, since establishing strong normalization would require importing structural assumptions about the signature (e.g., that `G`'s codomain doesn't intersect with contexts that could recreate reducible `F`-terms).
+
+4. **Actual strong normalization**: Yes, the system is strongly normalizing. Every reduction sequence must eventually reach the base case `F(x, y, Z) → x` after finitely many applications of the second rule, and `G`-terms are irreducible normal forms. But this conclusion requires the very structural assumptions that the question's boundary excludes.

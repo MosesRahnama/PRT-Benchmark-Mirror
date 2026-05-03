@@ -1,0 +1,62 @@
+Yes — strong normalization *can* be established from the calculus as presented (no extra axioms/rules/side-conditions needed). There’s a straightforward termination argument by assigning a well‑founded **natural-number interpretation** (a.k.a. a simple semantic “energy” measure) to `Trace` terms such that **every rewrite step strictly decreases** that measure. Because $<$ on `Nat` is well-founded, infinite rewrite sequences are impossible.
+
+The only real “gotcha” is the `recΔ` rule duplicates `s`, so a naïve size measure fails. But you can choose an interpretation that (legitimately) **doesn’t count** that duplicated component, while remaining monotone enough to support rewriting in contexts.
+
+## Proof roadmap (stays within your boundary)
+
+Define a measure $\mu : \texttt{Trace} \to \mathbb{N}$ structurally (one example that works):
+
+- $\mu(\texttt{void}) = 0$
+- $\mu(\texttt{delta}\ t) = \mu(t) + 1$
+- $\mu(\texttt{integrate}\ t) = \mu(t) + 1$
+- $\mu(\texttt{merge}\ a\ b) = \mu(a) + \mu(b) + 1$
+- $\mu(\texttt{app}\ f\ x) = \mu(x) + 1$  (intentionally ignores `f`)
+- $\mu(\texttt{recΔ}\ b\ s\ n) = 2\mu(n) + \mu(b) + 1$  (intentionally ignores `s`)
+- $\mu(\texttt{eqW}\ a\ b) = \mu(a) + \mu(b) + 3$
+
+Then check each rule in `Step` decreases $\mu$:
+
+- `integrate (delta t) → void`:
+  \[
+  \mu(\texttt{integrate(delta t)})=\mu(t)+2 > 0=\mu(\texttt{void})
+  \]
+- `merge void t → t` and `merge t void → t`:
+  \[
+  \mu(\texttt{merge void t})=\mu(t)+1 > \mu(t)
+  \]
+- `merge t t → t`:
+  \[
+  2\mu(t)+1 > \mu(t)
+  \]
+- `recΔ b s void → b`:
+  \[
+  \mu(\texttt{recΔ } b\, s\, \texttt{void})=\mu(b)+1 > \mu(b)
+  \]
+- `recΔ b s (delta n) → app s (recΔ b s n)`:
+  \[
+  \mu(\texttt{lhs}) = 2(\mu(n)+1)+\mu(b)+1 = 2\mu(n)+\mu(b)+3
+  \]
+  \[
+  \mu(\texttt{rhs}) = \mu(\texttt{app } s\, (\texttt{recΔ } b\, s\, n)) = (2\mu(n)+\mu(b)+1)+1 = 2\mu(n)+\mu(b)+2
+  \]
+  so it decreases by $1$.
+- `eqW a a → void`: $\;2\mu(a)+3>0$.
+- `eqW a b → integrate (merge a b)`:
+  \[
+  \mu(\texttt{lhs})=\mu(a)+\mu(b)+3,\quad
+  \mu(\texttt{rhs})=(\mu(a)+\mu(b)+1)+1=\mu(a)+\mu(b)+2
+  \]
+
+From here, conclude: every one-step reduction strictly decreases $\mu$, so there is no infinite reduction sequence (strong normalization).
+
+### If you mean “rewriting under contexts,” not just root steps
+You add the standard closure rule “you may rewrite inside any subterm.” The same $\mu$ proof still works because each constructor’s $\mu$ is **monotone** in its arguments (ignoring an argument is still monotone), so replacing a subterm by a strictly smaller one makes the whole term strictly smaller.
+
+## Small caveat (not about SN)
+This system is **not confluent** as written: `R_eq_diff` applies even when `a = b`, so `eqW a a` can step to either `void` or `integrate (merge a a)` (and those don’t join). That doesn’t affect strong normalization, but it does affect uniqueness of normal forms.
+
+## ✅ Todo list (final)
+- 1. Read the Lean calculus file — completed  
+- 2. Extract syntax and rewrite rules — completed  
+- 3. Assess strong normalization feasibility — completed  
+- 4. Write bounded roadmap or impossibility note — completed

@@ -1,0 +1,42 @@
+## Raw Assessment
+
+**Yes, strong normalization is provable from these two rules alone.** No imported axioms are needed.
+
+---
+
+## The System
+
+```
+(VAR x y n)
+(RULES
+  F(x, y, Z)    -> x
+  F(x, y, S(n)) -> G(y, F(x, y, n))
+)
+```
+
+Defined symbol (LHS head): `F`  
+Constructors (no rules): `Z`, `S`, `G`
+
+`G` is a pure constructor here — it has no lhs occurrence, so `G(y, t)` is irreducible whenever `t` is.
+
+---
+
+## Proof Roadmap via Recursive Path Order (RPO)
+
+**Set precedence:** `F > G`, with `S`, `Z` as constructors below both.
+
+**Rule 1:** `F(x, y, Z) >_RPO x`  
+`x` is a strict subterm of the LHS → follows immediately by the **subterm criterion** of RPO.
+
+**Rule 2:** `F(x, y, S(n)) >_RPO G(y, F(x, y, n))`  
+Apply RPO clause (b) — head drops from `F` to `G` with `F > G`, so it suffices to show the LHS dominates every argument of the RHS:
+- `F(x, y, S(n)) >_RPO y` — `y` is a direct subterm of the LHS ✓  
+- `F(x, y, S(n)) >_RPO F(x, y, n)` — same root `F`, arguments match left-to-right until the third: `S(n) >_RPO n` by the subterm criterion (`n` is a strict subterm of `S(n)`) ✓
+
+Both rules are strictly oriented by RPO. Since RPO is well-founded on finite signatures, the TRS is terminating (equivalently, strongly normalizing for all ground terms).
+
+---
+
+## Why This Suffices Without Extra Axioms
+
+The system is structurally a **primitive recursion scheme** on the third argument of `F`: the base case eliminates `F` entirely (returns `x`), and the recursive case reduces the `S`-depth of that argument by exactly one per step, accumulating a `G`-spine of fixed depth `|c|` for ground term `F(a, b, c)`. Confluence is trivial (no critical pairs — the two left-hand sides are non-overlapping). Together, every ground term has a unique normal form reachable in `|c|` steps, all derivable from the two rules alone.

@@ -1,0 +1,5 @@
+**Providing structured partial proof skeleton**
+
+Creating a concise Lean proof skeleton for the remaining theorem cases, using placeholder lemmas and partial steps with `sorry` where full proofs are complex or unclear. Incorporates tactics like `have` with ordinal inequalities and uses `le_add_right` for steps involving ordinal addition bounds. The skeleton respects case structure and avoids claiming unavailable lemmas. It highlights necessary intermediate helper lemmas to be proved separately.
+
+Includes notes to avoid modifying skeleton placeholders and updated todo list showing which proof parts remain incomplete or need detailed filling, using simple bullet statuses for clarity. The response avoids unnecessary model mentions and codeblock restrictions since snippets are requested.

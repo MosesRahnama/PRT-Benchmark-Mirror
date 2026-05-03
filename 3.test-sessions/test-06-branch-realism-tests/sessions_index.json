@@ -1,0 +1,870 @@
+{
+  "extraction_date": "2026-04-11T21:45:35.993360+00:00",
+  "total_sessions": 108,
+  "sessions": [
+    {
+      "slug": "claude-haiku-4.5__2026-04-01T11-36-10",
+      "source": "copilot",
+      "model": "copilot/claude-haiku-4.5",
+      "session_id": "8dd602d9-8d50-4143-bddf-b766b1f8e523",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "claude-haiku-4.5__2026-04-01T12-22-56",
+      "source": "copilot",
+      "model": "copilot/claude-haiku-4.5",
+      "session_id": "0181ca6f-22c7-4517-b151-482a8c32e684",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "claude-haiku-4.5__2026-04-10T18-33-48",
+      "source": "copilot",
+      "model": "copilot/claude-haiku-4.5",
+      "session_id": "a920cb51-f908-44d4-ab92-40a4b5aa4c15",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "claude-haiku-4.5__2026-04-10T18-33-54",
+      "source": "copilot",
+      "model": "copilot/claude-haiku-4.5",
+      "session_id": "92bfccb7-2570-4c53-b3e2-62c4c461cb53",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "claude-opus-4.5__2026-04-01T11-36-31",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.5",
+      "session_id": "d31b43dc-de25-40b0-86dd-f1aafbfbe8f7",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "claude-opus-4.5__2026-04-01T16-03-32",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.5",
+      "session_id": "709f6a23-e630-4def-979e-cbda6a60a370",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "claude-opus-4.5__2026-04-10T18-34-44",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.5",
+      "session_id": "bd93b5d6-dfe4-4a7c-acdb-5e9eff4f32ac",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "claude-opus-4.5__2026-04-11T19-45-35",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.5",
+      "session_id": "c9c789b9-d039-4875-b094-4c2cb4ea5428",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "claude-opus-4.6__2026-04-01T11-37-35",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.6",
+      "session_id": "67597440-324b-4871-8672-8e04f15642bf",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "claude-opus-4.6__2026-04-01T12-20-25",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.6",
+      "session_id": "e214111a-81c9-49c7-a70a-fb1955d26ae6",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "claude-opus-4.6__2026-04-10T18-33-59",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.6",
+      "session_id": "00c5578e-c6c5-46f6-8bcd-f7dd4523a9f5",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "claude-opus-4.6__2026-04-10T18-34-07",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.6",
+      "session_id": "13933772-8389-4587-88df-2a5b0843d8ff",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4.5__2026-04-01T11-36-20",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.5",
+      "session_id": "430b01ea-63de-4675-94ee-92bc1e61b9e9",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4.5__2026-04-01T12-24-07",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.5",
+      "session_id": "a6a67b0d-cdb2-4be2-a06a-f7dd4e6cce32",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4.5__2026-04-10T18-35-05",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.5",
+      "session_id": "90850b76-aad4-43ae-9c6b-92e114cba62d",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4.5__2026-04-10T18-35-24",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.5",
+      "session_id": "047fb5bb-9d0f-49ad-9abc-d1113a0e38ce",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4.6__2026-04-01T11-35-14",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.6",
+      "session_id": "969c8a38-56ee-4b31-88bf-38cc591948cd",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4.6__2026-04-01T11-37-42",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.6",
+      "session_id": "7bfab709-4fc2-4de3-b0c3-33c726b3809b",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4.6__2026-04-10T18-34-10",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.6",
+      "session_id": "836c3385-311a-40af-84bd-dc4c073fdca8",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4.6__2026-04-11T19-51-29",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.6",
+      "session_id": "58cd8e75-b6e0-40ca-8da9-5a8cf99dc90a",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4__2026-04-01T12-23-49",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4",
+      "session_id": "794df798-dd8f-4b0c-9ecc-ffa8df12c7d4",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4__2026-04-01T12-24-01",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4",
+      "session_id": "c764b96a-eb06-4b71-9b2e-faceab4782af",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4__2026-04-10T18-35-01",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4",
+      "session_id": "1bcd4828-5935-4987-864e-8b0ca98e89b7",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4__2026-04-11T19-51-56",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4",
+      "session_id": "b6de8e7f-7a28-4414-91d3-d48aa1af6102",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "deepseek-r1-0528__2026-04-01T11-37-57",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-r1-0528",
+      "session_id": "eeadf640-2345-46f6-94a1-f23197109126",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "deepseek-r1-0528__2026-04-01T12-24-41",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-r1-0528",
+      "session_id": "6abd156c-b430-4d32-bca5-970f776c8537",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "deepseek-r1-0528__2026-04-10T18-38-57",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-r1-0528",
+      "session_id": "0acfff97-ce92-495f-8a99-88d56d263ef5",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "deepseek-r1-0528__2026-04-10T18-39-21",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-r1-0528",
+      "session_id": "f7059299-2927-4af3-b00b-27324ceea052",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "deepseek-v3.2__2026-04-01T11-43-23",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-v3.2",
+      "session_id": "00d98b0e-24b9-4292-85ad-9f71a0e9ba72",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "deepseek-v3.2__2026-04-01T12-24-22",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-v3.2",
+      "session_id": "dc0cff14-108d-4c85-8acf-cc0e5b06880d",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "deepseek-v3.2__2026-04-10T18-39-25",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-v3.2",
+      "session_id": "74a0c468-063f-4984-9d2d-b14e9ec29cde",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "deepseek-v3.2__2026-04-10T18-39-33",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-v3.2",
+      "session_id": "470f613b-2c7c-404b-bc8d-88927a198a5c",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gemini-2.5-pro__2026-04-01T11-35-34",
+      "source": "copilot",
+      "model": "copilot/gemini-2.5-pro",
+      "session_id": "979f155c-e5e8-45d9-a487-f4337b3fb3fa",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gemini-2.5-pro__2026-04-01T12-25-01",
+      "source": "copilot",
+      "model": "copilot/gemini-2.5-pro",
+      "session_id": "03567b1e-d5ab-464b-ae42-895909314850",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gemini-2.5-pro__2026-04-10T18-39-37",
+      "source": "copilot",
+      "model": "copilot/gemini-2.5-pro",
+      "session_id": "9b2567c1-64a6-4797-84d9-f936c6945818",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gemini-2.5-pro__2026-04-10T18-39-47",
+      "source": "copilot",
+      "model": "copilot/gemini-2.5-pro",
+      "session_id": "3f31f529-58e3-4042-b1c0-b188f0cf6f02",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gemini-3-flash-preview__2026-04-01T11-35-48",
+      "source": "copilot",
+      "model": "copilot/gemini-3-flash-preview",
+      "session_id": "4d64088f-a13b-4f6d-ba51-7e36b984c4f6",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gemini-3-flash-preview__2026-04-01T12-25-11",
+      "source": "copilot",
+      "model": "copilot/gemini-3-flash-preview",
+      "session_id": "f0a64e59-73d0-40d7-8798-3f9b9fe7d368",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gemini-3-flash-preview__2026-04-10T18-39-51",
+      "source": "copilot",
+      "model": "gemini/Google/models/gemini-3-flash-preview",
+      "session_id": "9e38985d-844e-43d1-8dbe-a20df2938746",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gemini-3-flash-preview__2026-04-10T18-40-00",
+      "source": "copilot",
+      "model": "gemini/Google/models/gemini-3-flash-preview",
+      "session_id": "27110952-2904-4bef-b187-036beacdf56f",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gemini-3.1-pro-preview__2026-04-01T11-35-55",
+      "source": "copilot",
+      "model": "copilot/gemini-3.1-pro-preview",
+      "session_id": "c5372a6c-780c-436f-8f1e-e16b4aa47579",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gemini-3.1-pro-preview__2026-04-01T12-25-22",
+      "source": "copilot",
+      "model": "copilot/gemini-3.1-pro-preview",
+      "session_id": "be8c35d8-108e-4a93-b825-76876ee4d774",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gemini-3.1-pro-preview__2026-04-10T18-40-03",
+      "source": "copilot",
+      "model": "copilot/gemini-3.1-pro-preview",
+      "session_id": "65ef9055-b962-405a-a663-591341adf871",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gemini-3.1-pro-preview__2026-04-10T18-40-14",
+      "source": "copilot",
+      "model": "copilot/gemini-3.1-pro-preview",
+      "session_id": "bf07b836-4c04-4ea3-8fcf-df7ba5941a9c",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "glm-5__2026-04-01T12-25-47",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/z-ai/glm-5",
+      "session_id": "12b2224b-0073-4014-b61b-bac4c35d2b73",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "glm-5__2026-04-01T12-26-02",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/z-ai/glm-5",
+      "session_id": "dcced565-c189-45b5-9fff-cd8e0223784d",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "glm-5__2026-04-10T18-40-19",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/z-ai/glm-5",
+      "session_id": "53ebca9d-88c7-468b-9978-bfad3e06c92b",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "glm-5__2026-04-10T18-40-29",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/z-ai/glm-5",
+      "session_id": "a0206205-f619-419d-813e-f9a1a4f5d38e",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-4o__2026-04-01T11-37-02",
+      "source": "copilot",
+      "model": "copilot/gpt-4o",
+      "session_id": "3c87c136-94a5-42d5-a39f-f699308b0467",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-4o__2026-04-01T12-26-08",
+      "source": "copilot",
+      "model": "copilot/gpt-4o",
+      "session_id": "683f85da-3c04-4772-800d-7c5d99b9ea87",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-4o__2026-04-10T18-40-34",
+      "source": "copilot",
+      "model": "copilot/gpt-4o",
+      "session_id": "9d883c6a-779e-4b66-8fb9-c73b8a1d91a6",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-4o__2026-04-10T18-40-44",
+      "source": "copilot",
+      "model": "copilot/gpt-4o",
+      "session_id": "d7506ed0-8329-4c62-bc3e-28e177aa0073",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.2-codex__2026-04-01T12-27-36",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2-codex",
+      "session_id": "2b06a93a-b7f0-42dc-a09f-a529eee98eaf",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.2-codex__2026-04-01T12-27-50",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2-codex",
+      "session_id": "7ae86e79-d768-4e4c-8b15-f3389a4c1bbc",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.2-codex__2026-04-10T19-22-12",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2-codex",
+      "session_id": "c794b3d9-7e66-4385-a064-18b3fa0eb12c",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.2-codex__2026-04-10T19-24-28",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2-codex",
+      "session_id": "2763727c-0c14-476d-9e9b-96a1e9b72950",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.2__2026-04-01T11-36-39",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2",
+      "session_id": "84ad8ea5-da7a-4882-8549-d259329c8056",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.2__2026-04-01T12-27-11",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2",
+      "session_id": "c83dd679-689d-4199-a1c0-4043bd274531",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.2__2026-04-10T18-40-59",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2",
+      "session_id": "3aba97e0-9a07-4a21-bc92-d26c8e5b664e",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.2__2026-04-11T19-46-33",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2",
+      "session_id": "b6f2a21b-351f-466d-ad5e-8aa1a1e6fd4c",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.3-codex__2026-04-01T11-36-50",
+      "source": "copilot",
+      "model": "copilot/gpt-5.3-codex",
+      "session_id": "4f6bcf92-9722-4298-b304-47aaaf55e24e",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.3-codex__2026-04-01T12-34-29",
+      "source": "copilot",
+      "model": "copilot/gpt-5.3-codex",
+      "session_id": "7840a676-8049-49fc-9d36-70a8c776a969",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.3-codex__2026-04-10T18-41-02",
+      "source": "copilot",
+      "model": "copilot/gpt-5.3-codex",
+      "session_id": "3f2c12af-710f-4bb6-a861-6d64434af4e5",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.3-codex__2026-04-10T18-41-17",
+      "source": "copilot",
+      "model": "copilot/gpt-5.3-codex",
+      "session_id": "7479a01c-1b66-49a6-91ac-9982ce1acda8",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.4-pro__2026-04-01T12-27-55",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-5.4-pro",
+      "session_id": "740038ec-21d3-4312-b032-061d78585c17",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.4-pro__2026-04-01T12-28-07",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-5.4-pro",
+      "session_id": "62ee0dd1-e37b-4955-8507-90375d0780eb",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.4-pro__2026-04-10T18-34-21",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-5.4-pro",
+      "session_id": "efae12ae-9dc4-4b6a-a327-d8709ed64897",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.4-pro__2026-04-10T18-34-31",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-5.4-pro",
+      "session_id": "27ec58df-d948-423e-9c42-5dc70951fc10",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.4__2026-04-01T12-28-13",
+      "source": "copilot",
+      "model": "copilot/gpt-5.4",
+      "session_id": "69364d95-31b7-4d68-acef-5e021b722dcc",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.4__2026-04-01T12-28-32",
+      "source": "copilot",
+      "model": "copilot/gpt-5.4",
+      "session_id": "79c09bdd-8f6b-40ff-b5e9-0681e036ac6c",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.4__2026-04-10T18-41-39",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-5.4",
+      "session_id": "f32c5405-365f-47ea-8d20-16d6307b5c33",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.4__2026-04-11T19-46-47",
+      "source": "copilot",
+      "model": "copilot/gpt-5.4",
+      "session_id": "1eb18e35-ae76-4fe2-8c6e-bc263424b8d2",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-oss-120b__2026-04-01T12-28-41",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-oss-120b",
+      "session_id": "9d6452a0-534f-4635-bfd8-3bcf37e6db6b",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-oss-120b__2026-04-01T12-28-51",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-oss-120b",
+      "session_id": "35004910-8efb-4faa-943e-3a1a06d74c7c",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-oss-120b__2026-04-10T18-41-43",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-oss-120b",
+      "session_id": "2a0f83c5-f31f-45fe-a8fb-f299a4fd2038",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "gpt-oss-120b__2026-04-10T18-41-55",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-oss-120b",
+      "session_id": "eff16785-e385-4832-be5e-073969cb6435",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "grok-3__2026-04-01T12-29-00",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-3",
+      "session_id": "7c39cb6a-1a3f-45dc-ba25-726727e28f65",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "grok-3__2026-04-01T12-29-09",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-3",
+      "session_id": "bb5455fb-d3f9-4313-9c14-ccd390b8e48d",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "grok-3__2026-04-10T18-42-22",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-3",
+      "session_id": "c4128236-a31e-4e0d-a146-138cc49d7219",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "grok-3__2026-04-10T18-42-46",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-3",
+      "session_id": "b33f3922-3b6b-4797-8849-06489d4dd870",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "grok-4-0709__2026-04-01T11-35-28",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-0709",
+      "session_id": "a16b0087-fa75-4973-82b1-5f250d2b9b82",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "grok-4-0709__2026-04-01T12-29-15",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-0709",
+      "session_id": "ca6aad62-b51c-4e37-860d-2c49f6915faf",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "grok-4-0709__2026-04-10T18-43-49",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-0709",
+      "session_id": "e0fe4e5d-28dd-48d7-9420-066e842444d0",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "grok-4-0709__2026-04-10T18-44-06",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-0709",
+      "session_id": "ab3de681-26fa-4722-873b-5e851c66b2fd",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "grok-4-1-fast-reasoning__2026-04-01T11-38-07",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-1-fast-reasoning",
+      "session_id": "32d8a0b2-0df2-4554-968f-eaaf8fd6a41e",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "grok-4-1-fast-reasoning__2026-04-01T12-29-51",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-1-fast-reasoning",
+      "session_id": "7466ce38-2757-4ec0-884d-8010395a3ffe",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "grok-4-1-fast-reasoning__2026-04-10T18-43-14",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-1-fast-reasoning",
+      "session_id": "b331aafe-80d9-46fc-ac1a-a94143e58486",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "grok-4-1-fast-reasoning__2026-04-10T18-43-26",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-1-fast-reasoning",
+      "session_id": "4295f42c-17b0-42b8-981c-ef6e842f55bd",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "grok-4-fast-reasoning__2026-04-01T12-31-20",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-fast-reasoning",
+      "session_id": "39223816-ea22-4276-b542-a4dbe157adc6",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "grok-4-fast-reasoning__2026-04-01T12-31-33",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-fast-reasoning",
+      "session_id": "55e215aa-dd4c-44cf-8614-a64838b951b7",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "grok-4-fast-reasoning__2026-04-10T18-44-11",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-fast-reasoning",
+      "session_id": "ea88163d-55a2-471c-940e-0b35905dbe91",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "grok-4-fast-reasoning__2026-04-10T18-44-19",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-fast-reasoning",
+      "session_id": "0d796fc4-c869-4777-9533-d7f55e645c9d",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "grok-4.20-0309-reasoning__2026-04-01T11-38-27",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4.20-0309-reasoning",
+      "session_id": "3cf409de-4afc-4983-bc6d-a7a10803a062",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "grok-4.20-0309-reasoning__2026-04-01T12-31-38",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4.20-0309-reasoning",
+      "session_id": "f3775b68-2045-4098-8655-688b57f0eab2",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "grok-4.20-0309-reasoning__2026-04-10T18-44-22",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4.20-0309-reasoning",
+      "session_id": "1da4e879-1ff0-4d13-84c5-57b8b5c57600",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "grok-4.20-0309-reasoning__2026-04-10T18-44-33",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4.20-0309-reasoning",
+      "session_id": "9c1ed713-0f41-4b8d-9cd0-19bcf31884e8",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "grok-code-fast-1__2026-04-01T12-31-58",
+      "source": "copilot",
+      "model": "copilot/grok-code-fast-1",
+      "session_id": "2583f7d2-d36a-416d-842c-54fdf23a30c6",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "grok-code-fast-1__2026-04-01T12-32-14",
+      "source": "copilot",
+      "model": "copilot/grok-code-fast-1",
+      "session_id": "663bd69c-0d12-471f-bb2e-6a3f2be5a912",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "grok-code-fast-1__2026-04-10T19-24-41",
+      "source": "copilot",
+      "model": "copilot/grok-code-fast-1",
+      "session_id": "b7237dc4-ba76-4e99-a8bf-eaec4de668ee",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "grok-code-fast-1__2026-04-10T19-24-48",
+      "source": "copilot",
+      "model": "copilot/grok-code-fast-1",
+      "session_id": "fb214c06-14ce-4e78-86be-6068e343585f",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "o3__2026-04-01T11-37-10",
+      "source": "copilot",
+      "model": "openai/OpenAI 2/o3",
+      "session_id": "64dee7fc-8d41-45d1-8600-2d339d8cefec",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "o3__2026-04-01T11-37-21",
+      "source": "copilot",
+      "model": "openai/OpenAI 2/o3",
+      "session_id": "fd05d5b0-b43b-4fe9-b991-1a0dfe0320cf",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "o3__2026-04-10T18-41-58",
+      "source": "copilot",
+      "model": "openai/OpenAI 2/o3",
+      "session_id": "b8ee949b-5472-4d9a-85b1-83fb9ca563cc",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "o3__2026-04-10T18-42-18",
+      "source": "copilot",
+      "model": "openai/OpenAI 2/o3",
+      "session_id": "e30f847e-3861-4b21-9348-22319f45c53c",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "qwen3-max-thinking__2026-04-01T11-38-53",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/qwen/qwen3-max-thinking",
+      "session_id": "8372b192-9fc3-4682-9b3c-90ab0c5dd8e3",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "qwen3-max-thinking__2026-04-01T12-32-33",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/qwen/qwen3-max-thinking",
+      "session_id": "1223dcf6-4fc5-4ce2-aa07-603ae02fb6e1",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "qwen3-max-thinking__2026-04-10T20-08-37",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/qwen/qwen3-max-thinking",
+      "session_id": "2ed11451-4edf-407e-a829-d1cb1120f966",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    },
+    {
+      "slug": "qwen3-max-thinking__2026-04-10T22-23-13",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/qwen/qwen3-max-thinking",
+      "session_id": "19739bf2-1d40-4753-a7c7-7daa4e97ef62",
+      "benchmark_type": "test-06-branch-realism",
+      "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt"
+    }
+  ]
+}

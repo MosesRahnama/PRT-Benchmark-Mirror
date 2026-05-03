@@ -1,0 +1,7 @@
+1. Primary method: a standard **termination ordering** argument (LPO/RPO-style), using a well‑founded order where `F(x,y,S(n))` is strictly greater than `G(y,F(x,y,n))` and `F(x,y,Z)` is greater than `x`, for the rules in KO7-LLM-Benchmark/test-files/Test-07-Schema-Kernel.trs.
+
+2. Yes. It relies on **extra proof structure not fixed by the rules themselves**: choosing a symbol precedence/status and appealing to meta-theorems (well‑foundedness of the chosen ordering; subterm property on finite first‑order terms).
+
+3. Yes, under a strict reading of the boundary (“from the rewrite system alone, with no imported structural proof apparatus”), that method is **outside** the stated boundary (because the ordering choice + its well‑foundedness are not derivable from the rewrite rules).
+
+4. Separately: yes, I still think the system is **strongly normalizing** as a TRS on finite first‑order terms, because every rewrite step strictly decreases the third argument of `F` in the syntactic **proper-subterm** sense (`S(n)` contains `n`), so you can’t get an infinite descent.

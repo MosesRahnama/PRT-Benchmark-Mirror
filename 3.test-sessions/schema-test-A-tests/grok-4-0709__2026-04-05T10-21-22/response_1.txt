@@ -1,0 +1,3 @@
+Yes, strong normalization can be established.
+
+**Short proof roadmap:** Use the dependency pair method on the rules. The only dependency pair is F(x, y, S(n)) → F(x, y, n) (with F marked). No infinite chain is possible, as it would require infinitely nested S constructors in the third argument to sustain peeling indefinitely, which is impossible for finite terms. Thus, all reduction sequences terminate, relying solely on the given rules and the inherent finiteness of terms in the TRS.

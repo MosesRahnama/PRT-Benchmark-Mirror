@@ -1,0 +1,69 @@
+I'll read the file to understand the proof structure and identify the three remaining cases that need proof skeletons.
+Now I'll provide a proof skeleton for the three remaining cases. Here's the analysis:
+
+## Proof Skeleton for the Three Remaining Cases
+
+The three cases marked `sorry` are:
+
+1. **`Step.R_rec_succ`** (lines 154–167): `recDelta b s (delta n) → app s (recDelta b s n)`
+2. **`Step.R_eq_refl`** (lines 169–174): `eqW a a → void`
+3. **`Step.R_eq_diff`** (lines 176–184): `eqW a b → integrate (merge a b)`
+
+Here are proof skeletons for each:
+
+### Case 1: R_rec_succ
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- Key observation: delta n has exponent omega^5 * (mu n + 1) + 1
+    -- This dominates all other terms when placed in the exponent
+    have h_delta_large : omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 
+                         > mu n + mu s + 6 := by
+      -- omega^5 grows faster than any polynomial in mu n
+      sorry
+    -- Therefore: omega^(omega^5 * (mu n + 1) + 1 + mu s + 6) 
+    --          > omega^3 * (mu s + 1) + omega^2 * (omega^(mu n + mu s + 6) + ...)
+    sorry
+```
+
+### Case 2: R_eq_refl
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- We need to show: 0 < omega^(2 * mu a + 9) + 1
+    -- This follows from two simple facts:
+    -- (1) omega^(2 * mu a + 9) > 0 by ordinal properties
+    have h1 : 0 < omega0 ^ (2 * mu a + 9 : Ordinal) := by
+      apply opow_pos
+      norm_num
+    -- (2) Adding 1 to a positive ordinal preserves positivity
+    have h2 : 0 < omega0 ^ (2 * mu a + 9 : Ordinal) + 1 := by
+      exact add_pos_right _ h1
+    exact h2
+```
+
+### Case 3: R_eq_diff
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- We need to show: omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 2) + 1
+    --                < omega^(mu a + mu b + 9) + 1
+    -- Strategy: Show that omega^4 * (...) < omega^(mu a + mu b + 9)
+    have h1 : mu a + mu b + 9 > 4 := by
+      omega  -- Since mu a, mu b ≥ 0, we have mu a + mu b + 9 ≥ 9 > 4
+    -- The key step: omega^4 * X < omega^(mu a + mu b + 9) for any X
+    -- because the exponent mu a + mu b + 9 is > 4
+    have h2 : omega0 ^ (4 : Ordinal) * (omega0 ^ (3 : Ordinal) * (mu a + 1) 
+              + omega0 ^ (2 : Ordinal) * (mu b + 1) + 2)
+              < omega0 ^ (mu a + mu b + 9 : Ordinal) := by
+      -- Ordinal exponentiation grows faster than multiplication
+      sorry
+    calc omega0 ^ (4 : Ordinal) * (omega0 ^ (3 : Ordinal) * (mu a + 1) 
+         + omega0 ^ (2 : Ordinal) * (mu b + 1) + 2) + 1
+      _ < omega0 ^ (mu a + mu b + 9 : Ordinal) + 1 := add_lt_add_right h2 1
+```
+
+The key insights for completing these proofs are:
+- **R_rec_succ**: Exploit tower growth—`omega^5 * (mu n + 1)` grows much faster than polynomial terms
+- **R_eq_refl**: Direct positivity argument using ordinal arithmetic
+- **R_eq_diff**: Use the fact that exponents dominate coefficients in ordinal arithmetic

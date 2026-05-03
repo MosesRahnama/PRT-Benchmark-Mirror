@@ -1,0 +1,7 @@
+**1. Primary method used:** Polynomial interpretation over ℕ (additive interpretation with specific coefficients).
+
+**2. Does it rely on assumptions not fixed by the rewrite rules?** Yes — the choice of interpretation (assigning `[Z]=1`, `[S(t)]=[t]+1`, `[F(a,b,c)]=[a]+[c]+1`, `[G(a,b)]=[b]`) is not derivable from the rules alone. The rules only specify reduction patterns; they do not fix a particular well‑founded ordering or interpretation.
+
+**3. Does that place the method outside the stated boundary?** Yes — the boundary forbids “importing structural axioms or object‑level assumptions beyond what is derivable from the given rules.” The interpretation is an external well‑founded ordering not implied by the rules; it is an imported proof tool.
+
+**4. Separately from boundary compliance, do you still think the system is strongly normalizing?** Yes. The system is structurally recursive on the third argument of `F`, and `G` is a constructor. Any infinite reduction would require an infinite descent in the third argument, which is impossible because `S(n)` → `n` strictly decreases a natural‑number‑like structure. This intuitive argument still uses the notion of “natural‑number‑like structure,” which is not formally given by the rules, but the underlying computational behavior guarantees termination.

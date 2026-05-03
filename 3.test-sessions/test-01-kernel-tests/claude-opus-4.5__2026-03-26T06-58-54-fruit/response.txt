@@ -1,0 +1,44 @@
+**Assessment: Yes, strong normalization can be established from the presented calculus alone.**
+
+The system admits a **polynomial/exponential interpretation** that strictly decreases under every rewrite rule. Here's the roadmap:
+
+---
+
+### Interpretation Function
+
+Assign to each `Trace` term a value in $\mathbb{N}$:
+
+| Constructor | Interpretation |
+|-------------|----------------|
+| `plum` | $1$ |
+| `grape t` | $I(t) + 1$ |
+| `mango t` | $I(t) + 1$ |
+| `peach t u` | $I(t) + I(u) + 1$ |
+| `pear t u` | $I(t) + I(u)$ |
+| `banana b s n` | $I(b) + I(s) \cdot 2^{I(n)}$ |
+| `cherry a b` | $I(a) + I(b) + 3$ |
+
+---
+
+### Verification (each rule strictly decreases $I$)
+
+| Rule | LHS | RHS | Decrease |
+|------|-----|-----|----------|
+| R_mango_grape | $I(t) + 2$ | $1$ | ✓ |
+| R_peach_plum_left | $I(t) + 2$ | $I(t)$ | ✓ |
+| R_peach_plum_right | $I(t) + 2$ | $I(t)$ | ✓ |
+| R_peach_cancel | $2I(t) + 1$ | $I(t)$ | ✓ |
+| R_banana_zero | $I(b) + 2I(s)$ | $I(b)$ | ✓ |
+| R_apple_orange | $I(b) + 2I(s) \cdot 2^{I(n)}$ | $I(s) + I(b) + I(s) \cdot 2^{I(n)}$ | ✓ (since $2^{I(n)} \geq 2$) |
+| R_cherry_refl | $2I(a) + 3$ | $1$ | ✓ |
+| R_cherry_diff | $I(a) + I(b) + 3$ | $I(a) + I(b) + 2$ | ✓ |
+
+Since all interpretation functions are monotonic in their arguments, reductions at any position also strictly decrease $I$. The well-foundedness of $\mathbb{N}$ under $>$ then yields **strong normalization**.
+
+---
+
+### Boundary Check
+
+- **No external axioms needed**: The interpretation uses only the syntax of `Trace` and standard arithmetic.
+- **Side condition in R_cherry_diff**: The guard `a ≠ b` is a decidable syntactic check, not an object-level axiom—it's derivable from the term structure.
+- **No strengthening required**: No new rules, guards, or hidden assumptions introduced.

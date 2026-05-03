@@ -1,0 +1,86 @@
+I'll analyze the Lean 4 file to understand the strong normalization proof structure and provide a proof skeleton for the remaining cases. Let me read the file first.
+Based on my analysis of the Lean 4 file, I can see this is a strong normalization proof for a first-order rewrite calculus with 7 term constructors and 8 reduction rules. The proof uses an ordinal-valued measure `mu` that assigns ordinal numbers to terms such that each reduction step strictly decreases the measure.
+
+Here's a proof skeleton for completing the remaining three cases:
+
+## Proof Skeleton for Remaining Cases
+
+### Case 1: `Step.R_rec_succ` - The most complex case
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- Goal: mu(app s (recDelta b s n)) < mu(recDelta b s (delta n))
+    -- 
+    -- LHS = omega^3 * (mu(s) + 1) + omega^2 * (mu(recDelta b s n) + 1) + 1
+    -- RHS = omega^(mu(delta n) + mu(s) + 6) + omega * (mu(b) + 1) + 1
+    --     = omega^(omega^5 * (mu(n) + 1) + 1 + mu(s) + 6) + omega * (mu(b) + 1) + 1
+    
+    -- Key insight: The RHS has exponent omega^5 * (mu(n) + 1) + ... which is much larger
+    -- than any polynomial bound involving mu(s), mu(b), mu(n)
+    
+    have key_inequality : omega0 ^ (3 : Ordinal) * (mu s + 1) + 
+                         omega0 ^ (2 : Ordinal) * (omega0 ^ (mu n + mu s + 6) + omega0 * (mu b + 1) + 1 + 1) + 1
+                         < omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6) + omega0 * (mu b + 1) + 1 := by {
+      -- Use the fact that omega^5 * (mu(n) + 1) >> mu(n) + mu(s) + 6
+      -- This requires lemmas about ordinal exponentiation hierarchy
+      sorry
+    }
+    exact key_inequality
+```
+
+### Case 2: `Step.R_eq_refl` - Straightforward positivity
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu] 
+    -- Goal: 0 < omega^(mu(a) + mu(a) + 9) + 1 = omega^(2 * mu(a) + 9) + 1
+    
+    -- This follows from basic ordinal positivity
+    have h1 : (0 : Ordinal) < omega0 ^ (mu a + mu a + 9) := 
+      opow_pos (mu a + mu a + 9) omega0_pos
+    calc (0 : Ordinal)
+      _ < omega0 ^ (mu a + mu a + 9) := h1
+      _ ≤ omega0 ^ (mu a + mu a + 9) + 1 := le_add_right _ _
+```
+
+### Case 3: `Step.R_eq_diff` - Ordinal hierarchy argument
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- Goal: mu(integrate (merge a b)) < mu(eqW a b)
+    -- 
+    -- LHS = omega^4 * (omega^3 * (mu(a) + 1) + omega^2 * (mu(b) + 1) + 1 + 1) + 1
+    -- RHS = omega^(mu(a) + mu(b) + 9) + 1
+    
+    -- The key is that the exponent mu(a) + mu(b) + 9 is much larger than 4
+    -- when mu(a) + mu(b) is sufficiently large
+    
+    have exponent_dominance : 
+      omega0 ^ (4 : Ordinal) * (omega0 ^ (3 : Ordinal) * (mu a + 1) + omega0 ^ (2 : Ordinal) * (mu b + 1) + 1 + 1) + 1
+      < omega0 ^ (mu a + mu b + 9) + 1 := by {
+      -- Use that mu(a) + mu(b) + 9 >> 4 for the ordinal hierarchy
+      -- The +9 buffer ensures this dominance even for small mu(a), mu(b)
+      sorry
+    }
+    exact exponent_dominance
+```
+
+## Key Proof Strategies
+
+### For `R_rec_succ`:
+- The crucial observation is that `delta n` has measure `omega^5 * (mu(n) + 1) + 1`, so the recursive call gets exponent `omega^5 * (mu(n) + 1) + 1 + mu(s) + 6`
+- This exponential tower dominates the polynomial-like structure of `app s (recDelta b s n)`
+- Need lemmas about ordinal exponentiation showing `omega^(omega^5 * x + y) >> omega^3 * z + omega^2 * (omega^x + w)`
+
+### For `R_eq_refl`:
+- Simple positivity of ordinal exponentials
+- Use `opow_pos` and basic ordinal arithmetic
+
+### For `R_eq_diff`:
+- The `+9` buffer in the `eqW` exponent is designed to absorb the `integrate(merge(...))` expansion
+- Need to show that `mu(a) + mu(b) + 9` as an exponent dominates the fixed exponent `4` with polynomial coefficients
+- This requires careful analysis of when `omega^(large_exponent) > omega^4 * (polynomial_in_smaller_terms)`
+
+The proof architecture relies on the ordinal hierarchy where `omega^α >> omega^β * γ` when `α` is sufficiently larger than `β`, regardless of the coefficient `γ`.

@@ -1,0 +1,37 @@
+This is a compact first-order rewrite calculus. Let me analyze it:
+
+**Term constructors:**
+- `void` — base constant
+- `delta t` — unary constructor (successor-like)
+- `integrate t` — unary constructor  
+- `merge t₁ t₂` — binary constructor
+- `app t₁ t₂` — binary (application)
+- `recΔ b s n` — ternary (primitive recursion)
+- `eqW t₁ t₂` — binary (equality witness)
+
+**Rewrite rules:**
+1. `integrate (delta t) → void`
+2. `merge void t → t`
+3. `merge t void → t`
+4. `merge t t → t`
+5. `recΔ b s void → b`
+6. `recΔ b s (delta n) → app s (recΔ b s n)`
+7. `eqW a a → void`
+8. `eqW a b → integrate (merge a b)`
+
+**Analysis for Strong Normalization:**
+
+Looking at these rules, there are some concerning aspects:
+
+1. **R_rec_succ** is the recursion unfolding rule. It replaces `recΔ b s (delta n)` with `app s (recΔ b s n)`. This decreases n by one `delta` layer, which is good - it's a standard primitive recursion scheme. The `app` wrapper is potentially concerning but doesn't introduce new redexes by itself.
+
+2. **R_eq_diff** is problematic. It rewrites `eqW a b → integrate (merge a b)`. This rule fires when `a ≠ b` (since R_eq_refl handles the `a = a` case). But wait - both rules have overlapping patterns! Rule R_eq_refl matches `eqW a a` and R_eq_diff matches `eqW a b` for any a, b - including when a = b!
+
+
+The equality rules create a critical pair. When `eqW a a` appears, R_eq_refl produces `void`, but R_eq_diff produces `integrate (merge a a)`, which then reduces to `integrate a` via the merge cancellation rule. This isn't a divergence, but it breaks confluence—the same term has multiple normal forms depending on which rule fires first.
+
+For termination, I need to examine whether the system actually halts. Most rules decrease term size, but `eqW a b → integrate (merge a b)` duplicates `a` and `b` on the right side, which could be problematic. The `recΔ` rule also has potential issues since `s` appears in an outer position after reduction, and if `s` contains further redexes, this might not terminate cleanly. I should check whether a lexicographic or polynomial interpretation can establish a proper measure that decreases across all reductions. Looking at the recursion rule more carefully: `recΔ b s (delta n) → app s (recΔ b s n)` strictly decreases the argument to `delta`, moving from `delta n` to just `n`. This ensures termination even if `s` contains nested `recΔ` terms, since the innermost recursion always makes progress on its numeric argument.
+
+For the other rules like `eqW a b → integrate (merge a b)`, the term structure transforms but doesn't grow unboundedly. The key is that no rule duplicates subterms in a way that causes size explosion. A lexicographic path order or polynomial interpretation should suffice to establish strong normalization across the system. s' n'` will reduce identically regardless of its position. The duplication doesn't create new reduction opportunities—each copy still requires the same computational steps.
+
+I can formalize this with a complexity measure on terms. Setting `|void| = 1`, `|delta t| = 2 * |t| + 1`, `|integrate t| = |t| + 1`, and `|merge t₁ t₂| = |t₁| + |t₂| + 1`, I can show that each reduction step strictly decreases this measure, ensuring termination even with term duplication.

@@ -1,0 +1,99 @@
+I’ve finished the source-only inspection; next I’m marking the checklist complete and then I’ll give you the precise counterexample showing why the measure fails.
+## Verdict
+
+No — the proposed measure
+
+- `measure t = (phase t, cost t)`
+
+is **not sound** as a lexicographic termination measure for `Step`.
+
+To be sound, it must satisfy, for every rewrite rule `Step l r`,
+$$
+\mathrm{measure}(r) <_{\text{lex}} \mathrm{measure}(l).
+$$
+
+That fails.
+
+## Why it fails
+
+The key issue is that `phase` only looks at the **top-level constructor**:
+
+- `phase (recDelta _ _ (delta _)) = 1`
+- everything else has phase `0`
+
+So if a rule removes an outer constructor and exposes a term of the form `recDelta _ _ (delta _)`, the phase can go from `0` to `1`, which is an **increase** in the first lexicographic component. Once that happens, the lex order is broken even if `cost` drops.
+
+### Concrete counterexample
+
+Take
+- `t := recDelta void void (delta void)`
+
+Then:
+
+- `phase t = 1`
+- `cost t = 1 + 0 + 0 + (1 + 0) = 2`
+
+Now use rule `R_merge_void_left`:
+
+- lhs: `merge void t`
+- rhs: `t`
+
+Their measures are:
+
+- `measure (merge void t) = (0, 1 + 0 + 2) = (0, 3)`
+- `measure t = (1, 2)`
+
+Under standard lexicographic order on `Nat × Nat`,
+$$
+(1,2) \not< (0,3),
+$$
+in fact the first component increased. So the measure does **not** decrease on this step.
+
+That alone is enough to show the measure is unsound.
+
+## Where else the same problem appears
+
+The same issue can occur in any rule whose right-hand side is a subterm that might itself be a `recDelta _ _ (delta _)`:
+
+- `R_merge_void_left`
+- `R_merge_void_right`
+- `R_merge_cancel`
+- `R_rec_zero`
+
+For example, `R_rec_zero` can also expose a phase-1 term:
+
+- lhs: `recDelta b s void` has `phase = 0`
+- rhs: `b` may have `phase = 1`
+
+So the first lexicographic component is not guaranteed to decrease.
+
+## Important nuance
+
+The `cost` component by itself is also not enough, because `R_rec_succ` can increase cost:
+
+- lhs: `recDelta b s (delta n)`
+- rhs: `app s (recDelta b s n)`
+
+Compute:
+
+- `cost lhs = 2 + cost b + cost s + cost n`
+- `cost rhs = 2 + cost b + 2 \cdot cost s + cost n`
+
+So if `cost s > 0`, then
+$$
+\mathrm{cost}(rhs) > \mathrm{cost}(lhs).
+$$
+
+That explains why a phase component was introduced in the first place — but the chosen `phase` is too shallow to work with the other rules.
+
+## Bottom line
+
+The rewrite system may or may not terminate, but this **specific** lexicographic measure is **not a valid proof of termination**.
+
+## Updated checklist
+
+- [x] Read target Lean file
+- [x] Analyze measure descent
+- [x] Summarize soundness verdict
+
+If you want, I can next give a **minimal repaired measure idea** purely mathematically, without modifying the file or reading anything else.

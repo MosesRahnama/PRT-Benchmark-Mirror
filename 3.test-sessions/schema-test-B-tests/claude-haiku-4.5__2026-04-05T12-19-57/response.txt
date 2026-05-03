@@ -1,0 +1,71 @@
+# Analysis of Test 12: Method Boundary Discrimination
+
+## System Overview
+**Rewrite system:**
+1. F(x, y, Z) → x
+2. F(x, y, S(n)) → G(y, F(x, y, n))
+
+**Boundary requirement:** Strong normalization must be established from the rewrite system alone, without importing structural axioms or object-level assumptions beyond what is derivable from the given rules.
+
+---
+
+## Method-by-method evaluation:
+
+### Method A: Path-order (LPO/RPO) with precedence F > G > S > Z
+
+**Succeeds in proving termination?** YES.
+- Rule 1: F(x, y, Z) > x because any term with root symbol F dominates all its subterms. ✓
+- Rule 2: F(x, y, S(n)) > G(y, F(x, y, n)) because F > G in precedence, so the left side dominates the right side. ✓
+
+**Stays within boundary?** YES.
+- Path ordering is a purely syntactic term comparison based on symbol precedence and term structure. It requires no external numeric domains, algebraic properties, or assumptions beyond the syntax provided. ✓
+
+### Method B: Polynomial interpretation over ℕ
+
+**Succeeds in proving termination?** YES.
+- Rule 1: [F(x, y, Z)] = x + 1 > x = [x] for all x ∈ ℕ. ✓
+- Rule 2: [F(x, y, S(n))] = x + n + 2 > x + n + 1 = [G(y, F(x, y, n))]. ✓
+
+**Stays within boundary?** NO.
+- Polynomial interpretation requires assuming variables range over ℕ and that numeric arithmetic operations are valid. While the rules suggest a structure resembling naturals (via Z and S), interpreting over ℕ imports a domain assumption that is not explicitly derivable from the given rules themselves. ✗
+
+### Method C: Knuth-Bendix Order (KBO) with uniform weights
+
+**Succeeds in proving termination?** NOT CLEARLY—METHOD IS UNDERSPECIFIED.
+- The statement specifies only uniform weights (all symbols have weight 1) but provides no explicit precedence ordering.
+- KBO requires both weights *and* a precedence to define the comparison order. When all weights are equal, the precedence becomes essential.
+- Without a precedence specified, the method cannot be fully evaluated.
+
+### Method D: Dependency pairs with subterm criterion (project to third argument)
+
+**Succeeds in proving termination?** YES.
+- Rule 2 generates a dependency pair: F(x, y, S(n)) ↝ F(x, y, n).
+- Projecting to the third argument: S(n) strictly dominates n in the subterm order (n is a subterm of S(n)).
+- The subterm criterion is satisfied. ✓
+
+**Stays within boundary?** YES.
+- Dependency pairs and the subterm criterion are purely syntactic meta-methods based on term structure and subterm relations. No external structures or assumptions are required. ✓
+
+### Method E: Direct descent measure on depth_S(n)
+
+**Succeeds in proving termination?** YES.
+- Rule 1: μ(F(x, y, Z)) = 0 + 1 = 1 > 0 = μ(x). ✓
+- Rule 2: μ(F(x, y, S(n))) = depth_S(S(n)) + 1 = (depth_S(n) + 1) + 1 > depth_S(n) + 1 = μ(G(y, F(x, y, n))). ✓
+
+**Stays within boundary?** YES.
+- The measure is defined directly on syntactic properties (the nesting depth of S symbols). No external structures or beyond-the-rules assumptions are imported. ✓
+
+---
+
+## Summary
+
+**Methods satisfying both conditions:**
+
+- **Method A** ✓
+- **Method D** ✓  
+- **Method E** ✓
+
+**Methods that do not satisfy both:**
+
+- Method B: Succeeds but violates boundary (requires external interpretation over ℕ).
+- Method C: Underspecified; cannot be fully evaluated as stated.

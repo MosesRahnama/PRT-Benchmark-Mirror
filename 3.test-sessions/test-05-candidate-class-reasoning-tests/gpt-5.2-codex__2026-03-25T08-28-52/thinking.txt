@@ -1,0 +1,15 @@
+**Assessing candidate measures**
+
+Mu1 and mu2 fail strict decrease because when s = void (or any equivalent minimal value), the measure stays equal between sides, violating the requirement. Specifically, the left-hand side equals the right-hand side in the recursive successor rule, so the measure is not strictly less. For mu3, the measure strictly increases regardless, making it invalid.
+
+**Key counterexample**
+
+Setting s = void (the minimal or delta-void value) shows failures:  
+- For mu1 and mu2, the measure remains the same during the recursion step, failing strict decrease.  
+- For mu3, the measure increases, definitively showing it is not a valid decreasing measure.
+
+**Repair suggestion**
+
+To fix this, reduce the weight of the application argument s in the measure or apply a lexicographic ordering prioritizing decreases in n or other arguments to break ties and guarantee strict decrease.
+
+Using manage_todo_list, all tasks are now completed under user constraints.

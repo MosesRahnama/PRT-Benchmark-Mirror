@@ -1,0 +1,101 @@
+Below is a **proof‑skeleton** you can paste in place of the three `sorry` placeholders.  
+Each case is broken into the usual steps that are needed for the ordinal arithmetic, but the heavy‑lifting lemmas are left as `sorry` (or `admit`) for you to fill in later.  The structure mirrors the already‑proved cases, so you can copy‑paste the pattern and then replace the `sorry`s with the actual ordinal‑inequality arguments.
+
+```lean
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    -- Goal: μ (app s (recDelta b s n)) < μ (recDelta b s (delta n))
+    simp [mu]                     -- unfold the definition of μ
+    -- LHS = ω^(μ (delta n) + μ s + 6) + ω * (μ b + 1) + 1
+    -- RHS = ω^3 * (μ s + 1) + ω^2 * (μ (recDelta b s n) + 1) + 1
+    --
+    -- 1️⃣  Show the dominant term on the LHS dominates the whole RHS.
+    have h_dom : ω ^ (μ (delta n) + μ s + (6 : Ordinal))
+                  > ω ^ (μ s + 1) := by
+      -- use `opow_lt_opow_iff` together with the fact that
+      --   μ (delta n) + μ s + 6  >  μ s + 1
+      sorry
+
+    -- 2️⃣  Show the remaining additive part on the LHS is ≤ the RHS.
+    have h_rest : ω * (μ b + 1) + 1
+                  ≤ ω ^ 2 * (μ (recDelta b s n) + 1) + 1 := by
+      -- use monotonicity of multiplication and the definition of μ(recDelta …)
+      sorry
+
+    -- 3️⃣  Combine the two inequalities.
+    calc
+      μ (app s (recDelta b s n))
+          = ω ^ (μ (delta n) + μ s + (6 : Ordinal))
+            + ω * (μ b + 1) + 1 := rfl
+      _ < ω ^ (μ (delta n) + μ s + (6 : Ordinal))
+            + (ω ^ 2 * (μ (recDelta b s n) + 1) + 1) := by
+            apply add_lt_add_left h_rest _
+      _ ≤ ω ^ 3 * (μ s + 1) + ω ^ 2 * (μ (recDelta b s n) + 1) + 1 := by
+            -- use `h_dom` and the fact that `ω ^ (μ (delta n) + μ s + 6)`
+            -- dominates the `ω ^ 3 * (μ s + 1)` term
+            sorry
+      _ = μ (recDelta b s (delta n)) := rfl
+```
+
+```lean
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    -- Goal: 0 < μ (eqW a a) = ω^(μ a + μ a + 9) + 1
+    simp [mu]
+    -- It suffices to show the leading term is positive.
+    have h_pos : (0 : Ordinal) < ω ^ (μ a + μ a + (9 : Ordinal)) := by
+      -- `omega0_pos` gives `0 < ω`.  Use monotonicity of `opow`.
+      have : (0 : Ordinal) < ω := omega0_pos
+      exact lt_of_lt_of_le this (le_of_eq rfl)   -- replace with a proper `opow_pos`
+    -- Now add the trailing `+ 1`.
+    exact lt_of_lt_of_le h_pos (by
+      -- `ω ^ … + 1` is ≥ the leading term
+      apply le_add_of_nonneg_right
+      exact zero_le_one)
+```
+
+```lean
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    -- Goal: μ (integrate (merge a b)) < μ (eqW a b)
+    simp [mu]
+    -- LHS = ω^4 * (μ (merge a b) + 1) + 1
+    -- RHS = ω^(μ a + μ b + 9) + 1
+    --
+    -- 1️⃣  Bound the `μ (merge a b)` term.
+    have h_merge : μ (merge a b) ≤
+        ω ^ (μ a + 1) * (3 : Ordinal) + ω ^ (μ b + 1) * (2 : Ordinal) := by
+      -- unfold `μ (merge …)` and use simple inequalities
+      simp [mu]
+      sorry
+
+    -- 2️⃣  Show the leading ω‑power on the RHS dominates the whole LHS.
+    have h_dom : ω ^ (μ a + μ b + (9 : Ordinal))
+                  > ω ^ 4 * (ω ^ (μ a + 1) * (3 : Ordinal) + ω ^ (μ b + 1) * (2 : Ordinal) + 1) := by
+      -- use `opow_lt_opow_iff` together with
+      --   μ a + μ b + 9  >  max (4 + μ a + 1) (4 + μ b + 1)
+      sorry
+
+    -- 3️⃣  Combine.
+    calc
+      μ (integrate (merge a b))
+          = ω ^ (4 : Ordinal) * (μ (merge a b) + 1) + 1 := rfl
+      _ ≤ ω ^ (4 : Ordinal) *
+            (ω ^ (μ a + 1) * (3 : Ordinal) + ω ^ (μ b + 1) * (2 : Ordinal) + 1) + 1 := by
+            apply mul_le_mul_of_nonneg_left h_merge
+            exact zero_le_one
+      _ < ω ^ (μ a + μ b + (9 : Ordinal)) + 1 := by
+            -- use `h_dom` and monotonicity of addition
+            exact lt_of_lt_of_le h_dom (le_add_of_nonneg_right zero_le_one)
+      _ = μ (eqW a b) := rfl
+```
+
+### How to finish each `sorry`
+
+| Case | What you need to prove | Typical lemmas you’ll use |
+|------|------------------------|---------------------------|
+| `R_rec_succ` | Show the huge exponent coming from `δ n` dominates the RHS. | `opow_lt_opow_iff`, `lt_of_lt_of_le`, `add_lt_add_left`, `mul_le_mul_of_nonneg_left`. |
+| `R_eq_refl` | Positivity of `ω ^ (2·μ a + 9)`. | `omega0_pos`, `opow_pos`, `lt_of_lt_of_le`, `zero_lt_one`. |
+| `R_eq_diff` | Compare `ω^4 * (…)` with `ω^(μ a + μ b + 9)`. | `opow_lt_opow_iff`, `lt_of_lt_of_le`, `mul_le_mul_of_nonneg_left`, `add_le_add_right`. |
+
+The skeleton already contains the `simp [mu]` unfolding, the `calc` chain, and placeholders (`sorry`) for the *core ordinal‑inequality lemmas*.  Replace each `sorry` with a concrete proof using the lemmas indicated (or any other ordinal facts you prefer).  Once the three blocks are filled, the `mu_decreases` theorem will be complete and the strong‑normalisation proof will go through.

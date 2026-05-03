@@ -1,0 +1,93 @@
+Below is a compact “fill-in-the-blanks” outline for the three outstanding cases.  Each block already
+
+1. unfolds `mu` with `simp`,
+2. states the natural comparison goal, and
+3. inserts comments / `have …` placeholders indicating the ordinal-arithmetic lemmas you will need
+   (`lt_add_one`, `le_mul_right`, `opow_pos`, `opow_lt_opow_of_lt`, etc.).
+
+You can paste the whole snippet over the three `sorry`s and refine each proof interactively.
+
+```lean
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+  -- Expand both measures.
+  simp [mu] at *
+  /-
+    Goal:     omega0 ^ (mu n + mu s + 6) + ω * (mu b + 1) + 1
+           < ω ^ 3 * (mu s + 1)
+             + ω ^ 2 * (omega0 ^ (mu n + mu s + 6) + ω * (mu b + 1) + 1 + 1)
+             + 1
+    The exponent `omega0 ^ (mu n + …)` on the LHS dominates every term
+    on the RHS because it eventually contains `omega0 ^ 5 * (mu n + 1)`.
+  -/
+  -- Helper facts showing the LHS main tower already beats the RHS tail.
+  have h_dom :
+      omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + (mu s + 6))
+        <
+      omega0 ^ (mu n + mu s + 6) := by
+    -- You will use `opow_lt_opow_of_lt` with exponent inequalities here.
+    sorry
+  -- Combine helper inequalities with `calc`.
+  calc
+    _ < _ := by
+      -- chain `lt_of_lt_of_le`, `add_le_add_left`, etc.
+      sorry
+
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+  -- RHS: omega0^(2*mu a + 9) + 1  is strictly positive.
+  simp [mu]   -- turns goal into `0 < _`
+  have h_pos : (0 : Ordinal) < omega0 ^ (mu a + mu a + (9 : Ordinal)) :=
+    opow_pos _ omega0_pos
+  have : (0 : Ordinal)
+        < omega0 ^ (mu a + mu a + (9 : Ordinal)) + 1 :=
+    lt_of_lt_of_le h_pos (le_add_of_nonneg_right _ zero_le_one)
+  simpa using this
+
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+  -- Reduce both measures.
+  simp [mu] at *
+  /-
+    Need:
+      ω ^ 4 * (mu (merge a b) + 1) + 1
+      < ω ^ (mu a + mu b + 9) + 1
+    Strategy:
+      (1) Bound  μ(merge a b)  by a much smaller tower,
+      (2) Multiply the bound by  ω⁴ ,
+      (3) Compare the products by exponent-monotonicity.
+  -/
+  -- Step 1: a rough upper bound for the merge.
+  have h_merge :
+      mu (merge a b)
+        < omega0 ^ (mu a + mu b + (8 : Ordinal)) := by
+    -- Use the two-term structure of `merge` plus inequalities
+    --   mu a + 1 ≤ ω² * (mu a + 1),
+    --   mu b + 1 ≤ ω¹ * (mu b + 1),
+    -- then dominate both by the claimed exponent.
+    sorry
+
+  -- Step 2: push the bound through the `integrate` multiplier.
+  have h_int :
+      omega0 ^ (4 : Ordinal) * (mu (merge a b) + 1)
+        < omega0 ^ (mu a + mu b + (9 : Ordinal)) := by
+    -- Apply `mul_lt_opow_of_lt_exponent` (or similar) using `h_merge`.
+    sorry
+
+  -- Finish with one last `calc`.
+  calc
+      omega0 ^ (4 : Ordinal) * (mu (merge a b) + 1) + 1
+          < omega0 ^ (mu a + mu b + (9 : Ordinal)) + 1 := by
+        have : _ < _ := add_lt_add_of_lt_of_le h_int (le_rfl _)
+        simpa using this
+```
+
+Key hints for filling the `sorry`s:
+
+• `opow_lt_opow_of_lt` proves $ω^{α} < ω^{β}$ from `α < β`.  
+• `mul_lt_opow_of_lt_exponent` (a small lemma you might write yourself) is handy for turning
+  `x < ω^β` into `ω^k * (x + 1) < ω^{β + k}`.  
+• Use `lt_add_one`, `le_mul_right`, `le_add_left` to pad with positive tails.
+
+This skeleton compiles once each `sorry` is replaced by concrete ordinal-arithmetic
+lemmas, concluding the strict-decrease proof and hence strong normalization.

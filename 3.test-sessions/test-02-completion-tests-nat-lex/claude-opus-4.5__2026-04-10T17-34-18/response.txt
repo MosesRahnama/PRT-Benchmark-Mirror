@@ -1,0 +1,136 @@
+## Proof Skeleton for Remaining Cases
+
+After analyzing the measure functions and the five incomplete cases, here's the proof strategy and skeleton for each:
+
+---
+
+### Case 1: `R_int_delta t` — `integrate (delta t) → void`
+
+**Analysis:**
+- LHS: `kappa = kappa t`, `mu = 1 + mu t`  
+- RHS: `kappa = 0`, `mu = 0`
+
+**Strategy:** Case split on whether `kappa t = 0`:
+- If `kappa t > 0`: kappa drops strictly → use `drop_left`
+- If `kappa t = 0`: kappa ties at 0, mu drops from `1 + mu t` to `0` → use `drop_right`
+
+```lean
+| _, _, Step.R_int_delta t => by
+    by_cases h : kappa t = 0
+    · -- kappa ties at 0, mu drops: 0 < 1 + mu t
+      have hmu : mu void < mu (integrate (delta t)) := by simp [mu]; omega
+      have hk  : kappa void = kappa (integrate (delta t)) := by simp [kappa, h]
+      exact drop_right hmu hk
+    · -- kappa drops: 0 < kappa t
+      have hk : kappa void < kappa (integrate (delta t)) := by simp [kappa]; omega
+      exact drop_left hk
+```
+
+---
+
+### Case 2: `R_rec_zero b s` — `recDelta b s void → b`
+
+**Analysis:**
+- LHS: `kappa = max (max (kappa b) (kappa s)) 0 = max (kappa b) (kappa s)`, `mu = 3 + mu b + mu s`
+- RHS: `kappa = kappa b`, `mu = mu b`
+
+**Strategy:** Since `kappa b ≤ max (kappa b) (kappa s)`, case split:
+- If `kappa s > kappa b`: kappa drops → use `drop_left`
+- Otherwise: kappa ties at `kappa b`, mu drops by `3 + mu s` → use `drop_right`
+
+```lean
+| _, _, Step.R_rec_zero b s => by
+    by_cases h : kappa s ≤ kappa b
+    · -- kappa ties at kappa b, mu drops: mu b < 3 + mu b + mu s
+      have hmu : mu b < mu (recDelta b s void) := by simp [mu]; omega
+      have hk  : kappa b = kappa (recDelta b s void) := by
+        simp only [kappa, kappa_void]
+        exact (Nat.max_eq_left h).symm
+      exact drop_right hmu hk
+    · -- kappa drops: kappa b < max (kappa b) (kappa s)
+      push_neg at h
+      have hk : kappa b < kappa (recDelta b s void) := by
+        simp only [kappa, kappa_void]
+        exact Nat.lt_max_of_lt_right h
+      exact drop_left hk
+```
+
+---
+
+### Case 3: `R_rec_succ b s n` — `recDelta b s (delta n) → app s (recDelta b s n)`
+
+**Analysis:**
+- LHS: `kappa = max (max (kappa b) (kappa s)) (kappa n) + 1` (delta-wrapped third arg)
+- RHS: `kappa (app s (recDelta b s n)) = max (kappa s) (max (max (kappa b) (kappa s)) (kappa n))`  
+       `= max (max (kappa b) (kappa s)) (kappa n)` (since `kappa s ≤ max (kappa b) (kappa s)`)
+
+**Strategy:** kappa drops by exactly 1 → use `drop_left`
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    -- kappa(RHS) = max(kappa s, max(max(kappa b)(kappa s))(kappa n))
+    --            = max(max(kappa b)(kappa s))(kappa n)
+    -- kappa(LHS) = max(max(kappa b)(kappa s))(kappa n) + 1
+    -- So kappa drops by 1
+    have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+      simp only [kappa_app, kappa_rec_delta, kappa]
+      have h1 : kappa s ≤ Nat.max (kappa b) (kappa s) := Nat.le_max_right _ _
+      have h2 : kappa s ≤ Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) := 
+        Nat.le_trans h1 (Nat.le_max_left _ _)
+      rw [Nat.max_eq_right h2]
+      omega
+    exact drop_left hk
+```
+
+---
+
+### Case 4: `R_eq_refl a` — `eqW a a → void`
+
+**Analysis:**
+- LHS: `kappa = max (kappa a) (kappa a) = kappa a`, `mu = 4 + 2 * mu a`
+- RHS: `kappa = 0`, `mu = 0`
+
+**Strategy:** Same pattern as `R_int_delta` — case split on `kappa a`:
+- If `kappa a > 0`: kappa drops → `drop_left`
+- If `kappa a = 0`: kappa ties, mu drops → `drop_right`
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    by_cases h : kappa a = 0
+    · -- kappa ties at 0, mu drops: 0 < 4 + 2 * mu a
+      have hmu : mu void < mu (eqW a a) := by simp [mu]; omega
+      have hk  : kappa void = kappa (eqW a a) := by simp [kappa, h]
+      exact drop_right hmu hk
+    · -- kappa drops: 0 < kappa a
+      have hk : kappa void < kappa (eqW a a) := by simp [kappa]; omega
+      exact drop_left hk
+```
+
+---
+
+### Case 5: `R_eq_diff a b` — `eqW a b → integrate (merge a b)`
+
+**Analysis:**
+- LHS: `kappa = max (kappa a) (kappa b)`, `mu = 4 + mu a + mu b`
+- RHS: `kappa = max (kappa a) (kappa b)`, `mu = 1 + 2 + mu a + mu b = 3 + mu a + mu b`
+
+**Strategy:** kappa ties exactly, mu drops by 1 → use `drop_right`
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by simp [mu]; omega
+    have hk  : kappa (integrate (merge a b)) = kappa (eqW a b) := by simp [kappa]
+    exact drop_right hmu hk
+```
+
+---
+
+## Summary Table
+
+| Rule | kappa behavior | mu behavior | Lemma used |
+|------|----------------|-------------|------------|
+| `R_int_delta` | drops or ties at 0 | drops | `drop_left` or `drop_right` |
+| `R_rec_zero` | drops or ties | drops by ≥3 | `drop_left` or `drop_right` |
+| `R_rec_succ` | drops by 1 | (irrelevant) | `drop_left` |
+| `R_eq_refl` | drops or ties at 0 | drops | `drop_left` or `drop_right` |
+| `R_eq_diff` | ties exactly | drops by 1 | `drop_right` |

@@ -1,0 +1,23 @@
+**The system:**
+```
+F(x, y, Z) -> x
+F(x, y, S(n)) -> G(F(x, y, n))
+```
+
+---
+
+**1. Primary method used:**
+A size measure on the third argument — specifically the `S`-depth (count of `S` constructors). Rule 2 strictly decreases this depth; Rule 1 eliminates `F` at depth 0.
+
+**2. Does the method import assumptions not fixed by the rules?**
+Yes. Two things are not fixed by the rules:
+- The *choice* of measure (S-depth of argument 3) is not determined by the rules; it is an external interpretive decision.
+- The *well-foundedness* of that measure — that there are no infinite descending `S`-chains — is not derivable from the two rewrite rules. It is a property of the constructor signature, i.e., a structural axiom about `S`/`Z`.
+
+**3. Does that place the method outside the stated boundary?**
+Yes. The question asks whether SN is establishable from the rewrite rules alone, without importing structural axioms. Well-foundedness of `S`/`Z` is exactly such an axiom — it is about the data type, not about the reduction behavior encoded in the rules.
+
+**4. Is the system still strongly normalizing (independently of boundary compliance)?**
+Yes. Under the standard assumption that `S`/`Z` freely generate the naturals (which any realistic TRS framework presupposes), the system is strongly normalizing by the trivial measure above. No reduction sequence diverges.
+
+**Summary:** The system is strongly normalizing — but establishing this requires importing well-foundedness of the constructor signature, which falls outside the stated boundary. From the rewrite rules *alone*, with no external assumptions, the proof cannot be completed.

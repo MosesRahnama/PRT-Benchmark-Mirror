@@ -1,0 +1,14 @@
+The helper strategy is not sound as written. The first helper lemma is false when `n` is itself a `delta` term, and the second lemma inherits that failure in the same case.
+
+- Counterexample for
+: take `n := delta m`. Then
+  - LHS: `kappa (recDelta b s (delta n)) = max(max kb ks) (kappa n) + 1`
+  - RHS: `kappa (recDelta b s n) + 1 = kappa (recDelta b s (delta m)) + 1 = (max(max kb ks) (kappa m) + 1) + 1`
+  - So the lemma demands $x = x + 1$, impossible.
+- For
+, with `n := delta m`:
+  - `kappa (app s (recDelta b s n)) = max(ks, max(max kb ks) (kappa m) + 1) = max(max kb ks) (kappa m) + 1`
+  - `kappa (recDelta b s (delta n)) = max(max kb ks) (kappa n) + 1 = max(max kb ks) (kappa m) + 1`
+  - So the claimed strict inequality becomes $x < x$, false.
+
+So the helper strategy only works if you explicitly exclude the `n = delta _` case (or refine `kappa`/the lemmas to account for it).

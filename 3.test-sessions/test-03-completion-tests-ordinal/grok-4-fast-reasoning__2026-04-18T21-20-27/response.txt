@@ -1,0 +1,70 @@
+### Proof Skeleton for Remaining Cases in `mu_decreases`
+
+The theorem `mu_decreases` requires proofs for the cases `R_rec_succ`, `R_eq_refl`, and `R_eq_diff`. Below is a skeleton for each, using ordinal arithmetic properties from Mathlib (e.g., `opow_lt`, `add_lt_add`, `mul_lt_mul`). Each builds on the existing `simp [mu]` and comments, adding structured `calc` or `have` blocks. Replace `sorry` with these, ensuring all steps use proven lemmas like `Ordinal.lt_add_one`, `Ordinal.opow_pos`, `Ordinal.mul_add`, etc. Verify with Lean's tactic mode if needed.
+
+#### Case: `R_rec_succ` (recDelta b s (delta n) → app s (recDelta b s n))
+```lean
+| _, _, Step.R_rec_succ b s n => by
+  simp [mu]
+  -- Goal: ω³ · (μ s + 1) + ω² · (μ (recDelta b s n) + 1) + 1 < ω^(μ (delta n) + μ s + 6) + ω · (μ b + 1) + 1
+  -- Let α = μ n, β = μ s, γ = μ b, δ = μ (recDelta b s n) = ω^(α + β + 6) + ω · (γ + 1) + 1
+  -- LHS = ω³ · (β + 1) + ω² · (δ + 1) + 1
+  -- RHS = ω^(ω⁵ · (α + 1) + 1 + β + 6) + ω · (γ + 1) + 1
+  -- Key: Exponent ω⁵ · (α + 1) + β + 7 >> 3 (for ω³ term) and >> α + β + 6 (for ω² · δ term)
+  have h_delta : μ (delta n) = ω⁵ · (μ n + 1) + 1 := by simp [mu]
+  have h_rec_n : μ (recDelta b s n) = ω^(μ n + μ s + 6) + ω · (μ b + 1) + 1 := by simp [mu]
+  have h_exp_large : μ (delta n) + μ s + 6 > 3 := by
+    -- Prove ω⁵ · (μ n + 1) + 1 + μ s + 6 > 3 using opow_pos and add_pos
+    sorry  -- ω⁵ > 3, and additives are nonnegative
+  have h_dominate_exp : ω^(μ (delta n) + μ s + 6) > ω^3 · (μ s + 1) + ω^2 · (μ (recDelta b s n) + 1) + 1 := by
+    -- Use opow_lt_of_lt {exponent > 3} and bound LHS < ω^4 (since ω^2 · ω^(α+β+6) < ω^(α+β+7) << ω^(ω^5 · (α+1) + ...))
+    apply lt_of_lt_of_le
+    · exact opow_lt _ h_exp_large (by exact Ordinal.nat_cast_ne_zero 4)
+    · -- Bound LHS ≤ ω^3 · (β + 1) + ω^2 · (ω^(α + β + 6) + ...) + 1 ≤ ω^4
+      sorry  -- Use mul_add, add_lt_add, and opow bounds
+  calc μ (app s (recDelta b s n))
+    _ = ω^3 · (μ s + 1) + ω^2 · (μ (recDelta b s n) + 1) + 1 := by simp [mu]
+    _ < ω^(μ (delta n) + μ s + 6) + ω · (μ b + 1) + 1 := by
+      rw [← add_lt_add]
+      exact add_lt_add_left h_dominate_exp _
+```
+
+#### Case: `R_eq_refl` (eqW a a → void)
+```lean
+| _, _, Step.R_eq_refl a => by
+  simp [mu]
+  -- Goal: 0 < ω^(μ a + μ a + 9) + 1
+  have h_exp_pos : μ a + μ a + 9 > 0 := by
+    apply add_pos_right
+    exact Ordinal.nat_lt_self (Ordinal.nat_cast_ne_zero 9)
+  have h_base_pos : ω > 0 := Ordinal.nat_lt_self (Ordinal.nat_cast_ne_zero 0)
+  calc 0
+    _ < ω^(2 * μ a + 9) := opow_pos h_base_pos h_exp_pos
+    _ ≤ ω^(2 * μ a + 9) + 1 := le_add_right _ _
+```
+
+#### Case: `R_eq_diff` (eqW a b → integrate (merge a b))
+```lean
+| _, _, Step.R_eq_diff a b => by
+  simp [mu]
+  -- Goal: ω^4 · (μ (merge a b) + 1) + 1 < ω^(μ a + μ b + 9) + 1
+  -- Let μ (merge a b) = ω^3 · (μ a + 1) + ω^2 · (μ b + 1) + 1
+  -- LHS = ω^4 · (ω^3 · (μ a + 1) + ω^2 · (μ b + 1) + 2) + 1
+  -- Key: Exponent μ a + μ b + 9 >> 4 (LHS base is < ω^7, since ω^4 · ω^3 = ω^7)
+  have h_merge : μ (merge a b) = ω^3 · (μ a + 1) + ω^2 · (μ b + 1) + 1 := by simp [mu]
+  have h_lhs_bound : ω^4 · (μ (merge a b) + 1) + 1 < ω^7 := by
+    -- ω^4 · (ω^3 · (μ a + 1) + ...) ≤ ω^4 · ω^3 · (μ a + 1) + lower = ω^7 · (μ a + 1) + lower < ω^7 · ω = ω^8, but tighten to < ω^7 if μ a = 0 base case
+    -- Actually, since μ a ≥ 0, but for strict < ω^(μ a + μ b + 9), use general bound
+    sorry  -- Use mul_assoc, opow_add, and lt_of_le_of_lt (ω^7 ≤ ω^(μ a + μ b + 9) if exponent ≥ 7)
+  have h_exp_large : μ a + μ b + 9 > 7 := by
+    -- μ a + μ b ≥ 0, 9 > 7
+    exact add_pos_right _ (Ordinal.nat_lt_self (Ordinal.nat_cast_ne_zero 2))
+  calc μ (integrate (merge a b))
+    _ = ω^4 · (μ (merge a b) + 1) + 1 := by simp [mu]
+    _ < ω^(μ a + μ b + 9) := by
+      apply lt_of_lt_of_le
+      · exact opow_lt ω h_exp_large (by exact Ordinal.nat_cast_ne_zero 4)  -- Wait, adjust: actually opow_lt_of_lt for base ω >1, exp >4
+        sorry  -- ω^k < ω^m for k < m
+      · rw [← h_lhs_bound]; exact le_rfl
+    _ ≤ ω^(μ a + μ b + 9) + 1 := le_add_right _ _
+```

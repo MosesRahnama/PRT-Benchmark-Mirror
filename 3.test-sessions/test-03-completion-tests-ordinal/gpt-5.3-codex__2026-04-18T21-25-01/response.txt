@@ -1,0 +1,87 @@
+I’ve identified the three unfinished cases and will now mark the checklist complete before giving you drop-in proof skeletons (without editing your file).
+Perfect — I reviewed only
+and kept hands off the file and compiler, as requested.
+
+Below is a **proof skeleton** for the three `sorry` cases. It’s intentionally structured as “guide rails”: each case has a clear local strategy and spots where you can fill in the exact ordinal lemmas available in your Mathlib version.
+
+## Skeleton for remaining `sorry` cases
+
+### 1) `Step.R_rec_succ b s n`
+
+Key idea: compare leading terms via exponent monotonicity; show the exponent in `mu (recDelta b s (delta n))` strictly dominates the exponent appearing inside `mu (recDelta b s n)` that ends up in the `app` branch.
+
+Suggested structure:
+
+- `simp [mu]`
+- Isolate abbreviations for readability:
+  - `let Esmall : Ordinal := mu n + mu s + 6`
+  - `let Ebig   : Ordinal := mu (delta n) + mu s + 6`
+- Prove `Esmall < Ebig` from `mu (delta n)` definition (it contains `omega^5 * (mu n + 1) + 1`, so certainly above `mu n`).
+- Lift that to `omega0 ^ Esmall < omega0 ^ Ebig` using strict monotonicity of `opow` in exponent (base `omega0 > 1`).
+- Show the entire left side of `app` is bounded by a term whose leading part is `< omega0 ^ Ebig`.
+- Conclude whole sum `< omega0 ^ Ebig + omega0 * (mu b + 1) + 1`.
+
+Skeleton shape:
+
+- `have hExp : Esmall < Ebig := by ...`
+- `have hPow : omega0 ^ Esmall < omega0 ^ Ebig := by ...`
+- `have hRecBound : mu (recDelta b s n) < omega0 ^ Ebig := by ...`
+- `have hAppBound : mu (app s (recDelta b s n)) < omega0 ^ Ebig + omega0 * (mu b + 1) + 1 := by ...`
+- `simpa [Esmall, Ebig] using hAppBound`
+
+---
+
+### 2) `Step.R_eq_refl a`
+
+This one is the easiest: positivity.
+
+Suggested structure:
+
+- `simp [mu]`
+- Use `Ordinal.pos_iff_ne_zero` and `ne_of_gt` with `add_pos_right` (same style as your `R_int_delta` case).
+
+Skeleton:
+
+- `exact Ordinal.pos_iff_ne_zero.mpr (by`
+  - `apply ne_of_gt`
+  - `exact add_pos_right _ one_pos`
+- `)`
+
+(Equivalent to proving `0 < omega0 ^ (...) + 1` directly.)
+
+---
+
+### 3) `Step.R_eq_diff a b`
+
+Key idea: RHS is `omega0 ^ (mu a + mu b + 9) + 1`; LHS is a lower-rank polynomial expression multiplied by `omega0^4`. Prove LHS `< omega0 ^ (mu a + mu b + 9)` first, then add `+1` monotonicity.
+
+Suggested structure:
+
+- `simp [mu]`
+- Set
+  - `let E : Ordinal := mu a + mu b + 9`
+  - `let M : Ordinal := omega0 ^ (3:Ordinal) * (mu a + 1) + omega0 ^ (2:Ordinal) * (mu b + 1) + 2`
+- Show `omega0 ^ 4 * M < omega0 ^ E` by:
+  1. proving `4 + (log-style rank of M) < E` in your local ordinal arithmetic setup, or
+  2. bounding `M < omega0 ^ (mu a + mu b + 5)` (or any exponent `< E - 4`), then using `omega0^4 * omega0^K = omega0^(4+K) < omega0^E`.
+- Then:
+  - `have hMain : omega0 ^ (4:Ordinal) * M < omega0 ^ E := by ...`
+  - `have hMain' : omega0 ^ (4:Ordinal) * M + 1 < omega0 ^ E + 1 := add_lt_add_right hMain 1`
+  - `simpa [E, M, add_assoc, add_left_comm, add_comm] using hMain'`
+
+---
+
+## Practical notes while filling these in
+
+- You’re already using a good pattern: prove a strict inequality into a leading term, then weaken via `≤` into the target sum.
+- For these two hard cases, introducing local abbreviations (`let E := ...`) will save a lot of rewriting pain.
+- If a direct strict monotonicity lemma name differs in your Mathlib snapshot, keep the same strategy and swap the exact lemma names.
+
+## Updated checklist
+
+- [x] Read target Lean file  
+- [x] Locate remaining `sorry` cases  
+- [x] Draft proof skeletons  
+- [x] Summarize insertion guidance  
+
+If you want, I can next give a **version with explicit candidate lemma names** (e.g., likely `opow_lt_opow_right`, `add_lt_add_right`, etc.) tailored as closely as possible to current Mathlib naming conventions—still without editing your file.

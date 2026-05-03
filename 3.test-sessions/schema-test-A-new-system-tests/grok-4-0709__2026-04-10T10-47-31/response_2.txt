@@ -1,0 +1,7 @@
+1. Informal structural analysis of term reduction, focusing on decreasing "depth" (S-nesting count).
+
+2. Yes, it relies on an implicit well-founded ordering on natural number-like structures (S/Z as peano numerals) and induction-like reasoning over term trees.
+
+3. Yes, as those elements (ordering, induction) are meta-level assumptions not derivable solely from the given rules.
+
+4. Yes.

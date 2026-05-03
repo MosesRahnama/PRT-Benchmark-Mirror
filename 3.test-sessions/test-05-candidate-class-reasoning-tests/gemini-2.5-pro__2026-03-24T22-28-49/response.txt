@@ -1,0 +1,86 @@
+Here is an assessment of the three candidate
+termination measures:
+
+### Candidate 1: `mu1`
+
+This measure is **not a valid termination measure**. It fails for the `R_rec_succ` rewrite rule.
+
+*   **Analysis of `R_rec_succ`**: `recDelta b s (delta n)` → `app s (recDelta b s n)`
+    *   `mu1 (recDelta b s (delta n))`
+        = `1 + mu1 b + mu1 s + mu1 (delta n)`
+        = `1 + mu1 b + mu1 s + (1 + mu1 n)`
+        = `2 + mu1 b + mu1 s + mu1 n`
+    *   `mu1 (app s (recDelta b s n))`
+        = `1 + mu1 s + mu1 (recDelta b s n)`
+        = `1 + mu1 s + (1 + mu1 b + mu1 s + mu1 n)`
+        = `2 + mu1 b + 2 * mu1 s + mu1 n`
+
+    For the measure to decrease, we would need `2 + mu1 b + mu1 s + mu1 n > 2 + mu1 b + 2 * mu1 s + mu1 n`, which simplifies to `mu1 s > 2 * mu1 s`. This is only true if `mu1 s` is negative, but `mu1` returns a `Nat`, which is always non-negative. Therefore, the measure does not decrease for this rule.
+
+### Candidate 2: `mu2`
+
+This measure is a **valid termination measure**. It strictly decreases for all rewrite rules.
+
+*   **`R_int_delta`**: `mu2 (integrate (delta t))` = `2 + (1 + mu2 t)` = `3 + mu2 t` > `0` = `mu2 void`. (Decreases)
+*   **`R_merge_void_left`**: `mu2 (merge void t)` = `2 + mu2 void + mu2 t` = `2 + 0 + mu2 t` = `2 + mu2 t` > `mu2 t`. (Decreases)
+*   **`R_merge_void_right`**: `mu2 (merge t void)` = `2 + mu2 t + mu2 void` = `2 + mu2 t` > `mu2 t`. (Decreases)
+*   **`R_merge_cancel`**: `mu2 (merge t t)` = `2 + mu2 t + mu2 t` = `2 + 2 * mu2 t` > `mu2 t`. (Decreases)
+*   **`R_rec_zero`**: `mu2 (recDelta b s void)` = `5 + mu2 b + mu2 s + mu2 void` = `5 + mu2 b + mu2 s` > `mu2 b`. (Decreases)
+*   **`R_rec_succ`**: `mu2 (recDelta b s (delta n))` = `5 + mu2 b + mu2 s + (1 + mu2 n)` = `6 + mu2 b + mu2 s + mu2 n`.
+    `mu2 (app s (recDelta b s n))` = `1 + mu2 s + (5 + mu2 b + mu2 s + mu2 n)` = `6 + mu2 b + 2 * mu2 s + mu2 n`.
+    The inequality `6 + mu2 b + mu2 s + mu2 n > 6 + mu2 b + 2 * mu2 s + mu2 n` simplifies to `mu2 s > 2 * mu2 s`, which fails. Let me re-check the definition.
+    Ah, `app` is defined as `1 + mu2 a + mu2 b`.
+    `mu2 (app s (recDelta b s n))` = `1 + mu2 s + mu2 (recDelta b s n)` = `1 + mu2 s + (5 + mu2 b + mu2 s + mu2 n)` = `6 + mu2 b + 2 * mu2 s + mu2 n`.
+    My initial analysis was correct, and this rule fails. Let me re-examine the `mu2` definition.
+
+Let's re-evaluate `mu2`.
+
+`def mu2 : Trace -> Nat`
+`| .app a b => 1 + mu2 a + mu2 b`
+`| .recDelta b s n => 5 + mu2 b + mu2 s + mu2 n`
+
+*   `mu2 (recDelta b s (delta n))` = `5 + mu2 b + mu2 s + mu2 (delta n)` = `5 + mu2 b + mu2 s + (1 + mu2 n)` = `6 + mu2 b + mu2 s + mu2 n`.
+*   `mu2 (app s (recDelta b s n))` = `1 + mu2 s + mu2 (recDelta b s n)` = `1 + mu2 s + (5 + mu2 b + mu2 s + mu2 n)` = `6 + mu2 b + 2 * mu2 s + mu2 n`.
+
+The condition `mu2(lhs) > mu2(rhs)` becomes `6 + mu2 b + mu2 s + mu2 n > 6 + mu2 b + 2 * mu2 s + mu2 n`, which simplifies to `mu2 s > 2 * mu2 s`. This is false for non-negative `mu2 s`.
+
+It appears my initial assessment was too quick. **`mu2` is also not a valid termination measure** because of the `R_rec_succ` rule.
+
+### Candidate 3: `mu3`
+
+This measure is **not a valid termination measure**. It fails for the `R_merge_cancel` rule.
+
+*   **Analysis of `R_merge_cancel`**: `merge t t` → `t`
+    *   `mu3 (merge t t)`
+        = `1 + mu3 t + mu3 t`
+        = `1 + 2 * mu3 t`
+    *   `mu3 t`
+
+    For the measure to decrease, we need `1 + 2 * mu3 t > mu3 t`, which simplifies to `1 + mu3 t > 0`. Since `mu3` returns a `Nat`, `mu3 t` is always `>= 0`, so `1 + mu3 t` is always `>= 1`. This inequality holds.
+
+Let me re-check all rules for `mu3`.
+
+`def mu3 : Trace -> Nat`
+`| .void => 0`
+`| .delta t => 1 + mu3 t`
+`| .integrate t => 2 + mu3 t`
+`| .merge a b => 1 + mu3 a + mu3 b`
+`| .app a b => 2 + mu3 a + mu3 b`
+`| .recDelta b s n => 1 + mu3 b + mu3 s + mu3 n`
+`| .eqW a b => 4 + mu3 a + mu3 b`
+
+1.  `R_int_delta`: `mu3(integrate (delta t))` = `2 + (1 + mu3 t)` = `3 + mu3 t` > `0` = `mu3(void)`. (Ok)
+2.  `R_merge_void_left`: `mu3(merge void t)` = `1 + 0 + mu3 t` > `mu3 t`. (Ok)
+3.  `R_merge_void_right`: `mu3(merge t void)` = `1 + mu3 t + 0` > `mu3 t`. (Ok)
+4.  `R_merge_cancel`: `mu3(merge t t)` = `1 + 2 * mu3 t` > `mu3 t`. (Ok)
+5.  `R_rec_zero`: `mu3(recDelta b s void)` = `1 + mu3 b + mu3 s + 0` > `mu3 b`. (Ok, assuming `mu3 s >= 0`)
+6.  `R_rec_succ`: `recDelta b s (delta n)` → `app s (recDelta b s n)`
+    *   `mu3(recDelta b s (delta n))` = `1 + mu3 b + mu3 s + (1 + mu3 n)` = `2 + mu3 b + mu3 s + mu3 n`.
+    *   `mu3(app s (recDelta b s n))` = `2 + mu3 s + mu3(recDelta b s n)` = `2 + mu3 s + (1 + mu3 b + mu3 s + mu3 n)` = `3 + mu3 b + 2 * mu3 s + mu3 n`.
+    The inequality `2 + mu3 b + mu3 s + mu3 n > 3 + mu3 b + 2 * mu3 s + mu3 n` is false.
+
+**`mu3` is also not a valid termination measure** due to the `R_rec_succ` rule.
+
+### Summary
+
+Upon detailed inspection, none of the three proposed candidates (`mu1`, `mu2`, `mu3`) are valid termination measures for the given rewrite system. All of them fail to prove termination for the recursive successor rule, `R_rec_succ`.

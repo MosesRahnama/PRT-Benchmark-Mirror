@@ -1,0 +1,44 @@
+```lean
+-- integrate (delta t) --> void
+| _, _, Step.R_int_delta t => by
+  have hmu : mu void < mu (integrate (delta t)) := by simp [mu]; omega
+  by_cases hk : kappa t = 0
+  · rw [hk]; simp [kappa]; exact drop_right hmu rfl
+  · have : kappa void < kappa (integrate (delta t)) := by simp [kappa]; omega
+    exact drop_left this
+
+-- recDelta b s void --> b
+| _, _, Step.R_rec_zero b s => by
+  have hmu : mu b < mu (recDelta b s void) := by simp [mu]; omega
+  have hk : kappa b = kappa (recDelta b s void) := by simp [kappa]
+  exact drop_right hmu hk
+
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+  have : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+    simp [kappa]
+    apply Nat.lt_of_lt_of_le
+    · exact Nat.lt_succ_self _
+    · omega
+  exact drop_left this
+
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+  have hmu : mu void < mu (eqW a a) := by simp [mu]; omega
+  by_cases hk : kappa a = 0
+  · rw [hk]; simp [kappa]; exact drop_right hmu rfl
+  · have : kappa void < kappa (eqW a a) := by simp [kappa]; omega
+    exact drop_left this
+
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+  have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by simp [mu]; omega
+  have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by simp [kappa]
+  exact drop_right hmu hk
+```
+
+Replace each `sorry` in `theorem measure_decreases` with the corresponding proof above. These proofs use `simp`, `omega` (for arithmetic), and the existing `drop_left`/`drop_right` lemmas. They establish strict lexicographic decrease on `(kappa, mu)` for each rule:
+
+- `R_int_delta`, `R_eq_refl`: Kappa drops (unless already 0, then mu drops).
+- `R_rec_zero`, `R_eq_diff`: Kappa unchanged, mu drops.
+- `R_rec_succ`: Kappa drops by exactly 1.

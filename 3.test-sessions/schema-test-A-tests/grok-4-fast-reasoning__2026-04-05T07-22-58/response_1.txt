@@ -1,0 +1,53 @@
+## Raw Assessment
+
+**Yes, strong normalization is provable from these two rules alone, with no external axioms needed.**
+
+---
+
+### The System
+
+```
+(VAR x y n)
+F(x, y, Z)    -> x
+F(x, y, S(n)) -> G(y, F(x, y, n))
+```
+
+`G` has no rules; it is a free/constructor symbol. The only active defined symbol is `F`.
+
+---
+
+### Why SN Holds
+
+**Structural observation.** The second rule makes a recursive call `F(x, y, n)` where the third argument shrinks from `S(n)` to `n`. The first two arguments are unchanged. The base case `Z` fires rule 1 and eliminates `F` entirely. Since the third argument is a term over `{Z, S}`, its size is finite and decreases by exactly 1 at each application of rule 2. No rule creates a new `F` in a position that could exceed the original; `G` is inert.
+
+---
+
+### Proof Roadmap — Polynomial Interpretation
+
+Define a monotone $\mathbb{N}_{\geq 1}$-valued interpretation $|\cdot|$:
+
+$$|Z| = 1, \quad |S(t)| = |t| + 1$$
+$$|F(x, y, n)| = (|x| + |y| + 1)\cdot|n|$$
+$$|G(y, t)| = |y| + |t| + 1$$
+
+**Rule 1** — $F(x, y, Z) \to x$:
+
+$$\text{LHS} = (|x|+|y|+1)\cdot 1 = |x|+|y|+1 > |x| = \text{RHS} \quad \checkmark$$
+
+**Rule 2** — $F(x, y, S(n)) \to G(y, F(x, y, n))$:
+
+$$\text{LHS} = (|x|+|y|+1)(|n|+1)$$
+$$\text{RHS} = |y| + (|x|+|y|+1)|n| + 1$$
+$$\text{LHS} - \text{RHS} = (|x|+|y|+1) - |y| - 1 = |x| \geq 1 \quad \checkmark$$
+
+Both rules strictly decrease the measure. The interpretation is monotone in all argument positions (coefficients $\geq 1$), so the strict decrease at rule steps propagates to all contexts. By the standard polynomial interpretation theorem, the TRS is **terminating**, and since it is unconditionally left-linear with no extra-variable right-hand sides and the measure covers all subterms, this gives **strong normalization** directly.
+
+---
+
+### What Is Not Needed
+
+- No object-level axioms about `G`.
+- No structural induction schema imported from outside.
+- No assumption about the domain of `x` or `y` beyond "terms of the same signature."
+
+The two rules are self-contained: the measure witnesses SN purely from their syntactic shape.

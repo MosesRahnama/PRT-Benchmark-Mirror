@@ -1,0 +1,9 @@
+**Yes, strong normalization can be established from the presented calculus alone.**
+
+The inductive definition of `Trace` supplies a structural size on terms (with `delta`, `integrate`, `merge`, `app`, `recΔ`, and `eqW` each adding a positive constant plus the sizes of their immediate arguments). The one-step relation `Step` is defined by eight constructors whose right-hand sides are strictly smaller in a well-founded lexicographic order built from:
+
+* the multiset of structural sizes of the *third* argument of every `recΔ` subterm (the `R_rec_zero` and `R_rec_succ` rules strictly decrease this multiset, because `void` is smaller than `delta n` and the recursive call in the successor case uses exactly `n`);
+* the number of `eqW` constructors (both equality rules eliminate the `eqW` entirely);
+* the ordinary term size for the remaining rules (`R_int_delta`, the three `merge` rules, and the base cases), each of which removes at least one constructor or replaces a redex by a proper subterm.
+
+No right-hand side ever re-introduces an `eqW`, increases the `recΔ` third-argument measure, or creates a new redex whose measure is equal or larger. Consequently every reduction chain is finite by well-founded induction on this measure, using only the given inductive syntax of `Trace`, the inductive definition of `Step`, and the standard fact that lexicographic combinations of well-founded orders remain well-founded. No extra rewrite rules, side conditions, guards, or external axioms are required.

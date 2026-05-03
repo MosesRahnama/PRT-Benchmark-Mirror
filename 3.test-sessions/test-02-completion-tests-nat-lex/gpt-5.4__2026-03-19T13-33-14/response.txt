@@ -1,0 +1,140 @@
+, didn’t modify anything, and didn’t run the compiler.
+
+## Suggested skeletons
+
+These are the four branches that look structurally finishable with the current helper lemmas.
+
+```lean
+-- integrate (delta t) --> void
+| _, _, Step.R_int_delta t => by
+    by_cases h : kappa t = 0
+    · have hmu : mu void < mu (integrate (delta t)) := by
+        simp [mu]
+      have hk : kappa void = kappa (integrate (delta t)) := by
+        simp [kappa, h]
+      exact drop_right hmu hk
+    · have hk : kappa void < kappa (integrate (delta t)) := by
+        simpa [kappa] using Nat.pos_of_ne_zero h
+      exact drop_left hk
+```
+
+```lean
+-- recDelta b s void --> b
+| _, _, Step.R_rec_zero b s => by
+    by_cases hsb : kappa s ≤ kappa b
+    · have hmu : mu b < mu (recDelta b s void) := by
+        simp [mu]
+        omega
+      have hk : kappa b = kappa (recDelta b s void) := by
+        simp [kappa, Nat.max_eq_left hsb, Nat.max_eq_left (Nat.zero_le _)]
+      exact drop_right hmu hk
+    · have hkbs : kappa b < kappa s := Nat.lt_of_not_ge hsb
+      have hk : kappa b < kappa (recDelta b s void) := by
+        simpa [kappa,
+          Nat.max_eq_right (Nat.le_of_lt hkbs),
+          Nat.max_eq_left (Nat.zero_le _)] using hkbs
+      exact drop_left hk
+```
+
+```lean
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    by_cases h : kappa a = 0
+    · have hmu : mu void < mu (eqW a a) := by
+        simp [mu]
+      have hk : kappa void = kappa (eqW a a) := by
+        simp [kappa, h]
+      exact drop_right hmu hk
+    · have hk : kappa void < kappa (eqW a a) := by
+        simpa [kappa] using Nat.pos_of_ne_zero h
+      exact drop_left hk
+```
+
+```lean
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by
+      simp [mu]
+      omega
+    have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by
+      simp [kappa]
+    exact drop_right hmu hk
+```
+
+## The troublesome branch
+
+`R_rec_succ` is different. A plain skeleton is easy to write:
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+      -- this is the key missing lemma
+      sorry
+    exact drop_left hk
+```
+
+But with the **current** definitions of `kappa` and `mu`, that key lemma does **not** appear to be true in general.
+
+### Why it looks unprovable as written
+
+Take:
+
+- `b = void`
+- `s = void`
+- `n = delta void`
+
+Then:
+
+- source: `recDelta void void (delta (delta void))`
+- target: `app void (recDelta void void (delta void))`
+
+Their measures compute to:
+
+- `kappa source = 1`
+- `kappa target = 1`
+- `mu source = 3`
+- `mu target = 4`
+
+So the target is **not** lexicographically smaller:
+- first component ties,
+- second component increases.
+
+That means this branch is not just “missing a trick”; it likely needs a **stronger measure**.
+
+## Best next-step skeleton for `R_rec_succ`
+
+If your goal is to keep the theorem shape but finish the proof later, I’d leave that case in a structured placeholder like this:
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    -- This case likely needs a stronger measure.
+    -- With the current `(kappa, mu)`, the target can have the same `kappa`
+    -- and larger `mu`, so neither `drop_left` nor `drop_right` closes it.
+    --
+    -- Intended repair direction:
+    --   1. strengthen the first component so recursive unfolding on `delta`
+    --      strictly decreases;
+    --   2. then prove a lemma of the form
+    --        kappa' (app s (recDelta b s n)) < kappa' (recDelta b s (delta n))
+    --      and finish with `drop_left`.
+    sorry
+```
+
+## What this means for the file
+
+So, in short:
+
+- `R_int_delta`: case split on `kappa t = 0`
+- `R_rec_zero`: case split on whether `kappa s ≤ kappa b`
+- `R_eq_refl`: case split on `kappa a = 0`
+- `R_eq_diff`: direct `drop_right`
+- `R_rec_succ`: current measure seems insufficient; needs redesign, not just proof search
+
+## Checklist
+
+- [x] Read the target Lean file only
+- [x] Identified the five unfinished cases
+- [x] Gave skeletons for the four plausibly provable cases
+- [x] Flagged `R_rec_succ` as measure-failing under the current definitions
+
+If you want, I can next help you design a revised lexicographic measure that makes `R_rec_succ` go through—still without editing the file.

@@ -1,0 +1,7 @@
+1. The previous answer primarily used a termination proof by a well-founded term ordering, specifically the idea that the rules can be oriented by something like lexicographic path ordering, together with the observation that the third argument decreases from $S(n)$ to $n$.
+
+2. Yes. That method depends on an externally chosen proof device: an ordering/measure and the standard finite-term TRS semantics. Those are not fixed by the rewrite rules themselves.
+
+3. Yes, under a strict reading of your boundary. The ordering-based argument uses meta-level proof structure not literally contained in or derivable from the displayed rules alone, so it goes beyond that boundary.
+
+4. Separately from that boundary issue, yes: I still think the system is strongly normalizing in the ordinary first-order finite-term TRS sense. The recursive step strictly descends on the third argument, and there are no rules that can rebuild it or create a cycle.

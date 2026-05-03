@@ -1,0 +1,7 @@
+1. **Primary method:** an external **polynomial interpretation / well-founded ordering** on terms into $\mathbb N$.
+
+2. **Yes.** That method uses a chosen interpretation and decrease ordering that are **not fixed by the rewrite rules themselves**.
+
+3. **Yes, on a strict reading of your boundary.** It is a metatheoretic termination proof method, so it goes beyond “the presented rewrite system alone,” even if it does **not** add new object-level rewrite axioms.
+
+4. **Yes, separately I still think the system is strongly normalizing.** Intuitively, the only recursive step replaces `F(x, y, S(n))` by `F(x, y, n)` inside a `G`, and there are no rules that rewrite `G`, `S`, or `Z`, so the recursion on the third argument can only descend finitely many times.

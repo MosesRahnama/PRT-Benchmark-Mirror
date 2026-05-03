@@ -1,0 +1,38 @@
+## Assessment
+
+You can establish strong normalization from the calculus alone. The rewrite system in
+is a finite first‑order TRS with no rule that reintroduces any left‑hand‑side constructor in a way that can loop back, and the one “expanding” rule `R_apple_orange` still decreases under a standard well‑founded ordering. This is provable without importing any extra axioms or adding guards beyond the given rules.
+
+## Proof roadmap (within the boundary)
+
+A clean, self‑contained route is a **lexicographic path ordering (LPO)** (or any equivalent recursive path ordering):
+
+1. **Choose a precedence** on constructors that satisfies:
+   - `banana > pear`
+   - `cherry > mango`, `cherry > peach`
+   - `mango > plum`, `cherry > plum`
+   - (the rest can be arbitrary; e.g., `cherry > banana > mango > peach > pear > grape > plum`)
+2. **Use LPO’s subterm property** to orient the collapsing rules:
+   - `peach plum t → t`, `peach t plum → t`, `peach t t → t`, `banana b s plum → b`, `cherry a a → plum` are all strictly decreasing because the RHS is a proper subterm (or smaller by precedence for `plum`).
+3. **Orient the only “structural” rule**  
+   `banana b s (grape n) → pear s (banana b s n)`  
+   with LPO and *lexicographic status* for `banana`:
+   - Since `banana > pear`, it suffices to show the LHS is larger than each RHS argument.
+   - LHS > `s` (subterm).
+   - LHS > `banana b s n` because roots match and `grape n > n`, so the third argument strictly decreases.
+4. **Orient the conditional rule**  
+   `cherry a b → mango (peach a b)` (for `a ≠ b`)  
+   using precedence `cherry > mango` and `cherry > peach`. The side condition does not affect termination; even the unconditional version decreases.
+5. **Conclude**: LPO is well‑founded, all rules strictly decrease, hence **no infinite `Step` chains** (strong normalization).
+
+This stays fully within the given syntax and rules; it does not require any extra rewrite rules or external axioms.
+
+## ✅ Updated todo list
+
+- [x] Read
+for the exact rewrite system.
+- [x] Check for potential non‑termination patterns and assess rule structure.
+- [x] Provide an internal proof roadmap using a standard termination ordering.
+- [x] Deliver concise conclusion within the requested boundary.
+
+If you want, I can sketch a Lean proof structure for the LPO argument (still without modifying files).

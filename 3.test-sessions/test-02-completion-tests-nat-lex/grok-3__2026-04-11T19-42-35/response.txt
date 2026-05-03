@@ -1,0 +1,37 @@
+I'll provide a proof skeleton for the remaining five cases in the `measure_decreases` theorem from the provided Lean 4 file. I won't modify the file or run any tools, as requested.
+
+Below is a skeleton for the proofs of the remaining cases in the `measure_decreases` theorem. Each case focuses on showing that the lexicographic measure `(kappa, mu)` decreases with each step.
+
+- **integrate (delta t) → void** (`R_int_delta`):
+  - Here, `kappa` of `void` is 0, and `kappa` of `integrate (delta t)` is `kappa t` (since `integrate` and `delta` are transparent to `kappa`). Since `kappa t` is a natural number, it is at least 0, so `kappa` either decreases or stays the same.
+  - If `kappa t = 0`, then `kappa` ties, and we check `mu`. `mu` of `void` is 0, and `mu` of `integrate (delta t)` is `1 + mu t`, which is at least 1, so `mu` strictly decreases.
+  - If `kappa t > 0`, then `kappa` strictly decreases from `kappa t` to 0, which is enough for lexicographic decrease.
+  - Use `drop_left` if `kappa` decreases, otherwise use `drop_right` with the `mu` decrease.
+
+- **recDelta b s void → b** (`R_rec_zero`):
+  - `kappa` of `recDelta b s void` is `max (max (kappa b) (kappa s)) (kappa void)`, which simplifies to `max (kappa b) (kappa s)`, since `kappa void = 0`.
+  - `kappa` of `b` is just `kappa b`, so `kappa` may decrease or tie (since `max (kappa b) (kappa s)` is at least `kappa b`).
+  - If `kappa s > kappa b`, then `kappa` ties at `kappa s`, and we check `mu`. `mu` of `recDelta b s void` is `3 + mu b + mu s + mu void`, which is `3 + mu b + mu s`, and `mu` of `b` is `mu b`, so `mu` strictly decreases by at least 3 + `mu s`.
+  - If `kappa s ≤ kappa b`, then `kappa` ties at `kappa b`, and `mu` still decreases.
+  - Use `drop_right` since `kappa` ties and `mu` decreases.
+
+- **recDelta b s (delta n) → app s (recDelta b s n)** (`R_rec_succ`):
+  - `kappa` of `recDelta b s (delta n)` is `max (max (kappa b) (kappa s)) (kappa n) + 1`, due to the `delta` wrapper.
+  - `kappa` of `app s (recDelta b s n)` is `max (kappa s) (kappa (recDelta b s n))`, and `kappa (recDelta b s n)` is `max (max (kappa b) (kappa s)) (kappa n)`, so the overall `kappa` is `max (kappa s) (max (max (kappa b) (kappa s)) (kappa n))`, which simplifies to `max (max (kappa b) (kappa s)) (kappa n)`.
+  - Thus, `kappa` strictly decreases by 1 (from `... + 1` to `...`).
+  - Use `drop_left` since `kappa` decreases.
+
+- **eqW a a → void** (`R_eq_refl`):
+  - `kappa` of `eqW a a` is `max (kappa a) (kappa a)`, which is `kappa a`.
+  - `kappa` of `void` is 0, so `kappa` decreases or ties (if `kappa a = 0`).
+  - If `kappa a > 0`, `kappa` decreases, which is enough.
+  - If `kappa a = 0`, check `mu`. `mu` of `eqW a a` is `4 + mu a + mu a = 4 + 2 * mu a`, and `mu` of `void` is 0, so `mu` decreases.
+  - Use `drop_left` if `kappa` decreases, otherwise `drop_right`.
+
+- **eqW a b → integrate (merge a b)** (`R_eq_diff`):
+  - `kappa` of `eqW a b` is `max (kappa a) (kappa b)`.
+  - `kappa` of `integrate (merge a b)` is `kappa (merge a b)` (since `integrate` is transparent), which is `max (kappa a) (kappa b)`, so `kappa` ties.
+  - Since `kappa` ties, check `mu`. `mu` of `eqW a b` is `4 + mu a + mu b`, and `mu` of `integrate (merge a b)` is `1 + mu (merge a b) = 1 + (2 + mu a + mu b) = 3 + mu a + mu b`, so `mu` decreases by 1 (from 4 to 3).
+  - Use `drop_right` since `kappa` ties and `mu` decreases.
+
+These skeletons outline the reasoning for each case, focusing on whether `kappa` decreases (using `drop_left`) or ties while `mu` decreases (using `drop_right`). You can implement these proofs by filling in the details with appropriate Lean tactics and simplifications using the provided `@[simp]` lemmas.

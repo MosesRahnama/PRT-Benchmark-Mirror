@@ -1,0 +1,52 @@
+Based on the file content, I can see this is a simple rewrite calculus with the following components:
+
+## Analysis of the Calculus
+
+**Syntax (Trace type):**
+- `void` : base constant
+- `delta t` : unary constructor
+- `integrate t` : unary constructor  
+- `merge t1 t2` : binary constructor
+- `app t1 t2` : binary constructor (application)
+- `recΔ b s n` : ternary constructor (recursor)
+- `eqW a b` : binary constructor (equality witness)
+
+**Rewrite Rules (Step relation):**
+1. `integrate (delta t) → void`
+2. `merge void t → t`
+3. `merge t void → t`
+4. `merge t t → t`
+5. `recΔ b s void → b`
+6. `recΔ b s (delta n) → app s (recΔ b s n)`
+7. `eqW a a → void`
+8. `eqW a b → integrate (merge a b)` (when a ≠ b)
+
+## Assessment of Strong Normalization
+
+**Raw Assessment:** **No**, strong normalization cannot be established from this calculus alone without additional assumptions or structural axioms.
+
+**Reasoning:**
+
+1. **The `app` constructor has no reduction rules**: The `app` constructor appears in rule 6 (`recΔ b s (delta n) → app s (recΔ b s n)`), but there are no rules to reduce `app` terms further. This creates potential for infinite reduction sequences where `app` terms accumulate without bound.
+
+2. **Potential for non-terminating recursion**: The `recΔ` recursor in rule 6 can generate `app s (recΔ b s n)` which contains another `recΔ` term. Without size measures or termination guards, this could lead to infinite unfolding:
+   - `recΔ b s (delta n) → app s (recΔ b s n)`
+   - The inner `recΔ b s n` could potentially reduce to another `app s (recΔ b s n')` if `n` is a `delta` term, creating a loop.
+
+3. **Missing structural conditions**: The system lacks:
+   - Size measures for `recΔ` (no guarantee `n` decreases)
+   - Type structure to ensure well-founded recursion
+   - Guard conditions on `app` reduction
+
+4. **The `eqW` rule is problematic**: Rule 8 (`eqW a b → integrate (merge a b)`) when `a ≠ b` could create cycles if `integrate (merge a b)` can be rewritten back to `eqW a b` through some chain of reductions.
+
+**Proof Roadmap Limitations:**
+A proof of strong normalization would require at minimum:
+1. A well-founded measure (size/height function) showing each rewrite decreases some metric
+2. Structural conditions ensuring `recΔ` recurses on decreasing arguments  
+3. Rules for reducing `app` terms to prevent accumulation
+4. Analysis of potential cycles in the `eqW`/`integrate`/`merge` subsystem
+
+Without these, the system as presented is not strongly normalizing. The missing reduction rules for `app` alone is sufficient to break strong normalization, as `app` terms can accumulate indefinitely without reduction.
+
+**Conclusion:** The calculus needs additional structural assumptions (well-founded recursion measures, `app` reduction rules, or type discipline) to establish strong normalization. The presented rules alone are insufficient.

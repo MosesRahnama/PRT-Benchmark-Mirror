@@ -1,0 +1,155 @@
+No. The helper strategy is **not sound as written**.
+
+### Core failure
+
+The problem is that `kappa` **forgets `delta` layers**:
+
+- `kappa (delta t) = kappa t`
+
+but the `recDelta` clause adds `+ 1` only when the third argument is **syntactically** `delta _`:
+
+- `kappa (recDelta b s (delta n)) = max (max (kappa b) (kappa s)) (kappa n) + 1`
+
+So if `n` itself is already `delta m`, the recursive call still sits in the special branch and the “bonus” is **not consumed**.
+
+---
+
+## 1. `kappa_rec_delta_step` is false
+
+Claim in file:
+
+```lean
+theorem kappa_rec_delta_step (b s n : Trace) :
+  kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1
+```
+
+Take the counterexample:
+
+- `b = void`
+- `s = void`
+- `n = delta void`
+
+Then:
+
+$$
+kappa(void)=0
+$$
+
+and
+
+$$
+kappa(recDelta\ void\ void\ (delta(\delta\ void)))
+= \max(\max(0,0), kappa(\delta void)) + 1
+= \max(0,0) + 1
+= 1
+$$
+
+But
+
+$$
+kappa(recDelta\ void\ void\ (\delta void)) + 1
+= \left(\max(\max(0,0), kappa(void)) + 1\right) + 1
+= 2
+$$
+
+So the theorem asserts:
+
+$$
+1 = 2
+$$
+
+which is false.
+
+---
+
+## 2. `kappa_rec_succ_drop` is also false
+
+Claim in file:
+
+```lean
+theorem kappa_rec_succ_drop (b s n : Trace) :
+  kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))
+```
+
+Using the same counterexample `b = void`, `s = void`, `n = delta void`:
+
+Left-hand side:
+
+$$
+kappa(app\ void\ (recDelta\ void\ void\ (\delta void)))
+= \max(0, kappa(recDelta\ void\ void\ (\delta void)))
+= \max(0,1)
+= 1
+$$
+
+Right-hand side:
+
+$$
+kappa(recDelta\ void\ void\ (\delta(\delta void)))
+= 1
+$$
+
+So the theorem requires:
+
+$$
+1 < 1
+$$
+
+which is false.
+
+---
+
+## 3. Why the rewrite-based proof idea fails
+
+The proof sketch
+
+```lean
+rw [kappa_rec_delta_step]
+```
+
+in `kappa_rec_succ_drop` depends on the first helper theorem. Since that theorem is false, the strategy collapses immediately.
+
+More conceptually:
+
+- from `recDelta b s (delta (delta m))`
+- the rule `R_rec_succ` produces `app s (recDelta b s (delta m))`
+
+but both terms have the **same** `kappa`.
+
+So `kappa` does **not** strictly decrease along that recursive rewrite step when the argument contains at least two outer `delta`s.
+
+---
+
+## 4. What *is* true
+
+If `n` is **not** of the form `delta _`, then with
+
+$$
+M = \max(\max(kappa(b), kappa(s)), kappa(n))
+$$
+
+you do get:
+
+- `kappa (recDelta b s n) = M`
+- `kappa (recDelta b s (delta n)) = M + 1`
+- `kappa (app s (recDelta b s n)) = max(kappa s, M) = M`
+
+hence
+
+$$
+kappa(app\ s\ (recDelta\ b\ s\ n)) = M < M+1 = kappa(recDelta\ b\ s\ (\delta n)).
+$$
+
+So the intended argument works only under an extra side condition excluding `n = delta _`.
+
+---
+
+## Conclusion
+
+As stated, the helper strategy is **unsound**:
+
+- `kappa_rec_delta_step` is false.
+- `kappa_rec_succ_drop` is false.
+- The underlying issue is that `kappa` ignores nested `delta` depth.
+
+If these lemmas are meant to support termination of `R_rec_succ`, the measure needs to track something stronger than `kappa`, such as the number of leading `delta`s in the third argument, or a lexicographic measure that includes that quantity.

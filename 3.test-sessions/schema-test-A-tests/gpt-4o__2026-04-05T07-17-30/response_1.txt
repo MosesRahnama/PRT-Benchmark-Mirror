@@ -1,0 +1,23 @@
+The rewrite system presented consists of:
+
+1. **Variables**: `x`, `y`, `n`.
+2. **Rules**:
+   - `F(x, y, Z) -> x`
+   - `F(x, y, S(n)) -> G(y, F(x, y, n))`
+
+### Assessment:
+Strong normalization cannot be established from the presented rewrite system alone. Here's why:
+
+1. **Recursive Rule**: The second rule, `F(x, y, S(n)) -> G(y, F(x, y, n))`, introduces a recursive call to `F` with the argument `n`. Without additional constraints or assumptions about `n` (e.g., that `n` decreases in some well-founded order), there is no guarantee that the recursion terminates.
+
+2. **No Structural Axioms**: The system does not include structural axioms or assumptions about the nature of `S` (e.g., that `S` represents a successor function on natural numbers) or `Z` (e.g., that `Z` is a base case). Without these, the rewrite system lacks the necessary structure to ensure termination.
+
+3. **Potential Infinite Reduction**: If `n` is not well-founded or if `S` does not have a base case like `Z`, the term `F(x, y, S(S(...)))` could lead to infinite reductions.
+
+### Proof Roadmap (if structural axioms were available):
+If we assume `S` represents a successor function and `Z` is the base case:
+1. **Define a Measure**: Assign a natural number measure to `n` (e.g., `|n|` where `|Z| = 0` and `|S(n)| = |n| + 1`).
+2. **Show Decrease**: Prove that the recursive call `F(x, y, n)` in the second rule strictly decreases the measure of `n`.
+3. **Well-Foundedness**: Use the well-foundedness of natural numbers to argue that the recursion terminates.
+
+Without these assumptions, the system as presented does not provide sufficient information to establish strong normalization.

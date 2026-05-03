@@ -1,0 +1,35 @@
+**Assessment**
+
+The rewrite system defined by the inductive relation `Step` is **strongly normalising** on its own. No additional structural axioms, guards, side‑conditions, or external assumptions are needed to prove termination.
+
+**Why it terminates**
+
+All rewrite rules are *decreasing* with respect to a simple well‑founded measure on `Trace` terms, e.g.
+
+\[
+\mu(t)=\text{number of constructors in }t
+\]
+
+(we may give a slightly higher weight to the `delta` constructor, but any linear combination works).
+
+| Rule | Left‑hand side | Right‑hand side | Effect on µ |
+|------|----------------|----------------|------------|
+| `R_int_delta` | `integrate (delta t)` | `void` | drops at least two constructors (`integrate`, `delta`). |
+| `R_merge_void_left/right` | `merge void t` / `merge t void` | `t` | removes the `merge` node. |
+| `R_merge_cancel` | `merge t t` | `t` | removes one `merge`. |
+| `R_rec_zero` | `recΔ b s void` | `b` | removes the `recΔ` node. |
+| `R_rec_succ` | `recΔ b s (delta n)` | `app s (recΔ b s n)` | replaces `delta n` by a strictly smaller `n`; the total number of constructors strictly decreases. |
+| `R_eq_refl` | `eqW a a` | `void` | removes `eqW`. |
+| `R_eq_diff` | `eqW a b` | `integrate (merge a b)` | replaces `eqW` (1 node) by `integrate` + `merge` (2 nodes), but note that **no rule ever produces `eqW` on the right‑hand side**. Hence any `eqW` can be eliminated in one step and never re‑appears. |
+
+Because every rule either removes a constructor or replaces a term with a strictly smaller one (in the case of `recΔ`), the measure µ strictly decreases along any `Step` reduction. Since µ is a natural number, infinite descending chains are impossible.
+
+**Proof roadmap (within the given boundary)**  
+
+1. **Define a measure** `μ : Trace → ℕ` (e.g., total constructor count, giving `delta` a weight of 2 to handle the `recΔ` case).  
+2. **Show** for each constructor of `Step` that `μ(lhs) > μ(rhs)`.  
+   - The cases above give the required inequalities.  
+3. Conclude that `μ` is a *ranking function* for the relation `Step`.  
+4. By the standard well‑foundedness argument, any reduction sequence must be finite; therefore the system is **strongly normalising**.
+
+No extra axioms, side‑conditions, or hidden assumptions are required beyond the syntax and the seven rewrite rules already present.

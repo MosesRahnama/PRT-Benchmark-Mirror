@@ -1,0 +1,67 @@
+Good, let me examine this rewrite calculus. I have:
+
+**Syntax (Trace):**
+- plum (constant)
+- grape : Trace → Trace (unary)
+- mango : Trace → Trace (unary)
+- peach : Trace → Trace → Trace (binary)
+- pear : Trace → Trace → Trace (binary)
+- banana : Trace → Trace → Trace → Trace (ternary)
+- cherry : Trace → Trace → Trace (binary)
+
+**Rewrite Rules:**
+1. mango(grape(t)) → plum
+2. peach(plum, t) → t
+3. peach(t, plum) → t
+4. peach(t, t) → t
+5. banana(b, s, plum) → b
+6. banana(b, s, grape(n)) → pear(s, banana(b, s, n))
+7. cherry(a, a) → plum
+8. cherry(a, b) → mango(peach(a, b)) (when a ≠ b)
+
+Let me check if this termination immediately. Rule 6 is problematic:
+banana(b, s, grape(n)) → pear(s, banana(b, s, n))
+
+This creates a new application of banana with potentially the same or larger complexity. We need to analyze this more carefully.
+
+Let me think about whether this terminates:
+- Rules 1-5, 7-8 seem to simplify things
+- Rule 6 is the key: banana(b, s, grape(n)) → pear(s, banana(b, s, n))
+
+The third argument goes from grape(n) to n (strictly decreases), but we add a new operator pear on the outside. So the structure increases but the depth of the third argument decreases.
+
+For strong normalization, we need to prove that all reduction sequences terminate. 
+
+I should use a lexicographic ordering or weighted measure to establish this. The approach would be to define a complexity function mapping terms to natural numbers, then verify each rule decreases it. Since the measure is well-founded, termination follows. For instance, I could assign weights where plum has weight 0, unary operators add 1, and binary/ternary operators combine their arguments' weights—this way rule 6's decrease in the third argument's depth outweighs the addition of pear. replaced by n in the third argument of banana, so the grape-depth strictly decreases there. For a well-founded measure, I can combine: first, the sum of all grape-depths and mango-depths (which always decrease), and second, total term size as a tiebreaker.
+
+Looking at the reduction rules systematically: rules 1-5 all strictly decrease term size (mango(grape(t)) → plum, peach eliminations, and banana(b, s, plum) → b). Rule 6 is the tricky one where grape-depth in the third argument of banana decreases even if overall size doesn't immediately shrink.
+
+For rule 8, cherry(a, b) → mango(peach(a, b)) expands the term but introduces structures that can only reduce further if peach(a, b) becomes grape(...) for the mango to apply. This means cherry(a, b) where a ≠ b creates mango(peach(a, b)), which then requires peach(a, b) to match a grape pattern to make progress—otherwise it's stuck.
+
+If neither a nor b equals plum and a ≠ b, then peach(a, b) won't reduce, leaving mango(peach(a, b)) as a normal form. The reduction still terminates even though it produces a stuck term.
+
+I need a more rigorous approach to verify termination. Let me construct a measure that accounts for all the reduction patterns.
+
+The key insight is that rule 6 is the only one increasing term size, but it transforms the third argument of banana from grape constructors into plain numbers. I can build an ordering where:
+- The maximum nesting depth of banana with grape arguments decreases under rule 6
+- All other rules decrease overall term size or maintain compatibility with this ordering
+
+A lexicographic measure should work: first prioritize positions where rule 6 applies, then track grape and mango depths, finally using total size as a tiebreaker.
+
+Rule 1 eliminates mango wrapping grape. Rules 2-5 and 7 all reduce size directly. Rule 6 strips away the grape structure from banana's third argument. But rule 8 creates a mango constructor, which complicates things—I need to verify it doesn't cause issues with the ordering.
+
+The real question is whether rule 8 can generate infinite chains. When cherry(a, b) with a ≠ b becomes mango(peach(a, b)), that mango only reduces if peach(a, b) is itself a grape, which it isn't. So rule 8 produces terms that don't immediately feed back into rule 1. Checking for cycles: can cherry(a, b) eventually produce cherry(a, b) again through a sequence of reductions?
+
+Following the path: cherry(a, b) → mango(peach(a, b)) → stuck, since mango(peach(a, b)) needs its argument to be grape(...) to reduce further, but peach only yields its arguments or plum. This means no infinite loops exist.
+
+For strong normalization, a lexicographic measure on (grape_banana_depth, mango_count, size) should work. Most rules decrease mango_count, while others reduce the structural complexity.
+
+Rule 6 specifically targets the first component by decreasing grape nesting depth. Rule 1 handles the second component. The remaining rules shrink the term size. Rule 8 increases mango_count, but placing this at the end of the ordering hierarchy ensures termination—the earlier components dominate, and stuck terms from rule 8 don't generate infinite reduction chains.
+
+I should verify this more rigorously by checking whether counterexamples exist. For instance, cherry(grape(...), grape(...)) either terminates immediately if both arguments are identical, or gets stuck if they differ. The coffee structures also need examination given that rule 6 is the only one preserving size while rule 8 complicates matters. A cleaner approach: establish that size decreases weakly across all rules, with at least one measure strictly decreasing whenever size stays constant or grows.
+
+Rules 1-5 and 7 all strictly reduce size. Rule 6 preserves size but strictly decreases the grape-count within the banana's third component. Rule 8 increases size, yet cherry can only apply when its arguments differ—once it produces mango(peach(a, b)), that structure can't cycle back to cherry unless peach reduces, which only happens under specific conditions that contradict the inequality assumption. This means rule 8 fires at most once per cherry term before getting stuck. The system appears to terminate.
+
+To verify this rigorously, I can define a lexicographic measure μ(t) = (m(t), s(t)) where s(t) counts constructors and m(t) counts banana-grape pairs. Most rules decrease s(t) directly. Rule 6 preserves s(t) while strictly decreasing m(t). Rule 8 increases s(t) but introduces no new banana-grape pairs, and the resulting mango-peach structure prevents any looping behavior. This ensures termination.
+
+However, I should double-check rule 8 more carefully. When cherry(a, b) reduces to mango(peach(a, b)), the peach term is inert unless a or b has a specific form. If a = plum, then peach(plum, b) → b, giving mango(b), which only reduces further if b itself is reducible. Since there's no forced creation of new cherry terms that would restart the cycle, the measure still decreases overall. The key observation is that rule 8 creates a structure that either terminates quickly or gets stuck, never generating an infinite reduction chain.

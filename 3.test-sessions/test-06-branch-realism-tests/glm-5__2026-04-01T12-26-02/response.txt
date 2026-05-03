@@ -1,0 +1,46 @@
+## Assessment: The Helper Strategy is **Not Sound**
+
+After analyzing the file, I found that **both helper theorems are false** in general. Here's the analysis:
+
+---
+
+### Theorem 1: `kappa_rec_delta_step`
+
+**Claim:** `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`
+
+**Counterexample:** Let `b = void`, `s = void`, `n = delta void`.
+
+| Expression | Calculation | Result |
+|------------|-------------|--------|
+| `kappa (recDelta void void (delta (delta void)))` | `max(max(0, 0), kappa(delta void)) + 1` | `max(0, 0) + 1 = 1` |
+| `kappa (recDelta void void (delta void))` | `max(max(0, 0), kappa void) + 1` | `max(0, 0) + 1 = 1` |
+| RHS: `kappa (recDelta void void (delta void)) + 1` | `1 + 1` | `2` |
+
+**LHS = 1 ≠ 2 = RHS** — The theorem fails.
+
+**Root cause:** The definition of `kappa` has:
+- `recDelta b s (delta n) ↦ max(max(κ b, κ s), κ n) + 1`
+- `recDelta b s n ↦ max(max(κ b, κ s), κ n)` (when `n` is not a `delta`)
+
+When `n` itself is `delta n'`, the term `recDelta b s n` matches the **first** pattern (with `+1`), not the second. The theorem incorrectly assumes `n` never has the form `delta n'`.
+
+---
+
+### Theorem 2: `kappa_rec_succ_drop`
+
+**Claim:** `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`
+
+Using the same counterexample (`b = void`, `s = void`, `n = delta void`):
+
+| Expression | Calculation | Result |
+|------------|-------------|--------|
+| `kappa (app void (recDelta void void (delta void)))` | `max(0, kappa(recDelta void void (delta void)))` | `max(0, 1) = 1` |
+| `kappa (recDelta void void (delta (delta void)))` | As computed above | `1` |
+
+**LHS = 1 ≮ 1 = RHS** — The strict inequality fails.
+
+---
+
+### Conclusion
+
+The helper strategy is **unsound** because both theorems require the additional hypothesis that `n` is not of the form `delta n'` (i.e., `n` must be "delta-free" or "at the boundary"). Without this constraint, the pattern-matching semantics of the `kappa` function produce equal or larger values than expected, breaking the termination argument.

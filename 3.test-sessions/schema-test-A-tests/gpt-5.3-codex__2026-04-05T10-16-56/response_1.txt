@@ -1,0 +1,12 @@
+Yes — from the rewrite rules alone, strong normalization is establishable.
+
+A short roadmap:
+
+- Orient the system with a standard reduction ordering (for example, lexicographic path ordering) using precedence F > G (constructors S, Z below both).
+- Rule 1 decreases by subterm: F(x,y,Z) → x, and the right side is a proper subterm of the left.
+- Rule 2 also decreases: F(x,y,S(n)) → G(y, F(x,y,n)).
+  - Left root F is above right root G by precedence.
+  - The recursive call argument strictly drops from S(n) to n, so F(x,y,S(n)) > F(x,y,n).
+- No rule rewrites G, S, or Z at the root, and there is no rule that can increase the third argument of F back from n to S(n).
+
+So every rewrite sequence must be finite; strong normalization holds for this TRS.

@@ -1,0 +1,107 @@
+Here’s a focused proof skeleton for the three remaining cases. I’ve kept it Lean-flavored and aligned with your existing style, but left the critical ordinal arithmetic steps as clearly marked subgoals. This should let you fill in the precise lemmas you prefer (e.g. `opow_lt_opow`, `opow_pos`, `lt_add_of_pos_right`, `lt_of_lt_of_le`, `le_add_right`, etc.).
+
+## Proof skeletons (remaining cases)
+
+### 1) `R_rec_succ`
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- Goal: mu(app s (recDelta b s n)) < mu(recDelta b s (delta n))
+
+    -- 1) Show mu n < mu (delta n)
+    have h_n : mu n < mu (delta n) := by
+      -- mu (delta n) = omega^5 * (mu n + 1) + 1
+      -- use lt_add_one and le_mul_right to push mu n < omega^5 * (mu n + 1)
+      -- then lt_of_lt_of_le
+      -- ...
+
+    -- 2) Lift to exponent inequality
+    have h_exp : mu n + mu s + (6 : Ordinal) < mu (delta n) + mu s + (6 : Ordinal) := by
+      -- add_lt_add_right twice
+      -- ...
+
+    -- 3) Compare the dominant omega-powers
+    have h_pow :
+        omega0 ^ (mu n + mu s + (6 : Ordinal))
+          < omega0 ^ (mu (delta n) + mu s + (6 : Ordinal)) := by
+      -- use opow_lt_opow omega0_pos h_exp
+      -- ...
+
+    -- 4) Control mu(recDelta b s n) by the big exponent
+    have h_rec :
+        mu (recDelta b s n)
+          < omega0 ^ (mu (delta n) + mu s + (6 : Ordinal)) := by
+      -- expand mu(recDelta b s n), then show each summand
+      -- is < omega^(mu(delta n)+mu s+6), using h_pow
+      -- and “add_lt_add” + “lt_of_lt_of_le”
+      -- ...
+
+    -- 5) Conclude app-measure is below the big omega-power
+    have h_app :
+        omega0 ^ (3 : Ordinal) * (mu s + 1)
+        + omega0 ^ (2 : Ordinal) * (mu (recDelta b s n) + 1) + 1
+        < omega0 ^ (mu (delta n) + mu s + (6 : Ordinal)) := by
+      -- use h_rec to bound the omega^2 term
+      -- show omega^3*(mu s+1) is also below the big exponent
+      -- finish with add_lt_add / lt_of_lt_of_le
+      -- ...
+
+    -- 6) Add the smaller tail terms on RHS
+    exact lt_of_lt_of_le h_app (le_add_right _ _)
+```
+
+### 2) `R_eq_refl`
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- goal: 0 < omega^(mu a + mu a + 9) + 1
+    have hpos : 0 < omega0 ^ (mu a + mu a + (9 : Ordinal)) := by
+      exact opow_pos _ omega0_pos
+    exact lt_of_lt_of_le hpos (le_add_right _ _)
+```
+
+### 3) `R_eq_diff`
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- goal: omega^4 * (mu(merge a b) + 1) + 1 < omega^(mu a + mu b + 9) + 1
+
+    -- 1) First bound mu(merge a b) by a large omega-power.
+    have h_merge :
+        mu (merge a b) + 1 < omega0 ^ (mu a + mu b + (8 : Ordinal)) := by
+      -- expand mu(merge a b)
+      -- show each summand < omega^(mu a + mu b + 8)
+      -- use monotonicity of opow and add_lt_add
+      -- ...
+
+    -- 2) Multiply by omega^4 (use opow-add arithmetic / monotonicity)
+    have h_mul :
+        omega0 ^ (4 : Ordinal) * (mu (merge a b) + 1)
+          < omega0 ^ (mu a + mu b + (9 : Ordinal)) := by
+      -- use h_merge and opow/add lemmas, e.g.
+      -- omega^4 * omega^k = omega^(4 + k)
+      -- and 4 + (mu a + mu b + 8) ≤ mu a + mu b + 9
+      -- ...
+
+    -- 3) Add the trailing +1 on the left and right
+    have h_lt :
+        omega0 ^ (4 : Ordinal) * (mu (merge a b) + 1) + 1
+          < omega0 ^ (mu a + mu b + (9 : Ordinal)) := by
+      -- lt_of_lt_of_le h_mul (le_add_right _ _)
+      -- ...
+
+    exact lt_of_lt_of_le h_lt (le_add_right _ _)
+```
+
+## Notes on lemmas that typically help
+
+- `opow_pos` for $0 < \omega^\alpha$
+- `opow_lt_opow` (monotone in exponent for base $\omega_0 > 1$)
+- `lt_add_one`, `add_lt_add_left`, `add_lt_add_right`
+- `le_add_left`, `le_add_right`, `lt_of_lt_of_le`
+- `le_mul_right` with `opow_pos` to show `$x \le \omega^k * x$`
+
+If you want, I can tailor these further to the exact lemmas you’re using elsewhere in the file (e.g., `opow_lt_opow` vs. `opow_le_opow`, `mul_le_mul_left`, etc.), but per your instructions I didn’t open any other files.

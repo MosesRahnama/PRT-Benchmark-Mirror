@@ -1,0 +1,762 @@
+{
+  "extraction_date": "2026-04-13T21:43:53.505322+00:00",
+  "total_sessions": 108,
+  "sessions": [
+    {
+      "slug": "claude-haiku-4.5__2026-03-18T13-07-00",
+      "source": "copilot",
+      "model": "copilot/claude-haiku-4.5",
+      "session_id": "1a99c1d4-0743-439e-918a-a3b4eeea03ea",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "claude-haiku-4.5__2026-03-19T13-29-07",
+      "source": "copilot",
+      "model": "copilot/claude-haiku-4.5",
+      "session_id": "16309f67-2fa5-458b-997e-806ffe472f9f",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "claude-haiku-4.5__2026-04-10T17-33-52",
+      "source": "copilot",
+      "model": "copilot/claude-haiku-4.5",
+      "session_id": "47254c00-9cc8-4113-94c9-bc2351c01563",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "claude-haiku-4.5__2026-04-10T17-34-03",
+      "source": "copilot",
+      "model": "copilot/claude-haiku-4.5",
+      "session_id": "300ce8f9-524e-4fb5-82fa-da23f6632676",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "claude-opus-4.5__2026-03-18T13-07-16",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.5",
+      "session_id": "1b16b771-65d5-4ed5-aa70-703759f5143b",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "claude-opus-4.5__2026-03-19T13-29-17",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.5",
+      "session_id": "88bdfaf3-b137-4b74-a8e3-b365f3ae3cbb",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "claude-opus-4.5__2026-04-10T17-34-06",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.5",
+      "session_id": "7b2dd4c1-dc49-44f4-a03b-9d843e0c4d9f",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "claude-opus-4.5__2026-04-10T17-34-18",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.5",
+      "session_id": "c977061b-91ac-4dd5-96fb-5660254a3fbe",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "claude-opus-4.6__2026-03-18T13-06-44",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.6",
+      "session_id": "cc1d7894-5b30-452a-81ef-3c459ef000a8",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "claude-opus-4.6__2026-03-19T13-29-57",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.6",
+      "session_id": "ad7baf86-a19e-44f8-96ee-a2e9d22083aa",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "claude-opus-4.6__2026-04-10T17-34-22",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.6",
+      "session_id": "5a7ca834-64a1-4d1b-a2f1-49cf8828cf0f",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "claude-opus-4.6__2026-04-10T17-34-37",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.6",
+      "session_id": "969476cb-1228-4580-90fd-7aaf13121118",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "claude-sonnet-4.5__2026-03-18T13-07-27",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.5",
+      "session_id": "58e0d307-36cb-473d-8c39-5ec2615cffba",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "claude-sonnet-4.5__2026-03-19T13-25-45",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.5",
+      "session_id": "1ab2dcbe-25eb-4ab7-9b1f-a346620be000",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "claude-sonnet-4.5__2026-04-10T17-35-00",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.5",
+      "session_id": "4a4a2f5a-40dd-4e3d-af4c-7d6d46de879b",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "claude-sonnet-4.5__2026-04-10T17-35-09",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.5",
+      "session_id": "c6ac824b-7ee5-48a9-a510-cfead6d11f64",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "claude-sonnet-4.6__2026-03-18T12-03-45",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.6",
+      "session_id": "a0da843f-cd32-484c-ab6a-e9ea2e58617d",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "claude-sonnet-4.6__2026-03-19T13-30-18",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.6",
+      "session_id": "9e69d3b0-ca71-4ac1-8e60-46a0dd573e1c",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "claude-sonnet-4.6__2026-04-10T17-34-42",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.6",
+      "session_id": "df8e9eb9-90d0-44d3-8a1a-294facb5bd27",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "claude-sonnet-4.6__2026-04-10T17-34-56",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.6",
+      "session_id": "0ceace66-a4b1-4af8-8c01-5be2ab27543b",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "claude-sonnet-4__2026-03-19T15-54-26",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4",
+      "session_id": "f86b6216-f732-418a-8257-7bca51f4fb83",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "claude-sonnet-4__2026-03-19T16-01-35",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4",
+      "session_id": "9b5bbdbe-be01-415f-a232-8723c8cc56a2",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "claude-sonnet-4__2026-04-10T17-35-12",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4",
+      "session_id": "7496fee7-1e2e-4788-ae8f-b8ea8d50e58c",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "claude-sonnet-4__2026-04-10T17-35-24",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4",
+      "session_id": "3655d06c-2c97-4827-aa89-05a377791af1",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "deepseek-r1-0528__2026-03-18T13-15-56",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-r1-0528",
+      "session_id": "77ff05dd-d3b8-406e-becc-05d0d98d187a",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "deepseek-r1-0528__2026-03-19T13-30-28",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-r1-0528",
+      "session_id": "5d97f327-c2bb-483c-ab02-fff8eebbb27a",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "deepseek-r1-0528__2026-04-10T17-36-00",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-r1-0528",
+      "session_id": "b99c8935-e1de-4ae8-afbe-d27ac7b7e212",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "deepseek-r1-0528__2026-04-11T19-41-56",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-r1-0528",
+      "session_id": "6ed30303-da43-46f9-b358-db0206d50010",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "deepseek-v3.2__2026-03-18T13-15-42",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-v3.2",
+      "session_id": "b43a4ce2-61d2-4c46-bb0b-c912569735b2",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "deepseek-v3.2__2026-03-18T19-04-54",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-v3.2",
+      "session_id": "3800bd67-5ebc-486f-88a4-699607582499",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "deepseek-v3.2__2026-04-10T17-36-51",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-v3.2",
+      "session_id": "aee0a06a-56d8-4bb3-8353-03da2c689253",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "deepseek-v3.2__2026-04-10T17-36-58",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-v3.2",
+      "session_id": "5da30029-48bd-4c90-834f-75599066e767",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gemini-2.5-pro__2026-03-18T13-09-23",
+      "source": "copilot",
+      "model": "copilot/gemini-2.5-pro",
+      "session_id": "e236f935-395e-4776-bb6c-44a2932ccba9",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gemini-2.5-pro__2026-03-19T13-31-09",
+      "source": "copilot",
+      "model": "copilot/gemini-2.5-pro",
+      "session_id": "81a25d71-c8dc-4d2e-ac55-88e3aab6f307",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gemini-2.5-pro__2026-04-10T17-37-02",
+      "source": "copilot",
+      "model": "copilot/gemini-2.5-pro",
+      "session_id": "b9ad2ee3-e55e-43e9-aa8e-068d549d17b9",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gemini-2.5-pro__2026-04-10T17-37-16",
+      "source": "copilot",
+      "model": "copilot/gemini-2.5-pro",
+      "session_id": "6a8f3d39-a416-4c96-9d61-5cec74cd0bbc",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gemini-3-flash-preview__2026-03-18T13-11-14",
+      "source": "copilot",
+      "model": "copilot/gemini-3-flash-preview",
+      "session_id": "1cf71166-8d2b-4501-89b3-511a57ffd7e9",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gemini-3-flash-preview__2026-03-19T16-02-52",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/google/gemini-3-flash-preview",
+      "session_id": "bdbcae29-dca7-4058-a2cf-38d2816c8e8d",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gemini-3-flash-preview__2026-04-10T17-37-20",
+      "source": "copilot",
+      "model": "gemini/Google/models/gemini-3-flash-preview",
+      "session_id": "252db670-378f-455f-8b2b-31bd952ee3d0",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gemini-3-flash-preview__2026-04-10T17-37-46",
+      "source": "copilot",
+      "model": "gemini/Google/models/gemini-3-flash-preview",
+      "session_id": "21a347ce-8c87-41e0-b982-c1ba8499b6cd",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gemini-3.1-pro-preview__2026-03-18T13-12-26",
+      "source": "copilot",
+      "model": "copilot/gemini-3.1-pro-preview",
+      "session_id": "9696ccfe-0fb2-4175-b562-05a5bc1bbc04",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gemini-3.1-pro-preview__2026-03-19T13-31-52",
+      "source": "copilot",
+      "model": "copilot/gemini-3.1-pro-preview",
+      "session_id": "aff76137-3fe4-498f-8baa-a79d2511ad6f",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gemini-3.1-pro-preview__2026-04-10T17-37-52",
+      "source": "copilot",
+      "model": "copilot/gemini-3.1-pro-preview",
+      "session_id": "ece2b1da-fabd-4a7b-9102-b0bee9ed2020",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gemini-3.1-pro-preview__2026-04-10T17-38-03",
+      "source": "copilot",
+      "model": "copilot/gemini-3.1-pro-preview",
+      "session_id": "56edf8f6-84a9-41bd-9580-a27eb0689042",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "glm-5__2026-03-18T13-23-30",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/z-ai/glm-5",
+      "session_id": "32c5958f-2709-4595-80a0-10f7b0af72e4",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "glm-5__2026-03-18T19-06-45",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/z-ai/glm-5",
+      "session_id": "b35984c4-997c-4717-a823-541b9863e8c9",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "glm-5__2026-04-10T17-38-07",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/z-ai/glm-5",
+      "session_id": "38ab8a64-56a8-4f97-8a18-5e7b85dc233c",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "glm-5__2026-04-10T17-38-27",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/z-ai/glm-5",
+      "session_id": "8614af60-6100-420d-956e-6d4edfd0409f",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-4o__2026-03-18T13-07-39",
+      "source": "copilot",
+      "model": "copilot/gpt-4o",
+      "session_id": "e5925338-4f95-4b68-ba8e-d0f47e1d8b46",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-4o__2026-03-19T13-32-15",
+      "source": "copilot",
+      "model": "copilot/gpt-4o",
+      "session_id": "13f50f05-eaf3-4826-b8bb-e959deb2b278",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-4o__2026-04-10T17-38-32",
+      "source": "copilot",
+      "model": "copilot/gpt-4o",
+      "session_id": "6da8fa81-5217-415c-b090-a2ba777ea541",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-4o__2026-04-10T17-38-42",
+      "source": "copilot",
+      "model": "copilot/gpt-4o",
+      "session_id": "0c7223a1-6801-4eb9-aef3-5c430d27d31d",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-5.2-codex__2026-03-18T13-13-16",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2-codex",
+      "session_id": "02ed65b4-d911-4094-8c75-c8f11120cdcd",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-5.2-codex__2026-03-18T18-59-26",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2-codex",
+      "session_id": "a3031574-14da-489b-8a25-8ea20864f30b",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-5.2-codex__2026-04-10T17-39-03",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2-codex",
+      "session_id": "36d638d9-afff-444f-851b-128dd9193fb5",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-5.2-codex__2026-04-10T17-39-11",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2-codex",
+      "session_id": "ba57f127-f894-43af-997b-4814f08b2d4d",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-5.2__2026-03-18T18-57-25",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2",
+      "session_id": "7d15a972-7688-494c-a3f1-6e3b008c9a9d",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-5.2__2026-03-18T19-02-39",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2",
+      "session_id": "4894b0d6-9173-4ef8-9e76-c0814c95210d",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-5.2__2026-04-10T17-38-46",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2",
+      "session_id": "25ea5fff-85bb-494e-b91d-756e14688be3",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-5.2__2026-04-10T17-38-57",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2",
+      "session_id": "7bd05630-e435-4e50-8570-74c39d507b80",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-5.3-codex__2026-03-18T12-38-53",
+      "source": "copilot",
+      "model": "copilot/gpt-5.3-codex",
+      "session_id": "f41f964e-3758-49d8-9148-6ca5d593cc2b",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-5.3-codex__2026-03-19T13-32-56",
+      "source": "copilot",
+      "model": "copilot/gpt-5.3-codex",
+      "session_id": "b00791dc-a4b3-4f9b-b304-5d103aa2ee7f",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-5.3-codex__2026-04-10T17-39-15",
+      "source": "copilot",
+      "model": "copilot/gpt-5.3-codex",
+      "session_id": "b5770d99-d63c-4283-aad7-5b75a9838f98",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-5.3-codex__2026-04-10T17-39-28",
+      "source": "copilot",
+      "model": "copilot/gpt-5.3-codex",
+      "session_id": "a78a2f26-fe9c-41d0-8d7a-ce5f4ea699ed",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-5.4-pro__2026-03-18T13-15-19",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-5.4-pro",
+      "session_id": "21e65ccb-f0bc-4bca-9a14-23aea1c42699",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-5.4-pro__2026-03-18T19-04-13",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-5.4-pro",
+      "session_id": "c32a97d8-e88b-406f-9b4e-54ac191bcf69",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-5.4-pro__2026-04-10T17-21-40",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-5.4-pro",
+      "session_id": "70e1f2a5-4af4-4677-8f0e-2d573b0addb1",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-5.4-pro__2026-04-10T17-33-48",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-5.4-pro",
+      "session_id": "2866a033-a580-4a8c-8783-e5ddf87f10c5",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-5.4__2026-03-18T12-21-19",
+      "source": "copilot",
+      "model": "copilot/gpt-5.4",
+      "session_id": "bb1f7769-2e12-4eac-a3b5-ca3c87aff1ee",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-5.4__2026-03-19T13-33-14",
+      "source": "copilot",
+      "model": "copilot/gpt-5.4",
+      "session_id": "f09adec3-33aa-42c2-bbde-61aacedb74b6",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-5.4__2026-04-10T17-39-33",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-5.4",
+      "session_id": "0a7123f0-a20a-4b54-8252-6e8c18ad6b95",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-5.4__2026-04-10T17-39-57",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-5.4",
+      "session_id": "01bed78d-c53b-4e35-84a3-a1e0fb8d1138",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-oss-120b__2026-03-18T13-16-06",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-oss-120b",
+      "session_id": "5b53455d-999c-47ef-a40b-59d4b6943d66",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-oss-120b__2026-03-18T19-04-37",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-oss-120b",
+      "session_id": "449884c8-f33b-4791-b8b0-576c193ac0b7",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-oss-120b__2026-04-10T17-40-01",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-oss-120b",
+      "session_id": "757c512c-c8b4-400b-bef5-883840b9a409",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "gpt-oss-120b__2026-04-10T17-40-20",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-oss-120b",
+      "session_id": "63ee1a89-955b-48d7-a374-11dc6182c355",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "grok-3__2026-03-18T13-19-28",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-3",
+      "session_id": "9b1e4d32-3268-49bb-a68d-c9712b5b66e0",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "grok-3__2026-04-11T19-42-35",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-3",
+      "session_id": "ebd93b36-889b-4302-8aba-9ddffe119783",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "grok-3__2026-04-11T19-42-49",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-3",
+      "session_id": "cf0af164-6bb3-4234-a663-74a4462ecb88",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "grok-3__2026-04-11T19-42-55",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-3",
+      "session_id": "b470738f-67bd-43bd-bad3-cf5febf30b06",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "grok-4-0709__2026-03-18T13-21-19",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-0709",
+      "session_id": "578cdd10-2b72-4d30-a8bb-7aa8d6a54d23",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "grok-4-0709__2026-03-18T19-07-51",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-0709",
+      "session_id": "e4b242c8-fb2c-4492-8395-7bb88b332797",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "grok-4-0709__2026-04-10T17-41-24",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-0709",
+      "session_id": "6d6d650c-0648-45be-b6a0-8a28931fd055",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "grok-4-0709__2026-04-10T17-41-40",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-0709",
+      "session_id": "caa5f57e-1158-4c09-a3cd-66e8200efa76",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "grok-4-1-fast-reasoning__2026-03-18T13-24-50",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-1-fast-reasoning",
+      "session_id": "1091a13e-24be-4141-9fd1-a358c82f8172",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "grok-4-1-fast-reasoning__2026-04-10T17-41-44",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-1-fast-reasoning",
+      "session_id": "b27c1469-f51f-49fa-a94f-d4d79a31667d",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "grok-4-1-fast-reasoning__2026-04-10T17-41-52",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-1-fast-reasoning",
+      "session_id": "a9f4f2b0-355a-4669-9400-f1d9b15c118f",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "grok-4-1-fast-reasoning__2026-04-11T19-43-17",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-1-fast-reasoning",
+      "session_id": "51c53600-d91b-40d2-ac5c-bb1012a5d07b",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "grok-4-fast-reasoning__2026-03-19T13-35-42",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-fast-reasoning",
+      "session_id": "69d45f18-5ee3-49ff-ba90-d545cbaf5067",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "grok-4-fast-reasoning__2026-03-19T13-36-00",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-fast-reasoning",
+      "session_id": "175e2724-7ed9-4e67-9c08-3249f453497e",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "grok-4-fast-reasoning__2026-04-10T17-41-56",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-fast-reasoning",
+      "session_id": "61611258-053b-4be3-8f42-cd5fc5a4ea34",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "grok-4-fast-reasoning__2026-04-10T17-42-05",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-fast-reasoning",
+      "session_id": "67cfc2b4-66f3-4923-9769-c3124e2dcf70",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "grok-4.20-0309-reasoning__2026-04-11T19-43-38",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4.20-0309-reasoning",
+      "session_id": "a1088017-8972-4b4e-a66a-a1be1e21dd0a",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "grok-4.20-0309-reasoning__2026-04-11T19-43-54",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4.20-0309-reasoning",
+      "session_id": "442438fb-b844-432d-a5a1-b2a7de410c57",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "grok-4.20-0309-reasoning__2026-04-11T19-44-25",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4.20-0309-reasoning",
+      "session_id": "7d41f0d8-8508-4a87-8351-f3f1a25dbb86",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "grok-4.20-0309-reasoning__2026-04-13T21-05-28",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4.20-0309-reasoning",
+      "session_id": "3d214651-0eb9-44f3-b51b-1eae007a3311",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "grok-code-fast-1__2026-03-19T13-36-12",
+      "source": "copilot",
+      "model": "copilot/grok-code-fast-1",
+      "session_id": "50ed235a-7bf1-4538-aafc-71a94dc6fcc0",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "grok-code-fast-1__2026-03-19T13-36-28",
+      "source": "copilot",
+      "model": "copilot/grok-code-fast-1",
+      "session_id": "2d130b0a-85b6-4c65-a95d-dc0b165037ab",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "grok-code-fast-1__2026-04-10T17-42-23",
+      "source": "copilot",
+      "model": "copilot/grok-code-fast-1",
+      "session_id": "ae9720be-6bda-429c-b6bc-53dc8f033971",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "grok-code-fast-1__2026-04-10T17-42-37",
+      "source": "copilot",
+      "model": "copilot/grok-code-fast-1",
+      "session_id": "3b1bfb61-f40a-447a-8bf2-e4fed199dbe9",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "o3__2026-03-18T13-13-23",
+      "source": "copilot",
+      "model": "openai/OpenAI 2/o3",
+      "session_id": "c2117678-b7d1-42a6-987c-f89027a1aa95",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "o3__2026-03-18T19-00-01",
+      "source": "copilot",
+      "model": "openai/OpenAI 2/o3",
+      "session_id": "cda39ed7-783a-4e02-9afc-cf5f186e7c52",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "o3__2026-04-10T17-42-40",
+      "source": "copilot",
+      "model": "openai/OpenAI 2/o3",
+      "session_id": "21e468a1-ac33-4492-ac6c-7bcb3a34d5a9",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "o3__2026-04-11T19-42-18",
+      "source": "copilot",
+      "model": "openai/OpenAI 2/o3",
+      "session_id": "98eabbf8-638f-41df-b446-f094a77d4639",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "qwen3-max-thinking__2026-03-18T13-18-49",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/qwen/qwen3-max-thinking",
+      "session_id": "2a8485f5-6510-49f2-9a9d-55c0e46033ec",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "qwen3-max-thinking__2026-03-18T19-06-14",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/qwen/qwen3-max-thinking",
+      "session_id": "05a08756-ca11-4727-ad34-c0846cafaffa",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "qwen3-max-thinking__2026-04-10T17-43-11",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/qwen/qwen3-max-thinking",
+      "session_id": "e24ae325-f21d-4b87-85aa-a555405a9ffb",
+      "benchmark_type": "completion"
+    },
+    {
+      "slug": "qwen3-max-thinking__2026-04-10T17-43-20",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/qwen/qwen3-max-thinking",
+      "session_id": "2f5bfc84-6be9-40ea-806f-a951f4cbbb05",
+      "benchmark_type": "completion"
+    }
+  ]
+}

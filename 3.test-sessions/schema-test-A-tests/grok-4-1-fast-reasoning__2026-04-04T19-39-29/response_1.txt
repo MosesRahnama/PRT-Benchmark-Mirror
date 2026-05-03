@@ -1,0 +1,10 @@
+**Yes**, strong normalization can be established purely from the rewrite rules' syntax.
+
+**Proof roadmap**:  
+Define *S-depth*(t) = 0 if t not S-headed, else 1 + *S-depth*(u) where t = S(u).  
+Let μ(t) be the multiset of *S-depth*s of all 3rd arguments of F-subterms in t.  
+
+- Rule 1 `F(x,y,Z) → x`: removes one entry from μ (the *S-depth*(Z)).  
+- Rule 2 `F(x,y,S(n)) → G(y,F(x,y,n))`: replaces *S-depth*(S(n)) = d ≥ 1 with *S-depth*(n) = d-1 < d in μ; other entries unchanged.  
+
+μ decreases in the well-founded multiset order > on ℕ at every step. No rules for G. Thus, no infinite reductions.

@@ -1,0 +1,49 @@
+## Assessment: The strategy is **unsound** as written
+
+The first helper theorem `kappa_rec_delta_step` is false, which invalidates the entire termination argument.
+
+---
+
+### Theorem 1: `kappa_rec_delta_step` — **False**
+
+**Claim:** `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`
+
+The definition of `kappa` treats `delta` as transparent (`kappa (delta t) = kappa t`), but `recDelta` pattern-matches on its third argument and adds `+1` only when it sees a top-level `delta`. This creates a mismatch when `n` is itself of the form `delta n'`.
+
+**Counterexample:** Let `b = s = n' = void` and `n = delta void`.
+
+| Expression | Evaluation | Result |
+|---|---|---|
+| LHS: `kappa (recDelta void void (delta (delta void)))` | `max(max(0, 0), kappa(delta void)) + 1 = max(0, 0) + 1` | **1** |
+| RHS: `kappa (recDelta void void (delta void)) + 1` | `(max(max(0, 0), kappa void) + 1) + 1 = (0 + 1) + 1` | **2** |
+
+$1 \neq 2$. The theorem is false.
+
+The root cause: `kappa(delta n') = kappa(n')`, so the LHS peels off the outer `delta` and computes `max(M, \kappa(n')) + 1`. But the RHS first evaluates `kappa(recDelta\; b\; s\; (\mathtt{delta}\; n'))$, which *also* fires the `+1` clause, yielding $\max(M, \kappa(n')) + 1 + 1$. The two `+1` contributions collide.
+
+---
+
+### Theorem 2: `kappa_rec_succ_drop` — **Proof strategy is correct in principle, but poisoned by Theorem 1**
+
+**Claim:** `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`
+
+The proof rewrites the RHS using Theorem 1 to obtain the goal:
+
+$$\max(\kappa(s),\; \kappa(\mathtt{recDelta}\; b\; s\; n)) < \kappa(\mathtt{recDelta}\; b\; s\; n) + 1$$
+
+This *would* hold, since $\kappa(s) \leq \max(\max(\kappa(b), \kappa(s)), \kappa(n)) \leq \kappa(\mathtt{recDelta}\; b\; s\; n)$, giving $\max(\kappa(s), X) = X < X + 1$.
+
+However, Theorem 1 is false, so the rewrite is illegitimate. And Theorem 2 is itself **false** for the same counterexample:
+
+| Expression | Value |
+|---|---|
+| LHS: `kappa (app void (recDelta void void (delta void)))` | `max(0, 1) = 1` |
+| RHS: `kappa (recDelta void void (delta (delta void)))` | `1` |
+
+$1 < 1$ is false.
+
+---
+
+### Diagnosis
+
+The measure `kappa` erases `delta` wrappers ($\kappa(\delta\; t) = \kappa(t)$) but simultaneously uses a top-level `delta` pattern in the `recDelta` clause to inject `+1`. These two design choices are incompatible: the `+1` counts one layer of `delta`, but `kappa` of that same `delta` sees through it. A fix would need to either make `kappa(delta t) = kappa(t) + 1` (so `kappa` itself counts `delta` depth) or use a different sub-structural measure for the third argument of `recDelta`.

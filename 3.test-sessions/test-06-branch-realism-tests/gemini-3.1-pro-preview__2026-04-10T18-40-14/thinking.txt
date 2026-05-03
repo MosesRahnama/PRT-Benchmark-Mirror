@@ -1,0 +1,23 @@
+**Examining Helper Strategies**
+
+I'm currently delving into the specifics of the helper strategy, aiming to evaluate its soundness. My focus now is on a formal analysis, employing trace calculus. I'm scrutinizing the defined operations – `void`, `delta`, `integrate`, and `merge` – to determine their impact within the system's logic.
+
+
+**Evaluating Proof Structures**
+
+I'm now zeroing in on the `kappa` function's definition for `recDelta`, which is where my concerns are focused. I am going to see if that discrepancy of + 1 makes the helper theorem `kappa_rec_delta_step` sound as I had initially suspected. Then I'll focus on the second helper theorem, and if that can be shown as well.
+
+
+**Investigating Definition Behavior**
+
+My earlier hypothesis about the soundness of the helper strategy is looking increasingly shaky. The analysis of `kappa`'s definition for `recDelta`, specifically how it pattern matches on the third argument `n`, is revealing potential inconsistencies. I'm now testing the `kappa_rec_delta_step` theorem with concrete examples, aiming to expose a flaw in the reasoning.
+
+
+**Exposing a Critical Flaw**
+
+I've successfully identified a critical flaw, now substantiated with a counterexample. My detailed calculations reveal that the `kappa_rec_delta_step` theorem is unsound, directly undermining the helper strategy's correctness. The pattern matching behavior in `kappa`'s definition is the root cause. This discrepancy invalidates my initial assumption.
+
+
+**Exposing Strategy Inconsistencies**
+
+The analysis continues to expose critical flaws. I've re-examined both `kappa_rec_delta_step` and `kappa_rec_succ_drop` and found both to be unsound, invalidating the helper strategy. This is mainly due to the incorrect calculation in the pattern matching. Both theorems fail, highlighting a fundamental error in the proposed strategy.

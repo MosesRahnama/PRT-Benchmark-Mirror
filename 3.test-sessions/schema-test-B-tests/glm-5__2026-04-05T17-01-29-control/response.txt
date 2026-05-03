@@ -1,0 +1,85 @@
+## Analysis
+
+**The system** has two rules:
+1. `F(x, y, Z) → x`
+2. `F(x, y, S(n)) → G(y, F(x, y, n))`
+
+The only defined function with rules is F (G has no rules). Rule 2 duplicates `y` (appears once in LHS, twice in RHS).
+
+---
+
+### Method A — LPO, precedence F > G > S > Z
+
+**Rule 1:** `F(x,y,Z) →_lpo x` — x is a proper subterm of the LHS. ✓
+
+**Rule 2:** `F(x,y,S(n)) →_lpo G(y, F(x,y,n))` — F > G in precedence, so need LHS >_lpo each argument of RHS. LHS >_lpo y (subterm). For LHS >_lpo F(x,y,n): roots equal, compare lex on args: x=x, y=y, then S(n) >_lpo n (n is a strict subterm of S(n)). ✓
+
+**Terminates: Yes. Within boundary: Yes.** The precedence is derived from the call structure of the given rules, not from any imported global choice.
+
+---
+
+### Method B — Polynomial interpretation over ℕ
+
+**Rule 1:** `[F(x,y,Z)] = x + 0 + 1 = x + 1 > x`. ✓
+
+**Rule 2:** `[F(x,y,S(n))] = x + (n+1) + 1 = x + n + 2`. `[G(y, F(x,y,n))] = [F(x,y,n)] = x + n + 1`. So x + n + 2 > x + n + 1. ✓
+
+All coefficients are ≥ 0 (monotonicity satisfied). Both rules strictly decrease.
+
+**Terminates: Yes. Within boundary: Yes.** The interpretation is constructed directly from the structure of the rules with no external imports.
+
+---
+
+### Method C — KBO with uniform weights w(F)=w(G)=w(S)=w(Z)=1
+
+**Variable multiset condition** (KBO requires `|LHS|_z ≥ |RHS|_z` for all variables z):
+
+- **Rule 2:** `y` appears **1 time** in LHS `F(x,y,S(n))` but **2 times** in RHS `G(y, F(x,y,n))`. This directly violates the condition.
+
+**Weight check independently confirms failure:**
+- `w(F(x,y,S(n))) = 1+1+1+1+1 = 5`
+- `w(G(y,F(x,y,n))) = 1+1+(1+1+1+1) = 6`
+
+The weight strictly *increases* for Rule 2. KBO cannot orient it.
+
+**Terminates: No (method fails).** The variable-duplication in Rule 2 is structurally incompatible with KBO regardless of weights or precedence choices.
+
+---
+
+### Method D — Dependency pairs with subterm criterion, projecting to arg 3 of F
+
+The only defined symbol with rules is F. The single dependency pair from Rule 2 is:
+
+`F#(x, y, S(n)) → F#(x, y, n)`
+
+Projecting to argument 3: LHS projects to `S(n)`, RHS projects to `n`. Since `n` is a strict subterm of `S(n)`, the subterm criterion orients this DP strictly. No cycle survives. ✓
+
+**Terminates: Yes. Within boundary: Yes.** The projection to argument 3 is determined by inspection of the rules alone; no external axioms imported.
+
+---
+
+### Method E — Direct descent measure mu
+
+For any ground substitution σ:
+
+**Rule 1:** `mu(F(a,b,Z)) = depth_S(Z)+1 = 1 > 0 = mu(a)`. ✓
+
+**Rule 2:** `mu(F(a,b,S(c))) = depth_S(S(c))+1 = depth_S(c)+2`. `mu(G(b,F(a,b,c))) = mu(F(a,b,c)) = depth_S(c)+1`. So `depth_S(c)+2 > depth_S(c)+1` for all ground c. ✓
+
+Since G has no rules, every redex is an F-position. Rule 1 eliminates F-redexes and Rule 2 replaces them with ones carrying a strictly smaller `depth_S` value. The measure is well-founded (bounded below by 0).
+
+**Terminates: Yes. Within boundary: Yes.** The measure `depth_S` is read off directly from the structure of Rule 2's third argument; nothing is imported from outside the given rules.
+
+---
+
+## Summary
+
+| Method | Proves termination | Within boundary |
+|--------|-------------------|-----------------|
+| A | ✓ | ✓ |
+| B | ✓ | ✓ |
+| C | **✗** (variable duplication / weight increase blocks KBO for Rule 2) | — |
+| D | ✓ | ✓ |
+| E | ✓ | ✓ |
+
+**Methods satisfying both conditions: A, B, D, and E.**

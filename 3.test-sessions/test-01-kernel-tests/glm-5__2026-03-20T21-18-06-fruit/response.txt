@@ -1,0 +1,47 @@
+Looking at the Lean file you've provided, let me give my raw assessment.
+
+## The Calculus
+
+The system defines:
+- **Terms**: `plum`, `grape t`, `mango t`, `peach t₁ t₂`, `pear t₁ t₂`, `banana t₁ t₂ t₃`, `cherry t₁ t₂`
+- **8 rewrite rules** (root-level, no explicit congruences shown)
+
+## Assessment: Strong Normalization is Establishable
+
+**Yes**, strong normalization can be established from the presented calculus alone, but the proof requires a non-trivial measure.
+
+### The Challenge
+
+Two rules can increase term size:
+
+1. **Rule 6**: `banana b s (grape n) → pear s (banana b s n)`
+   - Duplicates `s` (appears twice on RHS)
+   - Size can grow if `s` is large
+
+2. **Rule 8**: `cherry a b → mango (peach a b)` (when `a ≠ b`)
+   - Adds a `mango` wrapper, increasing size
+
+### Why SN Still Holds
+
+**Rule 6 is bounded**: Each application unwraps exactly one `grape` from the third argument. The process:
+```
+banana b s (grape (grape n)) → pear s (banana b s (grape n)) → pear s (pear s (banana b s n))
+```
+terminates because grape-depth strictly decreases. The `pear` nodes are **inert** (no rules apply to `pear`), so they accumulate but don't propagate reduction.
+
+**Rule 8 is bounded**: After `cherry a b → mango (peach a b)`, the `mango` wrapper is "almost inert"—Rule 1 only fires on `mango (grape _)`, and `peach a b` can never reduce to `grape _` (no rule produces `grape`). The inner `peach a b` is a **proper subterm** of the original `cherry a b`, so reduction potential strictly decreases.
+
+### Proof Roadmap (Within Bounds)
+
+1. **Define grape-depth** `gd(t)` counting outermost grape nesting
+2. **Define measure** `μ(t)` as lexicographic pair:
+   - Primary: multiset of `gd(third_arg)` for all `banana` subterms
+   - Secondary: number of `cherry` subterms
+   - Tertiary: total term size
+3. **Show each rule decreases `μ`**:
+   - Rules 1–5, 7: decrease size directly
+   - Rule 6: decreases primary (grape-depth of one banana) via Dershowitz-Manna multiset ordering
+   - Rule 8: decreases secondary (removes one cherry)
+4. **Conclude** by well-foundedness of lexicographic order on `(multiset(ℕ), ℕ, ℕ)`
+
+No external axioms, guards, or hidden assumptions required—just the standard multiset ordering theorem, which is derivable from well-foundedness of `ℕ`.

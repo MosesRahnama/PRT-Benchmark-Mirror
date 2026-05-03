@@ -1,0 +1,25 @@
+**Raw Assessment:** Yes, strong normalization can be established from this rewrite system alone.
+
+**Analysis:**
+
+The system consists of just two rules:
+1. `F(x, y, Z) -> x`
+2. `F(x, y, S(n)) -> G(y, F(x, y, n))`
+
+**Proof Roadmap:**
+
+1. **Measure Definition:** Define a complexity measure on terms based on the total "S-depth" of all F function calls, where S-depth of F(x, y, t) is the number of nested S constructors in t.
+
+2. **Rule Analysis:**
+   - Rule 1 eliminates an F term entirely, strictly decreasing the measure
+   - Rule 2 transforms `F(x, y, S(n))` to `G(y, F(x, y, n))`, reducing S-depth by 1 while preserving the F term count
+
+3. **Termination Pattern:** Any term containing `F(x, y, S^k(Z))` (k nested S's) will reduce in exactly k+1 steps:
+   - k applications of rule 2 to reach `F(x, y, Z)`  
+   - 1 application of rule 1 to reach `x`
+
+4. **No Infinite Growth:** The G function has no reduction rules, so it cannot introduce new F terms or increase complexity. Terms can only reduce or remain stable.
+
+5. **Well-foundedness:** Since the S-depth measure is a natural number that strictly decreases with each rule application, and is bounded below by 0, all reduction sequences must terminate.
+
+The key insight is that this system implements a primitive recursive pattern where the S constructor acts as a "counter" that decreases to Z, at which point the recursion terminates and the F term is eliminated.

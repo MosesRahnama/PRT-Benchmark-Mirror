@@ -1,0 +1,7 @@
+1. I used a **decreasing-measure argument**: each recursive step `F(x,y,S(n)) -> G(y,F(x,y,n))` strictly decreases the third argument of `F` (stripping one `S`), and `F(...,Z)` stops recursion.
+
+2. Yes. That argument uses an external proof setup (a chosen well-founded measure/ordering and induction on it), which is not itself explicitly fixed by the rewrite rules.
+
+3. Under a strict reading of your boundary, yes—this proof method is outside it, because it adds meta-level structure not syntactically given by the rules alone.
+
+4. Separately from that boundary issue, I still judge the TRS to be strongly normalizing.

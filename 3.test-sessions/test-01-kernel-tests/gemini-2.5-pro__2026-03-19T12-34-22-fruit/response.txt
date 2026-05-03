@@ -1,0 +1,24 @@
+Based on the provided calculus, strong normalization cannot be established from the presented rules alone.
+The system is not strongly normalizing due to the rewrite rule `R_apple_orange`:
+
+`∀ b s n, Step (banana b s (grape n)) (pear s (banana b s n))`
+
+Let's analyze the term structure. A common way to prove strong normalization is to show that every rewrite step decreases the term size or some other well-founded measure.
+
+Consider the term `T = banana b s (grape n)`.
+Its reduction is `T' = pear s (banana b s n)`.
+
+If we define a simple size function `size(t)` as the number of constructors in a term `t`, we have:
+
+*   `size(T) = size(banana b s (grape n)) = 1 + size(b) + size(s) + size(grape n) = 1 + size(b) + size(s) + 1 + size(n) = 2 + size(b) + size(s) + size(n)`
+*   `size(T') = size(pear s (banana b s n)) = 1 + size(s) + size(banana b s n) = 1 + size(s) + 1 + size(b) + size(s) + size(n) = 2 + size(b) + 2*size(s) + size(n)`
+
+The change in size is `size(T') - size(T) = size(s)`.
+
+Since `s` can be any `Trace`, its size is not necessarily zero. If `s` is any term other than `plum` (which has a size of 1, but can't be a standalone term `s` in this context without being a subterm), the size of the term strictly increases with each application of `R_apple_orange`.
+
+For example, consider a reduction sequence starting with `banana b s (grape (grape n))`:
+1.  `banana b s (grape (grape n))` → `pear s (banana b s (grape n))`
+2.  `pear s (banana b s (grape n))` → `pear s (pear s (banana b s n))`
+
+This sequence does not terminate if the recursive call is inside a constructor that doesn't get reduced. The `pear` constructor is not reduced by any rule, so the term grows indefinitely. This demonstrates the possibility of an infinite reduction sequence, which violates strong normalization.

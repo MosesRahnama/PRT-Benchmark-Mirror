@@ -1,0 +1,6 @@
+**Analyzing theorem conditions and pattern matching**
+
+I found the recursion on delta in the definition applies only when n is a delta constructor; otherwise, the theorem's equality doesn't hold universally, revealing a mismatch in kappa values increasing differently on each side.
+**Confirming helper strategy unsoundness with code references**
+
+The helper strategy is unsound unless restricting n to not be a delta, as shown by calculations around theorems on lines 46–52 and kappa’s definition on lines 26–34 in KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean. For n = delta n’, the theorem kappa_rec_delta_step fails since the increment adds inconsistently (+1 vs. +2), breaking strict inequalities in kappa_rec_succ_drop. I'll provide these calculations and cite these line ranges to support the conclusion.

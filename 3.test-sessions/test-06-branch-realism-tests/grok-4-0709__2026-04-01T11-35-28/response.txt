@@ -1,0 +1,24 @@
+The helper strategy is not sound as written. The two helper theorems are incorrect in general, and the measure `kappa` does not strictly decrease across all possible steps in the rewrite system, which undermines its use in a termination argument.
+
+### Supporting Calculations
+
+1. **Counterexample for `kappa_rec_delta_step`**:
+   - Let `n = delta void`, `K = Nat.max (kappa b) (kappa s)`, and assume `K ≥ 0` (true by definition since `kappa void = 0`).
+   - Left side: `kappa (recDelta b s (delta (delta void))) = Nat.max K (kappa (delta void)) + 1 = Nat.max K 0 + 1 = K + 1`.
+   - Right side: `kappa (recDelta b s (delta void)) + 1 = (Nat.max K (kappa void) + 1) + 1 = (Nat.max K 0 + 1) + 1 = (K + 1) + 1 = K + 2`.
+   - `K + 1 ≠ K + 2`, so the equality does not hold.
+
+2. **Counterexample for `kappa_rec_succ_drop`**:
+   - Let `n = delta void` and `K` as above.
+   - Left side: `kappa (app s (recDelta b s (delta void))) = Nat.max (kappa s) (kappa (recDelta b s (delta void))) = Nat.max (kappa s) (K + 1)`.
+     - Since `K ≥ kappa s`, this simplifies to `K + 1`.
+   - Right side: `kappa (recDelta b s (delta (delta void))) = K + 1` (from above).
+   - `K + 1 ≮ K + 1` (equality, not strict inequality).
+
+3. **Failure of `kappa` to strictly decrease**:
+   - Consider the step `recDelta b s (delta (delta void))` → `app s (recDelta b s (delta void))` (via `R_rec_succ`).
+   - `kappa` of left: `K + 1`.
+   - `kappa` of right: `K + 1` (from above).
+   - No strict decrease, so `kappa` cannot prove termination for chains of multiple `delta`s.
+
+The issues stem from `kappa`'s definition adding `+1` only for the outermost `delta`, not recursively for nested `delta` chains. This fails to properly measure recursion depth.

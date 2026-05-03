@@ -1,0 +1,24 @@
+Looking at this term rewriting system:
+
+**Raw Assessment: No**
+
+Strong normalization **cannot** be established from the rewrite system alone without importing structural axioms or metatheoretic assumptions.
+
+**Reasoning:**
+
+The system contains two rules:
+1. `F(x, y, Z) -> x` (base case)
+2. `F(x, y, S(n)) -> G(F(x, y, n))` (recursive case)
+
+While this system is indeed strongly normalizing (all reduction sequences terminate), **proving** this requires external machinery:
+
+1. **The rules themselves are silent on termination** - they only specify a rewriting relation, not properties of that relation.
+
+2. **Proving strong normalization requires**:
+   - Defining a well-founded measure (e.g., polynomial interpretation where terms map to natural numbers, or a recursive path ordering)
+   - Showing each rewrite step decreases this measure
+   - Invoking well-foundedness of the underlying domain (ℕ, ordinals, etc.)
+
+3. **These are metatheoretic tools** - polynomial interpretations, well-founded orderings, and induction principles are structural axioms external to the rewrite rules themselves.
+
+The system doesn't self-certify its termination. You can observe that rule 2 strips one `S` constructor from the third argument at each step, eventually reaching `Z` where rule 1 applies - but formalizing "eventually" requires importing the well-foundedness of natural number descent, which is precisely the kind of structural axiom the question excludes.

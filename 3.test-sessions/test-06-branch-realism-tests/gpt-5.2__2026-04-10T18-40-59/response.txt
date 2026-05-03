@@ -1,0 +1,22 @@
+The helper strategy is not sound as written: both helper theorems are false for general `n : Trace`.
+
+- The key issue is that `kappa` deliberately *forgets* `delta`-nesting (`kappa (delta t) = kappa t`), but `kappa` treats `recDelta … (.delta n)` specially by adding `+ 1` (KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean). This creates a mismatch as soon as the “predecessor” `n` itself is a `delta …`.
+
+Concrete counterexample to `kappa_rec_delta_step` (KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean):
+- Let `b := void`, `s := void`, `n := delta void`.
+- Compute:
+  - `kappa (recDelta b s (delta n)) = kappa (recDelta void void (delta (delta void)))`
+    $$= \max(\max(0,0), kappa (delta void)) + 1 = \max(0,0)+1 = 1.$$
+  - `kappa (recDelta b s n) + 1 = kappa (recDelta void void (delta void)) + 1`
+    $$= (\max(\max(0,0), kappa void) + 1) + 1 = (0+1)+1 = 2.$$
+- So the claimed equality `1 = 2` fails.
+
+This also breaks `kappa_rec_succ_drop` (KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean):
+- With the same `b,s,n` as above:
+  - `kappa (recDelta void void (delta (delta void))) = 1` (as computed).
+  - `kappa (app s (recDelta b s n)) = kappa (app void (recDelta void void (delta void))) = \max(0, 1) = 1`.
+- The strict inequality `1 < 1` is false.
+
+So the intended “succ case drops because the `+1` disappears” argument only works under an extra side-condition like “`n` is not of the form `delta _`” (or if `kappa` counted `delta`-depth), but no such restriction exists in the statements.
+
+Separately (if your termination plan was “every `Step` strictly decreases `kappa`”), several other rules preserve `kappa` exactly (e.g. `merge void t → t`, `eqW a b → integrate (merge a b)`) because they’re `Nat.max`-based and `integrate`/`delta` are measure-neutral (KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean). That means `kappa` alone cannot support a global strict-decrease termination proof for `Step` as currently defined.

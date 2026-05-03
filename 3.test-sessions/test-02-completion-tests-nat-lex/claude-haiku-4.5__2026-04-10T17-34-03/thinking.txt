@@ -1,0 +1,56 @@
+Looking at this Lean 4 file, I need to analyze what's being proved and provide skeleton proofs for the 5 remaining cases.
+
+The file defines:
+1. A `Trace` inductive type with 7 constructors (void, delta, integrate, merge, app, recDelta, eqW)
+2. A `Step` reduction relation with 8 rules (R_int_delta, R_merge_void_left, R_merge_void_right, R_merge_cancel, R_rec_zero, R_rec_succ, R_eq_refl, R_eq_diff)
+3. Two measures:
+   - `kappa`: recursion depth (counts +1 when recDelta has delta-wrapped third arg, delta is transparent)
+   - `mu`: weighted structural size (delta is transparent, other constructors have fixed weights)
+4. A lexicographic order on (kappa, mu) pairs
+
+The theorem `measure_decreases` needs to prove that every primitive step strictly decreases the lexicographic measure.
+
+Three cases are already proved:
+1. R_merge_void_left: merge void t --> t
+2. R_merge_void_right: merge t void --> t  
+3. R_merge_cancel: merge t t --> t
+
+Five cases remain (marked with sorry):
+
+1. **R_int_delta**: integrate (delta t) --> void
+   - kappa: integrate and delta are both transparent to kappa, so kappa(void) = 0 < kappa(integrate(delta(t))) = kappa(t), which is ≥ 0 (always strictly decreases because we go to void which has kappa 0)
+   - Actually: kappa(t) is arbitrary. If kappa(t) > 0, then kappa strictly decreases. If kappa(t) = 0, then kappa ties and mu must drop.
+   - mu: integrate has weight 1, delta is transparent, so mu(integrate(delta(t))) = 1 + mu(t). 
+   - mu(void) = 0, which is strictly less than 1 + mu(t) for any non-negative mu(t), so the measure always drops by at least 1 on the right component. This means I can apply drop_right. Alternatively, when kappa(t) > 0, the left component strictly decreases, allowing left drop instead.
+
+2. **R_rec_zero**: recDelta b s void --> b
+   - kappa: recDelta b s void has kappa value of max
+
+(kappa(b), kappa(s)), which is at least kappa(b). When this maximum exceeds kappa(b), the left component strictly decreases. Otherwise, kappa(b) equals the maximum (implying kappa(s) ≤ kappa(b)), so both components tie and I need the right drop.
+   - mu: The measure is 3 + mu(b) + mu(s), and mu(b) is strictly smaller since mu(s) ≥ 0, giving the right drop when kappa ties.
+
+3. **R_rec_su
+
+**: For recDelta b s (delta n) --> app s (recDelta b s n), the third argument being delta-wrapped adds complexity. The left side has kappa equal to max(max(kappa(b), kappa(s)), kappa(n)) + 1, while the right side is max(kappa(s), max(max(kappa(b), kappa(s)), kappa(n))). The right side simplifies to max(kappa(b), kappa(s), kappa(n)), which is strictly smaller than the left side's +1 increment, so the left component drops.
+
+For eqW a a --> void, when kappa(a) is positive, the left side's kappa exceeds the right side's 0, causing a left drop. When kappa(a) equals 0, kappas match but mu(eqW a a) = 4 + 2*kappa(a) dominates mu(void) = 0, creating a right drop. The eqW a b --> integrate (merge a b) case has matching kappas on both sides since both equal max(kappa(a), kappa(b)), so the measure comparison determines termination.
+
+Looking at the reduction rules, most cases follow a pattern where kappa either strictly decreases or ties while mu decreases. For rules like R_int_delta and R_eq_refl where kappa might behave differently depending on argument values, I need to split the proof into cases—one handling strict kappa decrease and another handling kappa equality with mu decrease.
+
+The proof structure for R_int_delta would check whether kappa t equals zero. When it does, kappa stays constant across the reduction while mu increases, so I'd apply drop_right. When kappa t is nonzero, kappa strictly decreases, requiring drop_left instead.
+
+Looking at the actual values: kappa void is 0, kappa of the integrated result is kappa t, mu void is 0, and mu of the integrated result is 1 + mu t. This means if kappa t is positive, the kappa condition for drop_left is satisfied directly.
+
+When kappa t equals 0, both sides have equal kappa values, but the mu inequality holds since 0 < 1 + mu t, so drop_right applies instead.
+
+For the R_rec_zero case, I need to split on whether kappa s is at most kappa b. When this holds, the maximum in recDelta equals kappa b, making the kappa values equal while mu b is strictly less than mu of the result.
+
+When kappa b < kappa s instead, the maximum becomes kappa s, which is strictly greater than kappa b, so drop_left handles this branch.
+
+The key insight is that omega should resolve the Nat.max calculations directly through simp and arithmetic reasoning, without needing explicit lemmas about max.
+
+For R_rec_succ, the situation simplifies because kappa decreases strictly in that case.
+
+For R_eq_refl, I need to split on whether kappa a equals zero. If it does, then mu increases while kappa stays equal, triggering drop_right. Otherwise, kappa strictly decreases, so drop_left applies.
+
+For R_eq_diff, the pattern continues with mu increasing on the left side while handling the kappa relationship appropriately.

@@ -1,0 +1,82 @@
+The file is only ~25 lines. Let me analyze this carefully.
+
+We have an inductive type `Trace` with constructors:
+- `void` (nullary)
+- `delta` (unary)
+- `integrate` (unary)
+- `merge` (binary)
+- `app` (binary)
+- `recΔ` (ternary)
+- `eqW` (binary)
+
+And rewrite rules (`Step` relation):
+1. `integrate (delta t) → void`
+2. `merge void t → t`
+3. `merge t void → t`
+4. 
+`merge t t → t` (idempotency)
+5. `recΔ b s void → b`
+6. `recΔ b s (delta n) → app s (recΔ b s n)`
+7. `eqW a a → void`
+8. `eqW a b → integrate (merge a b)`
+
+Now I'm wondering whether strong normalization can be proven just from the calculus itself. The critical issue is that the `Step` relation only fires at the root—there are no congruence rules that would let reductions happen in subterms.
+
+But wait, when we talk about strong normalization for a rewrite system, we typically mean the compatible closure where reductions can happen anywhere in a term. So I need to consider whether we're analyzing just the root-level `Step` relation or its contextual extension.
+
+Looking at rules 7 and 8 together, there's a real problem: `eqW a a` reduces to `void`, but `eqW a b` reduces to `integrate (merge a b)`. When `a` and `b` are equal, both rules could potentially apply, creating a conflict. both paths eventually reach normal forms, so the real question is whether every possible reduction sequence terminates—strong normalization rather than just weak normalization. The critical concern with `recΔ` is that rule 6 recursively peels off `delta` constructors from the third argument, which works fine for nested deltas like `delta (delta void)`, but I need to verify what happens when the third argument is something that doesn't obviously reduce to a base case.
+
+Looking at the structure more carefully, if `recΔ b s t` receives an argument `t` that's neither `void` nor a `delta` application, it gets stuck as a normal form—which is acceptable for strong normalization. The key insight is that `app` itself is completely inert; there are no reduction rules with `app` on the left side, so expressions like `app s (recΔ b s n)` are stuck at the root and can't create feedback loops that would cause infinite reduction. Now I'm checking whether `eqW` could somehow trigger non-termination... a ≠ b`:
+   - Rule 8: `eqW a b → integrate (merge a b)`
+   - Does rule 7 also apply? Only if `a = b`, so no.
+   
+   Consider `eqW a a`:
+   - Rule 7: `eqW a a → void` ✓
+   - Rule 8: `eqW a a → integrate (merge a a)` ✓
+   - Both apply. Via rule 8, we get `integrate (merge a a)`.
+   - Then `merge a a → a` (rule 4), so `integrate a`.
+   - If `a = delta t`, then `integrate (delta t) → void` (rule 1).
+   - Otherwise, `integrate a` is a normal form.
+   
+   Both paths terminate. No cycle.
+
+6. **Checking for loops with contextual closure:**
+   
+   With contextual reduction, I need to verify that no right-hand side can reduce back to trigger the same rule with equal or larger terms. When `eqW a a` reduces through rule 8 to `integrate (merge a a)` and then to `integrate a`, there are no more `eqW` terms to loop back on. For `recΔ b s (delta n)`, rule 6 produces `app s (recΔ b s n)` where the third argument strictly decreases, and `app` doesn't trigger further reductions, so this is well-founded.
+
+7. **Can we build a decreasing measure?**
+
+   I'm trying to construct a weight function on terms to prove strong normalization via a strictly decreasing measure. I'll assign weights to each constructor: `void` gets 1, `delta` and `integrate` each add 1 to their argument's weight, and `merge` and `app` sum their arguments' weights plus 1. The tricky parts are assigning weights to `recΔ` and `eqW` in a way that ensures every reduction rule strictly decreases the total weight.
+
+   Now I'm checking whether the basic rules actually decrease under this scheme. The first few look good—`integrate (delta t)` reduces from weight `w(t) + 2` down to 1, and the `merge` rules with `void` or identical arguments all drop from `w(t) + 2` or higher down to `w(t)`. For the recursive case `recΔ b s void → b`, I need to ensure the weight assignment for `recΔ` makes this decrease as well.
+
+The tricky part is the recursive step where `recΔ b s (delta n)` unfolds to `app s (recΔ b s n)`. The right-hand side introduces both `w(s)` and `w(recΔ b s n)`, so even though the recursive subterm gets smaller, I'm adding extra weight from `s` appearing in the application, and I need to make sure the overall measure still decreases. app` and remains inside `recΔ`). But wait, `s` was already in the LHS too — it's the same `s` in `recΔ b s n`. So the RHS is `app s (recΔ b s n)` which has weight `w(s) + w(recΔ b s n) + 1`.
+      
+      If `w(recΔ b s n) = f(w(b), w(s), w(n))`, then we need:
+      `f(w(b), w(s), w(n) + 1) > w(s) + f(w(b), w(s), w(n)) + 1`
+      
+      So `f(b, s, n+1) > s + f(b, s, n) + 1`
+
+This means the difference `f(b, s, n+1) - f(b, s, n)` must exceed `s + 1`, so `f` needs to grow at least linearly in `n` with a coefficient larger than `s`. Let me test whether something like `f(b, s, n) = (s + 2) * n + b + 1` works by expanding both sides and checking if the inequality holds.
+
+The verification checks out, but now I'm realizing this approach has a fundamental problem: I can't use a simple structural weight function here because the weight of `recΔ b s n` would need to multiply the weights of its subterms, which breaks compositionality. Even though I can compute it from the subterms, I need to verify whether this multiplicative weight actually decreases under all contextual closure rules.
+
+The issue is that with contextual closure, reducing a subterm inside a larger expression needs to decrease the overall weight. With additive weights this is straightforward, but with my multiplicative formula, reducing `s` to `s'` might not guarantee the whole expression decreases because the multiplication by `w(n)` could amplify or dampen the effect unpredictably. I need to verify that weight is monotone across all contexts—when a term reduces, its weight in any surrounding context also decreases. For additive positions this follows directly from strict monotonicity. For the `recΔ` constructor, I'm checking both the b-position and s-position: in the b-position the weight formula shows `w(t) + 1` as the varying term, so reduction preserves the inequality; in the s-position the coefficient `(w(t)+2)` multiplies `w(n)`, so if `w(t)` decreases then the overall weight decreases as well.
+
+Now I'm moving on to verify rule 8, which states that `eqW a b` should imply `integrate (merge a b)`.
+
+For this rule, I need `w(eqW a b)` to be strictly greater than `w(integrate (merge a b))`, which equals `w(a) + w(b) + 2`. Setting `w(eqW a b) = w(a) + w(b) + 3` satisfies this. Then I can check rule 7: when both arguments to `eqW` are identical, the weight `2w(a) + 3` is indeed greater than `w(void) = 1`. For rule 5, I'm verifying that `recΔ b s void` reduces to `b`...
+
+Now checking rule 6 where `recΔ b s (delta n)` unfolds recursively. The left side has weight `(w(s)+2)*w(n) + w(s) + w(b) + 3`, and I need to verify this is strictly greater than the right side's weight when `s` is applied to the recursive call.
+
+Computing the difference: the left side exceeds the right by exactly 1, confirming the weight decreases. Since all six rules strictly reduce weight and the weight function respects contextual closure, strong normalization follows from the well-foundedness of the natural numbers.
+
+But wait—I should verify whether we're actually proving this for the contextual closure or just the root-step relation as stated. The `Step` relation doesn't include explicit context rules, so if we're only considering root steps, strong normalization means no infinite sequence of root reductions. However, a single root step can transform the outermost constructor and enable another root step to fire, so I need to trace through what actually happens with examples like reducing `eqW (delta void) (delta void)` through either the reflexivity rule to `void` or the difference rule to `integrate (merge (delta void) (delta void))`.
+
+In that second case, `integrate` has no root rule that applies because its argument `merge (delta void) (delta void)` isn't yet in the form `delta t`. With contextual closure, we could reduce the merge first, but the question is whether the root-step relation alone is strongly normalizing. Let me look more carefully at rule 8 to pin down exactly what we're proving.
+
+The rule applies universally for all `a` and `b`, even when they're equal, so both `R_eq_refl` and `R_eq_diff` can fire on the same term. That's not a problem though — strong normalization guarantees all reduction sequences terminate regardless of which rule we pick when there's overlap, and since the weight decreases for both branches, we're safe. So yes, strong normalization follows from the calculus itself using a polynomial weight function, where the key is setting the multiplicative weight for `recΔ` to account for how `s` gets duplicated.
+
+Now I'm thinking through whether the lack of variables and external memory actually matters here. Since the system has no variables at all — everything is ground terms — there's no substitution, no lambda abstractions, no variable capture to worry about. `app` is just a constructor with no reduction rule, and `recΔ` is the only recursive combinator. This is really just a ground term rewriting system. I should also double-check the `Step` relation: it fires for any `a` and `b` without restriction, so even `eqW void void` reduces to `integrate (merge void void)`, and then `merge void void` continues from there.
+
+Following that path, `merge void void` reduces to `void`, then `integrate void` — but there's no rule that reduces `integrate void` since the only rule requires `integrate (delta t)`. So that branch gets stuck. The other path `eqW void void` →₇ `void` terminates cleanly. Both branches terminate, which is what matters. And since `Trace` is an inductive type, all terms are finite by construction. I'm satisfied with this analysis.

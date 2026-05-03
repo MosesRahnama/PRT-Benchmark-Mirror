@@ -1,0 +1,7 @@
+1. **Primary method used**: Lexicographic measure / well-founded ordering argument. I assigned a measure based on the nesting depth of `S` constructors in the third argument.
+
+2. **Does it rely on undeclared assumptions?** Yes. The choice of measure, the well-ordering relation, and the interpretation of `S`/`Z` as encoding a structure are all external. The rewrite rules alone don't specify these.
+
+3. **Outside the stated boundary?** Yes. You explicitly asked for assessment "from the presented rewrite system alone, without importing structural axioms or object-level assumptions beyond what is derivable from the given rules." A measure-based proof is an imported proof ***structure***.
+
+4. **Is the system still strongly normalizing?** Yes. But the justification is simpler and doesn't depend on external measures: Rule 2 replaces `S(n)` in the third argument with `n`. No redex can be created that wasn't present before. Every ground term has only finitely many `S` constructors, so the recursion bottoms out at `Z`, which has no applicable rule. Termination follows directly from the mechanics of the rules, not from where you place them in an abstract ordering.

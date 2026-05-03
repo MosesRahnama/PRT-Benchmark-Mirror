@@ -1,0 +1,16 @@
+### Assessment
+Yes, strong normalization (SN) can be established for this ground term rewriting system (TRS) using only the given syntax and rules. The system is finite-state in its reduction behavior: rules either simplify structures (e.g., canceling voids, duplicates, or integrating deltas) or unfold recursion on a consuming `delta` counter, with no cycles, non-terminating loops, or size-exploding chains possible under the defined steps.
+
+### Short Proof Roadmap
+1. **Define the reduction relation → as the reflexive-transitive closure of `Step`, and normal forms as terms with no `Step` successor.**
+2. **Prove SN by structural induction on terms (using Lean's well-founded recursion or a multiset measure on constructor depth):**
+   - **Base cases (constructors):** `void` is normal (no rules apply). For `delta t`, induct on `t` (SN of `t` implies SN of `delta t`, as no rule reduces `delta` directly).
+   - **`integrate u`:** Reduces only if `u = delta t` (to `void`, which is normal). Otherwise, normal if `u` is. Induct on `u`.
+   - **`merge u v`:** Reduces only if `u = void` (to `v`), `v = void` (to `u`), or `u = v` (to `u`). Each case decreases constructors or defers to SN of subterms. If irreducible, normal.
+   - **`app u v`:** No direct rules; normal if subterms are (induct).
+   - **`recΔ b s u`:** If `u = void`, reduces to `b` (normal by induct). If `u = delta n`, reduces to `app s (recΔ b s n)`; the `delta` "fuel" decreases (measure: nesting depth of `delta` in `u`), and `app` defers to SN of subterms. Otherwise, normal.
+   - **`eqW a b`:** Always reduces in one step: to `void` (if `a = b`, normal) or `integrate (merge a b)` (defers to SN of that term, which as above terminates without further explosion since `merge a b ≠ delta _` unless subterms reduce first).
+3. **No critical overlaps:** Rules are disjoint or non-overlapping (e.g., `recΔ` head-matches uniquely; `merge` conditions are mutually exclusive), ensuring reductions strictly decrease a well-founded measure (e.g., pair `(delta-depth, constructor-count)` with lexicographic order).
+4. **Conclude:** Every term reaches a normal form in finitely many steps, as infinite chains would require infinite `delta`-unfolding (impossible in finite terms) or cycling (contradicted by measure decrease).
+
+This stays within the syntax/rules: no extra axioms needed beyond decidable equality (already derived) and induction (standard in Lean).

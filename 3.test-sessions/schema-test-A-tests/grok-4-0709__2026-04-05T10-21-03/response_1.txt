@@ -1,0 +1,7 @@
+Yes, strong normalization can be established from the presented rewrite system alone.
+
+**Short proof roadmap:**
+- Compute dependency pairs: the only DP is F(x, y, S(n)) ▻ F(x, y, n).
+- Any infinite DP chain implies an infinite strict subterm descent S(n) ⊳ n ⊳ ... in third arguments.
+- Strict subterm relation ⊳ is well-founded on finite terms (no infinite descending chains possible).
+- Thus, no infinite DP chains exist, so the TRS terminates (is strongly normalizing) by the dependency pairs method.

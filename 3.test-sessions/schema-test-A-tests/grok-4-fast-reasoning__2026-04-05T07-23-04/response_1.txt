@@ -1,0 +1,19 @@
+### Assessment
+Yes, strong normalization can be established from the presented rewrite system alone. The system is terminating (hence strongly normalizing) due to its primitive recursive iteration schema, with no cycles, overlaps, or non-terminating patterns derivable from the rules.
+
+### Proof Roadmap
+1. **Syntax and Structure**: The system has function symbols `F` (arity 3), `G` (arity 2), constant `Z`, and constructor `S` (arity 1). Variables: `x, y, n`. Rules are:
+   - `F(x, y, Z) → x` (base case).
+   - `F(x, y, S(n)) → G(y, F(x, y, n))` (step case).
+   `G` has no rules (base constructor). Redexes are only at `F`-heads; no rules for subterms unless they contain `F`.
+
+2. **Termination Measure**: Define the *size* of a term as the multiset of "recursion depths" (number of nested `S`'s) across all third arguments of `F`-subterms. For a term `t`, size(`t`) = { depth(`u`) | `u` is third arg of some `F(·, ·, u)` in `t` }, ordered by multiset extension of natural numbers.
+
+3. **Decrease on Reduction**:
+   - Base rule: Replaces `F(x, y, Z)` (depth 0) with `x` (removes one depth-0 entry).
+   - Step rule: Replaces `F(x, y, S(n))` (depth = 1 + depth(`n`)) with `G(y, F(x, y, n))` (new `F` has depth(`n`), so multiset replaces `d+1` with `d`; strictly decreases lexicographically).
+   Reductions inside `x`/`y` or nested `F`'s preserve or decrease the multiset (inductive).
+
+4. **No Infinite Chains**: Every reduction strictly decreases the size multiset (well-founded), so all sequences terminate. Confluence follows from non-overlapping rules (third arg distinguishes cases), but not needed for strong normalization.
+
+This holds purely from the rules' form, without external axioms.

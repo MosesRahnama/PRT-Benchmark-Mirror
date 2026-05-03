@@ -1,0 +1,73 @@
+The file is fully contained in lines 1–20. Here is my assessment.
+
+---
+
+## System summary
+
+| Symbol | Arity | Role |
+|--------|-------|------|
+| `plum` | 0 | ground constant (zero / unit) |
+| `grape` | 1 | successor-like wrapper |
+| `mango` | 1 | unary destructor |
+| `peach` | 2 | binary "meet" / selector |
+| `pear` | 2 | binary pairing (constructor only — no rewrite rule consumes a `pear`-headed term) |
+| `banana` | 3 | primitive recursion combinator |
+| `cherry` | 2 | equality test |
+
+There are **8 rewrite rules** forming the root-step relation `Step`. No congruence/closure rules are given, so `Step` is a **root rewriting** relation (rewrites apply only at the top of a term). Even if one takes the compatible closure (rewriting anywhere inside a term), the analysis below still applies.
+
+---
+
+## Can strong normalization (SN) be proved from this calculus alone?
+
+**Yes.** A straightforward **polynomial interpretation** (a standard first-order termination method) works.
+
+### Proof roadmap
+
+**Method:** Assign every `Trace` term a value in $(\mathbb{N},>)$ via an interpretation $\llbracket \cdot \rrbracket$ and show every rule is strictly decreasing.
+
+Define:
+
+$$
+\begin{aligned}
+\llbracket \texttt{plum} \rrbracket &= 0 \\
+\llbracket \texttt{grape}\;t \rrbracket &= \llbracket t \rrbracket + 3 \\
+\llbracket \texttt{mango}\;t \rrbracket &= \llbracket t \rrbracket + 1 \\
+\llbracket \texttt{peach}\;t_1\;t_2 \rrbracket &= \llbracket t_1 \rrbracket + \llbracket t_2 \rrbracket + 1 \\
+\llbracket \texttt{pear}\;t_1\;t_2 \rrbracket &= \llbracket t_1 \rrbracket + \llbracket t_2 \rrbracket \\
+\llbracket \texttt{banana}\;b\;s\;n \rrbracket &= (\llbracket b \rrbracket + \llbracket s \rrbracket + 1) \cdot (\llbracket n \rrbracket + 1) \\
+\llbracket \texttt{cherry}\;a\;b \rrbracket &= \llbracket a \rrbracket + \llbracket b \rrbracket + 2
+\end{aligned}
+$$
+
+**Verification rule-by-rule** (each LHS must be strictly greater than RHS):
+
+| Rule | LHS value | RHS value | Decrease? |
+|------|-----------|-----------|-----------|
+| `R_mango_grape` | $(\llbracket t \rrbracket + 3) + 1 = \llbracket t \rrbracket + 4$ | $0$ | $\checkmark$ |
+| `R_peach_plum_left` | $0 + \llbracket t \rrbracket + 1$ | $\llbracket t \rrbracket$ | $\checkmark$ (by 1) |
+| `R_peach_plum_right` | $\llbracket t \rrbracket + 0 + 1$ | $\llbracket t \rrbracket$ | $\checkmark$ (by 1) |
+| `R_peach_cancel` | $\llbracket t \rrbracket + \llbracket t \rrbracket + 1$ | $\llbracket t \rrbracket$ | $\checkmark$ (by $\llbracket t \rrbracket + 1$) |
+| `R_banana_zero` | $(\llbracket b \rrbracket + \llbracket s \rrbracket + 1)(0+1) = \llbracket b \rrbracket + \llbracket s \rrbracket + 1$ | $\llbracket b \rrbracket$ | $\checkmark$ (by $\llbracket s \rrbracket + 1$) |
+| `R_apple_orange` | $(\llbracket b \rrbracket + \llbracket s \rrbracket + 1)(\llbracket n \rrbracket + 3 + 1)$ | $\llbracket s \rrbracket + (\llbracket b \rrbracket + \llbracket s \rrbracket + 1)(\llbracket n \rrbracket + 1)$ | see below |
+| `R_cherry_refl` | $\llbracket a \rrbracket + \llbracket a \rrbracket + 2$ | $0$ | $\checkmark$ |
+| `R_cherry_diff` | $\llbracket a \rrbracket + \llbracket b \rrbracket + 2$ | $(\llbracket a \rrbracket + \llbracket b \rrbracket + 1) + 1$ | $\checkmark$ (equal — need to bump; see note) |
+
+**`R_apple_orange` detail.** Let $B = \llbracket b \rrbracket + \llbracket s \rrbracket + 1$ (note $B \ge 1$) and $N = \llbracket n \rrbracket + 1$.
+
+$$\text{LHS} = B(N+3),\quad \text{RHS} = \llbracket s \rrbracket + B \cdot N$$
+
+$$\text{LHS} - \text{RHS} = 3B - \llbracket s \rrbracket = 3(\llbracket b \rrbracket + \llbracket s \rrbracket + 1) - \llbracket s \rrbracket = 3\llbracket b \rrbracket + 2\llbracket s \rrbracket + 3 \ge 3. \;\checkmark$$
+
+**`R_cherry_diff` note.** With the interpretation above, LHS $=$ RHS (both equal $\llbracket a \rrbracket + \llbracket b \rrbracket + 2$). Fix: raise `cherry` slightly — set $\llbracket \texttt{cherry}\;a\;b \rrbracket = \llbracket a \rrbracket + \llbracket b \rrbracket + 3$. Then:
+
+- `R_cherry_refl`: $\llbracket a \rrbracket + \llbracket a \rrbracket + 3 > 0$. $\checkmark$
+- `R_cherry_diff`: $\llbracket a \rrbracket + \llbracket b \rrbracket + 3 > \llbracket a \rrbracket + \llbracket b \rrbracket + 2$. $\checkmark$
+
+All other rules are unaffected (no rule has `cherry` on the RHS).
+
+### Conclusion
+
+Since every rule strictly decreases the $\mathbb{N}$-valued interpretation, every rewrite sequence terminates. Because the interpretation is compositional, this extends to the compatible closure (rewriting under any context).
+
+**Strong normalization holds, provable entirely within the presented calculus using a standard polynomial/linear interpretation over $\mathbb{N}$. No additional axioms, guards, side conditions, or imported structural principles are needed.**

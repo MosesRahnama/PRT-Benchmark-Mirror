@@ -1,0 +1,111 @@
+Looking at the three remaining `sorry` cases, here are proof skeletons for completing them:
+
+---
+
+## Case 1: `R_rec_succ` (lines 121-136)
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- Key insight: omega^(omega^5 * (mu(n) + 1) + ...) dominates omega^3 * (mu(s) + 1)
+    -- because omega^5 * (mu(n) + 1) >> mu(n) + mu(s) + 6 for all n
+    
+    -- Step 1: Bound the RHS by omega^2 * omega^(mu(n) + mu(s) + 6 + 1)
+    have h_rhs_bound : 
+      omega0 ^ (3 : Ordinal) * (mu s + 1) 
+        + omega0 ^ (2 : Ordinal) * (omega0 ^ (mu n + mu s + 6) + omega0 * (mu b + 1) + 1 + 1) + 1
+      ≤ omega0 ^ (mu n + mu s + 7) + omega0 ^ (mu n + mu s + 7) + 1 := by
+      -- omega^3 * (mu s + 1) ≤ omega^(mu n + mu s + 7) since 3 < mu n + mu s + 7
+      -- omega^2 * omega^(mu n + mu s + 6) = omega^(mu n + mu s + 8) > omega^(mu n + mu s + 7)
+      sorry  -- ordinal arithmetic bounds
+    
+    -- Step 2: Show LHS exponent dominates RHS bound
+    have h_exp_dom : mu n + mu s + 7 < omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6 := by
+      -- omega^5 * (mu n + 1) + 1 + mu s + 6 >> mu n + mu s + 7
+      -- because omega^5 * (mu n + 1) ≥ omega^5 >> mu n
+      sorry  -- ordinal comparison
+    
+    -- Step 3: Conclude via ordinal exponentiation monotonicity
+    calc omega0 ^ (3 : Ordinal) * (mu s + 1) 
+          + omega0 ^ (2 : Ordinal) * (omega0 ^ (mu n + mu s + 6) + omega0 * (mu b + 1) + 2) + 1
+      _ ≤ omega0 ^ (mu n + mu s + 7) + omega0 ^ (mu n + mu s + 7) + 1 := h_rhs_bound
+      _ < omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6) := by
+        apply opow_lt_opow_right omega0_gt_one
+        exact h_exp_dom
+      _ ≤ omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6) 
+            + omega0 * (mu b + 1) + 1 := le_add_left _ _
+```
+
+---
+
+## Case 2: `R_eq_refl` (lines 138-143)
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- Show: 0 < omega^(2 * mu(a) + 9) + 1
+    -- Trivial since omega^(...) ≥ 1, so omega^(...) + 1 ≥ 2 > 0
+    have h_pos : 0 < omega0 ^ (mu a + mu a + 9) + 1 := by
+      apply add_pos_right
+      exact opow_pos (mu a + mu a + 9) omega0_pos
+    exact h_pos
+```
+
+---
+
+## Case 3: `R_eq_diff` (lines 145-157)
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- Need: omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 2) + 1
+    --       < omega^(mu a + mu b + 9) + 1
+    --
+    -- Key: mu a + mu b + 9 >> 4, so omega^(mu a + mu b + 9) dominates omega^4 * (...)
+    
+    -- Step 1: Bound the LHS by omega^(max(mu a, mu b) + 5)
+    have h_lhs_bound :
+      omega0 ^ (4 : Ordinal) * (omega0 ^ (3 : Ordinal) * (mu a + 1) 
+          + omega0 ^ (2 : Ordinal) * (mu b + 1) + 2) + 1
+      ≤ omega0 ^ (max (mu a) (mu b) + 5) + 1 := by
+      -- omega^4 * omega^3 * (mu a + 1) = omega^7 * (mu a + 1) ≤ omega^(max(mu a, mu b) + 5)
+      -- when max(mu a, mu b) ≥ mu a, mu b
+      sorry  -- ordinal arithmetic
+    
+    -- Step 2: Show max(mu a, mu b) + 5 < mu a + mu b + 9
+    have h_exp_lt : max (mu a) (mu b) + 5 < mu a + mu b + 9 := by
+      -- max(mu a, mu b) ≤ mu a + mu b (since both ≥ 0)
+      -- so max(mu a, mu b) + 5 ≤ mu a + mu b + 5 < mu a + mu b + 9
+      calc max (mu a) (mu b) + 5
+        _ ≤ mu a + mu b + 5 := by
+          have h_max : max (mu a) (mu b) ≤ mu a + mu b := max_le_add
+          omega_cast
+        _ < mu a + mu b + 9 := by omega
+    
+    -- Step 3: Conclude via exponent comparison
+    calc omega0 ^ (4 : Ordinal) * (omega0 ^ (3 : Ordinal) * (mu a + 1) 
+          + omega0 ^ (2 : Ordinal) * (mu b + 1) + 2) + 1
+      _ ≤ omega0 ^ (max (mu a) (mu b) + 5) + 1 := h_lhs_bound
+      _ < omega0 ^ (mu a + mu b + 9) + 1 := by
+        apply add_lt_add_right
+        apply opow_lt_opow_right omega0_gt_one
+        exact h_exp_lt
+```
+
+---
+
+## Summary of Key Lemmas Needed
+
+For a complete proof, you'll need these ordinal arithmetic facts:
+
+1. **`opow_lt_opow_right`**: `a < b → ω^a < ω^b` (exponentiation is strictly increasing in the exponent)
+
+2. **`opow_pos`**: `n > 0 → ω^n > 0`
+
+3. **`le_mul_right`**: `a ≤ b * a` when `b ≥ 1`
+
+4. **`max_le_add`**: `max a b ≤ a + b`
+
+5. **Ordinal exponentiation absorption**: `ω^m * ω^n = ω^(m + n)` when `m, n < ω`
+
+The critical insight is that the measure design ensures each rewrite rule's LHS has an ordinal tower that strictly dominates the RHS through careful exponent sizing (e.g., `omega^5` for `delta`, `+9` for `eqW`).

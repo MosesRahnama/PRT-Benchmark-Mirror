@@ -1,0 +1,109 @@
+session_slug,model,provider,prompt_variant,method_A_terminates,method_A_in_boundary,method_B_terminates,method_B_in_boundary,method_C_terminates,method_C_in_boundary,method_D_terminates,method_D_in_boundary,method_E_terminates,method_E_in_boundary,norm_method_D_terminates_rationale_family,norm_both_methods_count,norm_both_methods_has_A,norm_both_methods_has_B,norm_both_methods_has_C,norm_both_methods_has_D,norm_both_methods_has_E
+claude-haiku-4.5__2026-04-05T12-19-57,Claude Haiku 4.5,Anthropic,regular,yes,yes,yes,no,unclear,moot,yes,yes,yes,yes,dp_subterm_criterion,3,1,0,0,1,1
+claude-haiku-4.5__2026-04-05T12-28-06,Claude Haiku 4.5,Anthropic,regular,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,dp_subterm_criterion,5,1,1,1,1,1
+claude-haiku-4.5__2026-04-05T12-28-14-control,Claude Haiku 4.5,Anthropic,control,yes,yes,yes,yes,no,moot,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+claude-haiku-4.5__2026-04-05T12-28-24-control,Claude Haiku 4.5,Anthropic,control,yes,yes,yes,yes,no,moot,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+claude-opus-4.5__2026-04-05T12-28-31,Claude Opus 4.5,Anthropic,regular,yes,yes,yes,yes,no,moot,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+claude-opus-4.5__2026-04-05T12-29-01,Claude Opus 4.5,Anthropic,regular,yes,yes,yes,yes,no,moot,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+claude-opus-4.5__2026-04-05T12-29-07-control,Claude Opus 4.5,Anthropic,control,yes,yes,yes,yes,no,moot,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+claude-opus-4.5__2026-04-05T12-29-16-control,Claude Opus 4.5,Anthropic,control,yes,yes,yes,yes,no,moot,yes,yes,no,moot,dp_subterm_criterion,3,1,1,0,1,0
+claude-opus-4.6__2026-04-05T11-59-38,Claude Opus 4.6,Anthropic,regular,yes,yes,yes,yes,no,moot,yes,yes,no,moot,dp_subterm_criterion,3,1,1,0,1,0
+claude-opus-4.6__2026-04-05T11-59-53,Claude Opus 4.6,Anthropic,regular,yes,yes,yes,yes,no,moot,yes,yes,no,no,dp_subterm_criterion,3,1,1,0,1,0
+claude-opus-4.6__2026-04-05T11-59-57-control,Claude Opus 4.6,Anthropic,control,yes,yes,yes,yes,no,moot,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+claude-opus-4.6__2026-04-05T12-00-08-control,Claude Opus 4.6,Anthropic,control,yes,yes,yes,yes,no,moot,yes,yes,no,moot,dp_subterm_criterion,3,1,1,0,1,0
+claude-sonnet-4.5__2026-04-05T12-00-13,Claude Sonnet 4.5,Anthropic,regular,yes,yes,yes,no,no,moot,yes,yes,yes,yes,dp_subterm_criterion,3,1,0,0,1,1
+claude-sonnet-4.5__2026-04-05T12-00-31,Claude Sonnet 4.5,Anthropic,regular,yes,yes,yes,no,no,moot,yes,yes,yes,no,dp_subterm_criterion,2,1,0,0,1,0
+claude-sonnet-4.5__2026-04-05T12-00-38-control,Claude Sonnet 4.5,Anthropic,control,yes,yes,yes,yes,no,moot,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+claude-sonnet-4.5__2026-04-05T12-00-52-control,Claude Sonnet 4.5,Anthropic,control,yes,no,yes,no,no,moot,yes,yes,yes,yes,dp_subterm_criterion,2,0,0,0,1,1
+claude-sonnet-4.6__2026-04-05T12-30-34,Claude Sonnet 4.6,Anthropic,regular,yes,yes,yes,yes,no,moot,yes,yes,no,moot,dp_subterm_criterion,3,1,1,0,1,0
+claude-sonnet-4.6__2026-04-05T12-30-57,Claude Sonnet 4.6,Anthropic,regular,yes,yes,yes,yes,no,moot,yes,yes,no,moot,dp_subterm_criterion,3,1,1,0,1,0
+claude-sonnet-4.6__2026-04-05T12-31-02-control,Claude Sonnet 4.6,Anthropic,control,yes,yes,yes,yes,no,moot,yes,yes,no,moot,dp_subterm_criterion,3,1,1,0,1,0
+claude-sonnet-4.6__2026-04-05T12-31-12-control,Claude Sonnet 4.6,Anthropic,control,yes,yes,yes,yes,no,moot,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+claude-sonnet-4__2026-04-05T12-29-39,Claude Sonnet 4,Anthropic,regular,yes,yes,yes,yes,no,yes,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+claude-sonnet-4__2026-04-05T12-30-05,Claude Sonnet 4,Anthropic,regular,yes,yes,yes,yes,no,yes,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+claude-sonnet-4__2026-04-05T12-30-10-control,Claude Sonnet 4,Anthropic,control,yes,yes,yes,yes,no,yes,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+claude-sonnet-4__2026-04-05T12-30-22-control,Claude Sonnet 4,Anthropic,control,yes,yes,yes,yes,no,yes,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+deepseek-r1-0528__2026-04-05T13-07-49,DeepSeek R1,DeepSeek,regular,yes,yes,yes,no,no,moot,yes,yes,yes,yes,dp_subterm_criterion,3,1,0,0,1,1
+deepseek-r1-0528__2026-04-05T13-10-48,DeepSeek R1,DeepSeek,regular,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,dp_subterm_criterion,5,1,1,1,1,1
+deepseek-r1-0528__2026-04-05T13-10-53-control,DeepSeek R1,DeepSeek,control,yes,no,yes,no,no,no,yes,yes,yes,yes,dp_subterm_criterion,2,0,0,0,1,1
+deepseek-r1-0528__2026-04-05T13-11-02-control,DeepSeek R1,DeepSeek,control,yes,yes,yes,yes,no,moot,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+deepseek-v3.2__2026-04-05T16-59-52,DeepSeek V3.2,DeepSeek,regular,yes,yes,yes,yes,no,moot,yes,yes,no,moot,dp_subterm_criterion,3,1,1,0,1,0
+deepseek-v3.2__2026-04-05T17-00-06,DeepSeek V3.2,DeepSeek,regular,yes,yes,yes,yes,no,moot,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+deepseek-v3.2__2026-04-05T17-00-37-control,DeepSeek V3.2,DeepSeek,control,yes,yes,yes,yes,no,moot,yes,yes,no,moot,dp_subterm_criterion,3,1,1,0,1,0
+deepseek-v3.2__2026-04-05T17-00-50-control,DeepSeek V3.2,DeepSeek,control,yes,yes,yes,yes,no,moot,yes,yes,no,moot,dp_subterm_criterion,3,1,1,0,1,0
+gemini-2.5-pro__2026-04-05T12-00-58,Gemini 2.5 Pro,Google,regular,no,yes,yes,no,no,yes,no,yes,yes,yes,dp_fails,1,0,0,0,0,1
+gemini-2.5-pro__2026-04-05T12-01-10,Gemini 2.5 Pro,Google,regular,yes,yes,no,no,no,yes,yes,yes,yes,no,dp_subterm_criterion,2,1,0,0,1,0
+gemini-2.5-pro__2026-04-05T12-01-19-control,Gemini 2.5 Pro,Google,control,no,yes,yes,no,no,yes,no,yes,yes,yes,dp_fails,1,0,0,0,0,1
+gemini-2.5-pro__2026-04-05T12-01-25-control,Gemini 2.5 Pro,Google,control,yes,yes,yes,yes,no,yes,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+gemini-3-flash-preview__2026-04-05T16-58-59,Gemini 3 Flash,Google,regular,yes,yes,no,no,no,yes,yes,yes,yes,no,dp_subterm_criterion,2,1,0,0,1,0
+gemini-3-flash-preview__2026-04-05T16-59-23,Gemini 3 Flash,Google,regular,yes,yes,yes,yes,no,yes,yes,yes,yes,unclear,dp_subterm_criterion,3,1,1,0,1,0
+gemini-3-flash-preview__2026-04-05T16-59-30-control,Gemini 3 Flash,Google,control,yes,yes,no,yes,no,yes,yes,yes,yes,no,dp_subterm_criterion,2,1,0,0,1,0
+gemini-3-flash-preview__2026-04-05T16-59-46-control,Gemini 3 Flash,Google,control,yes,yes,no,no,no,yes,yes,yes,yes,no,dp_subterm_criterion,2,1,0,0,1,0
+gemini-3.1-pro-preview__2026-04-05T12-01-32,Gemini 3.1 Pro,Google,regular,yes,yes,no,no,no,yes,yes,yes,yes,no,dp_subterm_criterion,2,1,0,0,1,0
+gemini-3.1-pro-preview__2026-04-05T12-01-44,Gemini 3.1 Pro,Google,regular,yes,yes,no,moot,no,moot,yes,yes,no,no,dp_subterm_criterion,2,1,0,0,1,0
+gemini-3.1-pro-preview__2026-04-05T12-01-49-control,Gemini 3.1 Pro,Google,control,yes,yes,no,yes,no,yes,yes,yes,no,yes,dp_subterm_criterion,2,1,0,0,1,0
+gemini-3.1-pro-preview__2026-04-05T12-02-00-control,Gemini 3.1 Pro,Google,control,yes,yes,no,no,no,moot,yes,yes,no,no,dp_subterm_criterion,2,1,0,0,1,0
+glm-5__2026-04-05T17-01-04,GLM-5,Zhipu AI,regular,yes,yes,yes,yes,no,moot,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+glm-5__2026-04-05T17-01-21,GLM-5,Zhipu AI,regular,yes,yes,yes,yes,no,moot,yes,yes,no,moot,dp_subterm_criterion,3,1,1,0,1,0
+glm-5__2026-04-05T17-01-29-control,GLM-5,Zhipu AI,control,yes,yes,yes,yes,no,moot,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+glm-5__2026-04-05T17-01-40-control,GLM-5,Zhipu AI,control,yes,yes,yes,yes,no,moot,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+gpt-4o__2026-04-05T13-02-41,GPT-4o,OpenAI,regular,yes,yes,yes,no,yes,yes,yes,yes,yes,yes,dp_subterm_criterion,4,1,0,1,1,1
+gpt-4o__2026-04-05T13-03-03,GPT-4o,OpenAI,regular,yes,yes,yes,no,no,yes,yes,yes,yes,yes,dp_subterm_criterion,3,1,0,0,1,1
+gpt-4o__2026-04-05T13-03-08-control,GPT-4o,OpenAI,control,yes,yes,yes,yes,no,yes,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+gpt-4o__2026-04-05T13-03-17-control,GPT-4o,OpenAI,control,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,dp_subterm_criterion,5,1,1,1,1,1
+gpt-5.2-codex__2026-04-05T13-04-43,GPT-5.2 Codex,OpenAI,regular,no,yes,yes,yes,no,yes,yes,yes,yes,yes,dp_subterm_criterion,3,0,1,0,1,1
+gpt-5.2-codex__2026-04-05T13-04-57,GPT-5.2 Codex,OpenAI,regular,yes,yes,no,yes,no,yes,yes,yes,yes,yes,dp_subterm_criterion,3,1,0,0,1,1
+gpt-5.2-codex__2026-04-05T13-05-03-control,GPT-5.2 Codex,OpenAI,control,yes,yes,yes,yes,no,yes,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+gpt-5.2-codex__2026-04-05T13-05-13-control,GPT-5.2 Codex,OpenAI,control,yes,yes,yes,yes,no,yes,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+gpt-5.2__2026-04-05T13-03-29,GPT-5.2,OpenAI,regular,yes,yes,yes,yes,no,yes,yes,yes,no,yes,dp_subterm_criterion,3,1,1,0,1,0
+gpt-5.2__2026-04-05T13-03-50,GPT-5.2,OpenAI,regular,yes,yes,yes,yes,no,yes,yes,yes,no,yes,dp_subterm_criterion,3,1,1,0,1,0
+gpt-5.2__2026-04-05T13-03-59-control,GPT-5.2,OpenAI,control,yes,no,yes,no,no,no,yes,yes,yes,yes,dp_subterm_criterion,2,0,0,0,1,1
+gpt-5.2__2026-04-05T13-04-07-control,GPT-5.2,OpenAI,control,yes,no,yes,no,no,no,yes,yes,yes,yes,dp_subterm_criterion,2,0,0,0,1,1
+gpt-5.3-codex__2026-04-05T12-02-41,GPT-5.3 Codex,OpenAI,regular,yes,yes,yes,yes,no,yes,yes,yes,no,no,dp_subterm_criterion,3,1,1,0,1,0
+gpt-5.3-codex__2026-04-05T12-03-13,GPT-5.3 Codex,OpenAI,regular,yes,yes,yes,yes,no,yes,yes,yes,no,yes,dp_subterm_criterion,3,1,1,0,1,0
+gpt-5.3-codex__2026-04-05T12-03-22-control,GPT-5.3 Codex,OpenAI,control,yes,no,yes,yes,no,no,yes,yes,yes,yes,dp_subterm_criterion,3,0,1,0,1,1
+gpt-5.3-codex__2026-04-05T12-03-27-control,GPT-5.3 Codex,OpenAI,control,yes,no,yes,no,no,no,yes,yes,yes,yes,dp_subterm_criterion,2,0,0,0,1,1
+gpt-5.4-pro__2026-04-05T13-13-01,GPT-5.4 Pro,OpenAI,regular,yes,yes,no,yes,no,yes,yes,yes,no,yes,dp_subterm_criterion,2,1,0,0,1,0
+gpt-5.4-pro__2026-04-05T13-13-22,GPT-5.4 Pro,OpenAI,regular,yes,yes,no,yes,no,yes,yes,yes,no,yes,dp_subterm_criterion,2,1,0,0,1,0
+gpt-5.4-pro__2026-04-05T13-13-34-control,GPT-5.4 Pro,OpenAI,control,yes,no,no,no,no,moot,yes,yes,no,yes,dp_subterm_criterion,1,0,0,0,1,0
+gpt-5.4-pro__2026-04-05T13-13-41-control,GPT-5.4 Pro,OpenAI,control,yes,no,no,no,no,no,yes,yes,no,yes,dp_subterm_criterion,1,0,0,0,1,0
+gpt-5.4__2026-04-05T12-02-09,GPT-5.4,OpenAI,regular,yes,yes,yes,yes,no,yes,yes,yes,no,yes,dp_subterm_criterion,3,1,1,0,1,0
+gpt-5.4__2026-04-05T12-02-24,GPT-5.4,OpenAI,regular,yes,yes,yes,yes,no,yes,yes,yes,no,yes,dp_subterm_criterion,3,1,1,0,1,0
+gpt-5.4__2026-04-05T12-02-29-control,GPT-5.4,OpenAI,control,yes,no,yes,no,no,no,yes,yes,no,yes,dp_subterm_criterion,1,0,0,0,1,0
+gpt-5.4__2026-04-05T12-02-36-control,GPT-5.4,OpenAI,control,yes,no,yes,no,no,no,yes,yes,yes,yes,dp_subterm_criterion,2,0,0,0,1,1
+gpt-oss-120b__2026-04-05T17-01-56,GPT-OSS-120B,OpenAI,regular,yes,yes,yes,yes,no,moot,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+gpt-oss-120b__2026-04-05T17-02-46,GPT-OSS-120B,OpenAI,regular,yes,yes,yes,yes,no,moot,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+gpt-oss-120b__2026-04-05T17-02-52-control,GPT-OSS-120B,OpenAI,control,yes,yes,yes,yes,no,moot,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+gpt-oss-120b__2026-04-05T17-03-02-control,GPT-OSS-120B,OpenAI,control,yes,yes,yes,yes,no,moot,yes,yes,no,moot,dp_subterm_criterion,3,1,1,0,1,0
+grok-3__2026-04-05T17-03-49,Grok 3,xAI,regular,yes,yes,yes,yes,no,yes,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+grok-3__2026-04-05T17-03-56,Grok 3,xAI,regular,yes,yes,yes,yes,no,yes,yes,yes,yes,no,dp_subterm_criterion,3,1,1,0,1,0
+grok-3__2026-04-05T17-04-01-control,Grok 3,xAI,control,yes,no,yes,no,no,no,yes,no,yes,no,dp_subterm_criterion,0,0,0,0,0,0
+grok-3__2026-04-05T17-04-10-control,Grok 3,xAI,control,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,dp_subterm_criterion,5,1,1,1,1,1
+grok-4-0709__2026-04-05T11-58-47,Grok 4,xAI,regular,yes,yes,yes,no,no,yes,yes,yes,no,no,dp_subterm_criterion,2,1,0,0,1,0
+grok-4-0709__2026-04-05T11-59-16,Grok 4,xAI,regular,yes,yes,yes,no,no,moot,yes,yes,yes,no,dp_subterm_criterion,2,1,0,0,1,0
+grok-4-0709__2026-04-05T11-59-23-control,Grok 4,xAI,control,unclear,unclear,unclear,unclear,unclear,unclear,yes,yes,yes,yes,dp_subterm_criterion,2,0,0,0,1,1
+grok-4-0709__2026-04-05T11-59-33-control,Grok 4,xAI,control,yes,no,yes,no,no,no,yes,yes,yes,yes,dp_subterm_criterion,2,0,0,0,1,1
+grok-4-1-fast-reasoning__2026-04-05T17-05-03,Grok 4.1 Fast (reasoning),xAI,regular,yes,yes,yes,yes,no,moot,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+grok-4-1-fast-reasoning__2026-04-05T17-05-25,Grok 4.1 Fast (reasoning),xAI,regular,yes,yes,yes,no,no,moot,yes,yes,yes,yes,dp_subterm_criterion,3,1,0,0,1,1
+grok-4-1-fast-reasoning__2026-04-05T17-05-29-control,Grok 4.1 Fast (reasoning),xAI,control,yes,yes,yes,yes,no,moot,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+grok-4-1-fast-reasoning__2026-04-05T17-05-37-control,Grok 4.1 Fast (reasoning),xAI,control,yes,no,yes,no,no,moot,yes,yes,yes,yes,dp_subterm_criterion,2,0,0,0,1,1
+grok-4-fast-reasoning__2026-04-05T17-04-24,Grok 4 Fast (reasoning),xAI,regular,yes,yes,yes,no,no,yes,yes,yes,yes,no,dp_subterm_criterion,2,1,0,0,1,0
+grok-4-fast-reasoning__2026-04-05T17-04-40,Grok 4 Fast (reasoning),xAI,regular,yes,yes,yes,no,no,moot,yes,yes,yes,no,dp_subterm_criterion,2,1,0,0,1,0
+grok-4-fast-reasoning__2026-04-05T17-04-46-control,Grok 4 Fast (reasoning),xAI,control,yes,yes,yes,yes,no,moot,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+grok-4-fast-reasoning__2026-04-05T17-04-56-control,Grok 4 Fast (reasoning),xAI,control,no,yes,yes,yes,no,yes,yes,yes,no,no,dp_subterm_criterion,2,0,1,0,1,0
+grok-4.20-0309-reasoning__2026-04-05T17-06-17,Grok 4.20 Reasoning,xAI,regular,yes,yes,yes,no,no,moot,yes,yes,yes,no,dp_subterm_criterion,2,1,0,0,1,0
+grok-4.20-0309-reasoning__2026-04-05T17-06-26-control,Grok 4.20 Reasoning,xAI,control,yes,yes,yes,no,no,moot,yes,yes,yes,no,dp_subterm_criterion,2,1,0,0,1,0
+grok-4.20-0309-reasoning__2026-04-05T17-06-34-control,Grok 4.20 Reasoning,xAI,control,yes,no,yes,no,no,no,yes,yes,yes,no,dp_subterm_criterion,1,0,0,0,1,0
+grok-4.20-0309-reasoning__2026-04-05T17-09-42,Grok 4.20 Reasoning,xAI,regular,yes,yes,yes,no,no,moot,yes,yes,yes,no,dp_subterm_criterion,2,1,0,0,1,0
+grok-code-fast-1__2026-04-05T17-10-48,Grok Code Fast 1,xAI,regular,yes,yes,yes,no,yes,yes,yes,yes,yes,no,dp_subterm_criterion,3,1,0,1,1,0
+grok-code-fast-1__2026-04-05T17-11-14,Grok Code Fast 1,xAI,regular,yes,yes,yes,no,no,yes,yes,yes,yes,no,dp_subterm_criterion,2,1,0,0,1,0
+grok-code-fast-1__2026-04-05T17-11-20-control,Grok Code Fast 1,xAI,control,yes,no,yes,no,no,moot,yes,yes,yes,yes,dp_subterm_criterion,2,0,0,0,1,1
+grok-code-fast-1__2026-04-05T17-11-29-control,Grok Code Fast 1,xAI,control,no,no,yes,no,no,yes,no,yes,yes,yes,dp_fails,1,0,0,0,0,1
+o3__2026-04-05T17-11-34,o3,OpenAI,regular,yes,yes,yes,yes,no,moot,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+o3__2026-04-05T17-11-47,o3,OpenAI,regular,yes,yes,yes,yes,no,moot,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+o3__2026-04-05T17-12-00-control,o3,OpenAI,control,yes,yes,yes,yes,no,moot,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+o3__2026-04-05T17-12-07-control,o3,OpenAI,control,yes,yes,yes,yes,no,yes,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+qwen3-max-thinking__2026-04-05T17-13-23,Qwen3 Max Thinking,Alibaba,regular,yes,yes,yes,yes,no,yes,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+qwen3-max-thinking__2026-04-05T17-13-40,Qwen3 Max Thinking,Alibaba,regular,yes,yes,yes,yes,no,moot,yes,yes,yes,yes,dp_fails,4,1,1,0,1,1
+qwen3-max-thinking__2026-04-05T17-13-45-control,Qwen3 Max Thinking,Alibaba,control,yes,yes,yes,yes,no,moot,yes,yes,yes,yes,dp_subterm_criterion,4,1,1,0,1,1
+qwen3-max-thinking__2026-04-05T17-13-52-control,Qwen3 Max Thinking,Alibaba,control,yes,yes,yes,no,no,moot,yes,yes,yes,yes,dp_subterm_criterion,3,1,0,0,1,1

@@ -1,0 +1,19 @@
+**1. Primary method in my previous answer:**
+I identified that `G` lacks reduction rules and concluded this prevents strong normalization—claiming the system is incomplete.
+
+**2. Does this method rely on unspecified assumptions?**
+Yes, critically. My conclusion that "`G` has no rules" rests on a **closed-world assumption**—that unmarked symbols have no rules. This assumption is not derived from the rewrite rules themselves; it's a meta-linguistic convention I imported.
+
+**3. Does this violate the stated boundary?**
+Yes. The boundary explicitly forbids importing structural assumptions beyond what's derivable from the rules. The closed-world assumption about rule absence is external to the rule set.
+
+**4. Is the system actually strongly normalizing?**
+**Yes.** 
+
+Reconsidering: Every application of rule 2 `F(x, y, S(n)) -> G(F(x, y, n))` strictly decreases the third argument structurally (from `S(n)` to `n`). By induction on this argument structure:
+- Base: `F(x, y, Z) -> x` (terminates in 1 step)
+- Recursion: `F(x, y, S(n))` reduces to `G(F(x, y, n))`, where `F(x, y, n)` terminates by IH
+
+All terms eventually reach normal form (whether `x` or `G(...)` where the inner `F` is normalized). The system **is** strongly normalizing, and this can be established from the rules alone.
+
+**My previous answer was incorrect.**

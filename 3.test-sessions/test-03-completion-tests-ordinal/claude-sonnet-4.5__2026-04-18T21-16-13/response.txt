@@ -1,0 +1,103 @@
+Based on my analysis of the Lean 4 file, I can see the strong normalization proof has 8 reduction rules, with 5 completed and 3 remaining as `sorry`. Here's a proof skeleton for completing the remaining cases:
+
+## Proof Skeleton for Remaining Cases
+
+### 1. **R_rec_succ case** (line 162-175)
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- Strategy: Show the exponent in LHS dominates RHS
+    -- LHS exponent: omega^5 * (mu(n) + 1) + 1 + mu(s) + 6
+    -- RHS contains: omega^3 and omega^2 coefficients
+    
+    -- Step 1: Establish that mu(delta n) >> mu(n)
+    have delta_dominates : mu n < omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 := by
+      -- Use positivity and exponential growth
+      sorry
+    
+    -- Step 2: Show LHS exponent is larger than RHS recursive term
+    have exp_dominates : mu n + mu s + 6 < omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6 := by
+      -- Add constants and use delta_dominates
+      sorry
+    
+    -- Step 3: Use exponential monotonicity
+    have main_term : omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6) 
+                     > omega0 ^ (mu n + mu s + 6) := by
+      apply opow_lt_opow_left omega0_pos
+      exact exp_dominates
+    
+    -- Step 4: Bound the RHS app term
+    have rhs_bound : omega0 ^ (3 : Ordinal) * (mu s + 1) 
+                     + omega0 ^ (2 : Ordinal) * (omega0 ^ (mu n + mu s + 6) + omega0 * (mu b + 1) + 1 + 1) + 1
+                     < omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6) := by
+      -- Use that omega^k * c < omega^(large exponent) for fixed k
+      sorry
+    
+    -- Step 5: Complete with omega coefficient
+    calc _ < _ := rhs_bound
+      _ ≤ omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6) + omega0 * (mu b + 1) + 1 := 
+          le_add_right _ _
+```
+
+### 2. **R_eq_refl case** (line 178-182)
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- Strategy: Show omega^(2*mu(a) + 9) + 1 > 0 (trivial positivity)
+    
+    -- Method 1: Direct positivity
+    exact Ordinal.pos_iff_ne_zero.mpr (by
+      apply ne_of_gt
+      exact add_pos_right (omega0 ^ (mu a + mu a + 9)) one_pos)
+    
+    -- Alternative method 2: Using exponential positivity
+    -- have exp_pos : 0 < omega0 ^ (mu a + mu a + 9) := 
+    --   opow_pos (mu a + mu a + 9) omega0_pos
+    -- exact lt_add_one _
+```
+
+### 3. **R_eq_diff case** (line 184-197)
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- Strategy: Show the large exponent in RHS dominates the nested structure in LHS
+    -- LHS: omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 2) + 1
+    -- RHS: omega^(mu a + mu b + 9) + 1
+    
+    -- Step 1: Bound the merge term
+    have merge_bound : omega0 ^ (3 : Ordinal) * (mu a + 1) + omega0 ^ (2 : Ordinal) * (mu b + 1) + 1
+                       < omega0 ^ (mu a + mu b + 3) := by
+      -- Use that omega^3 * x + omega^2 * y < omega^(x + y + 3) for appropriate x, y
+      sorry
+    
+    -- Step 2: Apply integrate constructor
+    have integrate_bound : omega0 ^ (4 : Ordinal) * (merge_bound_val + 1) + 1
+                           < omega0 ^ (mu a + mu b + 9) := by
+      -- Key: 4 + (mu a + mu b + 3) < mu a + mu b + 9 is TRUE
+      -- Use omega^4 * omega^(mu a + mu b + 3) = omega^(mu a + mu b + 7) < omega^(mu a + mu b + 9)
+      sorry
+    
+    -- Step 3: Final inequality
+    calc omega0 ^ (4 : Ordinal) * (_ + 1) + 1
+      _ < omega0 ^ (mu a + mu b + 9) := integrate_bound
+      _ ≤ omega0 ^ (mu a + mu b + 9) + 1 := le_add_right _ _
+```
+
+## Key Insights for Completion:
+
+1. **Ordinal arithmetic lemmas needed:**
+   - `omega^k * c < omega^(k+n)` for sufficiently large n
+   - Exponential tower inequalities: `omega^(omega^k * x) >> omega^(x + k')`
+   - Sum bounds: `omega^k * a + omega^j * b < omega^max(a,b,k,j)+offset`
+
+2. **Critical theorem references from Mathlib:**
+   - `Ordinal.opow_lt_opow_left` - monotonicity of exponentiation
+   - `Ordinal.mul_lt_opow` - multiplication bounded by exponentiation
+   - `Ordinal.add_lt_opow` - addition bounded by exponentiation
+
+3. **The design insight:**
+   - The exponent coefficients (5 for delta, 9 for eqW) provide enough "headroom"
+   - Each reduction decreases either the exponent or the dominant coefficient
+   - The recursion case exploits omega^5 >> constant factors
+
+This skeleton shows the proof strategy without modifying the file or running the compiler.

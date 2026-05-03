@@ -1,0 +1,56 @@
+## Raw assessment
+
+Yes — **strong normalization can be established from the calculus as presented**, without importing extra object-level axioms or strengthening the rewrite system with additional rules/guards.
+
+Two clarifications that matter:
+
+1. **As written, `Step` is only a root-step relation** (there are no congruence/context-closure rules like “if `t → t'` then `grape t → grape t'`”, etc.). For this literal `Step`, normalization is essentially immediate: many rules strictly collapse the top constructor, and the one “expanding” rule (`R_apple_orange`) produces a top symbol `pear`, for which there is **no** rule, so you can’t keep firing root steps there.
+
+2. If you instead mean the **standard term rewriting closure** (“rewrite at any position inside a term”), normalization is **still** provable *from these rules alone*, but you must use a termination method that tolerates **duplication** (because `R_apple_orange` duplicates `s`).
+
+The only real potential obstacle is that `R_apple_orange` duplicates a variable:
+\[
+\texttt{banana b s (grape n)} \to \texttt{pear s (banana b s n)}
+\]
+so naïve “size decreases” or “#grapes decreases” arguments **do not** work globally.
+
+## Why termination is still provable (in the standard TRS sense)
+
+A standard, assumption-free route is to use a **simplification order** such as **Lexicographic Path Ordering (LPO)** (or a closely related recursive path ordering). These orders are:
+
+- defined purely from the **signature** (your constructors) plus a **precedence** on symbols,
+- **well-founded** on finite first-order terms,
+- and can orient rules even when variables are duplicated.
+
+### Sketchy-but-sufficient roadmap (stays within your boundary)
+
+1. **Define the rewrite relation** you care about:
+   - either the given `Step`, or
+   - its usual **contextual closure** (rewrite in any subterm).
+
+2. **Choose an LPO precedence** that makes every LHS strictly greater than its RHS. One workable precedence is:
+   \[
+   \texttt{banana} \;>\; \texttt{pear} \;>\; \texttt{cherry} \;>\; \texttt{mango} \;>\; \texttt{peach} \;>\; \texttt{grape} \;>\; \texttt{plum}.
+   \]
+   (Exact middle ordering isn’t unique; key constraints are `banana > pear` and `cherry > mango`/`cherry > peach`.)
+
+3. **Check each rule decreases under LPO**:
+   - Rules like `peach plum t → t`, `peach t t → t`, `banana b s plum → b` decrease by the **subterm property** (a term is bigger than its proper subterms).
+   - `mango (grape t) → plum` decreases because `mango > plum` in the precedence.
+   - The “hard” rule `banana b s (grape n) → pear s (banana b s n)` is handled because:
+     - `banana > pear`, so it suffices (in LPO) to show the LHS is bigger than both arguments of the RHS (`s` and `banana b s n`);
+     - `s` is a subterm of the LHS, so LHS > `s`;
+     - and `banana b s (grape n) > banana b s n` holds because `grape n > n` (subterm property) and the `banana` arguments are compared lexicographically (or via the standard LPO same-root comparison).
+
+4. Conclude: since LPO is **well-founded**, there is **no infinite descending chain**, hence **no infinite rewrite sequence** ⇒ strong normalization.
+
+### About the conditional rule (`R_cherry_diff`)
+
+`R_cherry_diff` requires a proof of `a ≠ b` to fire. For termination, this condition only *reduces* the set of possible steps; it can’t create divergence. Even if you pretended it were unconditional, its orientation under LPO (with `cherry` high in the precedence) still goes through.
+
+## ✅ Todo list (final state)
+
+- 1. Read the Lean rewrite rules — **completed**
+- 2. Check for nontermination patterns — **completed**
+- 3. Decide if SN is provable — **completed**
+- 4. Provide bounded proof roadmap — **completed**

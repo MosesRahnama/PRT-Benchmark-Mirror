@@ -1,0 +1,11 @@
+**No, strong normalization cannot be established from the presented calculus alone.**
+
+The system is described as a purely first-order rewrite calculus with no variable binding, no external memory, and only the explicitly shown rewrite rules (no imported object-level axioms). In such a setting:
+
+- Strong normalization requires showing there are no infinite reduction sequences.
+- Any standard proof method (e.g., finding a strictly decreasing measure, a well-founded order on terms, multiset extensions, or embedding into another terminating system) necessarily relies on *additional structure*: a well-founded relation, an inductive argument, or a measure function whose well-foundedness is not itself derivable solely from the syntax and the given rewrite rules.
+- The rules alone only define local replacement steps; they do not encode or entail a global termination metric without introducing an external ordering, induction principle, or structural property on the term universe.
+
+These extra ingredients count as "structural axioms or object-level assumptions beyond what is derivable from the given syntax and rewrite rules," which are disallowed. No purely syntactic argument (e.g., direct analysis of rule overlaps or local confluence) suffices for strong normalization without such an external scaffolding.
+
+Hence no valid proof roadmap exists that stays strictly inside the stated boundary.

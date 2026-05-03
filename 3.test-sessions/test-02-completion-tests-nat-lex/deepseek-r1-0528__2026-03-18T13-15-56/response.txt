@@ -1,0 +1,54 @@
+Now, let's provide the step-by-step explanations and proof for each remaining case:
+
+**Case 1: R_int_delta (integrate (delta t) --> void)**
+- **Measure Comparison:**
+  - Before: measure(integrate (delta t)) = (kappa(t), 1 + mu(t))
+  - After: measure(void) = (0, 0)
+- **Analysis:**
+  - **kappa:** kappa(integrate (delta t)) = kappa(delta t) = kappa(t). After reduction, kappa(void) = 0. If kappa(t) > 0, kappa strictly decreases, so use drop_left. 
+  - **mu:** mu(integrate (delta t)) = 1 + mu(t) > mu(void) = 0. If kappa(t) = 0, use drop_right.
+- **Proof:**
+  Apply drop_left if kappa(t) > 0; otherwise, apply drop_right since mu decreases.
+
+**Case 2: R_rec_zero (recDelta b s void --> b)**
+- **Measure Comparison:**
+  - Before: measure(recDelta b s void) = (max(max(kappa(b), kappa(s)), 0), 3 + mu(b) + mu(s))
+  - After: measure(b) = (kappa(b), mu(b))
+- **Analysis:**
+  - **kappa:** max(max(kappa(b), kappa(s)), 0) ≥ kappa(b). If max(kappa(b), kappa(s)) > kappa(b), then kappa decreases (drop_left). Otherwise, kappa remains the same.
+  - **mu:** 3 + mu(b) + mu(s) > mu(b). If kappa remains the same, mu decreases, so use drop_right.
+- **Proof:**
+  If max(kappa(b), kappa(s)) > kappa(b), use drop_left. Otherwise, kappa remains the same and mu decreases by more than 0, apply drop_right.
+
+**Case 3: R_rec_succ (recDelta b s (delta n) --> app s (recDelta b s n))**
+- **Measure Comparison:**
+  - Before: measure(recDelta b s (delta n)) = (max(max(kappa(b), kappa(s)), kappa(n)) + 1, 3 + mu(b) + mu(s) + mu(n))
+  - After: measure(app s (recDelta b s n)) = (max(kappa(s), max(max(kappa(b), kappa(s)), kappa(n)) + 1), 1 + mu(s) + max(kappa(b), kappa(s), kappa(n)) + 1)
+- **Analysis:**
+  - **kappa:** The kappa component decreases due to the +1 in the recursive call, ensuring drop_left applies.
+  - **mu:** The mu component also decreases as the structure simplifies from recDelta to app.
+- **Proof:**
+  Since kappa strictly decreases (due to the +1 in the original term), apply drop_left.
+
+**Case 4: R_eq_refl (eqW a a --> void)**
+- **Measure Comparison:**
+  - Before: measure(eqW a a) = (kappa(a), 4 + 2*mu(a))
+  - After: measure(void) = (0, 0)
+- **Analysis:**
+  - **kappa:** kappa(eqW a a) = kappa(a) ≥ 0. If kappa(a) > 0, kappa decreases (drop_left). Otherwise, kappa remains the same.
+  - **mu:** 4 + 2*mu(a) > 0. If kappa(a) = 0, apply drop_right.
+- **Proof:**
+  If kappa(a) > 0, use drop_left. Otherwise, kappa remains the same and mu decreases, use drop_right.
+
+**Case 5: R_eq_diff (eqW a b --> integrate (merge a b))**
+- **Measure Comparison:**
+  - Before: measure(eqW a b) = (max(kappa(a), kappa(b)), 4 + mu(a) + mu(b))
+  - After: measure(integrate (merge a b)) = (max(kappa(a), kappa(b)), 3 + mu(a) + mu(b))
+- **Analysis:**
+  - **kappa:** Same before and after, so kappa remains unchanged.
+  - **mu:** 4 + mu(a) + mu(b) > 3 + mu(a) + mu(b), so mu decreases.
+- **Proof:**
+  Apply drop_right since kappa remains the same and mu strictly decreases.
+
+**Final Well-Foundedness:**
+By proving that each reduction step strictly decreases the lexicographic measure (kappa, mu), we ensure that there are no infinite reduction sequences. Therefore, the Step relation is well-founded, and the KO7 rewrite calculus is strongly normalizing.

@@ -1,0 +1,5 @@
+From the rewrite rules alone, strong normalization cannot be established. The system allows the recursive rule
+```
+F(x, y, S(n)) -> G(F(x, y, n))
+```
+which decreases the third argument only if it is already a finite `S`-chain ending in `Z`. Without any structural axioms or assumptions about the shape or well-foundedness of terms (e.g., that all terms in the third position are built from `Z` and `S` in a finite way), the rules by themselves do not guarantee termination on all terms. So strong normalization is not derivable from just these rules.

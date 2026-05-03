@@ -1,0 +1,12 @@
+The measure is **not sound** as a global lexicographic descent argument for all rewrite steps.
+
+- Problem: `phase` depends only on the root constructor, and several rules can replace a root with a subterm whose root has a higher phase.
+- Counterexample (using rule `R_merge_void_left`): choose  
+  `t = recDelta void void (delta void)`, so `phase t = 1`.  
+  Then `merge void t → t` gives  
+  `measure(merge void t) = (0, 3)` and `measure(t) = (1, 2)`.  
+  The first component increases from `0` to `1`, so this is not a decrease in standard lexicographic order.
+- The same issue can occur for `R_merge_void_right`, `R_merge_cancel`, and `R_rec_zero` (whenever the returned variable term has phase `1`).
+- Some rules do decrease (`R_rec_succ` by phase, `R_int_delta`/`R_eq_*` by cost), but termination proof needs **every** step to decrease.
+
+So as stated, this lexicographic measure does not establish termination of the full Step relation.

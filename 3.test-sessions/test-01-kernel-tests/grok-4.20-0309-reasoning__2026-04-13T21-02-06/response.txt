@@ -1,0 +1,11 @@
+**Yes, strong normalization can be established from the presented calculus alone.**
+
+The inductive definition of `Trace` and the eight constructors of `Step` comprise a first-order, pattern-directed rewrite system with no binders, no congruence rules, no contextual closure, and no additional axioms. The rules are:
+
+- strictly contracting (integrate-delta, merge-void, merge-cancel, rec-zero, eq-refl);
+- unfolding a recursor exactly once before producing an `app` term that matches *no* left-hand side (rec-succ);
+- or producing an `integrate(merge …)` redex whose further contraction is possible only in the trivial void/equal cases already covered by the merge rules (eq-diff).
+
+Because every redex is identified solely by exact head-constructor pattern matching on the whole term, reduction sequences cannot descend into subterms after a rewrite. The recursor rule increases syntactic size but immediately yields a normal form (`app` never appears on any LHS). No rule reintroduces an `eqW`, `recΔ`, or `integrate(delta …)` redex in a way that could regenerate the original term. Consequently there are no cycles, no infinite chains, and every sequence terminates in at most a handful of steps (bounded by the number of `recΔ`/`eqW`/`integrate`/`merge` constructors at the root).
+
+A standard inductive argument on the structure of a `Trace` (or on a lexicographic measure of root redex depth plus the number of applicable rule patterns) shows that every one-step reduct is strictly smaller in this well-founded order. No extra rewrite rules, side conditions, guards, or external lemmas are required; the termination proof follows directly from the syntax and the eight given constructors of `Step`.

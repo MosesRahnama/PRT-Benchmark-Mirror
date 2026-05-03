@@ -1,0 +1,32 @@
+Let me analyze this carefully.
+
+The file defines:
+1. An inductive type `Trace` with constructors: void, delta, integrate, merge, app, recDelta, eqW
+2. A rewrite relation `Step`
+3. A structural measure `kappa : Trace -> Nat`
+4. Two helper theorems intended for a termination argument
+
+Let me analyze the two theorems.
+
+**Theorem 1: `kappa_rec_delta_step`**
+
+States: `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`
+
+LHS: By the pattern match definition of kappa:
+
+
+`kappa (recDelta b s (delta n)) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1`
+
+RHS: `kappa (recDelta b s n) + 1`
+
+For the RHS, when `n` is not itself a delta, we get `kappa (recDelta b s n) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)`, so adding 1 gives us the same result as the LHS.
+
+But when `n` is already a delta, say `delta n'`, the calculation shifts—the RHS becomes `kappa (recDelta b s (delta n')) + 1`, which expands to `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 2`. Meanwhile, the LHS with the extra delta wrapping gives `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 1`, so there's a mismatch I need to resolve. delta (delta void))) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa void) + 1, which simplifies to Nat.max (kappa b) (kappa s) + 1. But the RHS gives Nat.max (Nat.max (kappa b) (kappa s)) (kappa void) + 2, which also simplifies to Nat.max (kappa b) (kappa s) + 2. So the LHS is +1 and the RHS is +2—they don't match, confirming the theorem is false.
+
+Now I'm checking a second theorem about `kappa_rec_succ_drop`, which claims that `kappa (app s (recDelta b s n))` is strictly less than `kappa (recDelta b s (delta n))`. The LHS expands to the max of kappa s and kappa of the recursive call, while the RHS is the max of...
+
+Actually, let me work through the case where `n` isn't of the form `delta n'`. Here the recursive call gives us `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)`, so the LHS becomes the max of kappa s with that entire expression, which simplifies down to just `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)` since kappa s is already part of the nested max.
+
+Now for the case where `n = delta n'`, the recursive call adds 1 to the max, so I need to verify that the LHS stays strictly less than the RHS by one. I see the issue now—I was computing the wrong thing. Let me recalculate the RHS properly: when `n = delta n'`, the kappa of the recursive call gives me `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 1`, which matches what I got for the LHS. So the inequality should actually hold, not fail like I thought. I realize theorem 2's proof depends on theorem 1, which I've already shown is false, so that approach won't work. But checking theorem 2 independently, I can construct a concrete counterexample: with `b = void, s = void, n = delta void`, the left side evaluates to 1 while the right side gives a different value, confirming theorem 2 is also false.
+
+The fundamental problem is that `kappa` computes `recDelta b s (delta n)` as `max(max(κ(b), κ(s)), κ(n)) + 1`, but when `n` is already a `delta`, the right-hand side `app s (recDelta b s n)` ends up with the same kappa value, breaking the inequality I need.

@@ -1,0 +1,7 @@
+1. I used a **polynomial interpretation / reduction measure** argument into $\mathbb{N}$ (showing each rewrite step strictly decreases a chosen numeric interpretation).
+
+2. Yes. That uses an externally chosen proof setup (interpretation and ordering) that is **not explicitly fixed by the rewrite rules themselves**.
+
+3. Under a strict reading of your boundary, yes — that method is outside it, because it imports extra proof machinery beyond what is syntactically given in the TRS.
+
+4. Yes, separately from that boundary issue, I still judge the system to be strongly normalizing.

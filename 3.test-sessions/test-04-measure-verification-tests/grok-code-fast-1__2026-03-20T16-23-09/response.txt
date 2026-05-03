@@ -1,0 +1,40 @@
+The proposed lexicographic termination measure `(phase t, cost t)` is not sound for the defined first-order rewrite calculus.
+
+### Analysis
+The measure uses lexicographic ordering on natural numbers: `(a, b) > (c, d)` if `a > c` or (`a = c` and `b > d`). For termination, every rewrite step must strictly decrease the measure.
+
+- `phase t` is 1 only for terms of the form `recDelta _ _ (delta _)`; otherwise, it is 0.
+- `cost t` counts nodes with weights (e.g., 1 for unary constructors, 3 for `eqW`).
+
+### Rule-by-Rule Assessment
+Most rules decrease the measure correctly when the right-hand side has `phase = 0`. However, issues arise when the right-hand side can have `phase = 1`, causing the measure to increase or stay the same.
+
+1. **R_int_delta**: `integrate (delta t) → void`  
+   Left: `(0, 2 + cost t)`, Right: `(0, 0)` → Decreases.
+
+2. **R_merge_void_left**: `merge void t → t`  
+   If `phase t = 0`: Decreases.  
+   If `phase t = 1`: Left `(0, 1 + cost t)`, Right `(1, cost t)` → Does not decrease (phase increases).
+
+3. **R_merge_void_right**: `merge t void → t`  
+   Same issue as above.
+
+4. **R_merge_cancel**: `merge t t → t`  
+   If `phase t = 0`: Decreases.  
+   If `phase t = 1`: Left `(0, 1 + 2 × cost t)`, Right `(1, cost t)` → Does not decrease.
+
+5. **R_rec_zero**: `recDelta b s void → b`  
+   If `phase b = 0`: Decreases.  
+   If `phase b = 1`: Left `(0, 1 + cost b + cost s)`, Right `(1, cost b)` → Does not decrease.
+
+6. **R_rec_succ**: `recDelta b s (delta n) → app s (recDelta b s n)`  
+   Left: `(1, 2 + cost b + cost s + cost n)`, Right: `(0, 2 + cost b + 2 × cost s + cost n)` → Decreases (phase decreases).
+
+7. **R_eq_refl**: `eqW a a → void`  
+   Left: `(0, 3 + 2 × cost a)`, Right: `(0, 0)` → Decreases.
+
+8. **R_eq_diff**: `eqW a b → integrate (merge a b)`  
+   Left: `(0, 3 + cost a + cost b)`, Right: `(0, 2 + cost a + cost b)` → Decreases.
+
+### Conclusion
+Rules 2–5 fail to guarantee a decrease when the right-hand side has `phase = 1`, which is possible under the inductive definition of `Trace`. The measure does not ensure termination for all rewrite sequences. A sound measure would need to prevent such increases, perhaps by refining `phase` or `cost` to account for subterm phases.

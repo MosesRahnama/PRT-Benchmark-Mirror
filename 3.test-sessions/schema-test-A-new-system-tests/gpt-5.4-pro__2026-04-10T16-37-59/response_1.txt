@@ -1,0 +1,28 @@
+**Assessment:** **Yes** — strong normalization is establishable from the rewrite system alone, under ordinary first-order TRS semantics on finite terms.
+
+**Reasoning:** A direct termination interpretation exists. For example, interpret terms into $\mathbb{N}$ by
+
+$$
+\llbracket Z \rrbracket = 0,\quad
+\llbracket S(t) \rrbracket = \llbracket t \rrbracket + 1,\quad
+\llbracket G(t) \rrbracket = \llbracket t \rrbracket,\quad
+\llbracket F(x,y,z) \rrbracket = \llbracket x \rrbracket + \llbracket z \rrbracket + 1.
+$$
+
+Then both rules strictly decrease:
+
+- $F(x,y,Z) \to x$ gives  
+  $$
+  \llbracket F(x,y,Z)\rrbracket = \llbracket x\rrbracket + 1 > \llbracket x\rrbracket.
+  $$
+
+- $F(x,y,S(n)) \to G(F(x,y,n))$ gives  
+  $$
+  \llbracket F(x,y,S(n))\rrbracket
+  = \llbracket x\rrbracket + \llbracket n\rrbracket + 2
+  >
+  \llbracket x\rrbracket + \llbracket n\rrbracket + 1
+  = \llbracket G(F(x,y,n))\rrbracket.
+  $$
+
+So every rewrite step strictly lowers a natural-number measure, which rules out infinite rewrite chains. No extra structural axioms or object-level assumptions are needed.

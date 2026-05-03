@@ -1,0 +1,254 @@
+, and I did **not** modify the file or run Lean.
+
+The three remaining `sorry`s are:
+
+- `Step.R_rec_succ`
+- `Step.R_eq_refl`
+- `Step.R_eq_diff`
+
+One small gotcha: in the comment for `R_rec_succ`, the displayed “LHS/RHS” measures are swapped. The actual goal is still the right one:
+$$
+\mu(\mathrm{app}\ s\ (\mathrm{recDelta}\ b\ s\ n)) < \mu(\mathrm{recDelta}\ b\ s\ (\mathrm{delta}\ n)).
+$$
+
+Below is a proof skeleton you can drop in conceptually. I’m keeping it Lean-shaped, but since I didn’t compile it, some lemma names around ordinal monotonicity may need tiny adjustment.
+
+## Suggested skeletons
+
+### `R_eq_refl`
+
+This one is the easiest: it is the same positivity pattern you already used for `R_int_delta`.
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    exact Ordinal.pos_iff_ne_zero.mpr (by
+      apply ne_of_gt
+      exact add_pos_right _ one_pos)
+```
+
+If that exact finishing line doesn’t elaborate cleanly, the same idea can be written as:
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    have h : (0 : Ordinal) < omega0 ^ (mu a + mu a + (9 : Ordinal)) + 1 := by
+      exact add_pos_right _ one_pos
+    exact h
+```
+
+### `R_rec_succ`
+
+This is the only genuinely structural case. The clean way to finish it is to introduce a local exponent
+$$
+\rho := \mu(n) + \mu(s) + 6
+$$
+and then show:
+
+1. `mu (recDelta b s n)` is below the next power above `ω^ρ`.
+2. Therefore the `app`-measure is bounded by something like `ω^(ρ + 3)`.
+3. The exponent of `mu (recDelta b s (delta n))` is
+   $$
+   \mu(\delta n) + \mu(s) + 6
+   = \omega^5 \cdot (\mu n + 1) + 1 + \mu(s) + 6,
+   $$
+   which strictly dominates `ρ + 3`.
+4. Hence the whole `app` side is below the leading `ω^(...)` term on the `recDelta (delta n)` side.
+
+A usable skeleton:
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    let ρ : Ordinal := mu n + mu s + (6 : Ordinal)
+
+    -- First isolate the size of the recursive call.
+    have hrec_lt :
+        omega0 ^ ρ + omega0 * (mu b + 1) + 1
+          < omega0 ^ (ρ + 1) := by
+      -- Idea:
+      --   show the tail `omega0 * (mu b + 1) + 1` is below `omega0 ^ ρ`
+      --   because `ρ ≥ 6`, hence certainly `ρ > 1`.
+      -- Then conclude
+      --   `omega0 ^ ρ + tail < omega0 ^ ρ * 2 < omega0 ^ (ρ + 1)`.
+      --
+      -- You will likely want one or two helper lemmas here:
+      --   * finite-power / linear terms are below `omega0 ^ ρ` when `ρ` is large
+      --   * `omega0 ^ ρ + beta < omega0 ^ (ρ + 1)` when `beta < omega0 ^ ρ`
+      sorry
+
+    -- Bound the whole app-measure by a single omega-power.
+    have happ_lt :
+        omega0 ^ (3 : Ordinal) * (mu s + 1)
+          + omega0 ^ (2 : Ordinal) *
+              (omega0 ^ ρ + omega0 * (mu b + 1) + 1 + 1)
+          + 1
+          < omega0 ^ (ρ + 3) := by
+      -- Strategy:
+      --   * bound `omega0 ^ 3 * (mu s + 1)` by `omega0 ^ (ρ + 3)`
+      --   * use `hrec_lt` to bound the second summand by `omega0 ^ (ρ + 3)`
+      --   * absorb the final `+ 1`
+      --
+      -- Since `ρ = mu n + mu s + 6`, we have plenty of room in the exponent.
+      sorry
+
+    have hexp_lt :
+        ρ + 3
+          < (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1) + mu s + (6 : Ordinal) := by
+      -- This is the key dominance fact:
+      -- `mu (delta n)` contributes the gigantic term
+      --   `omega0 ^ 5 * (mu n + 1) + 1`
+      -- which dwarfs the finite bump `+ 3`.
+      sorry
+
+    have hlead :
+        omega0 ^ (ρ + 3)
+          < omega0 ^
+              ((omega0 ^ (5 : Ordinal) * (mu n + 1) + 1) + mu s + (6 : Ordinal)) := by
+      -- monotonicity of `omega0 ^ _`
+      sorry
+
+    calc
+      omega0 ^ (3 : Ordinal) * (mu s + 1)
+          + omega0 ^ (2 : Ordinal) *
+              (omega0 ^ ρ + omega0 * (mu b + 1) + 1 + 1)
+          + 1
+          < omega0 ^ (ρ + 3) := happ_lt
+      _ < omega0 ^
+            ((omega0 ^ (5 : Ordinal) * (mu n + 1) + 1) + mu s + (6 : Ordinal)) := hlead
+      _ ≤ omega0 ^
+            ((omega0 ^ (5 : Ordinal) * (mu n + 1) + 1) + mu s + (6 : Ordinal))
+            + omega0 * (mu b + 1) + 1 := by
+            exact le_add_right _ _
+```
+
+### `R_eq_diff`
+
+This one is best done by proving a **stronger** estimate: bound the whole `integrate (merge a b)` measure by the principal term
+$$
+\omega^{\mu(a)+\mu(b)+9},
+$$
+and then weaken to `< ω^(...) + 1`.
+
+A good shape is:
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+
+    let σ : Ordinal := mu a + mu b + (9 : Ordinal)
+
+    have hmerge_lt :
+        omega0 ^ (3 : Ordinal) * (mu a + 1)
+          + omega0 ^ (2 : Ordinal) * (mu b + 1)
+          + 1 + 1
+          < omega0 ^ (mu a + mu b + (5 : Ordinal)) := by
+      -- Show each merge component is below a common omega-power:
+      --
+      --   omega0^3 * (mu a + 1) < omega0^(mu a + mu b + 5)
+      --   omega0^2 * (mu b + 1) < omega0^(mu a + mu b + 5)
+      --   1 + 1 < omega0^(mu a + mu b + 5)
+      --
+      -- then combine them.
+      --
+      -- Intuitively: the finite offsets `3`, `2`, and the small constants
+      -- are all absorbed by the `+ 5`.
+      sorry
+
+    have hint_lt :
+        omega0 ^ (4 : Ordinal) *
+            (omega0 ^ (3 : Ordinal) * (mu a + 1)
+              + omega0 ^ (2 : Ordinal) * (mu b + 1)
+              + 1 + 1)
+          + 1
+          < omega0 ^ σ := by
+      -- Use `hmerge_lt`, monotonicity of left-multiplication by `omega0 ^ 4`,
+      -- and rewrite / compare:
+      --
+      --   omega0^4 * omega0^(mu a + mu b + 5)
+      --   = omega0^(4 + (mu a + mu b + 5))
+      --   ≤ omega0^(mu a + mu b + 9)
+      --
+      -- Then absorb the final `+ 1`; since the target is a principal omega-power,
+      -- it is enough to keep the whole left side strictly below that power.
+      sorry
+
+    calc
+      omega0 ^ (4 : Ordinal) *
+          (omega0 ^ (3 : Ordinal) * (mu a + 1)
+            + omega0 ^ (2 : Ordinal) * (mu b + 1)
+            + 1 + 1)
+          + 1
+          < omega0 ^ σ := hint_lt
+      _ ≤ omega0 ^ σ + 1 := by
+          exact le_add_right _ _
+```
+
+## Helpful helper-lemma shape
+
+If you want to make the two hard cases pleasant, the right move is to prove one or two tiny local ordinal estimates first. Even as `have`-lemmas inside the branch, they’ll pay rent immediately.
+
+Typical shapes:
+
+```lean
+have h_small_of_lt_power :
+    beta < omega0 ^ ρ -> beta + 1 < omega0 ^ (ρ + 1) := by
+  sorry
+```
+
+```lean
+have h_fin_mul_lt_power :
+    k < ρ -> omega0 ^ k * (alpha + 1) < omega0 ^ ρ := by
+  sorry
+```
+
+```lean
+have h_opow_mono :
+    ξ < ζ -> omega0 ^ ξ < omega0 ^ ζ := by
+  sorry
+```
+
+You may already have corresponding Mathlib lemmas available; I’m writing these as proof targets, not asserting exact names.
+
+## What to focus on in the hard cases
+
+### For `R_rec_succ`
+The real proof idea is:
+
+- `mu (recDelta b s n)` is headed by `ω^ρ`.
+- `mu (app s (recDelta b s n))` is therefore still bounded by some finite shift of `ω^ρ`, say `ω^(ρ+3)`.
+- But `mu (delta n)` injects an exponent containing `ω^5 * (mu n + 1)`, and that exponent dominates `ρ+3`.
+- So the successor-step target is strictly smaller than the source.
+
+That’s the whole machine.
+
+### For `R_eq_diff`
+The real proof idea is:
+
+- `mu (merge a b)` is only built from `ω^3`, `ω^2`, and constants.
+- Wrapping it in `integrate` multiplies by `ω^4`.
+- So the whole left side stays below a power with a modest finite offset.
+- `eqW` was deliberately assigned exponent `mu a + mu b + 9`, which is large enough to absorb that entire expansion.
+
+In other words, the measure was designed so this case is “big hammer beats small hammer.”
+
+## Tiny caution on exact lemma names
+
+Because I didn’t run Lean, the following are the spots where names may vary slightly in Mathlib:
+
+- monotonicity of `omega0 ^ _`
+- positivity / nonzeroness rewrites for ordinals
+- the lemma turning `α < β` into `α + 1 ≤ β` when useful
+- left-multiplication monotonicity on ordinals
+
+But the branch structure above is the right skeleton for all three missing cases.
+
+## Updated checklist
+
+- [x] Read target Lean file
+- [x] Identify missing rule cases
+- [x] Draft proof skeletons
+
+## Wrap-up
+
+You have one near-drop-in completion for `R_eq_refl`, and structured proof plans for `R_rec_succ` and `R_eq_diff`. The key next step is to package the “finite-height term is below a larger omega-power” facts into small local helper lemmas; once those exist, the two remaining cases should collapse neatly instead of becoming ordinal soup with extra garnish.

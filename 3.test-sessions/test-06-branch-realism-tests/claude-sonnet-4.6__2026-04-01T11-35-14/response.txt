@@ -1,0 +1,59 @@
+## Assessment: The Helper Strategy is Unsound
+
+Both `sorry`-bearing theorems are false statements, so the strategy fails at its foundation.
+
+---
+
+### `kappa_rec_delta_step`
+
+**Claim:** `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`
+
+Let `B = kappa b`, `S = kappa s`, `N = kappa n`.
+
+- **LHS** (by `kappa_rec_delta`): $\max(\max(B, S),\ N) + 1$
+- **RHS**: `kappa (recDelta b s n) + 1`
+
+The catch-all pattern in `kappa` only fires when `n` is *not* of the form `delta _`. When `n = delta m`, the specific branch fires instead:
+
+$$\text{kappa (recDelta b s (delta m))} = \max(\max(B, S),\ \kappa\, m) + 1$$
+
+So for `n = delta m` (where $N = \kappa\, m$), the RHS becomes:
+
+$$(\max(\max(B, S),\ \kappa\, m) + 1) + 1 = \max(\max(B,S),\ N) + 2$$
+
+while the LHS is $\max(\max(B,S),\ N) + 1$. These are unequal.
+
+**Concrete counterexample** — `b = s = void`, `n = delta void`:
+- LHS = `kappa (recDelta void void (delta (delta void)))` $= \max(\max(0,0), 0) + 1 = 1$
+- RHS = `kappa (recDelta void void (delta void)) + 1` $= (\max(\max(0,0), 0) + 1) + 1 = 2$
+- $1 = 2$ is false.
+
+---
+
+### `kappa_rec_succ_drop`
+
+**Claim:** `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`
+
+This is the key termination obligation for `R_rec_succ`. Again take `n = delta m`:
+
+- **RHS** = `kappa (recDelta b s (delta n))` $= \max(\max(B, S),\ \kappa\, m) + 1$ (since $\kappa(\delta m) = \kappa\, m$)
+- **LHS** = `kappa (app s (recDelta b s (delta m)))` $= \max(S,\ \max(\max(B,S),\ \kappa\, m) + 1)$
+
+Since $\max(B, S) \geq S$, the outer max collapses:
+
+$$\text{LHS} = \max(\max(B,S),\ \kappa\, m) + 1 = \text{RHS}$$
+
+Strict inequality $<$ fails; we get equality.
+
+**Same concrete counterexample** — `b = s = void`, `n = delta void`:
+- LHS = `kappa (app void (recDelta void void (delta void)))` $= \max(0, 1) = 1$
+- RHS = `kappa (recDelta void void (delta (delta void)))` $= 1$
+- $1 < 1$ is false.
+
+---
+
+### Root Cause
+
+The `kappa` definition for `recDelta` only adds `+1` when the *third argument itself* is `delta _`. But `R_rec_succ` peels one `delta` off the outer shell and reintroduces `recDelta b s n` where `n` is now exposed. If `n` is itself `delta m`, the reduct `recDelta b s n` triggers the `+1` branch again, recovering the same `kappa` value. The measure fails to account for this case — it counts only one level of `delta`-depth rather than tracking the full nesting depth that the recursion unwinds.
+
+**Conclusion:** The helper strategy is **not sound**. Both lemmas have the same counterexample and neither can be proved as stated.

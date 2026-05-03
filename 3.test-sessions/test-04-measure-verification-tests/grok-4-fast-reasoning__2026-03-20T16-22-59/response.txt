@@ -1,0 +1,9 @@
+The proposed lexicographic measure `(phase t, cost t)` is **not sound** for proving termination of the `Step` relation.
+
+### Reasoning
+A termination measure is sound if, for every step `Step t u`, the measure strictly decreases: `measure t > measure u` lexicographically (first compare `phase t` vs. `phase u`; if equal, compare `cost t` vs. `cost u`).
+
+- The measure decreases correctly on rules `R_int_delta`, `R_eq_refl`, `R_eq_diff`, and `R_rec_succ` (phase drops from 1 to 0 in the last case, or costs decrease when phases are equal at 0).
+- However, it **increases** on rules `R_merge_void_left`, `R_merge_void_right`, `R_merge_cancel`, and `R_rec_zero` when the right-hand side has `phase = 1` (e.g., if `t = recDelta b s (delta n)` in a merge rule, left has `phase = 0` but right has `phase = 1`, so `(0, ... ) < (1, ... )` lexicographically).
+
+Since steps exist where the measure increases (or fails to decrease), it does not establish termination. A sound measure would need to ensure decreases (or non-increases) across *all* rules, possibly by refining `phase` to handle merges/recursion more robustly or using a different multiset/ordinal-based approach for first-order rewriting.

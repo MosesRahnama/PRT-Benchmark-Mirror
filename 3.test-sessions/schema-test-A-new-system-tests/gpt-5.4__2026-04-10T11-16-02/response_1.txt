@@ -1,0 +1,17 @@
+Yes. On the rewrite system as presented, strong normalization is establishable from the rules alone for ordinary finite first-order terms.
+
+Reasoning: there are only two rules, both centered on F. The recursive rule
+
+$$
+F(x,y,S(n)) \to G(F(x,y,n))
+$$
+
+strictly decreases the third argument from $S(n)$ to $n$. The added outer $G$ does not matter, because there is no rewrite rule for $G$. The base rule
+
+$$
+F(x,y,Z) \to x
+$$
+
+eliminates the F-redex entirely and returns a proper subterm. So the system has a simple well-founded descent: every time the recursive rule fires, the “nat-depth” of the third argument drops by one, and when it reaches $Z$, the F disappears.
+
+So from these rules alone, there is no mechanism to create an infinite reduction chain. No extra structural axioms or object-level assumptions are needed to justify that conclusion. The only caveat is that this is the standard first-order finite-term reading of the TRS.

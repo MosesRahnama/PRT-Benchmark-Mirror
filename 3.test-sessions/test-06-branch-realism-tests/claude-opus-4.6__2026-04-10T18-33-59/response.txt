@@ -1,0 +1,58 @@
+## Assessment: The helper strategy is **unsound**. Both theorems are false.
+
+### The root cause
+
+`kappa` is transparent to `delta`:
+
+$$\kappa(\texttt{delta}\;t) = \kappa(t)$$
+
+But the `recDelta` clause only awards a `+1` bonus for **one** layer of `delta` on the third argument. When that third argument is *already* a `delta`, wrapping another `delta` around it does not increase the `kappa` of the `recDelta` node, because the pattern only peels one layer and the inner `kappa` call collapses the rest.
+
+---
+
+### Theorem 1: `kappa_rec_delta_step` — **False**
+
+**Claim:** `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`
+
+Let $M = \max(\kappa(b),\, \kappa(s))$.
+
+| | LHS | RHS |
+|---|---|---|
+| `n` not a `delta` | $\max(M,\, \kappa(n)) + 1$ | $\max(M,\, \kappa(n)) + 1$ |
+| `n = delta m` | $\max(M,\, \kappa(m)) + 1$ | $\max(M,\, \kappa(m)) + 1 + 1$ |
+
+In the second row, $\kappa(\texttt{delta}\;m) = \kappa(m)$, so both the LHS and the inner RHS computation hit the `+1` clause with the same base — but the RHS then adds another `+1`.
+
+**Counterexample:** `b = void, s = void, n = delta void`.
+
+$$\text{LHS} = \kappa(\texttt{recDelta}\;\texttt{void}\;\texttt{void}\;(\texttt{delta}\;(\texttt{delta}\;\texttt{void}))) = \max(0,\,0) + 1 = 1$$
+
+$$\text{RHS} = \kappa(\texttt{recDelta}\;\texttt{void}\;\texttt{void}\;(\texttt{delta}\;\texttt{void})) + 1 = (\max(0,\,0)+1)+1 = 2$$
+
+$1 \neq 2$. $\square$
+
+---
+
+### Theorem 2: `kappa_rec_succ_drop` — **False**
+
+**Claim:** `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`
+
+Again let $M = \max(\kappa(b),\,\kappa(s))$ and take `n = delta m`:
+
+$$\text{LHS} = \max\!\bigl(\kappa(s),\; \underbrace{\max(M,\,\kappa(m))+1}_{\kappa(\texttt{recDelta}\;b\;s\;(\texttt{delta}\;m))}\bigr) = \max(M,\,\kappa(m))+1$$
+
+$$\text{RHS} = \max(M,\,\kappa(m))+1$$
+
+So LHS $=$ RHS; strict inequality fails.
+
+**Same counterexample:** `b = void, s = void, n = delta void` gives LHS $= 1$, RHS $= 1$, and $1 < 1$ is false. $\square$
+
+---
+
+### Why the termination argument collapses
+
+`kappa` is meant to decrease across the rewrite rule `R_rec_succ`:
+
+$$\texttt{recDelta}\;b\;s\;(\texttt{delta}\;n) \;\longrightarrow\; \texttt{app}\;s\;(\texttt{recDelta}\;b\;s\;n)$$
+
+For this to work, the measure must **strictly distinguish** `recDelta b s (delta n)` from `recDelta b s n` for *all* `n`. But because `kappa` erases `delta` wrappers, nested `delta` arguments are invisible to it, and the single `+1` bonus cannot accumulate. A correct fix would need a measure that counts `delta`-depth in the third argument of `recDelta` (e.g., a size measure where `delta` contributes `+1` unconditionally), rather than one that collapses `delta` everywhere else.

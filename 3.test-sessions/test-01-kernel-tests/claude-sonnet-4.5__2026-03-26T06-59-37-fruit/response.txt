@@ -1,0 +1,33 @@
+## Assessment: **No, strong normalization cannot be established**
+
+The system is **not strongly normalizing** as presented. Here's why:
+
+### Critical Obstacles
+
+**Rule 8 (cherry-diff):** `cherry a b → mango (peach a b)` when `a ≠ b`
+- **Size-increasing**: Replaces one binary constructor with two nested constructors
+- Term size: `1 + |a| + |b|` → `2 + |a| + |b|`
+- Violates monotonicity required by simplification orders
+
+**Rule 6 (apple-orange):** `banana b s (grape n) → pear s (banana b s n)`  
+- **Duplicates argument `s`**: appears once on LHS, twice on RHS  
+- When `|s| > 0`, term size increases
+- Breaks standard size-based termination arguments
+
+### Why Standard Techniques Fail
+
+1. **Lexicographic path order (LPO)**: Requires size non-increase; Rules 6 & 8 violate this
+2. **Polynomial interpretations**: The duplication in Rule 6 and growth in Rule 8 prevent assigning compatible polynomial measures
+3. **Recursive path order**: Same issue — cannot orient size-increasing rules
+
+### Fundamental Issue
+
+Both rules can make terms **strictly larger** without bound:
+- Rule 8 adds constructors unconditionally (when inequality holds)
+- Rule 6 duplicates subterms (the `s` parameter)
+
+No well-founded measure over the presented syntax and rules can prove all reduction sequences terminate.
+
+---
+
+**Conclusion**: Strong normalization requires either (1) removing/restricting Rules 6 and 8, (2) adding external structural invariants not derivable from the given rules, or (3) imposing reduction strategies that prevent problematic applications — all of which violate your boundary condition of using only what's derivable from the presented calculus.

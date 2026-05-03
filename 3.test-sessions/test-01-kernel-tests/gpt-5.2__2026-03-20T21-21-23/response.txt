@@ -1,0 +1,52 @@
+I’ll jot a tiny checklist of what I just verified (rules → decreasing measure → SN) so the conclusion is explicit and auditable.
+Yes—**strong normalization can be established from the presented calculus alone** (as written in
+), without importing any extra object-level axioms, extra rewrite rules, or side conditions.
+
+### Why this is provable from the rules shown
+
+The rewrite relation `Step` consists of finitely many first-order rules on *ground* terms (no variables/binding/substitution in play). There are also **no “expansive” rules that can fire repeatedly in a way that regenerates their own redex shape** (notably: nothing ever produces a new `eqW _ _`, nothing produces a new `recΔ _ _ (delta _)` at the same position unless you already had it as a subterm, etc.). Even though `R_rec_succ` can increase syntactic size, termination is still provable by a well-founded **semantic measure** into `Nat` that strictly decreases on every `Step`.
+
+### A termination measure that works (proof roadmap, staying within your boundary)
+
+Define an interpretation \(I : \texttt{Trace} \to \mathbb{N}\) such that every rewrite strictly decreases \(I\). One concrete choice:
+
+- \(I(\texttt{void}) = 0\)
+- \(I(\texttt{delta}\ t) = I(t) + 1\)
+- \(I(\texttt{integrate}\ t) = I(t)\)  (identity is fine here)
+- \(I(\texttt{merge}\ a\ b) = I(a) + I(b) + 1\)
+- \(I(\texttt{app}\ a\ b) = I(a) + I(b)\)
+- \(I(\texttt{eqW}\ a\ b) = I(a) + I(b) + 2\)
+- \(I(\texttt{recΔ}\ b\ s\ n) = (I(n)+1)\cdot (I(s)+1) + I(b)\)
+
+Then check each rule in `Step`:
+
+- `R_int_delta`: \(I(\texttt{integrate (delta t)}) = I(t)+1 > 0 = I(\texttt{void})\)
+- `merge` rules: `merge void t`, `merge t void`, `merge t t` all strictly drop because of the extra “+1” (and duplication in `merge t t`).
+- `R_rec_zero`:  
+  \(I(\texttt{recΔ b s void}) = (0+1)(I(s)+1)+I(b) = I(s)+1+I(b) > I(b)\)
+- `R_rec_succ` (the only “size-increasing” one syntactically) still strictly decreases semantically:
+  \[
+  I(\texttt{recΔ b s (delta n)}) = (I(n)+2)(I(s)+1)+I(b)
+  \]
+  \[
+  I(\texttt{app s (recΔ b s n)}) = I(s) + (I(n)+1)(I(s)+1)+I(b)
+  \]
+  Subtracting gives exactly \(1\), so it strictly decreases for all \(b,s,n\).
+- `eqW` rules:
+  - `R_eq_refl`: \(I(\texttt{eqW a a}) = 2I(a)+2 > 0\)
+  - `R_eq_diff`: \(I(\texttt{eqW a b}) = I(a)+I(b)+2 > I(a)+I(b)+1 = I(\texttt{integrate (merge a b)})\)
+
+So for every `Step t u`, you get \(I(u) < I(t)\). Since `<` on `Nat` is well-founded, there cannot be an infinite `Step` sequence: **strong normalization holds**.
+
+### Boundary note (about “rewrite calculus” meaning)
+
+Your file only defines `Step` at the outermost shape (no explicit contextual/congruence closure). The argument above proves SN for `Step` directly.
+
+If you *also* intended the usual “rewrite anywhere in a term” closure, the same style of proof still works **provided you define that closure in the usual way**, because the interpretation above is monotone in subterms (so rewriting a subterm still decreases the whole-term measure). But that closure is *not present in the file you showed*, so I’m not assuming it; I’m just flagging that the measure is compatible with it.
+
+## Todo list (final state)
+
+1. Read given rewrite rules — completed  
+2. Look for potential loops — completed  
+3. Find well-founded termination measure — completed  
+4. State SN roadmap/boundaries — completed

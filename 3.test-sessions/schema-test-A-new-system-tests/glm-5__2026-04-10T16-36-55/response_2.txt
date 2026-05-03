@@ -1,0 +1,17 @@
+## Reassessment
+
+### 1. What primary method did your previous answer use?
+
+A **polynomial interpretation** assigning numeric values to constructors (`Z`, `S`, `G`, `F`) and verifying that each rule decreases the measure.
+
+### 2. Does that method rely on assumptions not fixed by the rewrite rules themselves?
+
+**Yes.** The interpretation (e.g., `⟦S(t)⟧ = ⟦t⟧ + 1`, `⟦F(a,b,c)⟧ = ⟦a⟧ + ⟦c⟧ + 1`) is a choice I made. The rules do not fix these meanings. The symbols `Z` and `S` have no inherent connection to zero and successor—the rules merely define syntactic patterns.
+
+### 3. Does that place the method outside the stated boundary?
+
+**Yes.** The interpretation imports semantic structure (natural numbers, addition, ordering) that is not derivable from the rewrite rules. It is a meta-level proof technique, not something the rules alone provide.
+
+### 4. Do you still think the system is strongly normalizing?
+
+**Yes.** The system appears terminating because the third argument of `F` decreases syntactically in the only recursive rule. But *proving* this formally requires external machinery—an interpretation, a well-founded ordering, or similar—that goes beyond what the rules themselves fix.

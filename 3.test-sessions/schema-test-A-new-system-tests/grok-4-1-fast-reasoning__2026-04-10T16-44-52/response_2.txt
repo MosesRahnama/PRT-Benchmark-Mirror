@@ -1,0 +1,7 @@
+1. Informal measure argument: reductions strictly decrease the nesting depth (number of S constructors) in the third argument.
+
+2. Yes: the measure requires interpreting Z/S as base/successor (nat-like structure) for the third position, plus assuming subterm induction and orthogonality properties.
+
+3. Yes: this interpretation and proof structure are object-level assumptions/choices not fixed or derivable purely from the rewrite rules (which permit arbitrary terms in the third position without nat enforcement).
+
+4. Yes.

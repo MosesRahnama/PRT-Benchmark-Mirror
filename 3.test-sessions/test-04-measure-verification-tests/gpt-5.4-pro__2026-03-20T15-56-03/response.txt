@@ -1,0 +1,48 @@
+No.
+
+In
+, the proposed measure
+$$m(t) := (\mathrm{phase}(t), \mathrm{cost}(t))$$
+is **not sound** for the rewrite relation `Step`, under the intended lexicographic order on pairs of naturals.
+
+### Counterexample
+Take
+`u := recDelta void void (delta void)`.
+
+Then:
+- `phase u = 1`
+- `cost u = 2`
+
+By `R_merge_void_left`,
+`merge void u → u`.
+
+But:
+- `measure (merge void u) = (0, 3)`
+- `measure u = (1, 2)`
+
+So the rewrite step goes
+$$(0,3) \to (1,2)$$
+and the **first lexicographic component increases** from `0` to `1`. Hence the measure does not decrease on this step.
+
+### Why this happens
+`phase` depends only on the **root shape**:
+- it is `1` only for `recDelta _ _ (delta _)`,
+- otherwise `0`.
+
+So rules that strip an outer constructor can expose a subterm with phase `1`. This breaks lexicographic descent.
+
+The same issue affects:
+- `R_merge_void_right`
+- `R_merge_cancel`
+- `R_rec_zero` (if `b` itself has phase `1`)
+
+### Structural contradiction
+The measure is especially problematic because:
+- `R_rec_succ` needs a drop `1 → 0` in the first component,
+- while `R_merge_void_left` on the counterexample needs a drop `0 → 1`.
+
+No strict ordering on that first `phase` component can satisfy both.
+
+### Conclusion
+The lexicographic measure is **unsound**.  
+`cost` handles many rules, but `phase` is too root-sensitive and is not preserved under rules that expose subterms.

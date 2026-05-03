@@ -1,0 +1,24 @@
+I'll read the file to analyze the term rewriting system.
+**RAW ASSESSMENT: YES, strong normalization can be established.**
+
+## Why
+
+The system exhibits the structure of **primitive recursion**:
+- Rule 1 is the base case: `F(x, y, Z) → x`  
+- Rule 2 is the recursive case: `F(x, y, S(n)) → G(y, F(x, y, n))`
+
+The third argument of F is built exclusively from {Z, S}, representing Peano numerals. No rewrite rules exist for G or S, so G-terms and applications of S are normal forms.
+
+## Proof Roadmap
+
+1. **Define termination measure**: Let $\mu(t)$ = the S-nesting depth in the third argument when $t$ has form $F(x, y, c)$.
+
+2. **Show each rule decreases the measure or terminates**:
+   - Rule 1: $F(x, y, Z) \to x$ — the F vanishes (terminal)
+   - Rule 2: $F(x, y, S(n)) \to G(y, F(x, y, n))$ — the third argument shrinks from $S(n)$ to $n$, so $\mu$ strictly decreases
+
+3. **Invoke well-foundedness**: The natural numbers (S-nesting depths) form a well-founded order. Every descending chain in $\mu$ must terminate.
+
+4. **Conclude**: No infinite reduction sequences exist → strong normalization holds.
+
+The system requires no axioms beyond what the rules implicitly define (Peano structure and well-foundedness of depth).

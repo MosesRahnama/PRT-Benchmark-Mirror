@@ -1,0 +1,109 @@
+session_slug,model,provider,r_rec_succ_delivery,r_eq_refl_delivery,eq_refl_support_correctness,r_eq_diff_delivery,hard_case_delivery_correctness,remaining_case_labels_correct,remaining_case_targeting_correctness,non_remaining_case_material_present,response_scope_correctness,overall_test03_correctness
+claude-haiku-4.5__2026-04-18T21-14-40,Claude Haiku 4.5,Anthropic,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+claude-haiku-4.5__2026-04-18T21-14-50,Claude Haiku 4.5,Anthropic,closed_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+claude-haiku-4.5__2026-04-18T21-14-59,Claude Haiku 4.5,Anthropic,prose_only,prose_only,Correct,prose_only,Unresolved,yes,Correct,no,Correct,Unresolved
+claude-haiku-4.5__2026-04-18T21-15-08,Claude Haiku 4.5,Anthropic,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+claude-opus-4.5__2026-04-18T21-15-16,Claude Opus 4.5,Anthropic,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+claude-opus-4.5__2026-04-18T21-15-26,Claude Opus 4.5,Anthropic,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+claude-opus-4.5__2026-04-18T21-15-30,Claude Opus 4.5,Anthropic,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+claude-opus-4.5__2026-04-18T21-15-34,Claude Opus 4.5,Anthropic,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+claude-opus-4.6__2026-04-18T18-01-27,Claude Opus 4.6,Anthropic,prose_only,closed_code,Correct,prose_only,Unresolved,yes,Correct,no,Correct,Unresolved
+claude-opus-4.6__2026-04-18T21-13-24,Claude Opus 4.6,Anthropic,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+claude-opus-4.6__2026-04-18T21-13-29,Claude Opus 4.6,Anthropic,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+claude-opus-4.6__2026-04-18T21-13-34,Claude Opus 4.6,Anthropic,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+claude-sonnet-4.5__2026-04-18T21-16-06,Claude Sonnet 4.5,Anthropic,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+claude-sonnet-4.5__2026-04-18T21-16-13,Claude Sonnet 4.5,Anthropic,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+claude-sonnet-4.5__2026-04-18T21-16-16,Claude Sonnet 4.5,Anthropic,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+claude-sonnet-4.5__2026-04-18T21-16-20,Claude Sonnet 4.5,Anthropic,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+claude-sonnet-4.6__2026-04-18T21-16-24,Claude Sonnet 4.6,Anthropic,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+claude-sonnet-4.6__2026-04-18T21-16-41,Claude Sonnet 4.6,Anthropic,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+claude-sonnet-4.6__2026-04-18T21-16-44,Claude Sonnet 4.6,Anthropic,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+claude-sonnet-4.6__2026-04-18T21-16-48,Claude Sonnet 4.6,Anthropic,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+claude-sonnet-4__2026-04-18T21-15-49,Claude Sonnet 4,Anthropic,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+claude-sonnet-4__2026-04-18T21-15-53,Claude Sonnet 4,Anthropic,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+claude-sonnet-4__2026-04-18T21-15-56,Claude Sonnet 4,Anthropic,prose_only,prose_only,Correct,prose_only,Unresolved,yes,Correct,no,Correct,Unresolved
+claude-sonnet-4__2026-04-18T21-16-01,Claude Sonnet 4,Anthropic,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+deepseek-r1-0528__2026-04-18T21-17-17,DeepSeek R1,DeepSeek,open_code,closed_code,Correct,closed_code,Correct,yes,Correct,no,Correct,Correct
+deepseek-r1-0528__2026-04-18T21-17-28,DeepSeek R1,DeepSeek,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+deepseek-r1-0528__2026-04-18T21-17-34,DeepSeek R1,DeepSeek,closed_code,closed_code,Correct,closed_code,Correct,yes,Correct,no,Correct,Correct
+deepseek-r1-0528__2026-04-18T21-17-40,DeepSeek R1,DeepSeek,closed_code,closed_code,Correct,closed_code,Correct,yes,Correct,no,Correct,Correct
+deepseek-v3.2__2026-04-18T21-16-51,DeepSeek V3.2,DeepSeek,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+deepseek-v3.2__2026-04-18T21-17-00,DeepSeek V3.2,DeepSeek,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+deepseek-v3.2__2026-04-18T21-17-06,DeepSeek V3.2,DeepSeek,closed_code,closed_code,Correct,closed_code,Correct,yes,Correct,no,Correct,Correct
+deepseek-v3.2__2026-04-18T21-17-11,DeepSeek V3.2,DeepSeek,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gemini-2.5-pro__2026-04-18T21-21-45,Gemini 2.5 Pro,Google,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gemini-2.5-pro__2026-04-18T21-22-00,Gemini 2.5 Pro,Google,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gemini-2.5-pro__2026-04-18T21-22-05,Gemini 2.5 Pro,Google,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gemini-2.5-pro__2026-04-18T21-22-10,Gemini 2.5 Pro,Google,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gemini-3-flash-preview__2026-04-18T21-22-16,Gemini 3 Flash,Google,missing,missing,Incorrect,missing,Incorrect,no,Incorrect,yes,Incorrect,Incorrect
+gemini-3-flash-preview__2026-04-18T21-22-28,Gemini 3 Flash,Google,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gemini-3-flash-preview__2026-04-18T21-22-32,Gemini 3 Flash,Google,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gemini-3-flash-preview__2026-04-18T21-22-38,Gemini 3 Flash,Google,prose_only,closed_code,Correct,prose_only,Unresolved,yes,Correct,no,Correct,Unresolved
+gemini-3.1-pro-preview__2026-04-18T21-22-43,Gemini 3.1 Pro,Google,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gemini-3.1-pro-preview__2026-04-18T21-22-54,Gemini 3.1 Pro,Google,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gemini-3.1-pro-preview__2026-04-18T21-22-58,Gemini 3.1 Pro,Google,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gemini-3.1-pro-preview__2026-04-18T21-23-03,Gemini 3.1 Pro,Google,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+glm-5__2026-04-18T21-17-46,GLM-5,Zhipu AI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+glm-5__2026-04-18T21-18-03,GLM-5,Zhipu AI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+glm-5__2026-04-18T21-18-08,GLM-5,Zhipu AI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+glm-5__2026-04-18T21-18-14,GLM-5,Zhipu AI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gpt-4o__2026-04-18T21-23-09,GPT-4o,OpenAI,prose_only,prose_only,Correct,prose_only,Unresolved,yes,Correct,no,Correct,Unresolved
+gpt-4o__2026-04-18T21-23-19,GPT-4o,OpenAI,open_code,open_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gpt-4o__2026-04-18T21-23-25,GPT-4o,OpenAI,open_code,open_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gpt-4o__2026-04-18T21-23-30,GPT-4o,OpenAI,open_code,open_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gpt-5.2-codex__2026-04-18T21-24-01,GPT-5.2 Codex,OpenAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gpt-5.2-codex__2026-04-18T21-24-11,GPT-5.2 Codex,OpenAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gpt-5.2-codex__2026-04-18T21-24-16,GPT-5.2 Codex,OpenAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gpt-5.2-codex__2026-04-18T21-24-35,GPT-5.2 Codex,OpenAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gpt-5.2__2026-04-18T21-23-35,GPT-5.2,OpenAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gpt-5.2__2026-04-18T21-23-45,GPT-5.2,OpenAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gpt-5.2__2026-04-18T21-23-51,GPT-5.2,OpenAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gpt-5.2__2026-04-18T21-23-56,GPT-5.2,OpenAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gpt-5.3-codex__2026-04-18T21-24-39,GPT-5.3 Codex,OpenAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gpt-5.3-codex__2026-04-18T21-24-56,GPT-5.3 Codex,OpenAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gpt-5.3-codex__2026-04-18T21-25-01,GPT-5.3 Codex,OpenAI,prose_only,prose_only,Correct,prose_only,Unresolved,yes,Correct,no,Correct,Unresolved
+gpt-5.3-codex__2026-04-18T21-25-04,GPT-5.3 Codex,OpenAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gpt-5.4-pro__2026-04-18T21-13-39,GPT-5.4 Pro,OpenAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gpt-5.4-pro__2026-04-18T21-13-54,GPT-5.4 Pro,OpenAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gpt-5.4-pro__2026-04-18T21-13-58,GPT-5.4 Pro,OpenAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gpt-5.4-pro__2026-04-18T21-14-03,GPT-5.4 Pro,OpenAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gpt-5.4__2026-04-18T21-25-08,GPT-5.4,OpenAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gpt-5.4__2026-04-18T21-25-18,GPT-5.4,OpenAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gpt-5.4__2026-04-18T21-25-22,GPT-5.4,OpenAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gpt-5.4__2026-04-18T21-25-25,GPT-5.4,OpenAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gpt-oss-120b__2026-04-18T21-26-01,GPT-OSS-120B,OpenAI,prose_only,prose_only,Correct,prose_only,Unresolved,yes,Correct,no,Correct,Unresolved
+gpt-oss-120b__2026-04-18T21-26-20,GPT-OSS-120B,OpenAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gpt-oss-120b__2026-04-18T21-26-26,GPT-OSS-120B,OpenAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+gpt-oss-120b__2026-04-18T21-26-31,GPT-OSS-120B,OpenAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+grok-3__2026-04-18T21-19-08,Grok 3,xAI,prose_only,prose_only,Correct,prose_only,Unresolved,yes,Correct,no,Correct,Unresolved
+grok-3__2026-04-18T21-19-19,Grok 3,xAI,prose_only,prose_only,Correct,prose_only,Unresolved,yes,Correct,no,Correct,Unresolved
+grok-3__2026-04-18T21-19-24,Grok 3,xAI,prose_only,prose_only,Correct,prose_only,Unresolved,yes,Correct,no,Correct,Unresolved
+grok-3__2026-04-18T21-19-29,Grok 3,xAI,missing,missing,Incorrect,missing,Incorrect,no,Incorrect,no,Correct,Incorrect
+grok-4-0709__2026-04-18T21-18-20,Grok 4,xAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+grok-4-0709__2026-04-18T21-18-37,Grok 4,xAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,yes,Incorrect,Incorrect
+grok-4-0709__2026-04-18T21-18-43,Grok 4,xAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+grok-4-0709__2026-04-18T21-18-54,Grok 4,xAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+grok-4-0709__2026-04-18T21-19-02,Grok 4,xAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+grok-4-1-fast-reasoning__2026-04-18T21-19-46,Grok 4.1 Fast (reasoning),xAI,closed_code,closed_code,Correct,closed_code,Correct,yes,Correct,no,Correct,Correct
+grok-4-1-fast-reasoning__2026-04-18T21-19-52,Grok 4.1 Fast (reasoning),xAI,open_code,missing,Incorrect,missing,Incorrect,no,Incorrect,no,Correct,Incorrect
+grok-4-1-fast-reasoning__2026-04-18T21-19-58,Grok 4.1 Fast (reasoning),xAI,closed_code,closed_code,Correct,closed_code,Correct,yes,Correct,no,Correct,Correct
+grok-4-fast-reasoning__2026-04-18T21-20-16,Grok 4 Fast (reasoning),xAI,closed_code,closed_code,Correct,closed_code,Correct,yes,Correct,no,Correct,Correct
+grok-4-fast-reasoning__2026-04-18T21-20-27,Grok 4 Fast (reasoning),xAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+grok-4-fast-reasoning__2026-04-18T21-20-31,Grok 4 Fast (reasoning),xAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,yes,Incorrect,Incorrect
+grok-4-fast-reasoning__2026-04-18T21-20-38,Grok 4 Fast (reasoning),xAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+grok-4.20-0309-reasoning__2026-04-18T21-20-46,Grok 4.20 Reasoning,xAI,closed_code,closed_code,Correct,closed_code,Correct,yes,Correct,no,Correct,Correct
+grok-4.20-0309-reasoning__2026-04-18T21-21-01,Grok 4.20 Reasoning,xAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+grok-4.20-0309-reasoning__2026-04-18T21-21-07,Grok 4.20 Reasoning,xAI,closed_code,closed_code,Correct,closed_code,Correct,yes,Correct,no,Correct,Correct
+grok-4.20-0309-reasoning__2026-04-18T21-21-13,Grok 4.20 Reasoning,xAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+grok-code-fast-1__2026-04-18T21-21-18,Grok Code Fast 1,xAI,open_code,closed_code,Correct,open_code,Correct,no,Incorrect,yes,Incorrect,Incorrect
+grok-code-fast-1__2026-04-18T21-21-28,Grok Code Fast 1,xAI,closed_code,closed_code,Correct,closed_code,Correct,no,Incorrect,yes,Incorrect,Incorrect
+grok-code-fast-1__2026-04-18T21-21-33,Grok Code Fast 1,xAI,prose_only,prose_only,Correct,prose_only,Unresolved,yes,Correct,no,Correct,Unresolved
+grok-code-fast-1__2026-04-18T21-21-38,Grok Code Fast 1,xAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,yes,Incorrect,Incorrect
+o3__2026-04-18T21-25-29,o3,OpenAI,open_code,open_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+o3__2026-04-18T21-25-45,o3,OpenAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+o3__2026-04-18T21-25-49,o3,OpenAI,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+o3__2026-04-18T21-25-55,o3,OpenAI,open_code,open_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+qwen3-max-thinking__2026-04-18T21-26-39,Qwen3 Max Thinking,Alibaba,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+qwen3-max-thinking__2026-04-18T21-26-50,Qwen3 Max Thinking,Alibaba,open_code,open_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+qwen3-max-thinking__2026-04-18T21-26-55,Qwen3 Max Thinking,Alibaba,open_code,closed_code,Correct,open_code,Correct,yes,Correct,no,Correct,Correct
+qwen3-max-thinking__2026-04-18T21-27-00,Qwen3 Max Thinking,Alibaba,prose_only,prose_only,Correct,prose_only,Unresolved,yes,Correct,no,Correct,Unresolved

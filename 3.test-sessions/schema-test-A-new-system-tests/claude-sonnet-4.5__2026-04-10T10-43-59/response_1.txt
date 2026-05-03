@@ -1,0 +1,25 @@
+## Assessment: **No, strong normalization cannot be established from the rules alone**
+
+### Reasoning:
+
+**The System:**
+- Rule 1: `F(x, y, Z) -> x` (base case)
+- Rule 2: `F(x, y, S(n)) -> G(F(x, y, n))` (recursive case)
+
+**Why it appears normalizing:**
+Intuitively, rule 2 "peels off" one `S` from the third argument each time, replacing `S(n)` with `n`. Eventually we reach `Z`, where rule 1 applies and terminates. For example:
+```
+F(a, b, S(S(Z))) → G(F(a, b, S(Z))) 
+                 → G(G(F(a, b, Z))) 
+                 → G(G(a))
+```
+
+**Why formal proof requires external assumptions:**
+
+1. **No well-foundedness axiom in the rules**: The rules don't state that every term of the form `S(S(...S(Z)...))` has finite nesting depth. Without this, the rules are consistent with pathological models containing infinite `S`-chains.
+
+2. **Termination proofs require well-founded measures**: Standard techniques (polynomial interpretations, recursive path orderings) require mapping terms to natural numbers and relying on ℕ being well-founded—a structural assumption external to the rewrite rules themselves.
+
+3. **Rules describe local transformations only**: They don't encode global properties like "no cycles" or "finite term depth."
+
+**Conclusion**: Under the standard interpretation (terms as finite trees), this system is strongly normalizing. But *proving* this from the rewrite rules alone, without assuming structural properties of the term algebra (well-foundedness, finiteness), is not possible. The rules are consistent with non-terminating interpretations.

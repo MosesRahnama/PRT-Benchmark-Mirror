@@ -1,0 +1,30 @@
+, the relation `Step` is already very restrictive, and there is no rule that can regenerate an `eqW` or `recΔ` redex at the root after firing one. The only potentially “expansive” rule is:
+
+- `recΔ b s (delta n) → app s (recΔ b s n)`
+
+but this is still orientable by a standard termination ordering (it decreases the recursive argument from `delta n` to `n`).
+
+## Short proof roadmap (within your boundary)
+
+1. Treat the rules as a first-order TRS over the signature  
+   `{void, delta, integrate, merge, app, recΔ, eqW}`.
+
+2. Use a standard simplification ordering, e.g. **lexicographic path ordering (LPO/RPO)**, with a precedence satisfying at least:
+   - `recΔ ≻ app`
+   - `eqW ≻ integrate` and `eqW ≻ merge`
+   - (and suitable remaining precedence among constructors/constants)
+
+3. Check each rule decreases under that ordering:
+   - `merge ... →` argument rules decrease by subterm property.
+   - `recΔ ... (delta n) → app ... (recΔ ... n)` decreases since `delta n ≻ n` and `recΔ ≻ app`.
+   - `eqW a b → integrate (merge a b)` decreases from higher head `eqW` to lower head `integrate`, with argument obligations handled by subterm/precedence.
+   - Remaining rules are straightforward decreases.
+
+4. Since all rules are strictly decreasing in a well-founded ordering, the system is strongly normalizing.
+
+## Progress checklist
+
+- [x] Read only the requested file:
+- [x] Stayed within “no other files / no web search”
+- [x] Assessed SN from given calculus only
+- [x] Provided a short roadmap without adding assumptions

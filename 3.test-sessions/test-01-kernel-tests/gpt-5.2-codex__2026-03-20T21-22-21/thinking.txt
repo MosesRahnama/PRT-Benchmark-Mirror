@@ -1,0 +1,3 @@
+**Confirming strong normalization with structural measure**
+
+Strong normalization holds because rewriting applies only at root, with no contextual closure, and rules either reduce term size or strictly decrease the depth of nested delta constructors in the recΔ argument. No rule produces cycles or reintroduces complex redexes, so all rewrite sequences are finite. A well-founded lexicographic measure combining delta-depth and term size suffices for a termination proof.

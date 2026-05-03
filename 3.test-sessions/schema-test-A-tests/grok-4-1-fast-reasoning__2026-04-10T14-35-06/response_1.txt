@@ -1,0 +1,3 @@
+**Yes**, strong normalization holds.
+
+The rules implement recursion on the successor structure of the third argument: `F(x, y, Z) → x` (base) and `F(x, y, S(n)) → G(y, F(x, y, n))` (step, structurally decreasing the successor depth). No rules for `G`, `S`, or `Z`, so reductions terminate after finitely many steps matching the chain length, with no cycles, overlaps creating new `F`s, or infinite paths possible purely from the rules.

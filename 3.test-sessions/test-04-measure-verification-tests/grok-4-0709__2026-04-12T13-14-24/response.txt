@@ -1,0 +1,1 @@
+The proposed lexicographic termination measure is not sound. There are rewrite steps where the measure increases (e.g., `merge void t → t` when `t` has phase 1).

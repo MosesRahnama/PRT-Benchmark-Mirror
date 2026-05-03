@@ -1,0 +1,27 @@
+**Assessment:** **Yes** — under the standard first-order TRS reading on finite free terms, strong normalization can be established from these rules alone.
+
+**Reasoning:**  
+The only recursive rule is
+
+\[
+F(x,y,S(n)) \to G(y, F(x,y,n)),
+\]
+
+and the recursive occurrence of `F` is on the strictly smaller third argument `n` instead of `S(n)`. There are no rewrite rules for `G`, `S`, or `Z`, so no rule can rebuild a larger third argument for that same recursive call.
+
+A standard termination ordering already orients the system, e.g. a lexicographic path order with precedence
+
+\[
+F \succ G \succ S \succ Z.
+\]
+
+Then:
+
+- `F(x,y,Z) -> x` decreases by subterm/property.
+- `F(x,y,S(n)) -> G(y, F(x,y,n))` decreases because the left root `F` dominates `G`, and also
+  \[
+  F(x,y,S(n)) \succ F(x,y,n)
+  \]
+  since `S(n) \succ n`.
+
+So no extra structural axioms or object-level assumptions are needed beyond the ordinary TRS interpretation itself.

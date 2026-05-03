@@ -1,0 +1,119 @@
+I'll examine the Lean 4 file to understand the partial strong normalization proof and identify the remaining cases that need to be completed.
+Based on my analysis of the Lean 4 file, I can see that this is a strong normalization proof for a first-order rewrite calculus using ordinal-valued measures. The file contains 8 reduction rules, and 5 of them have been proved while 3 remain marked with `sorry`. 
+
+Here's a proof skeleton for completing the remaining three cases:
+
+## Case 1: `Step.R_rec_succ` (Line 158)
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- We need to show: mu(app s (recDelta b s n)) < mu(recDelta b s (delta n))
+    -- 
+    -- LHS = omega^3 * (mu s + 1) + omega^2 * (mu (recDelta b s n) + 1) + 1
+    --     = omega^3 * (mu s + 1) + omega^2 * (omega^(mu n + mu s + 6) + omega * (mu b + 1) + 1 + 1) + 1
+    --
+    -- RHS = omega^(mu (delta n) + mu s + 6) + omega * (mu b + 1) + 1
+    --     = omega^(omega^5 * (mu n + 1) + 1 + mu s + 6) + omega * (mu b + 1) + 1
+    --
+    -- Key insight: The RHS exponent contains omega^5 * (mu n + 1) which grows much faster
+    -- than any polynomial combination of mu n, making the RHS exponentially larger
+    
+    have h1 : mu n + mu s + 6 < omega0^5 * (mu n + 1) + 1 + mu s + 6 := by
+      -- omega^5 * (mu n + 1) dominates mu n
+      have dom : mu n < omega0^5 * (mu n + 1) := by
+        calc mu n < mu n + 1 := lt_add_one _
+        _ ≤ omega0^5 * (mu n + 1) := le_mul_right _ (opow_pos 5 omega0_pos)
+      linarith [dom]
+    
+    have h2 : omega0^(mu n + mu s + 6) < omega0^(omega0^5 * (mu n + 1) + 1 + mu s + 6) := 
+      opow_lt_opow_left omega0_pos h1
+      
+    -- The RHS dominates all terms in the LHS expansion
+    calc omega0^3 * (mu s + 1) + omega0^2 * (omega0^(mu n + mu s + 6) + omega0 * (mu b + 1) + 2) + 1
+    _ < omega0^(mu n + mu s + 6) := by
+        -- omega^(mu n + mu s + 6) dominates polynomial terms
+        sorry -- Technical ordinal arithmetic
+    _ < omega0^(omega0^5 * (mu n + 1) + 1 + mu s + 6) := h2
+    _ ≤ omega0^(omega0^5 * (mu n + 1) + 1 + mu s + 6) + omega0 * (mu b + 1) + 1 := 
+        le_add_right _ _
+```
+
+## Case 2: `Step.R_eq_refl` (Line 168)
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- We need to show: 0 < omega^(mu a + mu a + 9) + 1
+    -- This is straightforward since omega^(2 * mu a + 9) ≥ omega^9 > 0
+    
+    have h1 : (0 : Ordinal) < (9 : Ordinal) := by norm_num
+    have h2 : (9 : Ordinal) ≤ 2 * mu a + 9 := by
+      simp [mul_comm]
+      exact le_add_left _ _
+    have h3 : omega0^9 ≤ omega0^(2 * mu a + 9) := 
+      opow_le_opow_right omega0_pos h2
+    have h4 : (0 : Ordinal) < omega0^9 := 
+      opow_pos 9 omega0_pos
+    
+    calc (0 : Ordinal) 
+    _ < omega0^9 := h4
+    _ ≤ omega0^(2 * mu a + 9) := h3  
+    _ ≤ omega0^(2 * mu a + 9) + 1 := le_add_right _ _
+```
+
+## Case 3: `Step.R_eq_diff` (Line 176)
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- We need to show: mu(integrate (merge a b)) < mu(eqW a b)
+    -- 
+    -- LHS = omega^4 * (mu(merge a b) + 1) + 1
+    --     = omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 1 + 1) + 1
+    --     = omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 2) + 1
+    --
+    -- RHS = omega^(mu a + mu b + 9) + 1
+    --
+    -- Key insight: The exponent mu a + mu b + 9 is much larger than 4, and 
+    -- omega^(mu a + mu b + 9) dominates omega^4 * (polynomial in mu a, mu b)
+    
+    have merge_bound : mu (merge a b) = 
+      omega0^3 * (mu a + 1) + omega0^2 * (mu b + 1) + 1 := by simp [mu]
+    
+    have exp_dominance : (4 : Ordinal) < mu a + mu b + 9 := by
+      -- Since mu a ≥ 0 and mu b ≥ 0, we have mu a + mu b + 9 ≥ 9 > 4
+      have h1 : (4 : Ordinal) < (9 : Ordinal) := by norm_num
+      have h2 : (9 : Ordinal) ≤ mu a + mu b + 9 := le_add_left _ _
+      exact lt_of_lt_of_le h1 h2
+    
+    -- The key inequality: omega^4 * (polynomial) < omega^(mu a + mu b + 9)
+    have main_ineq : omega0^4 * (mu (merge a b) + 1) < omega0^(mu a + mu b + 9) := by
+      -- When exponents differ significantly, the larger exponent dominates
+      -- regardless of the coefficient
+      rw [merge_bound]
+      -- omega^(mu a + mu b + 9) grows much faster than omega^4 * (anything finite)
+      sorry -- Technical ordinal arithmetic using exp_dominance
+    
+    calc omega0^4 * (mu (merge a b) + 1) + 1
+    _ < omega0^4 * (mu (merge a b) + 1) + omega0^(mu a + mu b + 9) := by
+        rw [add_comm]
+        exact add_lt_add_right main_ineq _
+    _ = omega0^(mu a + mu b + 9) + omega0^4 * (mu (merge a b) + 1) := add_comm _ _
+    _ ≤ omega0^(mu a + mu b + 9) + omega0^(mu a + mu b + 9) := by
+        apply add_le_add_left
+        have : omega0^4 * (mu (merge a b) + 1) < omega0^(mu a + mu b + 9) := main_ineq
+        exact le_of_lt this
+    _ < omega0^(mu a + mu b + 9) + 1 := by
+        -- omega^α + omega^α = 2 * omega^α < omega^α + 1 when α > 0
+        sorry -- Technical: omega arithmetic for large ordinals
+```
+
+## Key Proof Strategy
+
+The proof skeleton follows these main principles:
+
+1. **Exponential Dominance**: When ordinal exponents differ significantly (like `ω^5` vs polynomial terms), the larger exponent dominates completely.
+
+2. **Ordinal Arithmetic**: Use properties like `ω^α < ω^β` when `α < β`, and `ω^α * k < ω^β` when `α < β` regardless of finite `k`.
+
+3. **Measure Design Validation**: The cases validate that the measure `mu` was designed with appropriate "gaps" - the exponents for `delta` (base `ω^5`) and `eqW` (exponent includes `+9`) are large enough to absorb the complexity of the reductions.
+
+The remaining `sorry` placeholders require detailed ordinal arithmetic lemmas from Mathlib, particularly around ordinal exponentiation and the relationship between different ordinal operations.

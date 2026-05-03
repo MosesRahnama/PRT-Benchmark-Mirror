@@ -1,0 +1,59 @@
+## Assessment of the Three Termination Measure Candidates
+
+The file defines a first-order rewrite system on `Trace` terms with 8 rewrite rules (`Step`), and three candidate termination measures `mu1`, `mu2`, `mu3` : `Trace → Nat`. A measure is **sound** if for every rule `Step t u`, we have `mu(t) > mu(u)`. Let me check each rule against each candidate.
+
+---
+
+### Rule-by-rule analysis
+
+I'll use the notation `μ(t)` for the measure of a subterm `t`, treating it as an arbitrary natural number.
+
+| Rule | LHS measure | RHS measure | Strict decrease requirement |
+|---|---|---|---|
+| **R_int_delta** | `integrate (delta t)` → `void` | LHS: overhead + μ(t), RHS: 0 | Always satisfied for all three |
+| **R_merge_void_left** | `merge void t` → `t` | LHS: overhead + 0 + μ(t), RHS: μ(t) | Needs overhead > 0 |
+| **R_merge_void_right** | `merge t void` → `t` | LHS: overhead + μ(t) + 0, RHS: μ(t) | Needs overhead > 0 |
+| **R_merge_cancel** | `merge t t` → `t` | LHS: overhead + 2·μ(t), RHS: μ(t) | Needs overhead + μ(t) > 0; true since overhead ≥ 1 |
+| **R_rec_zero** | `recDelta b s void` → `b` | LHS: overhead + μ(b) + μ(s) + 0, RHS: μ(b) | Needs overhead + μ(s) > 0 |
+| **R_rec_succ** | `recDelta b s (delta n)` → `app s (recDelta b s n)` | Critical rule — see below |
+| **R_eq_refl** | `eqW a a` → `void` | LHS: overhead + 2·μ(a), RHS: 0 | Always satisfied |
+| **R_eq_diff** | `eqW a b` → `integrate (merge a b)` | Critical rule — see below |
+
+---
+
+### Detailed check of the two critical rules
+
+#### R_rec_succ: `recDelta b s (delta n)` → `app s (recDelta b s n)`
+
+| Measure | LHS | RHS | Gap (LHS − RHS) |
+|---|---|---|---|
+| **mu1** | `1 + μ(b) + μ(s) + (1 + μ(n))` = `2 + μ(b) + μ(s) + μ(n)` | `1 + μ(s) + (1 + μ(b) + μ(s) + μ(n))` = `2 + μ(b) + 2·μ(s) + μ(n)` | **−μ(s)** ❌ |
+| **mu2** | `5 + μ(b) + μ(s) + (1 + μ(n))` = `6 + μ(b) + μ(s) + μ(n)` | `1 + μ(s) + (5 + μ(b) + μ(s) + μ(n))` = `6 + μ(b) + 2·μ(s) + μ(n)` | **−μ(s)** ❌ |
+| **mu3** | `1 + μ(b) + μ(s) + (1 + μ(n))` = `2 + μ(b) + μ(s) + μ(n)` | `2 + μ(s) + (1 + μ(b) + μ(s) + μ(n))` = `3 + μ(b) + 2·μ(s) + μ(n)` | **−1 − μ(s)** ❌ |
+
+**All three fail on R_rec_succ.** The RHS duplicates `s` (once directly in `app`, once inside the recursive `recDelta`), so any purely additive size measure will see the RHS grow by at least `μ(s)`. No constant overhead can compensate since `s` is universally quantified.
+
+#### R_eq_diff: `eqW a b` → `integrate (merge a b)`
+
+| Measure | LHS | RHS | Gap |
+|---|---|---|---|
+| **mu1** | `3 + μ(a) + μ(b)` | `1 + (1 + μ(a) + μ(b))` = `2 + μ(a) + μ(b)` | **+1** ✅ |
+| **mu2** | `5 + μ(a) + μ(b)` | `2 + (2 + μ(a) + μ(b))` = `4 + μ(a) + μ(b)` | **+1** ✅ |
+| **mu3** | `4 + μ(a) + μ(b)` | `2 + (1 + μ(a) + μ(b))` = `3 + μ(a) + μ(b)` | **+1** ✅ |
+
+All three handle R_eq_diff correctly.
+
+---
+
+### Verdict
+
+| Candidate | Sound? | Failing rule(s) |
+|---|---|---|
+| **mu1** | **No** | R_rec_succ |
+| **mu2** | **No** | R_rec_succ |
+| **mu3** | **No** | R_rec_succ |
+
+**None of the three candidates is a valid termination measure.** They all fail on `R_rec_succ` for the same structural reason: the rule `recDelta b s (delta n) ↝ app s (recDelta b s n)` duplicates the subterm `s` in the right-hand side. Any measure of the form $\mu(t) = c_t + \sum \mu(\text{subterms})$ (i.e., an additive/polynomial interpretation where subterms contribute linearly) cannot strictly decrease across a rule that copies a universally-quantified subterm. To handle this rule, one would need either:
+
+1. **A non-additive measure** — e.g., a multiset path ordering, a lexicographic ordering on a tuple (such as the depth of `n` as the primary component), or a Knuth-Bendix style polynomial where `s` is counted with coefficient < 1 in the recursive call context.
+2. **A different proof strategy** — e.g., proving termination via a well-founded relation on the third argument `n` alone (since `delta n → n` strictly shrinks it), treating `b` and `s` as parameters rather than measured arguments.

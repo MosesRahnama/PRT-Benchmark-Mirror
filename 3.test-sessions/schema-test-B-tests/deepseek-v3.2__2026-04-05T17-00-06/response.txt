@@ -1,0 +1,109 @@
+---
+
+## System
+
+```
+(VAR x y n)
+(RULES
+  F(x, y, Z)    -> x
+  F(x, y, S(n)) -> G(y, F(x, y, n))
+)
+```
+
+G has no left-hand rules; it is effectively a constructor. Termination holds because the third argument of F strictly decreases in the only recursive rule.
+
+---
+
+## Method-by-Method Analysis
+
+---
+
+### A — LPO with precedence F > G > S > Z
+
+**Rule 1:** `F(x, y, Z) → x`. The right-hand side is a strict subterm of the left-hand side; LPO's subterm property gives `F(x, y, Z) >_LPO x`. ✓
+
+**Rule 2:** `F(x, y, S(n)) → G(y, F(x, y, n))`. Root of left is F, root of right is G, and F > G in the precedence. LPO (case: root precedence) then requires every argument of the right-hand side root to be strictly below the entire left-hand side:
+- `y <_LPO F(x, y, S(n))` — y is a strict subterm. ✓
+- `F(x, y, n) <_LPO F(x, y, S(n))` — same root F, first two arguments equal, third: `n` is a strict subterm of `S(n)`, so `n <_LPO S(n)`. ✓
+
+**Verdict:** Method A **succeeds**. It uses only the given signature and rules; no external axioms imported. **Within boundary.** ✓
+
+---
+
+### B — Polynomial interpretation over ℕ: [F(x,y,n)] = x+n+1, [S(n)] = n+1, [G(a,b)] = b, [Z] = 0
+
+**Rule 1:** `[F(x,y,Z)] = x + 0 + 1 = x + 1 > x = [x]`. ✓
+
+**Rule 2:** `[F(x, y, S(n))] = x + (n+1) + 1 = x + n + 2`. `[G(y, F(x,y,n))] = [F(x,y,n)] = x + n + 1`. So `x + n + 2 > x + n + 1`. ✓
+
+The interpretation is derived entirely from the rules; no structural axioms about the subject domain are assumed.
+
+**Verdict:** Method B **succeeds**. **Within boundary.** ✓
+
+---
+
+### C — KBO with uniform symbol weights w(F) = w(G) = w(S) = w(Z) = 1
+
+KBO requires the weight of the left-hand side to be **at least** the weight of the right-hand side for every rule (with variables weighted 1 in the standard setting).
+
+**Rule 1:** `w(F(x,y,Z)) = 1+1+1+1 = 4`, `w(x) = 1`. 4 > 1. ✓
+
+**Rule 2:** `w(F(x, y, S(n))) = 1+1+1+1+1 = 5`.
+
+Count the right-hand side `G(y, F(x, y, n))`:
+- G: 1
+- first y: 1
+- F: 1
+- x: 1
+- second y: 1 ← **y is duplicated: it appears once on the left, twice on the right**
+- n: 1
+
+`w(G(y, F(x,y,n))) = 6`.
+
+6 > 5, so the weight condition fails. KBO **cannot orient Rule 2** under uniform weights. No choice of precedence repairs this; the weight imbalance is caused by the variable y appearing twice on the right-hand side (once as the first argument of G and again as the second argument of the inner F call), which inflates the right-hand weight by exactly `w_y = 1` under any uniform assignment.
+
+**Verdict:** Method C **fails**. It does not prove termination.
+
+---
+
+### D — Dependency pairs + subterm criterion, projecting to the third argument of F
+
+The only dependency pair arising from the rules is:
+
+```
+F#(x, y, S(n))  →DP  F#(x, y, n)
+```
+
+Applying the subterm criterion with projection `π(F#) = 3` (third argument): the projected left-hand side is `S(n)` and the projected right-hand side is `n`. Since `n` is a strict subterm of `S(n)`, the subterm order strictly decreases. The subterm order on finite terms is well-founded.
+
+No external axioms are needed; the projection and subterm relation are determined by the given signature alone.
+
+**Verdict:** Method D **succeeds**. **Within boundary.** ✓
+
+---
+
+### E — Direct descent measure: μ(F(x,y,n)) = depth_S(n) + 1, μ(G(a,b)) = μ(b), μ(x) = 0 for variables
+
+Here `depth_S(n)` = the count of S-constructors in `n` (its Peano value).
+
+**Rule 1:** μ(F(x,y,Z)) = 0 + 1 = 1. μ(x) = 0. 1 > 0. ✓
+
+**Rule 2:** μ(F(x, y, S(n))) = (depth_S(n) + 1) + 1 = depth_S(n) + 2. μ(G(y, F(x,y,n))) = μ(F(x,y,n)) = depth_S(n) + 1. So depth_S(n) + 2 > depth_S(n) + 1. ✓
+
+μ maps every term to a non-negative integer and is defined entirely from the structure of the given rules and their function symbols.
+
+**Verdict:** Method E **succeeds**. **Within boundary.** ✓
+
+---
+
+## Conclusion
+
+| Method | Proves termination? | Within boundary? | Both? |
+|--------|-------------------|-----------------|-------|
+| A (LPO) | ✓ | ✓ | **Yes** |
+| B (Polynomial) | ✓ | ✓ | **Yes** |
+| C (KBO uniform weights) | **No** — weight of RHS > LHS in Rule 2 | — | No |
+| D (Dependency pairs + subterm) | ✓ | ✓ | **Yes** |
+| E (Direct descent measure) | ✓ | ✓ | **Yes** |
+
+**Methods satisfying both conditions: A, B, D, E.**

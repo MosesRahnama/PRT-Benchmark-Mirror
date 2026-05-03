@@ -1,0 +1,109 @@
+Here's a proof skeleton for the five remaining cases with analysis:
+
+```lean
+-- ══════════════════════════════════════════════════════════════
+-- PROOF SKELETON FOR REMAINING CASES
+-- ══════════════════════════════════════════════════════════════
+
+-- CASE 1: integrate (delta t) --> void
+-- Strategy: Case split on kappa(t)
+--   • If kappa(t) > 0: kappa(void) = 0 < kappa(t) = kappa(integrate(delta t)), use drop_left
+--   • If kappa(t) = 0: kappa ties at 0, mu(void) = 0 < 1 + mu(t) = mu(integrate(delta t)), use drop_right
+| _, _, Step.R_int_delta t => by
+    cases Nat.eq_or_gt_of_le (Nat.zero_le (kappa t)) with
+    | inl hk0 =>  -- kappa t = 0
+        have hmu : mu void < mu (integrate (delta t)) := by simp [mu]; omega
+        have hk  : kappa void = kappa (integrate (delta t)) := by simp [kappa, ← hk0]
+        exact drop_right hmu hk
+    | inr hkPos =>  -- kappa t > 0
+        have hk : kappa void < kappa (integrate (delta t)) := by simp [kappa]; exact hkPos
+        exact drop_left hk
+
+-- CASE 2: recDelta b s void --> b
+-- Strategy: Case split on comparison of kappa(s) vs kappa(b)
+--   kappa(LHS) = max(max(kappa b, kappa s), 0) = max(kappa b, kappa s)
+--   kappa(RHS) = kappa(b)
+--   • If kappa(s) > kappa(b): kappa drops from max to b, use drop_left
+--   • If kappa(s) ≤ kappa(b): kappa ties at kappa(b), mu drops (3 + mu b + mu s > mu b), use drop_right
+| _, _, Step.R_rec_zero b s => by
+    cases Nat.lt_or_ge (kappa b) (kappa s) with
+    | inl hLt =>  -- kappa b < kappa s, so kappa drops
+        have hk : kappa b < kappa (recDelta b s void) := by
+          simp only [kappa, kappa_void, Nat.max_zero]
+          exact Nat.lt_max_of_lt_right hLt
+        exact drop_left hk
+    | inr hGe =>  -- kappa s ≤ kappa b, so kappa ties
+        have hmu : mu b < mu (recDelta b s void) := by simp [mu]; omega
+        have hk  : kappa b = kappa (recDelta b s void) := by
+          simp only [kappa, kappa_void, Nat.max_zero]
+          exact (Nat.max_eq_left hGe).symm
+        exact drop_right hmu hk
+
+-- CASE 3: recDelta b s (delta n) --> app s (recDelta b s n)
+-- ⚠️ CHALLENGING CASE: Requires structural case analysis on n
+--   kappa(LHS) = max(max(kappa b, kappa s), kappa n) + 1
+--   kappa(RHS) = max(kappa s, kappa(recDelta b s n))
+--
+--   Sub-case (a): n is NOT of form (delta m)
+--     kappa(recDelta b s n) = max(max(kappa b, kappa s), kappa n)
+--     kappa(RHS) = max(kappa s, ...) ≤ max(max..., kappa n) < kappa(LHS)
+--     → use drop_left
+--
+--   Sub-case (b): n = delta m for some m
+--     kappa(recDelta b s n) = max(max(kappa b, kappa s), kappa m) + 1 = kappa(LHS)
+--     kappa ties, but mu(RHS) = 4 + mu b + 2·mu s + mu n ≥ mu(LHS) = 3 + mu b + mu s + mu n
+--     → mu does NOT decrease; current measure insufficient for this sub-case
+--
+-- Possible fixes:
+--   (1) Add structural lemma: ∀ n, kappa(recDelta b s n) ≤ max(max(kappa b, kappa s), kappa n) + 1
+--       and strict when n matches delta pattern in new context
+--   (2) Strengthen the measure (e.g., count delta-nesting explicitly)
+--   (3) Use a different termination argument (e.g., multiset ordering)
+| _, _, Step.R_rec_succ b s n => by
+    -- Best attempt: show kappa(RHS) ≤ kappa(LHS) - 1 OR kappa(RHS) = kappa(LHS) with mu drop
+    -- This requires case analysis on n's structure
+    sorry  -- Needs strengthened measure or structural induction on n
+
+-- CASE 4: eqW a a --> void
+-- Strategy: Case split on kappa(a)
+--   kappa(LHS) = max(kappa a, kappa a) = kappa(a)
+--   kappa(RHS) = 0
+--   • If kappa(a) > 0: kappa drops, use drop_left
+--   • If kappa(a) = 0: kappa ties at 0, mu drops from 4 + 2·mu(a) to 0, use drop_right
+| _, _, Step.R_eq_refl a => by
+    cases Nat.eq_or_gt_of_le (Nat.zero_le (kappa a)) with
+    | inl hk0 =>  -- kappa a = 0
+        have hmu : mu void < mu (eqW a a) := by simp [mu]; omega
+        have hk  : kappa void = kappa (eqW a a) := by simp [kappa, ← hk0]
+        exact drop_right hmu hk
+    | inr hkPos =>  -- kappa a > 0
+        have hk : kappa void < kappa (eqW a a) := by simp [kappa]; exact hkPos
+        exact drop_left hk
+
+-- CASE 5: eqW a b --> integrate (merge a b)
+-- Strategy: Kappa ties, mu strictly decreases
+--   kappa(LHS) = max(kappa a, kappa b)
+--   kappa(RHS) = kappa(integrate(merge a b)) = max(kappa a, kappa b)  (both constructors transparent)
+--   mu(LHS) = 4 + mu(a) + mu(b)
+--   mu(RHS) = 1 + (2 + mu(a) + mu(b)) = 3 + mu(a) + mu(b)
+--   mu drops by 1, use drop_right
+| _, _, Step.R_eq_diff a b => by
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by simp [mu]; omega
+    have hk  : kappa (integrate (merge a b)) = kappa (eqW a b) := by simp [kappa]
+    exact drop_right hmu hk
+```
+
+## Summary
+
+| Rule | Strategy | Status |
+|------|----------|--------|
+| `R_int_delta` | Case split on `kappa t = 0` vs `> 0` | ✓ Completable |
+| `R_rec_zero` | Case split on `kappa s ≤ kappa b` | ✓ Completable |
+| `R_rec_succ` | **Problematic**: when `n = delta m`, kappa ties but mu *increases* | ⚠️ Needs measure fix |
+| `R_eq_refl` | Case split on `kappa a = 0` vs `> 0` | ✓ Completable |
+| `R_eq_diff` | Direct: kappa ties, mu drops by 1 | ✓ Completable |
+
+**The `R_rec_succ` case** cannot be completed with the current lexicographic measure `(kappa, mu)`. When `n` is structurally `delta m`, the right-hand side has equal kappa but *larger* mu. Consider either:
+- Refining `kappa` to track delta-nesting depth more precisely
+- Using a multiset path ordering
+- Adding a third component to the measure tuple

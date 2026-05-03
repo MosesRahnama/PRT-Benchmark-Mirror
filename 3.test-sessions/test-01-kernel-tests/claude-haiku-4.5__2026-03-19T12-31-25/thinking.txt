@@ -1,0 +1,47 @@
+Now I have the complete system. Let me analyze this step by step:
+
+**The System:**
+- Inductive type Trace with constructors: void, delta, integrate, merge, app, recΔ, eqW
+- 8 rewrite rules:
+  1. integrate (delta t) → void
+  2. merge void t → t
+  3. merge t void → t
+  4. merge t t → t
+  5. recΔ b s void → b
+  6. recΔ b s (delta n) → app s (recΔ b s n)
+  7. eqW a a → void
+  8. eqW a b → integrate (merge a b)  [for a ≠ b implicitly]
+
+**Analysis for Strong Normalization:**
+
+Let me trace through the potential issues:
+
+1. **Rule 1 (integrate-delta)**: integrate (delta t) → void
+   - This always terminates since delta gets applied once, then integrate consumes it.
+
+2. **Rule 6 (rec_succ)**: recΔ b s (delta n) → app s (recΔ b s n)
+   - This is the critical rule. It doesn't directly reduce the term size in a clear way.
+   - We go from recΔ b s (delta n) → app s (recΔ b s n)
+   - The structure changes: we replace one recΔ with an app containing a recΔ
+   - This is potentially problematic because we're not obviously reducing
+
+3. **Structural Analysis:**
+   - For Rule 6, we get recursion depth: recΔ b s (delta n) calls recΔ b s n recursively
+   - Each application of Rule 6 unpeels one layer of delta
+   - Eventually we reach recΔ b s void, which triggers Rule 5 and terminates
+   - This is standard primitive recursion - it should terminate
+   
+4. **The eqW Problem:**
+   - eqW a b → integrate (merge a b) creates new structure from arbitrary terms a and b
+   - These wrapped terms don't directly reduce unless a and b themselves are delta or void
+   - If a and b are complex, we're building nested integrate and merge operations that may not have reduction paths
+   - This could create terms that grow without terminating
+
+**Checking for Infinite Loops:**
+Rule 8 transforms eqW a b into integrate (merge a b) when a ≠ b. The concern is whether this creates cycles or unbounded growth. Since the system is first-order with no variable binding, I need to verify that every rewrite strictly decreases under some well-founded ordering. The issue is that eqW a b doesn't obviously reduce in size—it just restructures into nested operations. If merge a b doesn't reduce further, and integrate wraps it without simplifying, we could have terms that keep rewriting without progress. Let me trace what happens: eqW a b becomes integrate (merge a b), but then merge a b only reduces if both a and b are delta or void terms. For arbitrary ground terms, this might stall or cycle. d remain (if a and b are not void and not equal)
+- Then integrate (merge a b) could remain (if merge didn't reduce)
+- We'd be stuck at a normal form
+
+Looking at what actually reduces: Rules 1-7 all decrease term size, but Rule 8 (eqW a b → integrate (merge a b)) transforms without obvious size reduction. Rule 6 is particularly interesting—recΔ b s (delta n) → app s (recΔ b s n) actually increases structural size when |s| ≥ 1, which breaks a simple size-based argument.
+
+However, Rule 6 has a key property: the delta-depth in the third argument decreases (delta n becomes n). This suggests using a lexicographic measure combining delta-nesting depth with term size. For any ground term, Rule 6 eventually bottoms out at void where Rule 5 applies, and Rule 8 just replaces eqW with integrate-merge until reaching normal form. A formal proof would use polynomial interpretation or recursive path ordering to show all rules respect a well-founded ordering, establishing strong normalization.

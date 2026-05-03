@@ -1,0 +1,14 @@
+**Raw Assessment:**
+Yes, strong normalization (SN) for this system can be decisively established from the presented rewrite rules alone, without importing any structural axioms or object-level assumptions outside the given term algebra.
+
+**Short Proof Roadmap:**
+SN can be proven entirely syntactically using a standard **Lexicographic Path Ordering (LPO)**. Because LPO is a simplification ordering, any rewrite system whose rules decrease strictly under LPO is guaranteed to be strongly normalizing.
+
+1. **Establish Precedence:** Define a partial order on the function symbols such that $F \succ G$. 
+2. **Orient Rule 1 ($F(x, y, Z) \to x$):** 
+   The right-hand side $x$ is a direct subterm of the left-hand side $F(x, y, Z)$. By the subterm property of LPO, the left side strictly bounds the right side.
+3. **Orient Rule 2 ($F(x, y, S(n)) \to G(y, F(x, y, n))$):**
+   Since the left-hand head symbol $F$ is strictly greater than the right-hand head symbol $G$ ($F \succ G$), we only need to verify that the left side $F(x, y, S(n))$ is strictly bounding each immediate subterm of the right side:
+   * **Target $y$:** $F(x,y,S(n)) \succ_{lpo} y$ holds trivially by the subterm property.
+   * **Target $F(x,y,n)$:** The head symbols are identical ($F = F$), so LPO compares their arguments lexicographically from left to right. The first two arguments are identical ($x=x$, $y=y$). In the third position, $S(n) \succ_{lpo} n$ holds strictly by the subterm property. Therefore, $F(x, y, S(n)) \succ_{lpo} F(x, y, n)$.
+4. **Conclusion:** Both rewrite rules strictly decrease under the constructed LPO. Thus, the system is strongly normalizing strictly through syntactic structural descent.

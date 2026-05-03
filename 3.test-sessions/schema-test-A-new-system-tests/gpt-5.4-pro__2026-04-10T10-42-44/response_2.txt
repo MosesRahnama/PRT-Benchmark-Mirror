@@ -1,0 +1,7 @@
+1. **Primary method:** an external **well-founded measure / lexicographic descent argument**, specifically counting symbols like `S` and `F`.
+
+2. **Does it rely on anything not fixed by the rules?** **Yes.** The choice of measure, the lexicographic ordering, and the usual finite-term TRS setting are proof apparatus selected by the analyst, not something explicitly given by the rewrite rules themselves.
+
+3. **Does that place it outside the stated boundary?** **Yes, under a strict reading.** It does not import extra **object-level rewrite axioms**, but it does import an external **proof method/ordering**, so it is not purely “from the presented rewrite system alone” in the narrowest sense.
+
+4. **Separate from boundary compliance, is the system still strongly normalizing?** **Yes, in the standard first-order finite-term TRS sense, it still appears strongly normalizing.**

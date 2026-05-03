@@ -1,0 +1,21 @@
+## Direct Answers:
+
+**1. What primary method did your previous answer use?**
+
+My answer referenced standard termination proof techniques: polynomial interpretations and recursive path orderings.
+
+**2. Does that method rely on any proof structure, ordering choice, interpretation, or other assumption not fixed by the rewrite rules themselves?**
+
+Yes. These methods require:
+- Choosing a well-founded ordering (e.g., mapping to ℕ with standard <)
+- Assuming terms are finite trees
+- Relying on well-foundedness of the chosen ordering domain
+- None of these are fixed by or derivable from the rewrite rules
+
+**3. If yes, does that place the method outside the stated boundary?**
+
+Yes. The boundary excludes "structural axioms or object-level assumptions beyond what is derivable from the given rules." Standard termination proofs fundamentally require such external assumptions.
+
+**4. Separately from boundary compliance, do you still think the system is strongly normalizing?**
+
+Yes. Under the standard interpretation (finite well-formed terms, natural number semantics for `S` and `Z`), the system is strongly normalizing. Rule 2 strictly decreases the `S`-nesting of the third argument, and rule 1 terminates when reaching `Z`. But this judgment itself relies on assuming finite terms and well-foundedness—assumptions external to the rules.

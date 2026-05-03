@@ -1,0 +1,11 @@
+**1. Primary method used**  
+I argued by a *decreasing‑measure* (well‑founded) argument: each rewrite step strictly reduces the number of `S` constructors in the third argument of `F`, so any reduction sequence must terminate.
+
+**2. Reliance on extra proof structure**  
+The method uses the natural‑number ordering on the syntactic size of the third argument. This ordering is intrinsic to the term syntax (the `S/Z` representation of naturals) and does not introduce any additional axioms, interpretations, or external orderings beyond what the rewrite rules themselves provide.
+
+**3. Does that place the method outside the boundary?**  
+No. The reasoning stays within the boundary: it only exploits the structure of the rules and the obvious well‑founded measure derived from the term language.
+
+**4. Is the system still strongly normalising?**  
+Yes. Even with the clarified perspective, the system remains strongly normalising: every term `F(..., Sⁿ(Z))` can undergo at most `n` applications of the second rule before the first rule applies, after which no further rewrites are possible. Hence all reduction sequences terminate.

@@ -1,0 +1,77 @@
+This is a small first-order rewrite system. Let me analyze its structure:
+
+**Constructors (Trace):**
+- `plum` : nullary (base case)
+- `grape` : unary
+- `mango` : unary
+- `peach` : binary
+- `pear` : binary
+- `banana` : ternary
+- `cherry` : binary
+
+**Rewrite Rules (Step):**
+1. `mango (grape t) → plum`
+2. `peach plum t → t`
+3. `peach t plum → t`
+4. `peach t t → t`
+5. `banana b s plum → b`
+6. `banana b s (grape n) → pear s (banana b s n)`
+7. `cherry a a → plum`
+8. `cherry a b → mango (peach a b)` when `a ≠ b`
+
+Now I need to assess whether strong normalization (SN) can be established.
+
+**Analysis:**
+
+For strong normalization, I need to show that every reduction sequence terminates. Let me think about standard proof methods:
+
+1. **Polynomial interpretations / term orderings**: Find an assignment of "sizes" or "weights" to terms such that every rewrite step strictly decreases this measure.
+
+2. **Recursive path orderings (RPO)**: Show the rules fit within an RPO framework.
+
+3. **Multiset orderings**: Assign multiset structure and show decrease.
+
+Let me check each rule:
+
+**Rule 1: `mango (grape t) → plum`**
+- LHS has structure with `mango`, `grape`, `t`
+- RHS is just `plum` (constant)
+- This clearly decreases size/complexity
+
+**Rule 2: `peach plum t → t`**
+- LHS has `peach`, `plum`, `t`
+- RHS is just `t`
+
+
+- This clearly decreases (we go from containing `t` as subterm to just `t`)
+
+**Rule 3: `peach t plum → t`**
+- Same reasoning, decreases
+
+**Rule 4: `peach t t → t`**
+- LHS has two copies of `t`, RHS has one
+- Decreases (unless we're worried about sharing, but in pure term rewriting this is fine)
+
+**Rule 5: `banana b s plum → b`**
+- Goes from 3-argument constructor to subterm `b`
+- Decreases
+
+**Rule 6: `banana b s (grape n) → pear s (banana b s n)`** - This is the tricky one. The RHS has a recursive call to `banana` with `n` instead of `(grape n)`. Since `n` is a proper subterm of `(grape n)`, the third argument gets smaller, which should ensure termination. Rule 7 and 8 both simplify `cherry` applications, with rule 8 introducing a `mango` that can then be reduced by rule 1.
+
+**Rule 8: `cherry a b → mango (peach a b)` when `a ≠ b`** - The RHS appears larger than the LHS in naive size, but this doesn't guarantee non-termination. The `peach a b` can reduce via rules 2-4, and `mango` can only reduce via rule 1 if its argument becomes `grape t`. Since no rule creates new `grape` constructors, and the peach rules only produce subterms, the system can't cycle indefinitely.
+
+The key is that `grape` appears only in the original term or gets eliminated—it's never generated. This means I can build a termination argument using a lexicographic measure: first prioritize eliminating `cherry` constructors, then track `banana` complexity, then `peach` and `mango` constructors. A polynomial interpretation might work where each constructor receives a carefully chosen weight to ensure every rule strictly decreases the overall value.
+
+Rule 8 is interesting because it has the guard `a ≠ b`—a syntactic inequality check on subterms. This is a legitimate side condition for first-order rewriting, not an arbitrary predicate. Let me try assigning weights: `I(plum) = 1`, `I(grape t) = I(t) + 1`, `I(mango t) = I(t) + 1`, `I(peach t u)` continues the pattern...
+
+For Rule 6 to decrease strictly, if `banana b s n` has weight `f(b, s, n)`, then applying `grape` to the third argument must make the left side heavier than the right. Setting `I(banana b s n) = I(b) + I(s) * (I(n) + 1) + c` works if the multiplication by `I(s)` dominates the reduction. The constraint becomes checking whether `I(s) * I(n) + 2*I(s) > I(s) +` the remaining terms balance out.
+
+Testing `I(banana b s n) = I(b) + I(s) * 2^I(n)` instead: the left side of Rule 6 becomes `I(b) + 2 * I(s) * 2^I(n)` while the right side is `I(s) + I(b) + I(s) * 2^I(n)`. This simplifies to requiring `2^I(n) > 1`, which holds whenever `I(n) ≥ 1`. With `I(plum) = 1`, this is satisfied.
+
+Now checking Rule 5 (`banana b s plum → b`) with this weight function: the left side gives `I(b) + I(s) * 2^I(plum) = I(b) + I(s)`, which must exceed `I(b)` on the right. This requires `I(s) > 0`, guaranteed by the base case.
+
+For cherry, Rule 8 (`cherry a b → mango (peach a b)` when `a ≠ b`) is the constraint. The right side evaluates to `I(a) + I(b) + 2`, so I need `I(cherry a b) ≥ I(a) + I(b) + 3` for strict decrease. Rule 7 (`cherry a a → plum`) then requires `2*I(a) + 3 > 1`, which is always true. Setting `I(cherry a b) = I(a) + I(b) + 3` works for both rules.
+
+Verifying the remaining rules: mango with grape gives `I(t) + 2 > 1`; peach with plum arguments yields `I(t) + 2 > I(t)`; and peach with identical arguments produces `2*I(t) + 1 > I(t)`. All constraints are satisfied.
+
+For the full reduction relation beyond just root steps, I need to ensure the interpretation is monotonic in each argument. Since all functions use sums and products of non-negative terms, and the exponential `2^I(n)` is monotonic in its input, the interpretation remains weakly monotonic throughout. This means the polynomial interpretation successfully establishes strong normalization without requiring additional axioms.

@@ -1,0 +1,33 @@
+## Raw Assessment
+
+**Yes, strong normalization can be established from the presented calculus alone.**
+
+### Key Structural Observations
+
+1. **`grape` is never created** — examining all right-hand sides: `plum`, `t`, `b`, `pear s (banana b s n)`, `mango (peach a b)`. None contain `grape`.
+
+2. **`cherry` is never created** — no right-hand side contains `cherry`.
+
+3. **`pear` is never reduced** — no rule has `pear` on the left-hand side, so `pear` terms are normal forms.
+
+### Proof Roadmap
+
+Define a lexicographic measure $\mu(t) = (g(t), c(t), s(t))$ where:
+- $g(t)$ = number of `grape` constructors in $t$
+- $c(t)$ = number of `cherry` constructors in $t$  
+- $s(t)$ = total constructor count (structural size)
+
+**Check each rule:**
+
+| Rule | Effect on $(g, c, s)$ |
+|------|------------------------|
+| `R_mango_grape` | $g$ decreases (grape consumed) |
+| `R_apple_orange` | $g$ decreases (grape consumed) |
+| `R_cherry_refl` | $c$ decreases (cherry consumed) |
+| `R_cherry_diff` | $c$ decreases (cherry consumed) |
+| `R_peach_*` | $g,c$ unchanged; $s$ decreases (peach + plum consumed) |
+| `R_banana_zero` | $g,c$ unchanged; $s$ decreases (banana + plum consumed) |
+
+Since $\mu$ maps to $\mathbb{N}^3$ with lexicographic ordering, and every reduction step strictly decreases $\mu$, all reduction sequences are finite. The measure is bounded below by $(0,0,1)$ (smallest term is `plum`).
+
+**No external axioms, guards, or side conditions required** — the argument follows directly from the syntax and rule structure.

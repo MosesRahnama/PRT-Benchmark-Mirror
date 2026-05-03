@@ -1,0 +1,50 @@
+The helper strategy is **unsound** as written. Both theorems fail for the case where `n` is itself of the form `delta m` (i.e., `n = delta m`) because of how `.recDelta b s (.delta n)` is evaluated in `kappa`.
+
+Here is the breakdown of why both theorems fail:
+
+### 1. `kappa_rec_delta_step` is unsound
+**Statement:** `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`
+
+If we substitute `n = delta m`, the equation fails.
+
+* **LHS** evaluates to:
+  ```lean
+  kappa (recDelta b s (delta (delta m)))
+  -- applies the specific pattern for delta 
+  = Nat.max (Nat.max (kappa b) (kappa s)) (kappa (delta m)) + 1
+  -- expands kappa (delta m)
+  = Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1
+  ```
+* **RHS** evaluates to:
+  ```lean
+  kappa (recDelta b s (delta m)) + 1
+  -- applies the specific pattern for delta 
+  = (Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1) + 1
+  = Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 2
+  ```
+LHS $\neq$ RHS ($X + 1 \neq X + 2$). 
+
+### 2. `kappa_rec_succ_drop` is unsound
+**Statement:** `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`
+
+If we again substitute `n = delta m`, the strict inequality fails.
+
+* **LHS** evaluates to:
+  ```lean
+  kappa (app s (recDelta b s (delta m)))
+  = Nat.max (kappa s) (kappa (recDelta b s (delta m)))
+  = Nat.max (kappa s) (Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1)
+  -- Since kappa s <= Nat.max (kappa b) (kappa s), this simplifies to:
+  = Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1
+  ```
+
+* **RHS** evaluates (from LHS of the first theorem above) to:
+  ```lean
+  kappa (recDelta b s (delta (delta m)))
+  = Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1
+  ```
+
+LHS $\nless$ RHS (since they are exactly equal to each other when `n` is a `delta`). 
+
+### Conclusion
+The helper strategy is fundamentally unsound because the definition of `kappa` evaluates `kappa (delta n) = kappa n` universally but simultaneously assigns a `+ 1` penalty *only once* at the top level of `recDelta _ _ (delta _)`, rather than counting nesting depth. This flattened structure makes the strict inductive decrease in `kappa_rec_succ_drop` fail for nested `delta`s.

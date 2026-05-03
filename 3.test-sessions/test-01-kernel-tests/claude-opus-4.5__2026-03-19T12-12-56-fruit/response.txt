@@ -1,0 +1,36 @@
+## Assessment
+
+**Yes**, strong normalization of this system can be established from the presented calculus alone using standard proof methods.
+
+### Key Observation
+
+No rewrite rule introduces a `grape` constructor on the right-hand side. The rules only consume or preserve existing structure:
+
+- Rule 1 eliminates `mango (grape _)`  
+- Rule 6 strips `grape` from the third argument of `banana`  
+- Rules 2–5, 7–8 never produce `grape`
+
+### Proof Roadmap (Polynomial Interpretation)
+
+1. **Define an interpretation** I : Trace → ℕ with:
+   - I(plum) = 1
+   - I(grape t) = 2·I(t) + 2
+   - I(mango t) = I(t) + 1
+   - I(peach t₁ t₂) = I(t₁) + I(t₂) + 1
+   - I(pear t₁ t₂) = I(t₁) + I(t₂)
+   - I(banana b s n) = I(b) + I(s) + 2·I(n)
+   - I(cherry t₁ t₂) = I(t₁) + I(t₂) + 3
+
+2. **Verify each rule strictly decreases I**:
+   - R_mango_grape: I(mango (grape t)) = 2I(t) + 3 > 1 = I(plum) ✓
+   - R_peach_plum_left: I(peach plum t) = I(t) + 2 > I(t) ✓
+   - R_peach_plum_right: symmetric ✓
+   - R_peach_cancel: I(peach t t) = 2I(t) + 1 > I(t) ✓
+   - R_banana_zero: I(banana b s plum) = I(b) + I(s) + 2 > I(b) ✓
+   - R_apple_orange: I(banana b s (grape n)) = I(b) + I(s) + 4I(n) + 4 > I(s) + I(b) + I(s) + 2I(n) = I(pear s (banana b s n)) ✓ (requires I(s) < 2I(n) + 4, which holds for terms with I ≥ 1)
+   - R_cherry_refl: I(cherry a a) = 2I(a) + 3 > 1 = I(plum) ✓
+   - R_cherry_diff: I(cherry a b) = I(a) + I(b) + 3 > I(a) + I(b) + 2 = I(mango(peach a b)) ✓
+
+3. **Conclude** by well-foundedness of (ℕ, <).
+
+The interpretation weights may need minor tuning for R_apple_orange (the recursion on `banana`), but a suitable polynomial assignment exists. No external axioms, extra rules, or guards are required—only the syntactic structure and an interpretation into a well-founded domain.

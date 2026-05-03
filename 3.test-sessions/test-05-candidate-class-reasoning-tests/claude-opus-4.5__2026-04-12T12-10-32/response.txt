@@ -1,0 +1,79 @@
+## Assessment of the Three Termination Measure Candidates
+
+The file defines a rewrite system on `Trace` with 8 rewrite rules. A valid termination measure `μ` must satisfy `μ(lhs) > μ(rhs)` for every rule.
+
+### Analysis of Each Rule
+
+| Rule | LHS | RHS |
+|------|-----|-----|
+| R_int_delta | `integrate (delta t)` | `void` |
+| R_merge_void_left | `merge void t` | `t` |
+| R_merge_void_right | `merge t void` | `t` |
+| R_merge_cancel | `merge t t` | `t` |
+| R_rec_zero | `recDelta b s void` | `b` |
+| R_rec_succ | `recDelta b s (delta n)` | `app s (recDelta b s n)` |
+| R_eq_refl | `eqW a a` | `void` |
+| R_eq_diff | `eqW a b` | `integrate (merge a b)` |
+
+---
+
+### **mu1: ❌ UNSOUND**
+
+**Problem with R_eq_diff:**
+- LHS: `mu1(eqW a b) = 3 + mu1(a) + mu1(b)`
+- RHS: `mu1(integrate (merge a b)) = 1 + (1 + mu1(a) + mu1(b)) = 2 + mu1(a) + mu1(b)`
+- Decreases by 1 ✓
+
+**Problem with R_rec_succ:**
+- LHS: `mu1(recDelta b s (delta n)) = 1 + mu1(b) + mu1(s) + (1 + mu1(n)) = 2 + mu1(b) + mu1(s) + mu1(n)`
+- RHS: `mu1(app s (recDelta b s n)) = 1 + mu1(s) + (1 + mu1(b) + mu1(s) + mu1(n)) = 2 + mu1(b) + 2·mu1(s) + mu1(n)`
+- **LHS - RHS = -mu1(s) ≤ 0** — fails when `s ≠ void`
+
+---
+
+### **mu2: ❌ UNSOUND**
+
+**Problem with R_eq_diff:**
+- LHS: `mu2(eqW a b) = 5 + mu2(a) + mu2(b)`
+- RHS: `mu2(integrate (merge a b)) = 2 + (2 + mu2(a) + mu2(b)) = 4 + mu2(a) + mu2(b)`
+- Decreases by 1 ✓
+
+**Problem with R_rec_succ:**
+- LHS: `mu2(recDelta b s (delta n)) = 5 + mu2(b) + mu2(s) + (1 + mu2(n)) = 6 + mu2(b) + mu2(s) + mu2(n)`
+- RHS: `mu2(app s (recDelta b s n)) = 1 + mu2(s) + (5 + mu2(b) + mu2(s) + mu2(n)) = 6 + mu2(b) + 2·mu2(s) + mu2(n)`
+- **LHS - RHS = -mu2(s) ≤ 0** — fails when `s ≠ void`
+
+---
+
+### **mu3: ✓ SOUND**
+
+Checking all rules:
+
+| Rule | LHS measure | RHS measure | Decrease |
+|------|-------------|-------------|----------|
+| R_int_delta | `2 + (1 + mu3(t)) = 3 + mu3(t)` | `0` | `3 + mu3(t) > 0` ✓ |
+| R_merge_void_left | `1 + 0 + mu3(t) = 1 + mu3(t)` | `mu3(t)` | 1 ✓ |
+| R_merge_void_right | `1 + mu3(t) + 0 = 1 + mu3(t)` | `mu3(t)` | 1 ✓ |
+| R_merge_cancel | `1 + 2·mu3(t)` | `mu3(t)` | `1 + mu3(t) > 0` ✓ |
+| R_rec_zero | `1 + mu3(b) + mu3(s) + 0` | `mu3(b)` | `1 + mu3(s) > 0` ✓ |
+| R_rec_succ | `1 + mu3(b) + mu3(s) + (1 + mu3(n))` | `2 + mu3(s) + (1 + mu3(b) + mu3(s) + mu3(n))` | See below |
+| R_eq_refl | `4 + 2·mu3(a)` | `0` | `4 + 2·mu3(a) > 0` ✓ |
+| R_eq_diff | `4 + mu3(a) + mu3(b)` | `2 + (1 + mu3(a) + mu3(b)) = 3 + mu3(a) + mu3(b)` | 1 ✓ |
+
+**R_rec_succ verification:**
+- LHS: `2 + mu3(b) + mu3(s) + mu3(n)`
+- RHS: `3 + 2·mu3(s) + mu3(b) + mu3(n)`
+- LHS - RHS = `-1 - mu3(s) < 0` ❌
+
+**Correction:** mu3 also fails on R_rec_succ.
+
+---
+
+### **Conclusion**
+
+**All three candidates are unsound.** Each fails on `R_rec_succ` because the RHS `app s (recDelta b s n)` duplicates `s`, causing measures that count subterms linearly to increase rather than decrease when `mu(s) > 0`.
+
+A sound measure would require either:
+1. A weight for `recDelta` that exceeds `app`'s weight plus an extra copy of `s`
+2. A multiset or lexicographic ordering
+3. Restricting `s` to values with measure 0

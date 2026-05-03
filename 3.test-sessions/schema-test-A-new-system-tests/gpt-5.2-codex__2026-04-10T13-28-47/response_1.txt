@@ -1,0 +1,3 @@
+Raw assessment: strong normalization cannot be established from the rules alone.
+
+Reasoning: the system only gives two rules for `F`. There are no rules for `G`, `S`, or `Z`, and no structural axioms or constraints on `n`. From the rules alone you cannot derive a well-founded measure that guarantees termination for all terms because `F(x,y,S(n))` rewrites to `G(F(x,y,n))`, which introduces `G` and keeps an `F` inside without any rule to reduce `G(...)`. This does not let you prove that all rewrite sequences terminate, nor does it provide the necessary structural assumptions (e.g., that `n` is a well-founded numeral built from `Z`/`S`) to establish strong normalization.

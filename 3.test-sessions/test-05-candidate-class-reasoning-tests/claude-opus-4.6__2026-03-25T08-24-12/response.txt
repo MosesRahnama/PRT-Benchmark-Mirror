@@ -1,0 +1,48 @@
+## Assessment of the Three Candidate Termination Measures
+
+The file defines a first-order rewrite calculus over a `Trace` type with 8 rewrite rules (`Step`), and proposes three additive natural-number measures `mu1`, `mu2`, `mu3`. A valid termination measure must strictly decrease across every rule. I evaluate each rule for each candidate below.
+
+---
+
+### Per-rule analysis
+
+For each rule I compute $\text{LHS} - \text{RHS}$ under each measure. A positive gap means the rule is covered; zero or negative means failure.
+
+| Rule | LHS → RHS | $\Delta$`mu1` | $\Delta$`mu2` | $\Delta$`mu3` |
+|---|---|---|---|---|
+| `R_int_delta` | `integrate (delta t) → void` | $2 + \mu(t)$ ✓ | $3 + \mu(t)$ ✓ | $3 + \mu(t)$ ✓ |
+| `R_merge_void_left` | `merge void t → t` | $1$ ✓ | $2$ ✓ | $1$ ✓ |
+| `R_merge_void_right` | `merge t void → t` | $1$ ✓ | $2$ ✓ | $1$ ✓ |
+| `R_merge_cancel` | `merge t t → t` | $1 + \mu(t)$ ✓ | $2 + \mu(t)$ ✓ | $1 + \mu(t)$ ✓ |
+| `R_rec_zero` | `recDelta b s void → b` | $1 + \mu(s)$ ✓ | $5 + \mu(s)$ ✓ | $1 + \mu(s)$ ✓ |
+| **`R_rec_succ`** | `recDelta b s (delta n) → app s (recDelta b s n)` | $-\mu(s)$ **✗** | $-\mu(s)$ **✗** | $-1 - \mu(s)$ **✗** |
+| `R_eq_refl` | `eqW a a → void` | $3 + 2\mu(a)$ ✓ | $5 + 2\mu(a)$ ✓ | $4 + 2\mu(a)$ ✓ |
+| `R_eq_diff` | `eqW a b → integrate (merge a b)` | $1$ ✓ | $1$ ✓ | $1$ ✓ |
+
+---
+
+### The critical failure: `R_rec_succ`
+
+All three candidates fail on `R_rec_succ`. The RHS is `app s (recDelta b s n)`, which **duplicates** the subterm `s` — it appears both as the first argument to `app` and again inside the recursive `recDelta`. Under any additive measure $\mu$:
+
+$$\mu(\text{LHS}) = c_r + \mu(b) + \mu(s) + c_\delta + \mu(n)$$
+$$\mu(\text{RHS}) = c_a + \mu(s) + c_r + \mu(b) + \mu(s) + \mu(n)$$
+$$\Delta = c_\delta - c_a - \mu(s)$$
+
+Since $\mu(s)$ can be arbitrarily large, no **fixed** choice of constructor weights $c_\delta, c_a$ can make $\Delta > 0$ for all `s`. This is a structural impossibility for any simple additive $\mathbb{N}$-valued measure — not just these three.
+
+---
+
+### Candidate-by-candidate verdict
+
+**`mu1`** — Uniform weight 1 for most constructors, boosted `eqW` weight of 3.
+- Covers 7 of 8 rules. Fails `R_rec_succ` with gap $= -\mu_1(s)$ (non-decreasing when $s = \texttt{void}$, strictly increasing otherwise).
+- Margin on `R_eq_diff` is tight (gap = 1); the eqW weight of 3 is the minimum that works since `integrate(merge a b)` costs exactly $1+1+\mu(a)+\mu(b) = 2+\mu(a)+\mu(b)$.
+
+**`mu2`** — Inflated weights: `integrate` and `merge` at 2, `recDelta` and `eqW` at 5.
+- Covers the same 7 of 8 rules. The extra weight budget buys larger margins on every passing rule but **does not help** with `R_rec_succ` (gap is still $-\mu_2(s)$). The inflated constants are wasted; they cannot overcome a deficit that grows with term size.
+- `R_eq_diff` margin is still only 1 ($5 - 2 - 2 = 1$), showing that the weight inflation is not even uniformly beneficial.
+
+**`mu3`** — Swaps emphasis: `app` gets weight 2 while `recDelta` drops to 1.
+- **Strictly worse** on `R_rec_succ`: gap $= 1 - 2 - \mu_3(s) = -1 - \mu_3(s)$, meaning the measure increases even when $s = \texttt{void}$. The other two candidates at least break even at $s = \texttt{void}$.
+- Giving `app` a *higher* weight than `recDelta` is exactly the wrong trade-off for this

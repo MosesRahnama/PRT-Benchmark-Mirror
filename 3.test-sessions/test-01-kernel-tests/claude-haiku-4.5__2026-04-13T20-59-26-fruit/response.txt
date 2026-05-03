@@ -1,0 +1,39 @@
+I'll analyze the Lean 4 rewrite calculus presented in the file to assess whether strong normalization can be established from the given rules alone.
+
+Looking at the `Trace` and `Step` definitions:
+
+**Structure:**
+- `Trace` is a free inductive type with constructors of arities 0, 1, 2, and 3
+- `Step` defines a one-step rewrite relation with 8 rules
+
+**Analysis:**
+
+The key question is whether every reduction sequence terminates. Let me examine the reduction behavior:
+
+1. **R_mango_grape**: `mango (grape t) → plum` – removes two nested constructors
+2. **R_peach_plum_left/right**: `peach plum t → t` or `peach t plum → t` – removes constructors conditionally
+3. **R_peach_cancel**: `peach t t → t` – removes a constructor
+4. **R_banana_zero**: `banana b s plum → b` – removes constructors
+5. **R_apple_orange**: `banana b s (grape n) → pear s (banana b s n)` – **restructures without unconditional reduction**
+6. **R_cherry_refl**: `cherry a a → plum` – removes constructors
+7. **R_cherry_diff**: `cherry a b → mango (peach a b)` – **expands structure**
+
+**Critical observation:**
+
+Rules 5 and 7 are **problematic for strong normalization**:
+
+- **R_apple_orange** transforms `banana b s (grape n)` into `pear s (banana b s n)`. The right-hand side contains a `banana` term that can itself be the subject of further rewrites. This creates a **looping potential**: if the new `banana` term can be reduced again by R_apple_orange (with different arguments), we get cyclic reduction patterns.
+
+- **R_cherry_diff** transforms `cherry a b` into `mango (peach a b)`, which is a **strict expansion**. The result is a larger term that may be subject to further rewrites.
+
+**Verdict:**
+
+**No, strong normalization cannot be established from this calculus alone.**
+
+The system admits **non-terminating reduction sequences**. For example, rules can be composed such that repeated applications of R_apple_orange (restructuring without height decrease) combined with rules that expand terms (R_cherry_diff) create loops or infinite reduction chains. The absence of a well-founded measure that decreases under all rewrite rules is the fundamental barrier.
+
+To establish strong normalization, you would need either:
+- A termination guard or size metric that decreases under all rules
+- Restrictions on rule applicability (side conditions)
+- Removal of the expansion rules (R_apple_orange, R_cherry_diff), or
+- Rewrite rules that ensure all reductions eventually lead to irreducible forms

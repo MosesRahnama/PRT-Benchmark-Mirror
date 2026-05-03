@@ -1,0 +1,140 @@
+Below is an **unverified skeleton** for the five remaining branches in
+.
+
+### Four routine branches
+
+```lean
+-- integrate (delta t) --> void
+| _, _, Step.R_int_delta t => by
+    by_cases hk0 : kappa t = 0
+    · have hmu : mu void < mu (integrate (delta t)) := by
+        simp [mu]
+      have hk : kappa void = kappa (integrate (delta t)) := by
+        simpa [kappa] using hk0.symm
+      exact drop_right hmu hk
+    · have hk : kappa void < kappa (integrate (delta t)) := by
+        simpa [kappa] using Nat.pos_of_ne_zero hk0
+      exact drop_left hk
+
+-- recDelta b s void --> b
+| _, _, Step.R_rec_zero b s => by
+    by_cases hs : kappa s ≤ kappa b
+    · have hmu : mu b < mu (recDelta b s void) := by
+        simp [mu]
+        omega
+      have hk : kappa b = kappa (recDelta b s void) := by
+        simp [kappa, Nat.max_eq_left hs, Nat.max_eq_left (Nat.zero_le _)]
+      exact drop_right hmu hk
+    · have hs' : kappa b < kappa s := Nat.lt_of_not_ge hs
+      have hk : kappa b < kappa (recDelta b s void) := by
+        simpa [kappa,
+          Nat.max_eq_right (Nat.le_of_lt hs'),
+          Nat.max_eq_left (Nat.zero_le _)] using hs'
+      exact drop_left hk
+
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    by_cases hk0 : kappa a = 0
+    · have hmu : mu void < mu (eqW a a) := by
+        simp [mu]
+      have hk : kappa void = kappa (eqW a a) := by
+        simpa [kappa] using hk0.symm
+      exact drop_right hmu hk
+    · have hk : kappa void < kappa (eqW a a) := by
+        simpa [kappa] using Nat.pos_of_ne_zero hk0
+      exact drop_left hk
+
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by
+      simp [mu]
+      omega
+    have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by
+      simp [kappa]
+    exact drop_right hmu hk
+```
+
+### `R_rec_succ`: branch skeleton
+
+This case is the delicate one. The natural skeleton is:
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    have hs_le (u : Trace) :
+        kappa s ≤ Nat.max (Nat.max (kappa b) (kappa s)) (kappa u) := by
+      exact le_trans (Nat.le_max_right _ _) (Nat.le_max_left _ _)
+
+    cases n with
+    | void =>
+        have hk :
+            kappa (app s (recDelta b s void)) <
+            kappa (recDelta b s (delta void)) := by
+          simpa [kappa, Nat.max_eq_right (hs_le void)]
+            using Nat.lt_succ_self
+              (Nat.max (Nat.max (kappa b) (kappa s)) (kappa void))
+        exact drop_left hk
+
+    | integrate n' =>
+        have hk :
+            kappa (app s (recDelta b s (integrate n'))) <
+            kappa (recDelta b s (delta (integrate n'))) := by
+          simpa [kappa, Nat.max_eq_right (hs_le (integrate n'))]
+            using Nat.lt_succ_self
+              (Nat.max (Nat.max (kappa b) (kappa s)) (kappa (integrate n')))
+        exact drop_left hk
+
+    | merge n1 n2 =>
+        have hk :
+            kappa (app s (recDelta b s (merge n1 n2))) <
+            kappa (recDelta b s (delta (merge n1 n2))) := by
+          simpa [kappa, Nat.max_eq_right (hs_le (merge n1 n2))]
+            using Nat.lt_succ_self
+              (Nat.max (Nat.max (kappa b) (kappa s)) (kappa (merge n1 n2)))
+        exact drop_left hk
+
+    | app n1 n2 =>
+        have hk :
+            kappa (app s (recDelta b s (app n1 n2))) <
+            kappa (recDelta b s (delta (app n1 n2))) := by
+          simpa [kappa, Nat.max_eq_right (hs_le (app n1 n2))]
+            using Nat.lt_succ_self
+              (Nat.max (Nat.max (kappa b) (kappa s)) (kappa (app n1 n2)))
+        exact drop_left hk
+
+    | recDelta b' s' n' =>
+        have hk :
+            kappa (app s (recDelta b s (recDelta b' s' n'))) <
+            kappa (recDelta b s (delta (recDelta b' s' n'))) := by
+          simpa [kappa, Nat.max_eq_right (hs_le (recDelta b' s' n'))]
+            using Nat.lt_succ_self
+              (Nat.max (Nat.max (kappa b) (kappa s)) (kappa (recDelta b' s' n')))
+        exact drop_left hk
+
+    | eqW a' b' =>
+        have hk :
+            kappa (app s (recDelta b s (eqW a' b'))) <
+            kappa (recDelta b s (delta (eqW a' b'))) := by
+          simpa [kappa, Nat.max_eq_right (hs_le (eqW a' b'))]
+            using Nat.lt_succ_self
+              (Nat.max (Nat.max (kappa b) (kappa s)) (kappa (eqW a' b')))
+        exact drop_left hk
+
+    | delta n' =>
+        /-
+          Obstruction:
+          with the current `measure = (kappa, mu)`, this subcase does not
+          appear to decrease.
+
+          In fact, for `b = void`, `s = void`, `n' = void`:
+            recDelta void void (delta (delta void))  has measure (1, 3)
+            app void (recDelta void void (delta void)) has measure (1, 4)
+
+          So this branch likely needs a refined measure, not just more tactics.
+        -/
+        sorry
+```
+
+### Bottom line
+
+- `R_int_delta`, `R_rec_zero`, `R_eq_refl`, and `R_eq_diff` fit the current lexicographic plan.
+- `R_rec_succ` is **not just unfinished**: its `n = delta n'` subcase appears to **break the current measure**.

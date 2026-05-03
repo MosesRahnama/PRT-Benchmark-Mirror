@@ -1,0 +1,3 @@
+Yes, strong normalization can be established from the presented rewrite system alone.
+
+Reasoning: The rules peel off S from F's third argument (replacing with G and recursing on the inner term) or reduce to the first argument when hitting Z, without introducing new S's or F's in a growing manner. Since terms are finite trees with finite S-nesting, each reduction decreases the effective "depth" (e.g., total S count decreases with the recursive rule, and the base rule eliminates F), ensuring all sequences terminate without needing external axioms.

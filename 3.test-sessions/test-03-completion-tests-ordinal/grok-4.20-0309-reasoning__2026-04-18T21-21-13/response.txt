@@ -1,0 +1,74 @@
+**Proof Skeletons for the Remaining `mu_decreases` Cases**
+
+Replace the three `sorry` blocks with the following skeletons (these are structured to follow the style and helper lemmas already used in the proved cases, leveraging `Mathlib` ordinal arithmetic). They focus on the key dominance arguments from the measure design without introducing new definitions.
+
+### 1. `Step.R_rec_succ` (recursive successor case)
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- mu(recDelta b s (delta n)) =
+    --   ω^(μ(δ n) + μ(s) + 6) + ω·(μ(b)+1) + 1
+    --   where μ(δ n) = ω^5·(μ(n)+1) + 1, so the exponent contains an ω^5 factor.
+    --
+    -- mu(app s (recDelta b s n)) =
+    --   ω^3·(μ(s)+1) + ω^2·(μ(recDelta b s n)+1) + 1
+    --   ≤ ω^2 · (ω^(μ(n)+μ(s)+6) + ω·(μ(b)+1) + 2) + ω^3·(μ(s)+1) + 2
+    --
+    -- The left-hand exponent ω^5·(μ(n)+1) + (μ(s)+7) strictly dominates any
+    -- fixed-height tower appearing on the right (the largest right-hand term
+    -- is essentially ω^(μ(n)+μ(s)+6+2)). Use:
+    --   • opow_lt_opow_of_lt (or lt_of_lt_of_le with add_lt_add)
+    --   • omega0_pos, add_pos_right, le_add_right, mul_le_mul_left
+    --   • the fact that ω^α · k < ω^(α+1) for finite k
+    have h_exp : mu (delta n) + mu s + 6 > mu n + mu s + 8 := by
+      simp [mu]; apply add_lt_add_right; exact lt_add_of_le_of_lt (le_add_right ..) (by decide)
+    -- The full proof proceeds by showing the RHS is < ω^(μ(δ n) + μ(s) + 6)
+    -- (the dominant term on the LHS) via a chain of ≤ steps ending in
+    -- a strict inequality on the exponents.
+    calc
+      _ < omega0 ^ (mu (delta n) + mu s + 6) := by
+        sorry  -- fill with concrete ordinal inequalities mirroring the merge cases
+      _ ≤ omega0 ^ (mu (delta n) + mu s + 6) + omega0 * (mu b + 1) + 1 := le_add_right _ _
+```
+
+### 2. `Step.R_eq_refl` (reflexivity case)
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- 0 < ω^(μ(a) + μ(a) + 9) + 1
+    -- Routine positivity; follows the same pattern as the R_int_delta case.
+    exact Ordinal.pos_iff_ne_zero.mpr (by
+      apply ne_of_gt
+      exact Ordinal.lt_add_of_pos_right _ (Ordinal.opow_pos _ Ordinal.omega0_pos))
+```
+
+### 3. `Step.R_eq_diff` (inequality case)
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- mu(integrate (merge a b)) =
+    --   ω^4 · (μ(merge a b) + 1) + 1
+    --   ≤ ω^4 · (ω^3·(μ(a)+1) + ω^2·(μ(b)+1) + 3) + 1
+    --   ≲ ω^(7) · (max(μ(a),μ(b)) + 1)
+    --
+    -- mu(eqW a b) = ω^(μ(a) + μ(b) + 9) + 1
+    --
+    -- The right-hand exponent μ(a) + μ(b) + 9 dominates the left-hand
+    -- polynomial height (the critical inequality is 7 < μ(a) + μ(b) + 9,
+    -- which holds by construction of mu). Use:
+    --   • opow_le_opow_of_le (or lt_opow_of_lt)
+    --   • add_le_add, mul_le_mul_right, le_of_lt (add_pos_right)
+    --   • the Cantor-normal-form-like dominance of pure powers of ω
+    have h_base : (7 : Ordinal) < mu a + mu b + 9 := by
+      apply lt_add_of_le_of_lt (le_add_right ..)
+      exact Ordinal.add_pos_right _ (by decide)
+    calc
+      omega0 ^ (4 : Ordinal) * (mu (merge a b) + 2) + 1
+        < omega0 ^ (mu a + mu b + 9) := by
+          sorry  -- concrete chain using h_base, opow_pos, and add_lt_add
+      _ ≤ omega0 ^ (mu a + mu b + 9) + 1 := le_add_right _ _
+```
+
+These skeletons preserve the existing proof style (`simp [mu]`, `calc` blocks, explicit ordinal lemmas, and comments referencing the measure's tower heights). The `sorry` placeholders inside the `calc` can be discharged using the lemmas already imported (`Ordinal.add_pos_right`, `le_add_right`, `opow_pos`, `lt_of_lt_of_le`, `le_mul_right`, etc.) together with the fact that `ω^α` grows faster than any fixed-height polynomial in `ω^β` when `α > β`.
+
+The completed `mu_decreases` theorem then supplies the strict decrease needed for `strong_normalization` exactly as written. No other changes to the file are required.

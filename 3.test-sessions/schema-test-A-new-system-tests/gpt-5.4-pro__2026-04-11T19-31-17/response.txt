@@ -1,0 +1,9 @@
+1. **Primary method:** a **well-founded decreasing measure** on terms (a ranking/interpretation argument over occurrences of `F` and the size of its third argument).
+
+2. **Does it rely on anything not fixed by the rules?** **Yes.** It relies on a chosen meta-level proof device: an ordering/measure, plus the standard finite first-order TRS reading.
+
+3. **Does that place it outside the stated boundary?** **Under a strict reading, yes.** The method does not add object-level rewrite rules, but it does add an external proof structure not literally fixed by the presented rules.
+
+4. **Separately: is the system strongly normalizing?** **Yes, still likely yes** for the ordinary first-order finite-term reading. The only recursive step is  
+   `F(x, y, S(n)) -> G(F(x, y, n))`,  
+   which descends from `S(n)` to `n`, and there are no rules that regenerate or expand that argument.

@@ -1,0 +1,12 @@
+**No, the measure is not sound.**
+
+**Counterexample using `R_merge_void_left`:**
+
+Consider `t := recDelta void void (delta void)` (phase `t = 1`, `cost t = 1 + 0 + 0 + (1 + 0) = 2`).
+
+- Left: `merge void t` has `phase = 0`, `cost = 1 + 0 + 2 = 3`, so `measure = (0, 3)`.
+- Right: `t` has `measure = (1, 2)`.
+
+`(0, 3) < (1, 2)` lexicographically (first components `0 < 1`), so the measure **increases**.
+
+Similar issues occur in `R_merge_void_right`, `R_merge_cancel`, and `R_rec_zero`. The `phase` component fails to strictly decrease (or stay equal with `cost` decreasing) across all steps.

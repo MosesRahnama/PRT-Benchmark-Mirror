@@ -1,0 +1,26 @@
+The helper strategy is **unsound** as written. The issue lies in the definition of the measure `kappa` and the theorem `kappa_rec_delta_step`, which leads to a contradiction when `n` is constructed with `delta`.
+
+In Lean, overlapping pattern matches are resolved in equation order. Let's look at the definition of `kappa` for `recDelta`:
+```lean
+| .recDelta b s (.delta n) => Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1
+| .recDelta b s n => Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)
+```
+Because of how `kappa (delta t) = kappa t`, the measure ignores constructors of `delta`. 
+
+If we apply the theorem `kappa_rec_delta_step` to a term where `n = delta m`, we get a contradiction. 
+
+Let's calculate both sides of the theorem when `n = delta m`:
+**LHS:** `kappa (recDelta b s (delta (delta m)))`
+- This matches the first pattern for `recDelta`, assigning the inner `delta m` to the pattern variable `n`.
+- By definition, it evaluates to `Nat.max (Nat.max (kappa b) (kappa s)) (kappa (delta m)) + 1`.
+- Since `kappa (delta m) = kappa m`, the LHS reduces to `Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1`.
+
+**RHS:** `kappa (recDelta b s (delta m)) + 1`
+- By the first pattern for `recDelta`, `kappa (recDelta b s (delta m))` evaluates to `Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1`.
+- Therefore, the RHS is `(Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1) + 1`.
+
+Equating LHS and RHS gives:
+`X + 1 = X + 2` 
+*(where `X = Nat.max (Nat.max (kappa b) (kappa s)) (kappa m)`)*
+
+This equality is fundamentally false. Because `kappa_rec_delta_step` is unprovable, `kappa_rec_succ_drop` cannot be proven using it, and the entire termination measure strategy fails.

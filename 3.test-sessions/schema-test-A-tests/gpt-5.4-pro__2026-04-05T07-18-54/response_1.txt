@@ -1,0 +1,45 @@
+**Raw assessment:** **Yes.** Strong normalization is establishable from the rewrite system alone.
+
+**Reason:** a direct termination interpretation exists for the given TRS
+\[
+\begin{aligned}
+F(x,y,Z) &\to x\\
+F(x,y,S(n)) &\to G(y,F(x,y,n)).
+\end{aligned}
+\]
+
+A short proof roadmap:
+
+1. Interpret terms into $\mathbb N$ by a monotone polynomial interpretation:
+   \[
+   \llbracket Z \rrbracket = 0,\qquad
+   \llbracket S(n) \rrbracket = \llbracket n \rrbracket + 1,
+   \]
+   \[
+   \llbracket G(a,b) \rrbracket = \llbracket a \rrbracket + \llbracket b \rrbracket,
+   \]
+   \[
+   \llbracket F(x,y,n) \rrbracket = \llbracket x \rrbracket + (\llbracket n \rrbracket + 1)(\llbracket y \rrbracket + 1).
+   \]
+
+2. Check strict decrease on each rule:
+   - For $F(x,y,Z)\to x$:
+     \[
+     \llbracket F(x,y,Z)\rrbracket
+     = \llbracket x\rrbracket + (\llbracket y\rrbracket+1)
+     > \llbracket x\rrbracket.
+     \]
+   - For $F(x,y,S(n))\to G(y,F(x,y,n))$:
+     \[
+     \llbracket F(x,y,S(n))\rrbracket
+     = \llbracket x\rrbracket + (\llbracket n\rrbracket+2)(\llbracket y\rrbracket+1),
+     \]
+     \[
+     \llbracket G(y,F(x,y,n))\rrbracket
+     = \llbracket y\rrbracket + \llbracket x\rrbracket + (\llbracket n\rrbracket+1)(\llbracket y\rrbracket+1),
+     \]
+     and the difference is exactly $1$.
+
+3. Since every rewrite step strictly decreases a natural-number measure, no infinite rewrite sequence exists.
+
+So **termination / strong normalization follows purely from the displayed rules**, with no extra structural axioms or object-level assumptions.

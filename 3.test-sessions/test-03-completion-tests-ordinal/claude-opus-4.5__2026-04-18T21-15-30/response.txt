@@ -1,0 +1,106 @@
+## Proof Skeleton for Remaining Cases
+
+The file has three `sorry` cases that need proofs. Here are the proof skeletons:
+
+---
+
+### Case 1: `R_rec_succ` (line 138)
+**Goal:** `mu (app s (recDelta b s n)) < mu (recDelta b s (delta n))`
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- LHS: omega^3 * (mu s + 1) + omega^2 * (mu(recDelta b s n) + 1) + 1
+    -- RHS: omega^(mu(delta n) + mu s + 6) + omega * (mu b + 1) + 1
+    --    = omega^(omega^5 * (mu n + 1) + 1 + mu s + 6) + omega * (mu b + 1) + 1
+    --
+    -- Strategy: The RHS exponent contains omega^5 * (mu n + 1), which is enormous.
+    -- The LHS is bounded by omega^(omega^(mu n + mu s + 6) + something finite).
+    -- Since omega^5 * (mu n + 1) >> mu n + mu s + 6, the RHS dominates.
+    --
+    -- Step 1: Establish that omega^5 * (mu n + 1) + 1 + mu s + 6 > 3
+    have exp_large : omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6 > 3 := by
+      calc 3 < omega0 ^ (5 : Ordinal) := opow_pos 5 omega0_pos |> lt_of_lt_of_le (by decide)
+        _ ≤ omega0 ^ (5 : Ordinal) * (mu n + 1) := le_mul_right _ (by linarith [Ordinal.zero_le (mu n)])
+        _ ≤ omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6 := le_add_right _ _
+    -- Step 2: Show omega^3 * (mu s + 1) < omega^(large exponent)
+    have h1 : omega0 ^ (3 : Ordinal) * (mu s + 1) < omega0 ^ (omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6) := by
+      apply Ordinal.mul_lt_opow_of_principal_right principal_omega
+      · exact opow_pos 3 omega0_pos
+      · exact exp_large
+    -- Step 3: Bound the recDelta term inside RHS
+    -- mu(recDelta b s n) = omega^(mu n + mu s + 6) + omega * (mu b + 1) + 1
+    -- So omega^2 * (mu(recDelta b s n) + 1) is still dominated by omega^(omega^5 * ...)
+    have h2 : omega0 ^ (2 : Ordinal) * (omega0 ^ (mu n + mu s + 6) + omega0 * (mu b + 1) + 1 + 1)
+              < omega0 ^ (omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6) := by
+      -- omega^5 * (mu n + 1) dominates mu n + mu s + 6, so the exponent gap suffices
+      sorry -- Requires showing exponent dominance via principal_omega
+    -- Step 4: Combine to get full LHS < leading term of RHS
+    calc omega0 ^ 3 * (mu s + 1) + omega0 ^ 2 * (omega0 ^ (mu n + mu s + 6) + omega0 * (mu b + 1) + 1 + 1) + 1
+      _ < omega0 ^ (omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6) := by
+          apply add_lt_of_lt_of_lt h1 (add_lt_of_lt_of_lt h2 (opow_pos _ omega0_pos))
+      _ ≤ omega0 ^ (omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6) + omega0 * (mu b + 1) + 1 := le_add_right _ _
+```
+
+---
+
+### Case 2: `R_eq_refl` (line 152)
+**Goal:** `0 < omega^(mu a + mu a + 9) + 1`
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- Goal: 0 < omega^(mu a + mu a + 9) + 1
+    -- omega^(anything) ≥ 1, so omega^(...) + 1 ≥ 2 > 0
+    have h1 : 0 < omega0 ^ (mu a + mu a + 9) := opow_pos (mu a + mu a + 9) omega0_pos
+    exact add_pos_of_pos_of_nonneg h1 (Ordinal.zero_le 1) |> lt_of_lt_of_le (by decide)
+    -- Alternatively:
+    -- exact Ordinal.pos_iff_ne_zero.mpr (ne_of_gt (add_pos_right _ one_pos))
+```
+
+---
+
+### Case 3: `R_eq_diff` (line 163)
+**Goal:** `mu (integrate (merge a b)) < mu (eqW a b)`
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- LHS: omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 1 + 1) + 1
+    -- RHS: omega^(mu a + mu b + 9) + 1
+    --
+    -- Strategy: The inner term of LHS is roughly omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 2.
+    -- omega^4 * (omega^3 * ...) = omega^(4 + 3) * ... = omega^7 * ... when simplified.
+    -- But the RHS exponent is mu a + mu b + 9, which is a finite ordinal (not a tower).
+    -- The key: 4 + 3 = 7 and omega^7 * (mu a + 1 + ...) < omega^(mu a + mu b + 9) when mu a + mu b + 9 > 7.
+    --
+    -- Step 1: Bound the inner merge term
+    let inner := omega0 ^ 3 * (mu a + 1) + omega0 ^ 2 * (mu b + 1) + 2
+    -- Step 2: Show omega^4 * inner < omega^(mu a + mu b + 9)
+    have h1 : inner < omega0 ^ (mu a + mu b + 5) := by
+      -- omega^3 * (mu a + 1) < omega^(mu a + 4) by principal_omega arguments
+      -- omega^2 * (mu b + 1) < omega^(mu b + 3)
+      -- Sum is < omega^(max(mu a + 4, mu b + 3) + 1) ≤ omega^(mu a + mu b + 5)
+      sorry
+    have h2 : omega0 ^ (4 : Ordinal) * inner < omega0 ^ (mu a + mu b + 9) := by
+      -- omega^4 * (something < omega^(mu a + mu b + 5)) < omega^(4 + mu a + mu b + 5) = omega^(mu a + mu b + 9)
+      calc omega0 ^ 4 * inner
+        _ < omega0 ^ 4 * omega0 ^ (mu a + mu b + 5) := Ordinal.mul_lt_mul_of_pos_left h1 (opow_pos 4 omega0_pos)
+        _ = omega0 ^ (4 + (mu a + mu b + 5)) := (opow_add omega0 4 (mu a + mu b + 5)).symm
+        _ = omega0 ^ (mu a + mu b + 9) := by ring_nf
+    -- Step 3: Add the +1 terms
+    calc omega0 ^ 4 * inner + 1
+      _ < omega0 ^ (mu a + mu b + 9) := by
+          apply add_lt_of_lt_of_le h2 (opow_pos (mu a + mu b + 9) omega0_pos).le
+      _ ≤ omega0 ^ (mu a + mu b + 9) + 1 := le_add_right _ _
+```
+
+---
+
+### Summary of Proof Strategies
+
+| Rule | Key Insight |
+|------|-------------|
+| `R_rec_succ` | The LHS exponent contains `omega^5 * (mu n + 1)`, which dominates any polynomial combination of `mu n`, `mu s`, `mu b` in the RHS. Use `principal_omega` to show exponential dominance. |
+| `R_eq_refl` | Simple positivity: `omega^k + 1 > 0` for any ordinal `k`. |
+| `R_eq_diff` | The RHS exponent `mu a + mu b + 9` dominates the LHS's effective exponent `4 + 3 + small terms = 7 + ...`. Use ordinal exponent arithmetic to show `omega^4 * omega^3 * ... < omega^(mu a + mu b + 9)`. |

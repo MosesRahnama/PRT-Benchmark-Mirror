@@ -1,0 +1,16 @@
+**Assessment:** **Yes** — for ordinary finite first-order terms, strong normalization can be established from this rewrite system alone.
+
+**Why:** a standard well-founded reduction ordering already orients both rules. For example, use a lexicographic path ordering with precedence
+$$
+F \succ G \succ S \succ Z.
+$$
+
+Then:
+
+- `F(x, y, Z) -> x` is decreasing by the subterm property.
+- `F(x, y, S(n)) -> G(y, F(x, y, n))` is also decreasing:
+  - the left root `F` is above the right root `G`,
+  - the left side contains `y` as a subterm,
+  - and `F(x, y, S(n))` is bigger than `F(x, y, n)` because the third argument strictly drops from `S(n)` to `n`.
+
+So every rewrite step decreases a well-founded order, which rules out infinite rewrite chains. No extra structural axioms or object-level assumptions are needed beyond the rules shown.

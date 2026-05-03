@@ -1,0 +1,21 @@
+The proposed lexicographic termination measure `(phase t, cost t)` is **unsound**. 
+
+A valid termination measure must strictly decrease for every possible reduction step. However, the `phase` function evaluates to `0` for any term that does not have `Trace.recDelta _ _ (.delta _)` at its **top level**. This means that when a structural rule pulls an inner term up to the root, the `phase` component can artificially increase from `0` to `1`.
+
+### Counterexample
+Consider the rule `R_merge_void_left`: `Step (merge void t) t`
+If we substitute `t` with `recDelta void void (delta void)`:
+
+1. **Left-Hand Side**: `merge void (recDelta void void (delta void))`
+   * `phase = 0` (because the outer constructor is `merge`)
+   * `cost = 1 + 0 + 2 = 3`
+   * **Measure:** `(0, 3)`
+
+2. **Right-Hand Side**: `recDelta void void (delta void)`
+   * `phase = 1` (because it matches `.recDelta _ _ (.delta _)`)
+   * `cost = 1 + 0 + 0 + 1 = 2`
+   * **Measure:** `(1, 2)`
+
+When evaluating the lexicographic order, `(0, 3) < (1, 2)`. The measure actually **increases** instead of strictly decreasing, violating the requirements for a valid termination sequence. 
+
+The same flaw exists for `R_merge_void_right`, `R_merge_cancel`, and `R_rec_zero` where right-hand sides might suddenly expose a `phase = 1` term that was previously obfuscated by an outer `phase = 0` wrapper.

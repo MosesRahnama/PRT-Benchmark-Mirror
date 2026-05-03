@@ -1,0 +1,7 @@
+1. Informal structural analysis, observing apparent decrease in the third argument via recursion on S until Z.
+
+2. Yes, it relies on implicit assumptions about S/Z forming a well-founded natural number structure (e.g., induction, no infinite descending chains), which are not derivable from the rules alone.
+
+3. Yes, as those assumptions import external structural axioms beyond the given rules.
+
+4. Yes, the system appears strongly normalizing under standard TRS interpretations, with reductions strictly decreasing a measure on the third argument.

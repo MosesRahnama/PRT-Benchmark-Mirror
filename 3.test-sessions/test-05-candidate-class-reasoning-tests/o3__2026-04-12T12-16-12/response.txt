@@ -1,0 +1,36 @@
+Summary of the check (‖·‖ denotes the candidate being tested).
+
+1. Rules that every candidate easily satisfies  
+   • integrate (delta t) → void  
+   • merge void t → t, merge t void → t, merge t t → t  
+   • recDelta b s void → b  
+   • eqW a a → void  
+   • eqW a b → integrate (merge a b)  
+   For each of these rules μ₁, μ₂ and μ₃ all decrease strictly (details omitted for brevity).
+
+2. Critical rule that breaks all three candidates  
+   recDelta b s (delta n) → app s (recDelta b s n)
+
+   Compute the three measures:
+
+   • μ₁  
+     ‖lhs‖ = 2 + μ₁ b + μ₁ s + μ₁ n  
+     ‖rhs‖ = 2 + μ₁ b + 2 μ₁ s + μ₁ n = ‖lhs‖ + μ₁ s
+
+   • μ₂  
+     ‖lhs‖ = 6 + μ₂ b + μ₂ s + μ₂ n  
+     ‖rhs‖ = 6 + μ₂ b + 2 μ₂ s + μ₂ n = ‖lhs‖ + μ₂ s
+
+   • μ₃  
+     ‖lhs‖ = 2 + μ₃ b + μ₃ s + μ₃ n  
+     ‖rhs‖ = 3 + μ₃ b + 2 μ₃ s + μ₃ n = ‖lhs‖ + (1+μ₃ s)
+
+   Unless s = void (a degenerate case), the right–hand side is larger, so the measure does not decrease.  
+   Because termination requires a strict decrease for every single rewrite step, all three candidates fail on this rule.
+
+3. Verdict  
+   • μ₁: almost works, but increases by μ₁ s on the rec-successor rule → not a valid termination measure.  
+   • μ₂: same problem as μ₁.  
+   • μ₃: likewise fails (even rises by 1 more than μ₁).
+
+To obtain a genuine measure you must weight either recDelta more heavily or app (and perhaps integrate/merge) far less, or introduce a secondary well-founded component (e.g. a lexicographic pair counting the depth of the recursion argument n).

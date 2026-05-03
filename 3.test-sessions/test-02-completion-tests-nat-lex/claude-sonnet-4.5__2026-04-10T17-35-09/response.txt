@@ -1,0 +1,104 @@
+Looking at this file, I can see it's a strong normalization proof using a lexicographic measure `(kappa, mu)` where:
+- **kappa** tracks recursion depth (delta-transparent, increments for `recDelta` with delta-wrapped arguments)
+- **mu** tracks weighted structural size (delta-transparent)
+
+Three cases are proved, five remain. Here's a proof skeleton for completing the remaining cases:
+
+## Proof Skeleton for the 5 Remaining Cases
+
+### Case 1: `R_int_delta` - integrate (delta t) → void
+```lean
+| _, _, Step.R_int_delta t => by
+    -- Strategy: kappa may tie (if kappa t = 0) or drop; mu always drops
+    by_cases h : kappa t = 0
+    · -- When kappa t = 0: kappa ties, mu drops from (1 + mu t) to 0
+      have hmu : mu void < mu (integrate (delta t)) := by simp [mu]; omega
+      have hk  : kappa void = kappa (integrate (delta t)) := by simp [kappa, h]
+      exact drop_right hmu hk
+    · -- When kappa t > 0: kappa drops from kappa t to 0
+      have hk : kappa void < kappa (integrate (delta t)) := by
+        simp [kappa]; omega
+      exact drop_left hk
+```
+
+### Case 2: `R_rec_zero` - recDelta b s void → b
+```lean
+| _, _, Step.R_rec_zero b s => by
+    -- Strategy: kappa ties (max(kappa b, kappa s) vs kappa b), mu drops by 3 + mu s
+    have hmu : mu b < mu (recDelta b s void) := by simp [mu]; omega
+    have hk  : kappa b = kappa (recDelta b s void) := by
+      simp [kappa]
+      -- Need to show: kappa b = max(max(kappa b, kappa s), 0)
+      -- which simplifies to: kappa b = max(kappa b, kappa s)
+      -- This requires: kappa b ≥ kappa s
+      sorry  -- May need case split or additional lemma about max
+    exact drop_right hmu hk
+```
+
+**Alternative for Case 2** (if kappa doesn't always tie):
+```lean
+| _, _, Step.R_rec_zero b s => by
+    by_cases h : kappa b ≥ kappa s
+    · -- kappa ties: max(kappa b, kappa s) = kappa b
+      have hmu : mu b < mu (recDelta b s void) := by simp [mu]; omega
+      have hk  : kappa b = kappa (recDelta b s void) := by
+        simp [kappa]; exact Nat.max_eq_left h
+      exact drop_right hmu hk
+    · -- kappa drops: kappa b < kappa s, so max = kappa s
+      have hk : kappa b < kappa (recDelta b s void) := by
+        simp [kappa]; omega
+      exact drop_left hk
+```
+
+### Case 3: `R_rec_succ` - recDelta b s (delta n) → app s (recDelta b s n)
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    -- Strategy: kappa strictly drops by 1 (the +1 from delta-wrapping disappears)
+    -- LHS kappa: max(max(kappa b, kappa s), kappa n) + 1
+    -- RHS kappa: max(kappa s, max(max(kappa b, kappa s), kappa n))
+    --          = max(max(kappa b, kappa s), kappa n)
+    have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+      simp [kappa]
+      -- max(kappa s, max(max(kappa b, kappa s), kappa n)) + 1 > 
+      -- max(kappa s, max(max(kappa b, kappa s), kappa n))
+      omega
+    exact drop_left hk
+```
+
+### Case 4: `R_eq_refl` - eqW a a → void
+```lean
+| _, _, Step.R_eq_refl a => by
+    -- Strategy: Similar to R_int_delta
+    by_cases h : kappa a = 0
+    · -- kappa ties at 0, mu drops from 4 + 2*(mu a) to 0
+      have hmu : mu void < mu (eqW a a) := by simp [mu]; omega
+      have hk  : kappa void = kappa (eqW a a) := by simp [kappa, h]
+      exact drop_right hmu hk
+    · -- kappa drops from kappa a to 0
+      have hk : kappa void < kappa (eqW a a) := by
+        simp [kappa]; omega
+      exact drop_left hk
+```
+
+### Case 5: `R_eq_diff` - eqW a b → integrate (merge a b)
+```lean
+| _, _, Step.R_eq_diff a b => by
+    -- Strategy: kappa ties (both max(kappa a, kappa b)), mu drops by 1
+    -- LHS mu: 4 + mu a + mu b
+    -- RHS mu: 1 + (2 + mu a + mu b) = 3 + mu a + mu b
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by
+      simp [mu]; omega
+    have hk  : kappa (integrate (merge a b)) = kappa (eqW a b) := by
+      simp [kappa]
+    exact drop_right hmu hk
+```
+
+## Summary
+
+**Key insights:**
+1. **Cases that always decrease kappa**: `R_rec_succ` (loses the +1 increment)
+2. **Cases that reduce to void**: `R_int_delta`, `R_eq_refl` need case splits on whether starting kappa is 0
+3. **Cases with measure decreases**: `R_eq_diff` has kappa tie, mu drops by 1
+4. **Potential case split needed**: `R_rec_zero` may need to consider whether `kappa b ≥ kappa s`
+
+The proofs primarily use `omega` to discharge arithmetic goals about natural number inequalities after simplifying with the measure definitions.

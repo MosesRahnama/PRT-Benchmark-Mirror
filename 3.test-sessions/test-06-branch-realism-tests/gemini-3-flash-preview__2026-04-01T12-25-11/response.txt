@@ -1,0 +1,37 @@
+Based on an analysis of the definitions and the proposed theorems in <workspace>\test-files\Test-06-Branch-Realism.lean, the helper strategy is **unsound**.
+
+### Analysis of `kappa` and the Helper Theorems
+
+The helper strategy relies on `kappa_rec_delta_step` and `kappa_rec_succ_drop` to prove termination for the `R_rec_succ` step:
+- **Step**: `(recDelta b s (delta n)) → (app s (recDelta b s n))`
+
+#### 1. Counter-example to `kappa_rec_delta_step`
+The theorem `kappa_rec_delta_step` asserts:
+$$\kappa(\text{recDelta } b\ s\ (\delta\ n)) = \kappa(\text{recDelta } b\ s\ n) + 1$$
+
+However, according to the definition of `kappa`:
+- $\kappa(\text{recDelta } b\ s\ (\delta\ n)) = \max(\max(\kappa(b), \kappa(s)), \kappa(n)) + 1$
+- If $n$ is not a $\delta$-term (e.g., $n = \text{void}$), then $\kappa(\text{recDelta } b\ s\ n) = \max(\max(\kappa(b), \kappa(s)), \kappa(n))$.
+
+This equality holds for $n = \text{void}$. However, if $n$ is itself a $\delta$-term, say $n = \delta\ m$:
+- $\text{LHS} = \max(\max(\kappa(b), \kappa(s)), \kappa(m)) + 1$ (since $\kappa(\delta\ m) = \kappa(m)$)
+- $\text{RHS} = (\max(\max(\kappa(b), \kappa(s)), \kappa(m)) + 1) + 1$
+
+The $+1$ increment in `kappa` is applied specifically to the constructor pattern `.recDelta b s (.delta n)`, but because $\kappa(\delta\ n) = \kappa(n)$, the "depth" of $\delta$ nesting is not captured. `kappa` remains constant over any number of $\delta$ applications.
+
+#### 2. Failure of `kappa_rec_succ_drop`
+The theorem `kappa_rec_succ_drop` asserts:
+$$\kappa(\text{app } s\ (\text{recDelta } b\ s\ n)) < \kappa(\text{recDelta } b\ s\ (\delta\ n))$$
+
+Let's calculate both sides where $n = \text{void}$:
+- **RHS**: $\kappa(\text{recDelta } b\ s\ (\delta\ \text{void})) = \max(\max(\kappa(b), \kappa(s)), 0) + 1 = \max(\kappa(b), \kappa(s)) + 1$
+- **LHS**: $\kappa(\text{app } s\ (\text{recDelta } b\ s\ \text{void})) = \max(\kappa(s), \kappa(\text{recDelta } b\ s\ \text{void})) = \max(\kappa(s), \max(\kappa(b), \kappa(s))) = \max(\kappa(b), \kappa(s))$
+
+While this specific case ($\text{void}$) yields a strict decrease ($X < X+1$), the strategy fails when $n = \delta\ m$:
+- **LHS**: $\kappa(\text{app } s\ (\text{recDelta } b\ s\ (\delta\ m))) = \max(\kappa(s), \max(\max(\kappa(b), \kappa(s)), \kappa(m)) + 1) = \max(\max(\kappa(b), \kappa(s)), \kappa(m)) + 1$
+- **RHS**: $\kappa(\text{recDelta } b\ s\ (\delta\ (\delta\ m))) = \max(\max(\kappa(b), \kappa(s)), \kappa(m)) + 1$
+
+In this case, **LHS = RHS**, so the strict inequality `<` required for termination is not satisfied.
+
+### Conclusion
+The measure `kappa` is insensitive to the nesting of `delta` constructors (because `kappa (delta t) = kappa t`). Consequently, a rewrite step that simply peels off one `delta` while wrapping the remainder in `app` and `recDelta` does not consistently decrease the measure. The strategy is **unsound** for proving termination.

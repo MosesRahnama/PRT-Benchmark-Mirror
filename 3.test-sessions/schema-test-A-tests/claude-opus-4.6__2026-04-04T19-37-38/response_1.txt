@@ -1,0 +1,24 @@
+**Yes — strong normalization is provable from the presented rules alone.**
+
+The system is:
+
+```
+F(x, y, Z)    → x
+F(x, y, S(n)) → G(y, F(x, y, n))
+```
+
+**Key observations:**
+
+1. **G is a free (constructor) symbol** — it never appears as a root on any left-hand side, so it introduces no reductions.
+2. **F recurses structurally on its third argument** — the recursive call `F(x, y, n)` has a strictly smaller third argument than `F(x, y, S(n))`.
+
+**Proof roadmap via Lexicographic Path Order (LPO):**
+
+Set the precedence $F \succ G \succ S \succ Z$.
+
+- **Rule 1** (`F(x, y, Z) → x`): The RHS `x` is a proper subterm of the LHS. Immediate by the subterm property of LPO.
+- **Rule 2** (`F(x, y, S(n)) → G(y, F(x, y, n))`): Since $F \succ G$, it suffices to show $F(x,y,S(n)) \succ_{\text{LPO}}$ each argument of `G`:
+  - $F(x,y,S(n)) \succ_{\text{LPO}} y$ — `y` is a proper subterm of the LHS.
+  - $F(x,y,S(n)) \succ_{\text{LPO}} F(x,y,n)$ — same root `F`, first two arguments equal, and $S(n) \succ_{\text{LPO}} n$ by the subterm property.
+
+Since LPO is a well-founded reduction order closed under substitution and context, compatibility with LPO entails strong normalization. No external axioms, structural lemmas, or object-level assumptions are needed — the two rules and the standard LPO machinery suffice.

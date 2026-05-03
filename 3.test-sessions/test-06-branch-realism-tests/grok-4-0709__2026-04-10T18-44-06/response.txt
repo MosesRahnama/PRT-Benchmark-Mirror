@@ -1,0 +1,22 @@
+The helper strategy is not sound as written. The theorems `kappa_rec_delta_step` and `kappa_rec_succ_drop` are false in general, as they fail to hold when `n` itself has the form `delta m` for some `m`.
+
+### Supporting Calculations
+Assume for simplicity that `kappa b = kappa s = 0` (so `M ≜ max(kappa b, kappa s) = 0`) and let `n = delta void` (so `kappa n = kappa (delta void) = kappa void = 0`).
+
+- Left side of `kappa_rec_delta_step`: `kappa (recDelta b s (delta n)) = kappa (recDelta b s (delta (delta void)))`.  
+  This matches the `+1` case in the definition of `kappa` (third arg is `delta _`), so:  
+  `max(M, kappa (delta (delta void))) + 1 = max(0, kappa (delta void)) + 1 = max(0, 0) + 1 = 1`.
+
+- Right side of `kappa_rec_delta_step`: `kappa (recDelta b s n) + 1 = kappa (recDelta b s (delta void)) + 1`.  
+  This also matches the `+1` case (third arg is `delta void`), so:  
+  `max(0, kappa (delta void)) + 1 = max(0, 0) + 1 = 1`.  
+  Then right side overall: `1 + 1 = 2` (per the theorem statement).  
+
+But left = 1 while right = 2, so the claimed equality fails.
+
+- For `kappa_rec_succ_drop`: `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`.  
+  Left: `kappa (app s (recDelta b s (delta void))) = max(kappa s, kappa (recDelta b s (delta void))) = max(0, 1) = 1` (using the above calculation).  
+  Right: `1` (as above).  
+  But `1 ≮ 1`, so the claimed strict inequality fails.
+
+The theorems only hold when `n` is not of the form `delta _` (e.g., if `n = void`, both theorems are true). The strategy overlooks nested `delta` structure in the recursion argument, making the helpers unsound for a general termination argument.

@@ -1,0 +1,40 @@
+## Assessment
+
+**Yes, strong normalization can be established from the presented calculus alone.**
+
+### Key Structural Observations
+
+1. **No congruence rules**: The `Step` relation is defined only for top-level matches. There are no rules permitting reduction under constructors (e.g., no "if `Step t t'` then `Step (grape t) (grape t')`"). This is critical.
+
+2. **Rule classification by RHS**:
+   - **Normal-form producers**: `R_mango_grape`, `R_apple_orange`, `R_cherry_refl`, `R_cherry_diff` all produce terms that cannot reduce further:
+     - `plum` — no rule has `plum` on LHS
+     - `pear s (banana b s n)` — no rule has `pear` on LHS
+     - `mango (peach a b)` — cannot match `mango (grape t)` since `peach ≠ grape`
+   - **Subterm extractors**: `R_peach_plum_left`, `R_peach_plum_right`, `R_peach_cancel`, `R_banana_zero` produce a strict subterm of the original
+
+3. **No expansion rules**: No rule produces a term larger than its input *and* allows further reduction. The apparent size increase in `R_apple_orange` is harmless because `pear` is a blocking constructor.
+
+### Proof Roadmap
+
+Define measure `M(t) = (is-redex(t), |t|)` where:
+- `is-redex(t) = 1` if `t` matches some LHS, else `0`
+- `|t|` = constructor count (standard tree size)
+
+**Claim**: Each `Step t t'` satisfies `M(t') < M(t)` lexicographically.
+
+| Rule | LHS measure | RHS measure | Decrease |
+|------|-------------|-------------|----------|
+| `R_mango_grape` | `(1, 2+|t|)` | `(0, 1)` | ✓ (redex→normal) |
+| `R_peach_*` | `(1, 2+|t|)` | `(0 or 1, |t|)` | ✓ (size drops) |
+| `R_banana_zero` | `(1, 2+|b|+|s|)` | `(0 or 1, |b|)` | ✓ (size drops) |
+| `R_apple_orange` | `(1, ...)` | `(0, ...)` | ✓ (redex→normal) |
+| `R_cherry_*` | `(1, ...)` | `(0, ...)` | ✓ (redex→normal) |
+
+Since `{0,1} × ℕ` with lexicographic order is well-founded, all reduction sequences terminate. ∎
+
+### Why No External Assumptions Are Needed
+
+- The `R_cherry_diff` side condition `a ≠ b` is decidable from the inductive `Trace` type alone (Lean 4 derives decidable equality automatically)
+- No structural induction principles beyond what the inductive definition provides
+- No measure-theoretic or set-theoretic axioms beyond standard well-foundedness of `ℕ`

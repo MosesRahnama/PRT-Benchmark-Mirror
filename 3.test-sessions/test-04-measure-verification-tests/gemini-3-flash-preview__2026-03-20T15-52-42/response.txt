@@ -1,0 +1,36 @@
+## Analysis of the Termination Measure
+
+The file defines a **lexicographic measure** `(phase t, cost t)` for a first-order rewrite calculus on trace trees. Let me assess its soundness by examining each rewrite rule.
+
+### Measure Definition
+
+- `phase t`: Returns 1 if `t ≡ recDelta b s (delta n)`, otherwise 0
+- `cost t`: A tree-size metric (structural cost of all subterms)
+- **Lexicographic ordering**: `(1, _) > (0, _)` regardless of costs; when phases equal, the cost component determines ordering
+
+### Rule-by-Rule Verification
+
+| Rule | Before | After | Phase Change | Cost Change | Sound? |
+|------|--------|-------|--------------|-------------|--------|
+| **R_int_delta** | `integrate(delta t)` → `void` | phase=0 | 0 → 0 | 2+cost(t) → 0 ↓ | ✓ |
+| **R_merge_void_left** | `merge void t` → `t` | phase=0 | 0 → ≤0 | 1+cost(t) → cost(t) ↓ | ✓ |
+| **R_merge_void_right** | `merge t void` → `t` | phase=0 | 0 → ≤0 | 1+cost(t) → cost(t) ↓ | ✓ |
+| **R_merge_cancel** | `merge t t` → `t` | phase=0 | 0 → ≤0 | 1+2·cost(t) → cost(t) ↓ | ✓ |
+| **R_rec_zero** | `recDelta b s void` → `b` | phase=0 | 0 → ≤0 | 1+cost(b)+cost(s) → cost(b) ↓ | ✓ |
+| **R_rec_succ** | `recDelta b s (delta n)` → `app s (recDelta b s n)` | phase=1 | 1 → 0 ↓ | 2+cost(b)+cost(s)+cost(n) → 2+cost(b)+2·cost(s)+cost(n) | ✓ |
+| **R_eq_refl** | `eqW a a` → `void` | phase=0 | 0 → 0 | 3+2·cost(a) → 0 ↓ | ✓ |
+| **R_eq_diff** | `eqW a b` → `integrate(merge a b)` | phase=0 | 0 → 0 | 3+cost(a)+cost(b) → 2+cost(a)+cost(b) ↓ | ✓ |
+
+### Key Observation on R_rec_succ
+
+The critical rule is **R_rec_succ**, where the cost actually *increases* but the phase strictly decreases (1 → 0). With lexicographic ordering, this is **valid**: `(1, X) > (0, Y)` for any values X and Y, so termination is guaranteed despite the cost increase.
+
+### Conclusion
+
+**The measure is SOUND.** ✓
+
+Every rewrite rule either:
+- Maintains phase and strictly decreases cost, OR  
+- Strictly decreases phase (regardless of cost change)
+
+Both patterns preserve the lexicographic well-ordering on ℕ × ℕ, ensuring the rewrite system is terminating.

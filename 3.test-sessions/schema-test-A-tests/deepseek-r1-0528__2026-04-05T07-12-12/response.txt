@@ -1,0 +1,15 @@
+1. **Primary Method Used:** Recursive Path Ordering (RPO) with lexicographic comparison on the third argument of F.
+
+2. **Reliance on External Structure:**  
+   Yes. The method requires:
+   - A precedence order: `F > G > S > Z` (not fixed by rules)
+   - Lexicographic argument comparison for F (not fixed by rules)
+   - The subterm relation `n ⊂ S(n)` (a structural axiom)
+
+3. **Boundary Compliance:**  
+   Yes, this places the method outside the stated boundary. The precedence order and lexicographic comparison are proof-theoretic choices not derivable from the rewrite rules alone. The subterm relation is an imported structural axiom.
+
+4. **Strong Normalization Verdict:**  
+   Yes, the system remains strongly normalizing. The termination argument holds under standard term rewriting semantics, but proving it requires external ordering assumptions beyond the given rules.
+
+The core termination argument relies on the third argument strictly decreasing in constructor height with each recursive call, but formalizing this requires importing the well-foundedness of the natural number subterm relation.

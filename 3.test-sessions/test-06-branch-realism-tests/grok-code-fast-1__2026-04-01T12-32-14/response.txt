@@ -1,0 +1,25 @@
+The helper theorems (`kappa_rec_delta_step` and `kappa_rec_succ_drop`) are sound as written. They correctly establish properties of the structural measure `kappa` that support a termination argument for the rewrite calculus, specifically for the `recDelta` reduction rules.
+
+### Analysis of `kappa_rec_delta_step`
+This theorem states that wrapping the third argument of `recDelta` in a `delta` constructor increases the measure by exactly 1:
+- `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`
+
+**Supporting calculation:**
+- By definition: `kappa (recDelta b s n) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)`
+- By definition: `kappa (recDelta b s (delta n)) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1`
+- The difference is exactly `+1`, confirming the theorem.
+
+### Analysis of `kappa_rec_succ_drop`
+This theorem states that the right-hand side of the `R_rec_succ` reduction rule has a strictly smaller measure than the left-hand side:
+- `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`
+
+**Supporting calculation:**
+- Let `m = Nat.max (kappa b) (kappa s)` for brevity.
+- `kappa (recDelta b s n) = Nat.max m (kappa n)`
+- `kappa (recDelta b s (delta n)) = Nat.max m (kappa n) + 1` (from `kappa_rec_delta_step`)
+- `kappa (app s (recDelta b s n)) = Nat.max (kappa s) (kappa (recDelta b s n)) = Nat.max (kappa s) (Nat.max m (kappa n))`
+- Since `m ≥ kappa s` (by definition of `m`), `Nat.max (kappa s) (Nat.max m (kappa n)) = Nat.max m (kappa n)`
+- Thus: `kappa (app s (recDelta b s n)) = Nat.max m (kappa n) = kappa (recDelta b s n)`
+- Therefore: `kappa (app s (recDelta b s n)) = kappa (recDelta b s n) < kappa (recDelta b s n) + 1 = kappa (recDelta b s (delta n))`
+
+This ensures strict decrease for the `R_rec_succ` rule, which is necessary for termination. The theorems hold for all traces `b`, `s`, and `n`.

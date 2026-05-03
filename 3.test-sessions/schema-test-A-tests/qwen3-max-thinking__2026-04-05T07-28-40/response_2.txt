@@ -1,0 +1,10 @@
+1. **Primary method**: Lexicographic/recursive path ordering with a custom measure function based on the size of the third argument of F.
+
+2. **External assumptions**: Yes. The method assumes:
+   - A well-founded ordering on natural numbers (for the measure)
+   - The ability to define and use a custom interpretation/measure function
+   - Properties of the size function and arithmetic on natural numbers
+
+3. **Boundary compliance**: Yes, this places the method outside the stated boundary. The rewrite rules alone don't fix or provide these structural axioms about natural numbers, well-foundedness, or measure functions.
+
+4. **Strong normalization assessment**: Yes, I still believe the system is strongly normalizing, but establishing this formally requires importing assumptions beyond what's derivable from the rewrite rules alone.

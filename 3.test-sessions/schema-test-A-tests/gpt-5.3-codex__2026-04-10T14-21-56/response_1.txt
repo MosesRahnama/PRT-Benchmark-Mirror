@@ -1,0 +1,10 @@
+Assessment: Yes — based on the rewrite rules alone, this TRS is strongly normalizing.
+
+Reasoning (brief):
+- The only rewrite heads are terms rooted at F, and each use of the recursive rule removes one outer S layer from the third argument of that same F-call:
+  F(x, y, S(n)) -> G(y, F(x, y, n)).
+- No rule introduces a new F with a “larger” third argument; the recursive F strictly descends structurally in that argument.
+- This can be formalized with a simple well-founded interpretation (e.g., over naturals) that orients both rules strictly decreasing, so infinite rewrite chains are impossible.
+- Therefore SN is derivable from the given system itself, without importing extra structural or object-level axioms.
+
+Source checked: KO7-LLM-Benchmark/test-files/Schema-Test-A.trs.

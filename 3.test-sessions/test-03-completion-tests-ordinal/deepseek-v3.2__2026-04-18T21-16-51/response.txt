@@ -1,0 +1,154 @@
+Now I'll provide a proof skeleton for completing the remaining three cases. Based on the structure of the existing proofs and the ordinal arithmetic involved, here's a detailed proof skeleton:
+
+## Proof Skeleton for Remaining Cases
+
+### 1. Case `Step.R_rec_succ b s n`
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- Goal: mu (app s (recDelta b s n)) < mu (recDelta b s (delta n))
+    -- LHS: omega^3 * (mu s + 1) + omega^2 * (mu (recDelta b s n) + 1) + 1
+    -- RHS: omega^(mu (delta n) + mu s + 6) + omega * (mu b + 1) + 1
+    
+    -- First, compute mu (delta n) = omega^5 * (mu n + 1) + 1
+    have mu_delta_n : mu (delta n) = omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 := by
+      simp [mu]
+    
+    -- The key inequality: omega^5 * (mu n + 1) > mu n + mu s + 6
+    have h_exp_dom : omega0 ^ (5 : Ordinal) * (mu n + 1) > mu n + mu s + 6 := by
+      -- Since omega^5 * (mu n + 1) ≥ omega^5 > omega > any natural number
+      -- and mu n + mu s + 6 is at most omega * 2 + 6 (if mu n, mu s are finite)
+      -- This follows from properties of ordinal multiplication
+      calc
+        omega0 ^ (5 : Ordinal) * (mu n + 1) ≥ omega0 ^ (5 : Ordinal) := by
+          apply mul_le_mul_left (omega0 ^ (5 : Ordinal))
+          exact le_add_right (mu n) 1
+        _ > omega0 := by
+          exact opow_lt_opow_right omega_pos (by decide : (1 : Ordinal) < 5)
+        _ ≥ omega0 := le_rfl
+        _ > mu n + mu s + 6 := by
+          -- omega0 dominates any finite sum of finite ordinals
+          exact lt_of_le_of_lt (Ordinal.add_le_add (le_of_lt (lt_omega (mu n))) 
+            (le_of_lt (lt_omega (mu s)))) (by
+            have : (6 : Ordinal) < omega0 := by exact nat_lt_omega 6
+            exact lt_omega_add)
+    
+    -- Now we can show RHS > LHS using ordinal arithmetic properties
+    have h1 : omega0 ^ (mu (delta n) + mu s + 6) ≥ omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1)) := by
+      -- Since mu(delta n) = omega^5 * (mu n + 1) + 1 ≥ omega^5 * (mu n + 1)
+      rw [mu_delta_n]
+      apply opow_le_opow_left omega_pos
+      exact le_add_right (omega0 ^ (5 : Ordinal) * (mu n + 1)) (1 + mu s + 6)
+    
+    have h2 : omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1)) > 
+              omega0 ^ (3 : Ordinal) * (mu s + 1) + omega0 ^ (2 : Ordinal) * (mu (recDelta b s n) + 1) + 1 := by
+      -- The left side is a power tower starting with omega^(omega^5 * ...)
+      -- which dominates any polynomial in omega^3 and omega^2
+      apply lt_of_le_of_lt ?_ (opow_lt_opow_right omega_pos h_exp_dom)
+      -- Use properties of ordinal arithmetic: omega^(alpha) > omega^3 * beta for any beta < omega^(alpha)
+      exact ?
+    
+    exact lt_of_lt_of_le h2 h1
+```
+
+### 2. Case `Step.R_eq_refl a`
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- Goal: 0 < omega0 ^ (mu a + mu a + 9) + 1
+    -- This is straightforward since omega^(anything) ≥ 1 and 1 > 0
+    
+    -- Approach 1: Direct positivity
+    have h_pos : 0 < omega0 ^ (mu a + mu a + 9) := by
+      exact opow_pos (mu a + mu a + 9) omega_pos
+    
+    -- Then add 1 preserves positivity
+    calc
+      0 < omega0 ^ (mu a + mu a + 9) := h_pos
+      _ ≤ omega0 ^ (mu a + mu a + 9) + 1 := le_add_right _ _
+    
+    -- Or more simply:
+    exact by
+      have := opow_pos (mu a + mu a + 9) omega_pos
+      linarith
+```
+
+### 3. Case `Step.R_eq_diff a b`
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- Goal: mu (integrate (merge a b)) < mu (eqW a b)
+    -- LHS: omega^4 * (mu (merge a b) + 1) + 1
+    -- RHS: omega^(mu a + mu b + 9) + 1
+    
+    -- Expand mu (merge a b)
+    have mu_merge : mu (merge a b) = 
+        omega0 ^ (3 : Ordinal) * (mu a + 1) + omega0 ^ (2 : Ordinal) * (mu b + 1) + 1 := by
+      simp [mu]
+    
+    -- The key insight: omega^(mu a + mu b + 9) dominates omega^4 * (omega^3*(mu a+1) + omega^2*(mu b+1) + 2)
+    -- because the exponent mu a + mu b + 9 is much larger than 4
+    
+    have h_exp_gt : mu a + mu b + 9 > (4 : Ordinal) := by
+      -- Since mu a, mu b ≥ 0, their sum + 9 ≥ 9 > 4
+      calc
+        mu a + mu b + 9 ≥ 0 + 0 + 9 := by
+          exact add_le_add (add_le_add (Ordinal.zero_le _) (Ordinal.zero_le _)) (by decide)
+        _ = 9 := by simp
+        _ > 4 := by decide
+    
+    -- Now use properties of ordinal exponentiation
+    have h1 : omega0 ^ (mu a + mu b + 9) > omega0 ^ (4 : Ordinal) :=
+      opow_lt_opow_right omega_pos h_exp_gt
+    
+    have h2 : omega0 ^ (4 : Ordinal) ≥ 
+        omega0 ^ (4 : Ordinal) * (omega0 ^ (3 : Ordinal) * (mu a + 1) + omega0 ^ (2 : Ordinal) * (mu b + 1) + 2) := by
+      -- omega^4 * X ≤ omega^4 when X < omega
+      -- Need to show the parenthesized expression is < omega
+      have h_lt_omega : omega0 ^ (3 : Ordinal) * (mu a + 1) + omega0 ^ (2 : Ordinal) * (mu b + 1) + 2 < omega0 := by
+        -- Both terms are < omega since they're polynomials in omega^3 and omega^2
+        -- with coefficients < omega
+        apply lt_of_lt_of_le ?_ (lt_omega_succ _)
+        exact ?
+      
+      exact mul_le_mul_left (omega0 ^ (4 : Ordinal)) (le_of_lt h_lt_omega)
+    
+    -- Combine the inequalities
+    calc
+      mu (integrate (merge a b)) = omega0 ^ (4 : Ordinal) * (mu (merge a b) + 1) + 1 := by simp [mu]
+      _ = omega0 ^ (4 : Ordinal) * (omega0 ^ (3 : Ordinal) * (mu a + 1) + omega0 ^ (2 : Ordinal) * (mu b + 1) + 2) + 1 := by
+        rw [mu_merge]
+      _ ≤ omega0 ^ (4 : Ordinal) + 1 := by
+        -- Using h2
+        exact add_le_add_right (mul_le_mul_left (omega0 ^ (4 : Ordinal)) ?_) 1
+      _ < omega0 ^ (mu a + mu b + 9) + 1 := by
+        -- Since omega^4 < omega^(mu a + mu b + 9)
+        exact add_lt_add_right h1 1
+```
+
+## Key Mathematical Insights Needed:
+
+1. **Ordinal Arithmetic Properties**:
+   - `opow_pos α h` : `0 < ω^α` when `0 < ω`
+   - `opow_lt_opow_right h₁ h₂` : `ω^α < ω^β` when `α < β` and `1 < ω`
+   - `mul_le_mul_left a h` : `a * b ≤ a * c` when `b ≤ c`
+   - `add_lt_add_right h c` : `a + c < b + c` when `a < b`
+
+2. **For `R_rec_succ`**: The key is that `ω^5 * (μ n + 1)` dominates `μ n + μ s + 6`, making `ω^(ω^5*(μ n+1)+...)` much larger than any polynomial in `ω^3` and `ω^2`.
+
+3. **For `R_eq_refl`**: Simple positivity argument since `ω^α ≥ 1` for any `α`.
+
+4. **For `R_eq_diff`**: The exponent `μ a + μ b + 9` is at least 9, which is greater than 4, so `ω^(μ a + μ b + 9) > ω^4`. Then show that `ω^4 * (ω^3*(μ a+1) + ω^2*(μ b+1) + 2) ≤ ω^4` since the parenthesized expression is ` < ω`.
+
+## Implementation Notes:
+
+- Use `omega_pos : 0 < ω` from Mathlib
+- Use `opow_pos` and `opow_lt_opow_right` for exponent comparisons
+- Use `mul_le_mul_left` and `add_le_add` for linear combinations
+- For finite ordinal comparisons, use `by decide` for concrete numbers
+- The proofs will need to fill in the `?` placeholders with specific ordinal arithmetic lemmas from Mathlib
+
+This skeleton provides the structure and key insights needed to complete the proofs. The actual implementation will require selecting the appropriate lemmas from Mathlib's ordinal arithmetic library.

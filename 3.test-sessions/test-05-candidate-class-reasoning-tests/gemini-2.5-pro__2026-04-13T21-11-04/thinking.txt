@@ -1,0 +1,8 @@
+**Evaluating Termination Measures**
+
+I'm currently focused on assessing three termination measures, `mu1`, `mu2`, and `mu3`, within a rewrite system implemented in Lean 4. The `Step` inductive proposition defines this system, and the objects being rewritten are `Trace` types. I'm investigating how each measure behaves with these system and object types.
+
+
+**Decomposing Rewrite Steps**
+
+I've successfully broken down the `Step` constructors, identifying the `a` and `b` terms for each. Now, the challenge is to define and test the measures (`mu1`, `mu2`, `mu3`) using these rule applications. I'm focusing on crafting definitions that can handle the `Trace` objects involved, to assess if they fit the termination criteria for each rewrite step.

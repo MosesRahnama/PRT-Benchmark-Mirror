@@ -1,0 +1,7 @@
+1. Informal structural decrease on the successor depth of the third argument.
+
+2. Yes, it implicitly assumes well-foundedness of successor chains (finite depth, no infinite `S(S(...))`), a meta-theoretic structural property not syntactically enforced or derivable solely from the rewrite rules.
+
+3. Yes.
+
+4. Yes.

@@ -1,0 +1,30 @@
+**Assessment of the lexicographic termination measure**
+
+The measure used for the rewrite system is  
+
+\[
+\text{measure}(t) = (\text{phase}(t),\; \text{cost}(t))
+\]
+
+with the lexicographic order \((p_1,c_1) > (p_2,c_2)\) iff  
+
+* \(p_1 > p_2\), or  
+* \(p_1 = p_2\) **and** \(c_1 > c_2\).
+
+Below each rewrite rule (`Step`) is examined to see whether the measure strictly decreases from the left‑hand side (LHS) to the right‑hand side (RHS).
+
+| Rule | LHS term | RHS term | `phase` LHS | `phase` RHS | Comparison | `cost` LHS | `cost` RHS | Verdict |
+|------|----------|----------|-------------|-------------|------------|------------|------------|---------|
+| **R_int_delta** | `integrate (delta t)` | `void` | 0 | 0 | equal → compare `cost` | `2 + cost t` | `0` | **decreases** |
+| **R_merge_void_left** | `merge void t` | `t` | 0 | `phase t` | If `phase t = 1` (i.e. `t` is a `recDelta … (delta …)`), then `phase` **increases** on the RHS. No guarantee of decrease. | `1 + cost t` | `cost t` | **fails** for `phase t = 1` |
+| **R_merge_void_right** | `merge t void` | `t` | 0 | `phase t` | Same issue as above. | `1 + cost t` | `cost t` | **fails** for `phase t = 1` |
+| **R_merge_cancel** | `merge t t` | `t` | 0 | `phase t` | If `phase t = 1`, RHS has larger `phase`. | `1 + 2·cost t` | `cost t` | **fails** for `phase t = 1` |
+| **R_rec_zero** | `recDelta b s void` | `b` | 0 | `phase b` | If `phase b = 1`, RHS has larger `phase`. | `1 + cost b + cost s` | `cost b` | **fails** for `phase b = 1` |
+| **R_rec_succ** | `recDelta b s (delta n)` | `app s (recDelta b s n)` | 1 | 0 | `phase` strictly decreases (1 → 0). | `1 + cost b + cost s + (1 + cost n)` | `1 + cost s + (1 + cost b + cost s + cost n)` | **decreases** (phase drop already guarantees) |
+| **R_eq_refl** | `eqW a a` | `void` | 0 | 0 | compare `cost` | `3 + 2·cost a` | `0` | **decreases** |
+| **R_eq_diff** | `eqW a b` | `integrate (merge a b)` | 0 | 0 | compare `cost` | `3 + cost a + cost b` | `2 + cost a + cost b` | **decreases** |
+
+### Overall conclusion
+The lexicographic measure **is not sound** for the whole system because several rules (`R_merge_void_left`, `R_merge_void_right`, `R_merge_cancel`, `R_rec_zero`) can increase the `phase` component when the RHS term has `phase = 1`. Since the measure must *strictly* decrease for every rewrite step, these counter‑examples break termination soundness.
+
+Therefore, the proposed measure does **not** guarantee termination of the rewrite calculus as defined.

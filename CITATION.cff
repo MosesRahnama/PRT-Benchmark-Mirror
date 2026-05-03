@@ -1,0 +1,47 @@
+cff-version: 1.2.0
+message: "If you use this dataset, please cite it as follows."
+type: dataset
+title: "PRT-Benchmark"
+version: "1.0.0"
+date-released: "2026-04-25"
+abstract: >
+  PRT-Benchmark is a benchmark of frontier large language model behavior on nine
+  formal-methods termination-reasoning task families, evaluated at the minimal
+  first-order primitive recursor F(x,y,Z) -> x, F(x,y,S(n)) -> G(y,F(x,y,n)).
+  The release covers 27 frontier models and 1,188 sessions, graded on three
+  axes (termination, witness adequacy, rule-extracted boundary admissibility)
+  against externally-checkable answer keys fixed by archived TTT2/CeTA
+  certifications and a companion mechanized Lean 4 theorem stack.
+authors:
+  - family-names: Anonymous
+    given-names: Anonymous
+    affiliation: Anonymous Authors
+    email: anonymized@neurips.invalid
+license-url: "<DATASET_FILE_URL_PLACEHOLDER>/LICENSE"
+license: "PolyForm-Noncommercial-1.0.0"
+repository-code: "<DATASET_URL_PLACEHOLDER>"
+url: "<DATASET_PAGES_URL_PLACEHOLDER>"
+keywords:
+  - benchmark
+  - termination
+  - primitive recursion
+  - first-order rewriting
+  - Lean 4
+  - TTT2
+  - CeTA
+  - dependency pairs
+  - formal methods
+  - LLM evaluation
+  - frontier models
+  - PRT
+  - KO7
+preferred-citation:
+  type: article
+  title: "The Primitive Recursor and the Representation-Shift Bottleneck in Frontier LLM Termination Reasoning"
+  authors:
+    - family-names: Anonymous
+      given-names: Anonymous
+      affiliation: Anonymous Authors
+      email: anonymized@neurips.invalid
+  year: 2026
+  url: "<DATASET_URL_PLACEHOLDER>"

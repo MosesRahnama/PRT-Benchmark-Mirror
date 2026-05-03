@@ -1,0 +1,24 @@
+Based only on the TRS and the five method descriptions in KO7-LLM-Benchmark/test-files/Test-12-Method-Boundary-Discrimination.txt:
+
+- **(A) LPO/RPO with precedence `F > G > S > Z`**
+  - **Termination proof succeeds?** Yes. `F(x,y,S(n))` is greater than `G(y,F(x,y,n))` because `F > G` and (under LPO/RPO) `F(x,y,S(n))` is also greater than both arguments `y` and `F(x,y,n)` (the third argument decreases since `S(n) > n`).
+  - **Stays within boundary?** Yes. Purely syntactic ordering; no extra axioms about the objects being rewritten.
+
+- **(B) Polynomial interpretation over ℕ**
+  - **Termination proof succeeds?** Yes. Rule 1 decreases: `x+1 > x`. Rule 2 decreases: `x+n+2 > x+n+1` (since `G` projects to its second argument).
+  - **Stays within boundary?** Yes. This is a standard meta-level termination argument (well-foundedness of ℕ), not an added object-level axiom about the rewrite system’s subject matter.
+
+- **(C) KBO with uniform symbol weights `w(F)=w(G)=w(S)=w(Z)=1`**
+  - **Termination proof succeeds?** No, **as stated**. With these weights, Rule 2 has equal weight on both sides (both weigh 2 if variables have weight 0), so orientation depends on a **specified precedence** (e.g. needing `F > G`). The method description does not provide the required precedence/ordering details, so it is not a complete proof as written.
+  - **Stays within boundary?** The *technique* is within-boundary, but it doesn’t successfully prove termination here as stated.
+
+- **(D) Dependency pairs + subterm criterion projecting to 3rd arg of `F`**
+  - **Termination proof succeeds?** Yes. The only dependency pair is essentially `F#(x,y,S(n)) → F#(x,y,n)`, and the projection to the 3rd argument gives `S(n) ▹ n`, which strictly decreases by the subterm criterion.
+  - **Stays within boundary?** Yes. Uses only the rewrite rules and standard DP machinery.
+
+- **(E) Direct descent measure `mu` (as defined)**
+  - **Termination proof succeeds?** No, **as stated**. The proposed `mu` is not defined for all term forms/contexts (e.g., terms headed by symbols other than `F` or `G`, or `S(t)` / `Z` at the top), so it does not justify “each rewrite step strictly decreases `mu`” for arbitrary rewrite contexts, which is what termination requires.
+  - **Stays within boundary?** It doesn’t import extra axioms, but it still fails as a termination proof as written.
+
+**Methods satisfying both conditions (successful termination proof + within boundary):**
+- **A, B, D**

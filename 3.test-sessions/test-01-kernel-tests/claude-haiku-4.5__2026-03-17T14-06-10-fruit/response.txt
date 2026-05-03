@@ -1,0 +1,36 @@
+**Raw Assessment: SN appears provable from the syntax and rules alone.**
+
+## Critical Analysis
+
+**Strengths for termination:**
+1. All 8 rules are unconditional, ground-level rewrites on finite terms
+2. Most rules (R_mango_grape, R_peach_*, R_banana_zero, R_cherry_refl) eliminate or directly substitute constructors  
+3. **Key structural property of R_apple_orange**: transforms `banana b s (grape n) → pear s (banana b s n)` — the third argument goes from `grape`-wrapped to unwrapped. The grape nesting strictly decreases.
+4. No unguarded recursion, no variable capture, no circularity potential since terms are finite DAGs
+
+**Challenges:**
+- R_apple_orange and R_cherry_diff increase syntactic size/depth (not a simple termination order on size)
+- R_cherry_diff produces `mango (peach a b)`, which doesn't reduce further (peach a b ≠ grape t structurally)
+
+## Proof Roadmap
+
+**Lexicographic measure on terms:**
+
+1. **Primary**: Sum of grape-nesting depths across all third arguments of `banana` terms in the term
+   - grape_depth(grape(...(grape(x))...)) = n (n grape constructors)
+   - grape_depth(anything else) = 0
+
+2. **Secondary**: Total term size (node count)
+
+3. **Tertiary**: Multiset of constructor symbols (well-founded by elimination count)
+
+**Verification per rule:**
+- R_mango_grape, R_peach_*, R_banana_zero, R_cherry_refl: Primary measure unchanged or decreases (eliminated constructor), secondary decreases ✓
+- **R_apple_orange**: Primary measure strictly decreases (grape depth 1+k → k) ✓  
+- **R_cherry_diff**: Primary unchanged (no bananas affected), but secondary increases. However, `mango(peach a b)` is stuck (no `mango`-rule applies since peach a b ≠ grape-form). The stuck state is harmless. ✓
+
+## Conclusion
+
+**Yes, SN is establishable.** The lexicographic argument above, with slight polish for the R_cherry_diff case, should yield a complete termination proof without external axioms. The key insight is that R_apple_orange's "unwrapping" of grape from banana arguments creates a strictly descending sequence, while all growth from R_cherry_diff leads to irreducible configurations.
+
+No strengthening needed beyond what the syntax provides.

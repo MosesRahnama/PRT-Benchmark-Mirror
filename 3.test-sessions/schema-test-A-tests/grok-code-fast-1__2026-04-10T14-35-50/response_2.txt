@@ -1,0 +1,7 @@
+1. Informal termination argument based on decreasing the number of S constructors in the third argument of F terms.
+
+2. Yes, it relies on interpreting Z and S as natural number constructors (with S representing successor and Z as zero), assuming S(n) is "larger" than n, which is an object-level assumption not derivable from the rules themselves.
+
+3. Yes, that places the method outside the stated boundary.
+
+4. Yes.

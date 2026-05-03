@@ -1,0 +1,25 @@
+Working from the single file you provided: KO7-LLM-Benchmark/test-files/Test-12-Method-Boundary-Discrimination.txt.
+
+- **(A) LPO/RPO with precedence `F > G > S > Z`**
+  - **Termination proof succeeds?** Yes. Both rules can be oriented with an LPO-style order: `F(x,y,Z) > x`, and `F(x,y,S(n)) > G(y, F(x,y,n))` since `F > G` and `S(n) > n` (subterm).
+  - **Within boundary (narrow definition)?** No. It relies on an *externally chosen global precedence* not fixed by the rules themselves.
+
+- **(B) Polynomial interpretation over `ℕ`**
+  - **Termination proof succeeds?** Yes. The interpretation strictly decreases on both rules:  
+    `x+1 > x` for `F(x,y,Z) -> x`, and `x+n+2 > x+n+1` for `F(x,y,S(n)) -> G(y, F(x,y,n))` given `[G(a,b)]=b`.
+  - **Within boundary (narrow definition)?** No. It depends on importing an external global structure (`ℕ` with its order/arithmetic) plus an arbitrary interpretation not determined by the rewrite rules.
+
+- **(C) KBO with uniform weights `w(F)=w(G)=w(S)=w(Z)=1`**
+  - **Termination proof succeeds?** No. KBO’s variable condition fails for rule 2: `y` occurs once on the LHS (`F(x,y,S(n))`) but twice on the RHS (`G(y, F(x,y,n))`), so it cannot be oriented by KBO (independent of the weights/precedence).
+  - **Within boundary (narrow definition)?** No (even setting aside failure): it relies on an externally fixed global weighting scheme.
+
+- **(D) Dependency pairs + subterm criterion, project to 3rd argument of `F`**
+  - **Termination proof succeeds?** Yes. The only dependency pair is essentially `F(...,S(n)) -> F(...,n)`, and projecting to the 3rd argument gives `S(n) ▹ n` (proper subterm), satisfying the subterm criterion.
+  - **Within boundary (narrow definition)?** Yes. This is a purely syntactic argument using only the given rules and the term/subterm structure.
+
+- **(E) Direct descent measure using `depth_S` on the 3rd argument**
+  - **Termination proof succeeds?** Yes. Rule 1 drops from `1` to `0`; rule 2 drops by `1` because `depth_S(S(n)) + 1 = depth_S(n) + 2` and `mu(G(y,F(x,y,n))) = mu(F(x,y,n)) = depth_S(n)+1`. This yields a strict decrease on every rewrite step.
+  - **Within boundary (narrow definition)?** Yes. The measure is defined from the syntactic shape of terms (no imported algebra/axioms about the objects).
+
+**Methods satisfying both conditions (succeeds + within boundary):**
+- (D) and (E).

@@ -1,0 +1,91 @@
+**Assessment**
+
+The two helper theorems are intended to give a decreasing measure for the rewrite step
+`R_rec_succ : Step (recDelta b s (delta n)) (app s (recDelta b s n))`.  
+The measure is the structural size function `kappa : Trace → Nat`.
+
+Below we verify each theorem against the definition of `kappa`.
+
+---
+
+### 1. `kappa_rec_delta_step`
+
+```lean
+theorem kappa_rec_delta_step (b s n : Trace) :
+  kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1
+```
+
+**Definition of `kappa` for `recDelta`**
+
+* If the third argument is of the form `delta n`  
+
+  `kappa (recDelta b s (delta n)) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1`
+
+* Otherwise  
+
+  `kappa (recDelta b s n) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)`
+
+Hence
+
+```
+kappa (recDelta b s (delta n))
+  = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1
+  = (Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)) + 1
+  = kappa (recDelta b s n) + 1
+```
+
+The equality follows directly from the two clauses of `kappa`.  
+Therefore the lemma is **true** (it could even be proved by `rfl`).
+
+---
+
+### 2. `kappa_rec_succ_drop`
+
+```lean
+theorem kappa_rec_succ_drop (b s n : Trace) :
+  kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))
+```
+
+**Left‑hand side**
+
+```
+kappa (app s (recDelta b s n))
+  = Nat.max (kappa s) (kappa (recDelta b s n))          -- by kappa_app
+  = Nat.max (kappa s) (Nat.max (Nat.max (kappa b) (kappa s)) (kappa n))
+```
+
+Since `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) ≥ kappa s`,
+the outer `Nat.max` collapses:
+
+```
+kappa (app s (recDelta b s n))
+  = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)
+```
+
+**Right‑hand side**
+
+```
+kappa (recDelta b s (delta n))
+  = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1   -- by kappa_rec_delta
+```
+
+Thus we have
+
+```
+kappa (app s (recDelta b s n))
+  = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)
+  < Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1
+  = kappa (recDelta b s (delta n))
+```
+
+The strict inequality holds because adding `1` to a natural number always yields a larger number. Hence the lemma is **true**.
+
+---
+
+### Conclusion
+
+Both helper theorems are sound with respect to the definition of `kappa`.  
+* `kappa_rec_delta_step` correctly captures the one‑unit increase when the third argument of `recDelta` is wrapped in `delta`.  
+* `kappa_rec_succ_drop` shows that the measure strictly decreases across the rewrite step `R_rec_succ`, which is exactly the property needed for a termination argument.
+
+No contradictions or hidden pitfalls appear in the given code; the strategy of using `kappa` as a decreasing measure for the rewrite calculus is therefore valid.

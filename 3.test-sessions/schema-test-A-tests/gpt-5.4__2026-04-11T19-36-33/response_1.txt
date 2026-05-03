@@ -1,0 +1,9 @@
+Yes, under the standard first-order TRS reading on finite terms, strong normalization is establishable from these rules alone.
+
+Reasoning: the only recursive rule is
+$F(x,y,S(n)) \to G(y,F(x,y,n))$,
+and the recursive call strictly decreases the third argument from $S(n)$ to $n$. There are no rewrite rules for $G$, $S$, or $Z$, so the system cannot regenerate a larger third argument or create a rewrite loop through those symbols. The base rule
+$F(x,y,Z) \to x$
+closes the recursion.
+
+A clean way to see it is that the rules are orientable by a standard well-founded term order such as lexicographic path ordering, with a precedence like $F \succ G \succ S \succ Z$: the second rule decreases because the recursive occurrence $F(x,y,n)$ is smaller than $F(x,y,S(n))$, and the outer symbol on the right is also lower-precedence. So no infinite rewrite sequence is derivable from the presented system alone, and no extra structural axioms are needed to conclude strong normalization.

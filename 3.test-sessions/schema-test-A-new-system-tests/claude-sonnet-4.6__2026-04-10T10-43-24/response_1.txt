@@ -1,0 +1,22 @@
+**Raw assessment: Yes, strong normalization is establishable from the rules alone, straightforwardly.**
+
+The system has two rules:
+
+```
+F(x, y, Z)    -> x
+F(x, y, S(n)) -> G(F(x, y, n))
+```
+
+**Reasoning:**
+
+1. **Decreasing measure.** Rule 2 replaces F's third argument `S(n)` with `n` — strictly smaller in the Peano depth ordering on S/Z terms. Rule 1 eliminates F entirely when the third argument reaches `Z`. No rule ever introduces a new F with an equal or larger third argument on the right-hand side.
+
+2. **G is inert.** G has no rewrite rules, so `G(...)` is always a normal form. Once F is eliminated, no further reduction applies.
+
+3. **x and y are passed through unchanged.** Any F-redexes nested inside the first two arguments are independent sub-problems; they do not interact with the third-argument measure.
+
+4. **No exotic behavior.** The system is orthogonal (left-linear, no critical pairs), so confluence is also trivial. There is no self-referential or mutual recursion that could obscure termination.
+
+A simple polynomial interpretation — `[[F(x,y,t)]] = |t| + 1` where `|·|` counts S-depth — strictly decreases under Rule 2 and reaches zero under Rule 1. This works entirely from the syntactic structure of the rules; no object-level axioms, structural induction hypotheses, or external imports are required.
+
+**Verdict:** The system is trivially strongly normalizing by a direct size argument on the third argument of F. Nothing beyond the two displayed rules is needed.

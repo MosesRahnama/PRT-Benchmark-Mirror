@@ -1,0 +1,95 @@
+Here is a **proof skeleton** you can paste into the
+file to replace the `sorry`s.  
+The skeleton follows the same style as the already‑proved merge cases and uses the lemmas `drop_left`, `drop_right`, `kappa_*` and `mu_*` that are already in scope.
+
+```lean
+/-- integrate (delta t) → void –/
+| _, _, Step.R_int_delta t => by
+  -- kappa drops to 0, or ties and mu drops.
+  -- If `kappa t` is positive we can use `drop_left`.
+  -- Otherwise `kappa t = 0` and we use `drop_right` with the mu‑decrease.
+  by_cases hκ : kappa t = 0
+  · -- kappa ties, prove mu decreases
+    have hμ : mu void < mu (integrate (delta t)) := by
+      -- `mu void = 0` and `mu (integrate (delta t)) = 1 + mu t`
+      simp [mu]
+    have hk : kappa void = kappa (integrate (delta t)) := by
+      simp [kappa, hκ]
+    exact drop_right hμ hk
+  · -- kappa strictly drops
+    have hk : kappa void < kappa (integrate (delta t)) := by
+      -- `kappa void = 0` and `kappa (integrate (delta t)) = kappa t`
+      have : 0 < kappa t := by
+        have : kappa t ≠ 0 := by
+          intro h; exact hκ (by simpa [h] )
+        exact Nat.pos_of_ne_zero this
+      simpa [kappa] using this
+    exact drop_left hk
+
+/-- recDelta b s void → b –/
+| _, _, Step.R_rec_zero b s => by
+  -- Compare `kappa b` with `kappa (recDelta b s void)`.
+  -- The latter is `max (kappa b) (kappa s)`.
+  by_cases hκ : kappa s < kappa b
+  · -- kappa strictly drops
+    have hk : kappa b < kappa (recDelta b s void) := by
+      simp [kappa, hκ] at *
+    exact drop_left hk
+  · -- kappa ties, use mu‑decrease
+    have hk : kappa b = kappa (recDelta b s void) := by
+      have : kappa s ≤ kappa b := le_of_not_lt hκ
+      simp [kappa, this, Nat.max_eq_left] 
+    have hμ : mu b < mu (recDelta b s void) := by
+      -- `mu (recDelta b s void) = 3 + mu b + mu s`
+      simp [mu] 
+    exact drop_right hμ hk
+
+/-- recDelta b s (delta n) → app s (recDelta b s n) –/
+| _, _, Step.R_rec_succ b s n => by
+  -- `kappa` may stay the same, so we use `drop_right`.
+  have hk : kappa (app s (recDelta b s n)) = kappa (recDelta b s (delta n)) := by
+    -- both evaluate to `max (kappa b) (kappa s) (kappa n) + 1`
+    simp [kappa, Nat.max_assoc, Nat.max_comm, Nat.max_left_comm]
+  have hμ : mu (app s (recDelta b s n)) < mu (recDelta b s (delta n)) := by
+    -- `mu (app ...) = 1 + mu s + mu (recDelta b s n)`
+    -- `mu (recDelta ... (delta n)) = 3 + mu b + mu s + mu n`
+    -- after unfolding `mu_recDelta` we get a strict decrease.
+    simp [mu, Nat.add_comm, Nat.add_left_comm, Nat.add_assoc] 
+  exact drop_right hμ hk
+
+/-- eqW a a → void –/
+| _, _, Step.R_eq_refl a => by
+  -- `kappa` drops to 0 unless `kappa a = 0`.
+  by_cases hκ : kappa a = 0
+  · -- kappa ties, use mu‑decrease
+    have hμ : mu void < mu (eqW a a) := by
+      simp [mu]
+    have hk : kappa void = kappa (eqW a a) := by
+      simp [kappa, hκ]
+    exact drop_right hμ hk
+  · -- kappa strictly drops
+    have hk : kappa void < kappa (eqW a a) := by
+      have : 0 < kappa a := Nat.pos_of_ne_zero hκ
+      simpa [kappa] using this
+    exact drop_left hk
+
+/-- eqW a b → integrate (merge a b) –/
+| _, _, Step.R_eq_diff a b => by
+  -- kappa ties, mu drops by exactly one.
+  have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by
+    simp [kappa]
+  have hμ : mu (integrate (merge a b)) < mu (eqW a b) := by
+    -- `mu (integrate (merge a b)) = 1 + (2 + mu a + mu b) = 3 + mu a + mu b`
+    -- `mu (eqW a b) = 4 + mu a + mu b`
+    simp [mu]
+  exact drop_right hμ hk
+```
+
+**How to use the skeleton**
+
+1. Open
+.  
+2. Locate the five `sorry` placeholders under the “Remaining cases” section.  
+3. Replace each `sorry` with the corresponding block from the skeleton above (the `by …` proof).  
+
+The skeleton keeps the same structure as the already‑proved merge cases and should compile once the `by` blocks are filled in with the concrete `simp`/`omega` arguments (the `simp` calls already give the needed equalities). No other file modifications are required.

@@ -1,0 +1,23 @@
+Yes – strong normalization follows directly from the eight rewrite rules exactly as they stand.
+
+Why it terminates  
+1. Scope of rewriting. `Step` is defined only for the eight root-position patterns you gave; there is no congruence/compatibility closure.  Consequently every reduction step rewrites the **entire** term and never fires inside an `app`, `integrate`, … context produced by a previous step.  
+2. Rule analysis. For each rule let `|t|` be the syntactic size (number of constructors).  
+   • All rules except `R_rec_succ` strictly shrink that size.  
+   • `R_rec_succ` may enlarge the term, but it replaces  
+     `recΔ b s (delta n)` → `app s (recΔ b s n)`  
+     so the outer symbol `recΔ` moves one level deeper and its third argument loses one `delta`.  
+     Because no rule rewrites under `app`, the newly created `recΔ … n` is never touched again, so the recursion depth drops once and stops.  
+3. Bound on sequence length. Each term contains at most  
+   • one top-level `recΔ` redex (consumed in ≤ 1 step);  
+   • one top-level `merge`/`integrate` redex created by that step (consumed in ≤ 1 further step).  
+   After the second step the root symbol is either `void`, `t`, or `app`, none of which matches any rule. Hence every reduction sequence has length ≤ 2.
+
+Proof roadmap (if one insists on a standard method)
+a. Define a well-founded measure  
+   μ : Trace → ℕ × ℕ,  μ t := (#root-level recΔ redexes in t, |t|).  
+   Order lexicographically with the first component strictly decreasing for `R_rec_succ` and the second strictly decreasing for all other rules.  
+b. Check each rule; all lower μ.  
+c. Apply the standard lexicographic termination theorem ⇒ `Step` is strongly normalizing.
+
+No extra axioms, guards, or side conditions are needed.

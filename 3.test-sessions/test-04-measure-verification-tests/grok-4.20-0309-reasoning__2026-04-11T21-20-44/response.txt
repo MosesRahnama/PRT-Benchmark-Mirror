@@ -1,0 +1,34 @@
+**The proposed lexicographic measure `(phase t, cost t)` is not sound.**
+
+### Summary of the calculus
+- `Trace` encodes terms in a first-order rewrite system (with constructors for `void`, `delta`, `integrate`, `merge`, `app`, `recDelta`, and `eqW`).
+- `Step` is the one-step rewrite relation, defined by 8 constructors that encode the allowed reductions.
+- `phase` returns `1` **only** for terms whose top-level constructor is exactly `recDelta _ _ (.delta _)`. All other terms have `phase = 0`.
+- `cost` is a structural size measure (with a special weight of `3` for `eqW`).
+- The claimed termination measure is the lexicographic order on `Nat × Nat` (first `phase`, then `cost`).
+
+### Why it fails
+A sound measure must satisfy: for every `Step t t'`, `measure t' < measure t` (in the chosen lex order).
+
+The merge rules are the problem:
+
+- `R_merge_void_left`: `Step (merge void t) t`
+- `R_merge_void_right`: `Step (merge t void) t`
+- `R_merge_cancel`: `Step (merge t t) t`
+
+When the right-hand side `t` (or the duplicated `t`) is a top-level `recDelta _ _ (.delta _)`, we have:
+- LHS: `phase = 0`, `cost = 1 + cost(void) + cost(t)` (or similar for the other rules) → measure `(0, 1 + cost(t))` (approximately).
+- RHS: `phase = 1`, `cost = cost(t)` → measure `(1, cost(t))`.
+
+In lexicographic order on `(phase, cost)`:
+- `(0, k)` < `(1, m)` for any `k, m` (the first component decides).
+- The rewrite therefore **increases** the measure.
+
+The same increase occurs for any rewrite that “unwraps” a `void` or cancels a duplicate to expose a phase-1 term. The other rules (including the critical `R_rec_succ`, which moves from phase 1 to phase 0) do decrease the measure, but the existence of even one increasing case makes the whole measure unsound for proving termination of the rewrite system.
+
+### Additional observations (without running code)
+- The `phase` flag appears to be an attempt to give special priority to recursive `delta` cases.
+- However, the merge rules can introduce such terms from a phase-0 context, breaking the intended strict decrease.
+- The `cost` component alone is also insufficient, because some rules (e.g., `R_eq_diff`) rely on the phase distinction to guarantee progress.
+
+**Conclusion**: The measure is not sound. A correct termination argument would require a different (or refined) measure that strictly decreases on *all* rules, for example by incorporating a multiset of phases, a different primary rank that cannot increase on merges, or a more global structural measure on the entire `Trace`.

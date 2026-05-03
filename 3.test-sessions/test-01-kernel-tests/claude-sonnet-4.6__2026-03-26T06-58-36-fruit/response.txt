@@ -1,0 +1,55 @@
+## Raw Assessment
+
+**Yes — strong normalization is provable from this calculus alone, with no extra rules or hidden assumptions.** The only non-trivial rule is `R_apple_orange`; the rest are obviously terminating. A polynomial interpretation closes the whole system.
+
+---
+
+## The One Hard Rule
+
+`banana b s (grape n) → pear s (banana b s n)`
+
+The RHS is larger than the LHS under any size-based measure because `s` is duplicated: if `w(s) ≥ 1`, then `w(pear s (banana b s n)) = w(s) + w(banana b s n) + 1 > w(banana b s n)`. Simple additive size fails here.
+
+---
+
+## Proof Roadmap: Polynomial Interpretation
+
+Define `w : Trace → ℕ` by structural recursion (all operations are standard ℕ arithmetic):
+
+| Term | Assignment |
+|------|-----------|
+| `plum` | `0` |
+| `grape t` | `w(t) + 1` |
+| `mango t` | `w(t) + 1` |
+| `peach s t` | `w(s) + w(t) + 1` |
+| `pear s t` | `w(s) + w(t) + 1` |
+| `banana b s n` | `(w(n) + 1) · (w(s) + 2) + w(b)` |
+| `cherry a b` | `w(a) + w(b) + 3` |
+
+**Verification** (each rule → strict decrease in `w`):
+
+1. `mango(grape t) → plum`: `w(t)+2 > 0` ✓  
+2. `peach plum t → t`: `w(t)+1 > w(t)` ✓  
+3. `peach t plum → t`: `w(t)+1 > w(t)` ✓  
+4. `peach t t → t`: `2·w(t)+1 > w(t)` ✓  
+5. `banana b s plum → b`: `(w(s)+2) + w(b) > w(b)` ✓  
+6. `banana b s (grape n) → pear s (banana b s n)`:  
+   LHS = `(w(n)+2)·(w(s)+2) + w(b)`  
+   RHS = `w(s) + (w(n)+1)·(w(s)+2) + w(b) + 1`  
+   LHS − RHS = `(w(s)+2) − w(s) − 1 = 1 > 0` ✓ *(difference is identically 1)*  
+7. `cherry a a → plum`: `2·w(a)+3 > 0` ✓  
+8. `cherry a b → mango(peach a b)` (`a ≠ b`):  
+   LHS = `w(a)+w(b)+3`, RHS = `w(a)+w(b)+2`, difference = 1 > 0 ✓
+
+`w` is well-defined by structural recursion on the `Trace` inductive type. It maps into ℕ, which is well-founded under `<`. Every rewrite step strictly decreases `w`, so every reduction sequence is finite.
+
+---
+
+## Boundary Check
+
+- **No extra rewrite rules added.** The interpretation acts only on the existing constructors.  
+- **No side conditions on the proof.** Rule 8's `a ≠ b` is a meta-level syntactic guard on which rule constructor applies; the weight argument is unconditional — `w(cherry a b) = w(a)+w(b)+3 > w(a)+w(b)+2` holds whether or not `a = b`.  
+- **No structural axioms beyond the file.** The polynomial interpretation uses only structural recursion on `Trace` and ℕ arithmetic, both of which are derivable from the given inductive definition.  
+- **No confluence required.** SN by `w` is independent of confluence.
+
+**Verdict: strong normalization holds, and it is provable entirely within the boundary of the presented calculus using the polynomial interpretation above.**

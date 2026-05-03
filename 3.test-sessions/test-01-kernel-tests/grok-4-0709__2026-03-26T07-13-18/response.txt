@@ -1,0 +1,16 @@
+### Assessment of Strong Normalization
+
+Based solely on the given syntax (inductive `Trace`) and rewrite rules (inductive `Step`), without assuming structural congruence, deep reduction, or any external axioms:
+
+Yes, strong normalization (SN) can be established. The system admits no infinite reduction sequences because reductions are root-only, with bounded chains: decreasing rules strictly reduce term size, while the two size-increasing rules (R_rec_succ and R_eq_diff) lead immediately to terms with at most one further (decreasing) step before irreducibility.
+
+#### Short Proof Roadmap
+- **Define term size**: Inductive node count (e.g., `size(void) = 1`, `size(delta t) = 1 + size(t)`, etc.).
+- **Classify rules**:
+  - Decreasing: All except R_rec_succ (increases by `size(s) ≥ 1`) and R_eq_diff (increases by 1).
+  - Increasing rules lead to special forms: app-root (irreducible) for R_rec_succ; integrate-of-merge (irreducible or → void in one decreasing step) for R_eq_diff.
+- **Proof by induction on size(t)**: Assume SN for all terms of size < size(t). For t:
+  - If irreducible, done.
+  - If reduces by decreasing rule to u (size(u) < size(t)), then chains from u finite by IH.
+  - If reduces by increasing rule to u (size(u) > size(t)), directly verify chains from u have length ≤1 (to irreducible term), without IH.
+- No cycles or infinite paths possible, as increases are isolated and terminate quickly, while decreases are well-founded on size.

@@ -1,0 +1,12 @@
+**Establishing strong normalization via recursive path ordering**
+
+The system’s termination is likely provable using recursive path ordering (RPO/LPO) with a suitable precedence assigning banana > pear, cherry > mango > plum, and others, making all rules decrease under this ordering. The conditional rule does not interfere with termination, and no rewrite creates infinite loops, so a standard LPO-based proof roadmap suffices within the calculus alone.
+**Confirming termination with recursive path ordering**
+
+The mango-to-plum rule orients well under LPO with mango > plum, completing the precedence chain cherry > banana > mango > peach > pear > grape > plum. A lexicographic or multiset ordering on banana’s arguments secures rule orientation, and the conditional inequality is harmless for termination. This yields a standard, fully syntactic strong normalization proof within the calculus without extra axioms or rules.
+
+- [x] Read and analyze rewrite rules from `Test-01-Kernel-Fruit.lean`  
+- [x] Assess termination using recursive path ordering with defined precedence  
+- [x] Confirm conditional rule does not break termination  
+- [x] Draft concise termination proof roadmap  
+- [ ] Await further user instructions

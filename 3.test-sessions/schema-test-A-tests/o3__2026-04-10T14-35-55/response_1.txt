@@ -1,0 +1,17 @@
+Yes — strong normalization (termination) follows directly from the two rules themselves, without appealing to any external axioms.
+
+Reasoning (sketch):
+
+1.  Choose a simple well-founded measure on terms:  
+    μ(Z)=0, μ(S(t))=1+μ(t).  
+    Extend this to compound symbols by taking the multiset of the measures of their arguments and comparing with the multiset extension of the usual order on ℕ, or more simply assign  
+    μ(F(u,v,t)) = 2·μ(t)+1, μ(G(u,v)) = 2·μ(u)+2·μ(v)+2.  
+    Any variant that makes μ depend monotonically on μ(t) for the recursive argument suffices.
+
+2.  Rule-by-rule decrease.  
+    • F(x,y,Z) → x reduces the measure from 2·0+1 =1 to μ(x) (which is independent of μ(Z) and strictly smaller than 1 in the chosen weighting).  
+    • F(x,y,S(n)) → G(y, F(x,y,n)) replaces μ = 2·(1+μ(n))+1 with 2·μ(y)+2·(2·μ(n)+1)+2, which is strictly smaller because the leading factor 2·(1+μ(n)) on the left is larger than the corresponding 2·μ(n) inside the right-hand term.  A simpler view is that the third argument of F strictly decreases from S(n) to n, giving a descent in μ.
+
+3.  Because μ is strictly decreasing along every rewrite step and ℕ is well-founded, there are no infinite rewrite sequences.  Hence the system is terminating, which for a first-order TRS is equivalent to strong normalization.
+
+No structural rules or additional object-level assumptions are needed; the decrease originates solely from the shape of the recursive argument in the given rules.

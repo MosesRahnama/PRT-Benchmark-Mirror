@@ -1,0 +1,47 @@
+The Lean 4 file defines a first-order rewrite calculus with the following components:
+
+### Rewrite Calculus
+1. **Trace**: An inductive type representing various operations:
+   - `void`: Represents an empty trace.
+   - `delta`, `integrate`, `merge`, `app`, `recDelta`, `eqW`: Constructors representing different operations on traces.
+
+2. **Step**: A relation (`Trace -> Trace -> Prop`) defining rewrite rules:
+   - Examples include:
+     - `R_int_delta`: Simplifies `integrate (delta t)` to `void`.
+     - `R_merge_void_left` and `R_merge_void_right`: Handle merging with `void`.
+     - `R_rec_succ`: Defines recursive application of `recDelta`.
+     - `R_eq_refl` and `R_eq_diff`: Handle equality rewrites.
+
+### Termination Measures
+Three candidate measures (`mu1`, `mu2`, `mu3`) are defined to assess termination of the rewrite system. Each measure maps a `Trace` to a natural number (`Nat`), assigning weights to the constructors.
+
+#### Measure Definitions
+1. **`mu1`**:
+   - Assigns a base weight of `1` to most constructors, with additional weights for nested traces.
+   - `eqW` has a higher base weight of `3`.
+
+2. **`mu2`**:
+   - Similar to `mu1`, but assigns higher weights to `integrate`, `merge`, `recDelta`, and `eqW`.
+
+3. **`mu3`**:
+   - Assigns weights emphasizing `app` and `eqW` more than `mu1`, while reducing the weight of `merge`.
+
+### Assessment of Termination Measures
+1. **`mu1`**:
+   - Strengths: Simple and uniform, with a clear progression for nested traces.
+   - Weaknesses: May not adequately differentiate between operations like `integrate` and `merge`.
+
+2. **`mu2`**:
+   - Strengths: Assigns higher weights to operations like `integrate` and `recDelta`, which are more complex.
+   - Weaknesses: May overemphasize certain operations, potentially leading to overly conservative termination checks.
+
+3. **`mu3`**:
+   - Strengths: Balances weights across operations, emphasizing `app` and `eqW` more than `mu1`.
+   - Weaknesses: Lower weight for `merge` might underestimate its impact on termination.
+
+### Conclusion
+- **`mu1`** is the simplest and most uniform but may lack precision for complex traces.
+- **`mu2`** is more detailed, assigning higher weights to complex operations, but may be overly conservative.
+- **`mu3`** strikes a balance, emphasizing key operations while maintaining simplicity.
+
+The choice of measure depends on the specific requirements of the rewrite system, such as the need for precision versus simplicity.

@@ -1,0 +1,22 @@
+The proposed lexicographic termination measure (phase t, cost t) is not sound for this rewrite calculus.
+
+### Analysis
+The measure uses lexicographic ordering on pairs (phase, cost), where:
+- Phase is 1 for terms of the form `recDelta b s (delta n)`, and 0 otherwise.
+- Cost is a natural number computed recursively as defined.
+
+For termination, the measure must strictly decrease on every possible application of a rewrite rule. However, several rules violate this:
+
+- **R_merge_void_left**: `merge void t → t`  
+  If `t` has phase 1 (e.g., `recDelta b s (delta n)`), then the left side has measure (0, 1 + cost t) and the right side has measure (1, cost t). Since 0 < 1, the measure increases rather than decreases.
+
+- **R_merge_void_right**: `merge t void → t`  
+  Same issue as above if `t` has phase 1.
+
+- **R_merge_cancel**: `merge t t → t`  
+  Same issue as above if `t` has phase 1.
+
+- **R_rec_zero**: `recDelta b s void → b`  
+  Same issue as above if `b` has phase 1.
+
+The other rules (R_int_delta, R_rec_succ, R_eq_refl, R_eq_diff) do decrease the measure, but the existence of counterexamples in the above rules means the measure is not sound overall. This allows for potential infinite rewrite sequences where the measure can increase.

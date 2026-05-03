@@ -1,0 +1,17 @@
+I'll analyze the provided term rewriting system for strong normalization.
+## Assessment
+
+**Strong normalization cannot be established from this rewriting system alone.**
+
+### Reasoning
+
+1. **Missing definition for G**: The second rule introduces a function symbol `G` in its right-hand side, but no rewrite rules are provided to define how `G` reduces. Without rules governing `G`, we cannot determine whether the system terminates. `G` could loop indefinitely or generate infinite terms.
+
+2. **Structural recursion via F**: The rule `F(x, y, S(n)) -> G(y, F(x, y, n))` replaces a single application with a call to `G` containing a recursive call to `F`. The recursion on `F` is well-founded (the argument `n` decreases via the `S` constructor), but the introduction of `G` creates a dependency that breaks the proof of termination.
+
+3. **No termination argument for the full system**: Even though `F` itself exhibits structural recursion that would terminate in isolation, the coupling with undefined `G` makes the overall system's termination unprovable without additional information about `G`'s behavior.
+
+To establish strong normalization, you would need either:
+- Explicit rewrite rules defining `G`,
+- A proof that `G` itself is normalizing, or
+- A typing discipline or other structural constraint that guarantees termination of the combined system.

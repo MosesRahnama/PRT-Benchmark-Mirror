@@ -1,0 +1,37 @@
+Based on the analysis of the Lean 4 file and the three termination measures (mu1, mu2, mu3), here's my assessment of the candidates:
+
+### Analysis of Termination Measures
+1. **mu1**:
+   - Simple additive measure
+   - Fails to decrease for `R_rec_succ` rule:
+     - LHS: `recDelta b s (delta n)` → `1 + mu1 b + mu1 s + 1 + mu1 n = 2 + mu1 b + mu1 s + mu1 n`
+     - RHS: `app s (recDelta b s n)` → `1 + mu1 s + (1 + mu1 b + mu1 s + mu1 n) = 2 + mu1 b + 2*mu1 s + mu1 n`
+     - LHS < RHS when `mu1 s > 0` (common case)
+
+2. **mu2**:
+   - Higher weights for complex constructs
+   - Also fails for `R_rec_succ`:
+     - LHS: `5 + mu2 b + mu2 s + 1 + mu2 n = 6 + mu2 b + mu2 s + mu2 n`
+     - RHS: `1 + mu2 s + (5 + mu2 b + mu2 s + mu2 n) = 6 + mu2 b + 2*mu2 s + mu2 n`
+     - LHS < RHS when `mu2 s > 0`
+
+3. **mu3**:
+   - More balanced weights
+   - Still fails for `R_rec_succ`:
+     - LHS: `1 + mu3 b + mu3 s + 1 + mu3 n = 2 + mu3 b + mu3 s + mu3 n`
+     - RHS: `2 + mu3 s + (1 + mu3 b + mu3 s + mu3 n) = 3 + mu3 b + 2*mu3 s + mu3 n`
+     - LHS < RHS when `mu3 s > 0`
+
+### Key Observations
+- All three measures fail to satisfy the termination condition for the `R_rec_succ` reduction rule
+- The core issue is the `recDelta` to `app` transformation where the measure increases
+- The measures work correctly for simpler rules (`R_int_delta`, `R_merge_void`, etc.)
+- The recursive structure of `recDelta` seems problematic for these linear measures
+
+### Recommendation
+None of the three measures can prove termination of the rewrite system due to the failure on `R_rec_succ`. A different termination approach is needed, possibly:
+1. A lexicographic combination of measures
+2. A measure that accounts for the recursive structure of `recDelta`
+3. A well-founded relation based on subterm structure
+
+The most promising candidate is mu3 due to its more balanced weights, but it still fails for the critical `recDelta` case.

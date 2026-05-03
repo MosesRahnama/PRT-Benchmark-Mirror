@@ -1,0 +1,23 @@
+The helper theorems (`kappa_rec_delta_step` and `kappa_rec_succ_drop`) are sound as written. They correctly establish properties of the `kappa` measure that support a termination argument for the rewrite calculus, specifically ensuring that `kappa` decreases strictly in the `R_rec_succ` step.
+
+### Supporting Calculations for `kappa_rec_delta_step`
+This theorem states that `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`.  
+- By the definition of `kappa`:  
+  `kappa (recDelta b s (delta n)) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1`  
+  `kappa (recDelta b s n) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)`  
+- The common subexpression `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)` appears in both, so the difference is exactly `+1`.  
+- This holds for all `b`, `s`, `n : Trace`.
+
+### Supporting Calculations for `kappa_rec_succ_drop`
+This theorem states that `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`.  
+- Let `m = Nat.max (kappa b) (kappa s)`.  
+- Then:  
+  `kappa (recDelta b s (delta n)) = Nat.max m (kappa n) + 1`  
+  `kappa (recDelta b s n) = Nat.max m (kappa n)`  
+  `kappa (app s (recDelta b s n)) = Nat.max (kappa s) (kappa (recDelta b s n)) = Nat.max (kappa s) (Nat.max m (kappa n))`  
+- Since `kappa s ≤ m` (by definition of `m`), `Nat.max (kappa s) (Nat.max m (kappa n)) = Nat.max m (kappa n)`.  
+- Thus: `kappa (app s (recDelta b s n)) = Nat.max m (kappa n)` and `kappa (recDelta b s (delta n)) = Nat.max m (kappa n) + 1`.  
+- The inequality `Nat.max m (kappa n) < Nat.max m (kappa n) + 1` holds in `Nat` (natural numbers).  
+- This holds for all `b`, `s`, `n : Trace`.
+
+These theorems are provable in Lean 4 and ensure strict decrease of `kappa` in the `R_rec_succ` rewrite step, which is necessary for termination. No other steps or broader termination of the calculus were assessed, as the query was limited to the helper strategy.

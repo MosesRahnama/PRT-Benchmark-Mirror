@@ -1,0 +1,3 @@
+**Yes**, strong normalization can be established from the presented rewrite system alone.
+
+The TRS is orthogonal (non-overlapping rules, as `Z` is a constant not matching `S(n)`), with F as the sole defined symbol. Rule 1 handles the base case `F(x, y, Z) → x`, directly terminating. Rule 2 recursively unwraps successors: `F(x, y, S(n)) → G(F(x, y, n))`, strictly decreasing the nesting depth of S in the third argument (measure: number of S nodes). Constructors G, S, Z are irreducible. Subterm reductions in x/y are finite (induction on term size), and no cycles or size increases occur, ensuring all sequences terminate.

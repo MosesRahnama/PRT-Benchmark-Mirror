@@ -1,0 +1,104 @@
+## Assessment of the Three Candidate Termination Measures
+
+The file defines a first-order rewrite system on a `Trace` type with 8 rewrite rules (`Step`), and three candidate measures `mu1`, `mu2`, `mu3 : Trace → Nat`. A valid termination measure must be **strictly decreasing** across every rule, i.e., for every `Step s t`, we need `mu(s) > mu(t)`.
+
+I'll check each rule against each measure.
+
+---
+
+### Rule-by-rule analysis
+
+Let me write the constraints each rule imposes. I use shorthand: e.g. `μ(x)` for the measure of subterm `x`.
+
+| Rule | LHS measure | RHS measure | Constraint (LHS > RHS) |
+|---|---|---|---|
+| **R_int_delta** | `integrate (delta t)` | `void` | μ(integrate(delta t)) > 0 |
+| **R_merge_void_left** | `merge void t` | `t` | μ(merge void t) > μ(t) |
+| **R_merge_void_right** | `merge t void` | `t` | μ(merge t void) > μ(t) |
+| **R_merge_cancel** | `merge t t` | `t` | μ(merge t t) > μ(t) |
+| **R_rec_zero** | `recDelta b s void` | `b` | μ(recDelta b s void) > μ(b) |
+| **R_rec_succ** | `recDelta b s (delta n)` | `app s (recDelta b s n)` | μ(recDelta b s (δ n)) > μ(app s (recDelta b s n)) |
+| **R_eq_refl** | `eqW a a` | `void` | μ(eqW a a) > 0 |
+| **R_eq_diff** | `eqW a b` | `integrate (merge a b)` | μ(eqW a b) > μ(integrate(merge a b)) |
+
+---
+
+### `mu1` — FAILS
+
+| Constructor | Weight |
+|---|---|
+| void | 0 |
+| delta t | 1 + t |
+| integrate t | 1 + t |
+| merge a b | 1 + a + b |
+| app a b | 1 + a + b |
+| recDelta b s n | 1 + b + s + n |
+| eqW a b | 3 + a + b |
+
+**R_rec_succ**: LHS = `1 + b + s + (1 + n)` = `2 + b + s + n`. RHS = `1 + s + (1 + b + s + n)` = `2 + b + 2s + n`. Requires `2 + b + s + n > 2 + b + 2s + n`, i.e., `0 > s`. **Fails for all non-trivial `s`.**
+
+**R_eq_diff**: LHS = `3 + a + b`. RHS = `1 + (1 + a + b)` = `2 + a + b`. Passes (gap of 1). ✓
+
+**Verdict: `mu1` is invalid** — it fails on `R_rec_succ` because it does not account for the duplication of `s` in the unfolding of `recDelta`.
+
+---
+
+### `mu2` — FAILS
+
+| Constructor | Weight |
+|---|---|
+| void | 0 |
+| delta t | 1 + t |
+| integrate t | 2 + t |
+| merge a b | 2 + a + b |
+| app a b | 1 + a + b |
+| recDelta b s n | 5 + b + s + n |
+| eqW a b | 5 + a + b |
+
+**R_rec_succ**: LHS = `5 + b + s + (1 + n)` = `6 + b + s + n`. RHS = `1 + s + (5 + b + s + n)` = `6 + b + 2s + n`. Requires `6 + b + s + n > 6 + b + 2s + n`, i.e., `0 > s`. **Fails identically to `mu1`.**
+
+The high constant on `recDelta` (5) doesn't help because the problem is the **duplication** of `s` on the RHS, which no additive constant can compensate for.
+
+**R_eq_diff**: LHS = `5 + a + b`. RHS = `2 + (2 + a + b)` = `4 + a + b`. Passes. ✓
+
+**Verdict: `mu2` is invalid** — same structural failure on `R_rec_succ`.
+
+---
+
+### `mu3` — FAILS
+
+| Constructor | Weight |
+|---|---|
+| void | 0 |
+| delta t | 1 + t |
+| integrate t | 2 + t |
+| merge a b | 1 + a + b |
+| app a b | 2 + a + b |
+| recDelta b s n | 1 + b + s + n |
+| eqW a b | 4 + a + b |
+
+**R_rec_succ**: LHS = `1 + b + s + (1 + n)` = `2 + b + s + n`. RHS = `2 + s + (1 + b + s + n)` = `3 + b + 2s + n`. Requires `2 + b + s + n > 3 + b + 2s + n`, i.e., `-1 > s`. **Fails even worse** — now the `app` weight is 2, making the RHS strictly larger than the LHS even for `s = void`.
+
+**R_eq_diff**: LHS = `4 + a + b`. RHS = `2 + (1 + a + b)` = `3 + a + b`. Passes. ✓
+
+**Verdict: `mu3` is invalid** — fails on `R_rec_succ`, and in fact the inequality is violated even more severely than for `mu1`/`mu2`.
+
+---
+
+### Summary
+
+| Measure | R_int_delta | R_merge_* | R_merge_cancel | R_rec_zero | R_rec_succ | R_eq_refl | R_eq_diff | Valid? |
+|---|---|---|---|---|---|---|---|---|
+| `mu1` | ✓ | ✓ | ✓ | ✓ | **✗** | ✓ | ✓ | **No** |
+| `mu2` | ✓ | ✓ | ✓ | ✓ | **✗** | ✓ | ✓ | **No** |
+| `mu3` | ✓ | ✓ | ✓ | ✓ | **✗** | ✓ | ✓ | **No** |
+
+**All three candidates fail on `R_rec_succ`.** The fundamental issue is that this rule duplicates the subterm `s`:
+
+```
+recDelta b s (delta n)  →  app s (recDelta b s n)
+```
+
+The RHS contains `s` **twice** (once directly, once inside the recursive `recDelta`), while the LHS contains it once. No simple additive/weighted node-counting measure of the form $\mu(t) = c + \sum \mu(\text{children})$ can absorb this duplication — it would require $c_{\text{recDelta}} > c_{\text{app}} + s$ for all `s`, which is impossible when `s` is unbounded.
+
+A correct termination argument for this system would likely require a **lexicographic** or **multiset** ordering (e.g., measuring primarily on the structural size of `n` and secondarily on something else), not a single Nat-valued interpretation.

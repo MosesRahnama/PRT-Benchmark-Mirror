@@ -1,0 +1,71 @@
+## Analysis of Methods A–E
+
+**The system:**
+- `F(x, y, Z) → x`
+- `F(x, y, S(n)) → G(y, F(x, y, n))`
+
+Only `F` is defined (has rewrite rules). `G`, `S`, `Z` are constructors.
+
+---
+
+### Method A — LPO with F > G > S > Z
+
+**Succeeds?** Yes.
+- Rule 1: `F(x, y, Z) →lpo x` holds because `x` is a proper subterm of the LHS.
+- Rule 2: `F(x, y, S(n)) →lpo G(y, F(x, y, n))`— root `F > G`, so check all arguments of `G` are LPO-smaller than the LHS. `y` is a subterm of the LHS ✓; `F(x, y, n) <lpo F(x, y, S(n))` because at the differing position (third arg), `n` is a proper subterm of `S(n)` ✓.
+
+**Within boundary?** Yes. The precedence `F > G > S > Z` is fixed locally by needing the rules to go through; it is not an arbitrary imported global structural choice.
+
+---
+
+### Method B — Polynomial interpretation over ℕ
+
+**Succeeds?** Yes.
+- Rule 1: `[F(x,y,Z)] = x + 0 + 1 = x + 1 > x = [x]` ✓
+- Rule 2: `[F(x,y,S(n))] = x + (n+1) + 1 = x+n+2`; `[G(y, F(x,y,n))] = [F(x,y,n)] = x+n+1`. So `x+n+2 > x+n+1` ✓.
+
+**Within boundary?** Yes. The interpretation coefficients are dictated by making the rules go through; no external structural assumption is imported.
+
+---
+
+### Method C — KBO with uniform weights w = 1
+
+**Succeeds? No.**
+
+KBO requires the variable multiset of the RHS to be a sub-multiset of the LHS. In Rule 2:
+- LHS variables: `{x¹, y¹, n¹}`
+- RHS variables: `{y², x¹, n¹}` — `y` appears **twice** on the right, only once on the left.
+
+This violates the KBO variable condition unconditionally, regardless of the weight function or precedence chosen. Additionally, confirming via weights: `w(F(x,y,S(n))) = 5` but `w(G(y,F(x,y,n))) = 6`, so the weight itself fails. KBO cannot orient Rule 2.
+
+**Within boundary?** Moot (method fails).
+
+---
+
+### Method D — Dependency pairs + subterm criterion, π(F) = 3
+
+**Succeeds?** Yes.
+- The only defined symbol is `F`; the only dependency pair is `F#(x, y, S(n)) → F#(x, y, n)`.
+- Projecting to the third argument: `π(F#(x,y,S(n))) = S(n)`, `π(F#(x,y,n)) = n`. Since `n` is a proper subterm of `S(n)`, the subterm criterion orients this pair strictly. The DP problem has no cycle, proving termination.
+
+**Within boundary?** Yes. The projection index (3) is determined directly by the structure of the given rules.
+
+---
+
+### Method E — Direct descent measure on third argument
+
+**Succeeds?** Yes.
+- Rule 1: `μ(F(x,y,Z)) = depth_S(Z)+1 = 1 > 0 = μ(x)` ✓
+- Rule 2: `μ(F(x,y,S(n))) = depth_S(n)+2`; `μ(G(y,F(x,y,n))) = μ(F(x,y,n)) = depth_S(n)+1`. So `depth_S(n)+2 > depth_S(n)+1` ✓.
+
+The measure is bounded below by 0 and strictly decreases at every step, so no infinite rewrite sequence exists.
+
+**Within boundary?** Yes. The measure is derived directly from the recursive structure of the given rules and imports no external assumptions.
+
+---
+
+## Conclusion
+
+**Methods A, B, D, and E** each succeed in proving termination and remain within the stated boundary.
+
+**Method C** fails: the uniform-weight KBO cannot orient Rule 2 due to the variable duplication of `y` on the right-hand side, a structural obstacle that no precedence or weight choice can repair within standard KBO.

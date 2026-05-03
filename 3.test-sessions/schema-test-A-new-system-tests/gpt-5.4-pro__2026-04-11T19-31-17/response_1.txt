@@ -1,0 +1,25 @@
+**Raw assessment:** **Yes** — under the standard first-order TRS reading on finite terms, strong normalization looks establishable from
+alone.
+
+**Why:**
+- The only recursive rule is  
+  `F(x, y, S(n)) -> G(F(x, y, n))`,  
+  which makes the recursive `F` call on the **strict subterm** `n` of `S(n)`.
+- The base rule  
+  `F(x, y, Z) -> x`  
+  removes that `F` entirely.
+- There are **no** rules that rewrite `G`, `S`, or `Z`, and no rule that increases the third argument of an `F`.
+
+A direct well-founded measure is:
+
+$$
+M(t)=\sum_{\text{occurrences }F(u,v,w)\text{ in }t} \bigl(1 + |w|\bigr)
+$$
+
+where $|w|$ is the size of the third argument. Then:
+- `F(x,y,Z) -> x` strictly decreases $M$ by removing one `F`,
+- `F(x,y,S(n)) -> G(F(x,y,n))` strictly decreases $M$ by replacing `1 + |S(n)|` with `1 + |n|`.
+
+So every rewrite step strictly decreases a natural-number measure, hence there can be no infinite reduction sequence.
+
+So, **from the presented rules alone, yes: strong normalization is provable.**

@@ -1,0 +1,39 @@
+I'll provide a proof skeleton for the remaining three cases in the `mu_decreases` theorem from the file `Test-03-Completion-Ordinal.lean`. These cases are for the rules `R_rec_succ`, `R_eq_refl`, and `R_eq_diff`. I won't modify the file or run any commands, just outline the necessary steps to complete the proofs.
+
+### Proof Skeleton for Remaining Cases in `mu_decreases`
+
+#### Case: `R_rec_succ` - `recDelta b s (delta n) --> app s (recDelta b s n)`
+
+- **Goal**: Show that `mu (app s (recDelta b s n)) < mu (recDelta b s (delta n))`.
+- **Approach**:
+  1. Expand the definitions of `mu` for both sides:
+     - Left-hand side (LHS): `mu (app s (recDelta b s n)) = omega0 ^ 3 * (mu s + 1) + omega0 ^ 2 * (mu (recDelta b s n) + 1) + 1`
+     - Right-hand side (RHS): `mu (recDelta b s (delta n)) = omega0 ^ (mu (delta n) + mu s + 6) + omega0 * (mu b + 1) + 1`
+  2. Further expand `mu (delta n)` to `omega0 ^ 5 * (mu n + 1) + 1`, so the RHS exponent becomes `omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6`.
+  3. Show that the exponent on the RHS (`omega0 ^ 5 * (mu n + 1) + ...`) is much larger than any exponent on the LHS (maximum `omega0 ^ 3`), using properties of ordinal exponentiation and multiplication to establish dominance.
+  4. Conclude that the RHS is strictly greater than the LHS due to the dominant exponential term.
+
+#### Case: `R_eq_refl` - `eqW a a --> void`
+
+- **Goal**: Show that `mu void < mu (eqW a a)`.
+- **Approach**:
+  1. Expand the definitions of `mu`:
+     - LHS: `mu void = 0`
+     - RHS: `mu (eqW a a) = omega0 ^ (mu a + mu a + 9) + 1 = omega0 ^ (2 * mu a + 9) + 1`
+  2. Use the fact that any positive ordinal is greater than 0.
+  3. Show that `omega0 ^ (2 * mu a + 9) + 1 > 0` by proving the exponentiation results in a positive ordinal (since `omega0 > 0` and the exponent is non-negative), and adding 1 ensures positivity.
+  4. Conclude that `0 < omega0 ^ (2 * mu a + 9) + 1`.
+
+#### Case: `R_eq_diff` - `eqW a b --> integrate (merge a b)`
+
+- **Goal**: Show that `mu (integrate (merge a b)) < mu (eqW a b)`.
+- **Approach**:
+  1. Expand the definitions of `mu` for both sides:
+     - LHS: `mu (integrate (merge a b)) = omega0 ^ 4 * (mu (merge a b) + 1) + 1`
+     - Further expand `mu (merge a b) = omega0 ^ 3 * (mu a + 1) + omega0 ^ 2 * (mu b + 1) + 1`, so LHS becomes approximately `omega0 ^ 4 * (omega0 ^ 3 * (mu a + 1) + ...) + 1`.
+     - RHS: `mu (eqW a b) = omega0 ^ (mu a + mu b + 9) + 1`
+  2. Approximate the LHS to show its leading term is roughly `omega0 ^ 7 * (mu a + 1) + ...` after combining exponents.
+  3. Compare the exponents: RHS has `mu a + mu b + 9`, which is designed to be larger than the effective exponent in LHS (around 7 plus smaller terms), using ordinal addition and exponentiation properties.
+  4. Conclude that the RHS dominates the LHS due to the larger exponent, ensuring `mu (integrate (merge a b)) < mu (eqW a b)`.
+
+These skeletons provide the logical structure for completing the proofs using ordinal arithmetic properties, focusing on the dominance of exponential terms as per the design of the `mu` measure. Each case leverages the specific ordinal assignments to ensure a strict decrease in measure after each step.

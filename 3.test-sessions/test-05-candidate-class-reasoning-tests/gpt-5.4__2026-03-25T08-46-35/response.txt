@@ -1,0 +1,162 @@
+I’ve isolated the key issue: all three measures behave well on the collapsing rules, but the recursive unfold rule is the make-or-break point, so I’m updating the checklist and then I’ll give you the verdict with explicit inequalities.
+## Assessment
+
+I inspected only
+, and I did **not** modify anything or run Lean.
+
+A candidate termination measure for `Step` should satisfy:
+
+$$
+\forall\, t\, u,\; Step\ t\ u \Rightarrow \mu(t) > \mu(u).
+$$
+
+All three proposed measures fail that test.
+
+### The critical rule
+
+The only genuinely problematic rule is:
+
+$$
+\texttt{R\_rec\_succ: } recDelta\ b\ s\ (\delta n) \to app\ s\ (recDelta\ b\ s\ n)
+$$
+
+This rule duplicates the contribution of `s` on the right:
+- once as the left argument of `app`
+- once again inside the recursive `recDelta`
+
+That is exactly where the candidates break.
+
+## Candidate 1: `mu1`
+
+For `R_rec_succ`:
+
+$$
+\mu_1(recDelta\ b\ s\ (\delta n))
+= 1 + \mu_1(b) + \mu_1(s) + (1 + \mu_1(n))
+= 2 + \mu_1(b) + \mu_1(s) + \mu_1(n)
+$$
+
+$$
+\mu_1(app\ s\ (recDelta\ b\ s\ n))
+= 1 + \mu_1(s) + (1 + \mu_1(b) + \mu_1(s) + \mu_1(n))
+= 2 + \mu_1(b) + 2\mu_1(s) + \mu_1(n)
+$$
+
+So:
+
+$$
+\mu_1(\text{lhs}) - \mu_1(\text{rhs}) = -\mu_1(s)
+$$
+
+That means:
+- if `s = void`, the measure is **equal**
+- if `s ≠ void`, the measure **increases**
+
+So `mu1` is **not** a valid termination measure.
+
+### Quick verdict on the other rules
+
+`mu1` does decrease on all the other rewrite rules:
+- `integrate (delta t) -> void`
+- both `merge void` rules
+- `merge t t -> t`
+- `recDelta b s void -> b`
+- `eqW a a -> void`
+- `eqW a b -> integrate (merge a b)`
+
+But one bad rule is enough to sink the ship.
+
+## Candidate 2: `mu2`
+
+For the same rule:
+
+$$
+\mu_2(recDelta\ b\ s\ (\delta n))
+= 5 + \mu_2(b) + \mu_2(s) + (1 + \mu_2(n))
+= 6 + \mu_2(b) + \mu_2(s) + \mu_2(n)
+$$
+
+$$
+\mu_2(app\ s\ (recDelta\ b\ s\ n))
+= 1 + \mu_2(s) + (5 + \mu_2(b) + \mu_2(s) + \mu_2(n))
+= 6 + \mu_2(b) + 2\mu_2(s) + \mu_2(n)
+$$
+
+Hence:
+
+$$
+\mu_2(\text{lhs}) - \mu_2(\text{rhs}) = -\mu_2(s)
+$$
+
+So `mu2` fails in **exactly the same way** as `mu1`:
+- equal when `s = void`
+- larger on the right when `s ≠ void`
+
+The extra constants in `mu2` help some other rules look nicer, but they do **nothing** for `R_rec_succ`, because the constants cancel.
+
+So `mu2` is also **not** a valid termination measure.
+
+## Candidate 3: `mu3`
+
+Again for `R_rec_succ`:
+
+$$
+\mu_3(recDelta\ b\ s\ (\delta n))
+= 1 + \mu_3(b) + \mu_3(s) + (1 + \mu_3(n))
+= 2 + \mu_3(b) + \mu_3(s) + \mu_3(n)
+$$
+
+$$
+\mu_3(app\ s\ (recDelta\ b\ s\ n))
+= 2 + \mu_3(s) + (1 + \mu_3(b) + \mu_3(s) + \mu_3(n))
+= 3 + \mu_3(b) + 2\mu_3(s) + \mu_3(n)
+$$
+
+Therefore:
+
+$$
+\mu_3(\text{lhs}) - \mu_3(\text{rhs}) = -(1 + \mu_3(s))
+$$
+
+This is **always negative**. So under `mu3`, `R_rec_succ` always makes the measure strictly **bigger**.
+
+That makes `mu3` the weakest of the three.
+
+## Bottom line
+
+- **`mu1`: invalid**
+- **`mu2`: invalid**
+- **`mu3`: invalid, and worse than the first two**
+
+### Relative ranking
+
+If I had to rank them:
+
+$$
+\mu_1 \approx \mu_2 \;>\; \mu_3
+$$
+
+But the practical verdict is simpler:
+
+> **None of the three proves termination of this rewrite system.**
+
+## Why they fail structurally
+
+The failure is not accidental. In all three definitions, `recDelta b s n` counts `s` only **once**, but after `R_rec_succ`, the right-hand side contains `s` in two places:
+- directly in `app s ...`
+- indirectly inside `recDelta b s n`
+
+So any additive size-style measure of this exact shape is doomed on that rule.
+
+A successful proof would likely need one of these:
+- a **lexicographic** measure whose main component decreases with the third argument `n`
+- a measure where `recDelta` weights its second argument `s` more heavily than these candidates do
+- a more structured termination argument than a single flat natural-valued size function
+
+## Checklist
+
+- [x] Read requested Lean file
+- [x] Analyze three candidates
+- [x] Summarize assessment
+
+In short: the rewrite system may still be terminating, but **these three scalar candidates do not establish it**.

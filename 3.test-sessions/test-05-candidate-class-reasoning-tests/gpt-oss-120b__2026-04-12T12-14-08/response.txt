@@ -1,0 +1,22 @@
+**Assessment of the three termination‑measure candidates**
+
+| Measure | Definition (excerpt) | Behaviour on each rewrite rule | Verdict |
+|---------|----------------------|--------------------------------|---------|
+| **`mu1`** | `mu1 .void = 0`  <br> `mu1 (.delta t) = 1 + mu1 t`  <br> `mu1 (.integrate t) = 1 + mu1 t`  <br> `mu1 (.merge a b) = 1 + mu1 a + mu1 b`  <br> `mu1 (.app a b) = 1 + mu1 a + mu1 b`  <br> `mu1 (.recDelta b s n) = 1 + mu1 b + mu1 s + mu1 n`  <br> `mu1 (.eqW a b) = 3 + mu1 a + mu1 b` | All rules decrease **strictly** except **`R_rec_succ`**: <br> `mu1 (recDelta b s (delta n)) = 2 + μ₁b + μ₁s + μ₁n` <br> `mu1 (app s (recDelta b s n)) = 2 + μ₁b + 2·μ₁s + μ₁n` <br> The right‑hand side is larger by `μ₁s`. When `s = .void` (so `μ₁s = 0`) the two measures are equal, i.e. no decrease. | **Invalid** – not a strictly decreasing well‑founded measure (fails on `R_rec_succ`). |
+| **`mu2`** | `mu2 .void = 0`  <br> `mu2 (.delta t) = 1 + mu2 t`  <br> `mu2 (.integrate t) = 2 + mu2 t`  <br> `mu2 (.merge a b) = 2 + mu2 a + mu2 b`  <br> `mu2 (.app a b) = 1 + mu2 a + mu2 b`  <br> `mu2 (.recDelta b s n) = 5 + mu2 b + mu2 s + mu2 n`  <br> `mu2 (.eqW a b) = 5 + mu2 a + mu2 b` | Same pattern as `mu1`. For **`R_rec_succ`** we get: <br> `mu2 (recDelta b s (delta n)) = 6 + μ₂b + μ₂s + μ₂n` <br> `mu2 (app s (recDelta b s n)) = 6 + μ₂b + 2·μ₂s + μ₂n` <br> Again the right‑hand side is larger by `μ₂s`. If `s = .void` the measures are equal, so no decrease. | **Invalid** – fails to strictly decrease on `R_rec_succ`. |
+| **`mu3`** | `mu3 .void = 0`  <br> `mu3 (.delta t) = 1 + mu3 t`  <br> `mu3 (.integrate t) = 2 + mu3 t`  <br> `mu3 (.merge a b) = 1 + mu3 a + mu3 b`  <br> `mu3 (.app a b) = 2 + mu3 a + mu3 b`  <br> `mu3 (.recDelta b s n) = 1 + mu3 b + mu3 s + mu3 n`  <br> `mu3 (.eqW a b) = 4 + mu3 a + mu3 b` | For **`R_rec_succ`** we obtain: <br> `mu3 (recDelta b s (delta n)) = 2 + μ₃b + μ₃s + μ₃n` <br> `mu3 (app s (recDelta b s n)) = 3 + μ₃b + 2·μ₃s + μ₃n` <br> The right‑hand side is **larger** by `1 + μ₃s`. Thus the measure **increases** on this rule, violating the required monotonic decrease. | **Invalid** – not only non‑decreasing, it actually grows on `R_rec_succ`. |
+
+### Overall conclusion
+None of the three proposed measures (`mu1`, `mu2`, `mu3`) constitute a valid termination measure for the rewrite calculus defined in
+.  
+
+* `mu1` and `mu2` are *non‑increasing* (they can stay equal) on the `R_rec_succ` rule, which is insufficient for a well‑founded decreasing metric.  
+* `mu3` even **increases** on that rule, making it outright unsuitable.
+
+A correct termination measure must assign a strictly smaller natural number to the right‑hand side of **every** rewrite step, in particular to the `R_rec_succ` rule. A new candidate should therefore give a larger weight to the `app` constructor (or a smaller weight to `recDelta`) so that the inequality  
+
+\[
+\mu(\text{recDelta } b\; s\; (\delta n)) \;>\; \mu(\text{app } s\; (\text{recDelta } b\; s\; n))
+\]
+
+holds for all traces `b, s, n`.

@@ -1,0 +1,24 @@
+**The proposed measure is not sound.**
+
+The lexicographic order is defined on `measure t = (phase t, cost t)`. The `phase` component (0 or 1) is primary; `cost` is secondary. For the rewrite relation `Step lhs rhs` to be terminating under this measure, we require `measure lhs > measure rhs` (in the lexicographic sense) for every rule.
+
+### Rules that behave correctly
+- `R_int_delta`, `R_merge_void_left`, `R_merge_void_right`, `R_merge_cancel`, `R_eq_refl`, `R_eq_diff`: Both sides have `phase = 0` and the `cost` strictly decreases (by at least 1 in each case, as can be verified by direct substitution into the `cost` definition).
+- `R_rec_succ`: LHS has `phase = 1` (by definition of `phase`). RHS is an `app` (phase 0). The drop in the primary component guarantees `(1, _ ) > (0, _ )` regardless of the secondary `cost` values (which may actually increase).
+
+### The fatal case: `R_rec_zero`
+```lean
+R_rec_zero : ∀ b s, Step (recDelta b s void) b
+```
+- LHS = `recDelta b s void`. The third argument is `void`, not a `delta _`, so `phase = 0`.
+- RHS = `b`. `b` can be *any* `Trace`; in particular it can be a value with `phase = 1` (e.g. `b = recDelta x y (delta z)` for arbitrary `x y z`).
+
+In that situation:
+- `measure lhs = (0, 1 + cost b + cost s)`
+- `measure rhs = (1, cost b)`
+
+Because the primary component increases from 0 to 1, `(0, …) < (1, …)` in lexicographic order. The measure therefore *increases* on this rewrite step.
+
+Since the inductive definition of `Step` permits the rule for arbitrary `b` (with no side conditions that would prevent `phase b = 1`), there exist rewrite sequences along which the measure is not strictly decreasing. Consequently the proposed measure does not prove termination of the calculus.
+
+No other files were consulted and no compilation or editing was performed; the assessment follows solely from the definitions supplied in the excerpt.

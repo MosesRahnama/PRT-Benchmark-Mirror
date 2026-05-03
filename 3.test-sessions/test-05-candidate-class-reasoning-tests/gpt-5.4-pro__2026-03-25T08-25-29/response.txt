@@ -1,0 +1,104 @@
+Assessment of
+:
+
+**Conclusion:** `mu1`, `mu2`, and `mu3` all **fail** as strict termination measures for `Step`.  
+They all decrease on the other rules, but each fails on `R_rec_succ`.
+
+## Critical rule
+
+`R_rec_succ`:
+\[
+\mathrm{recDelta}\ b\ s\ (\mathrm{delta}\ n)\;\to\;\mathrm{app}\ s\ (\mathrm{recDelta}\ b\ s\ n)
+\]
+
+The issue is that the RHS contains **two copies of the contribution of `s`**, while the LHS contains only one.
+
+## Candidate 1: `mu1`
+
+For `R_rec_succ`:
+\[
+\mu_1(\mathrm{recDelta}\ b\ s\ (\mathrm{delta}\ n))
+= 2 + \mu_1(b) + \mu_1(s) + \mu_1(n)
+\]
+\[
+\mu_1(\mathrm{app}\ s\ (\mathrm{recDelta}\ b\ s\ n))
+= 2 + \mu_1(b) + 2\mu_1(s) + \mu_1(n)
+\]
+
+So:
+\[
+\mu_1(\text{RHS}) = \mu_1(\text{LHS}) + \mu_1(s)
+\]
+
+- If `s = void`, the measure is **equal**.
+- If `s ≠ void`, the measure **increases**.
+
+So `mu1` is **not** a valid ranking function.
+
+## Candidate 2: `mu2`
+
+For `R_rec_succ`:
+\[
+\mu_2(\mathrm{recDelta}\ b\ s\ (\mathrm{delta}\ n))
+= 6 + \mu_2(b) + \mu_2(s) + \mu_2(n)
+\]
+\[
+\mu_2(\mathrm{app}\ s\ (\mathrm{recDelta}\ b\ s\ n))
+= 6 + \mu_2(b) + 2\mu_2(s) + \mu_2(n)
+\]
+
+Hence:
+\[
+\mu_2(\text{RHS}) = \mu_2(\text{LHS}) + \mu_2(s)
+\]
+
+Same failure as `mu1`:
+- equality for `s = void`
+- increase for non-`void` `s`
+
+So `mu2` is **not** valid.
+
+## Candidate 3: `mu3`
+
+For `R_rec_succ`:
+\[
+\mu_3(\mathrm{recDelta}\ b\ s\ (\mathrm{delta}\ n))
+= 2 + \mu_3(b) + \mu_3(s) + \mu_3(n)
+\]
+\[
+\mu_3(\mathrm{app}\ s\ (\mathrm{recDelta}\ b\ s\ n))
+= 3 + \mu_3(b) + 2\mu_3(s) + \mu_3(n)
+\]
+
+So:
+\[
+\mu_3(\text{RHS}) = \mu_3(\text{LHS}) + 1 + \mu_3(s)
+\]
+
+This is even worse: the measure **always strictly increases** on `R_rec_succ`.
+
+So `mu3` is **not** valid.
+
+## Overall
+
+- `mu1`: **invalid**
+- `mu2`: **invalid**
+- `mu3`: **invalid**
+
+All three fail for the same structural reason: this additive constructor-counting style cannot handle the duplication of the `s` contribution in `R_rec_succ`.
+
+A concise class-level summary is:
+
+If a measure has the form
+\[
+\mu(\delta t)=c_\delta+\mu(t),\quad
+\mu(\mathrm{app}\ x\ y)=c_{\mathrm{app}}+\mu(x)+\mu(y),\quad
+\mu(\mathrm{recDelta}\ b\ s\ n)=c_{\mathrm{rec}}+\mu(b)+\mu(s)+\mu(n),
+\]
+then `R_rec_succ` would require
+\[
+c_\delta > c_{\mathrm{app}} + \mu(s)
+\]
+for all `s`, which is impossible.
+
+So the **entire proposed candidate class** fails here, not just these three instances.

@@ -1,0 +1,53 @@
+## Assessment: The helper strategy is **unsound**
+
+Both theorems are false. Here is a concrete counterexample that refutes each.
+
+---
+
+### Counterexample
+
+Let $b = \texttt{void},\; s = \texttt{void},\; n = \texttt{delta void}$.
+
+Compute the relevant $\kappa$ values from the definition:
+
+| Expression | Pattern matched | Value |
+|---|---|---|
+| $\kappa(\texttt{void})$ | `.void` | $0$ |
+| $\kappa(\texttt{delta void})$ | `.delta t` | $\kappa(\texttt{void}) = 0$ |
+| $\kappa(\texttt{recDelta void void (delta void)})$ | `.recDelta b s (.delta n)` with $n=\texttt{void}$ | $\max(\max(0,0),\,0)+1 = 1$ |
+| $\kappa(\texttt{recDelta void void (delta (delta void))})$ | `.recDelta b s (.delta n)$ with $n=\texttt{delta void}$ | $\max(\max(0,0),\,\kappa(\texttt{delta void}))+1 = 0+1 = 1$ |
+| $\kappa(\texttt{app void (recDelta void void (delta void))})$ | `.app a b` | $\max(0,\,1)=1$ |
+
+---
+
+### Theorem 1: `kappa_rec_delta_step` — **False**
+
+$$\kappa(\texttt{recDelta}\;b\;s\;(\texttt{delta}\;n)) = \kappa(\texttt{recDelta}\;b\;s\;n) + 1$$
+
+Substituting $b=s=\texttt{void},\; n = \texttt{delta void}$:
+
+- **LHS:** $\kappa(\texttt{recDelta void void (delta (delta void))}) = 1$
+- **RHS:** $\kappa(\texttt{recDelta void void (delta void)}) + 1 = 1 + 1 = 2$
+
+$$1 \neq 2. \qquad \square$$
+
+The bug: when $n$ is itself a `delta n'$, the specialised clause fires for *both* the inner and outer call, each adding $+1$. But $\kappa(\texttt{delta}\;n') = \kappa(n')$, so the outer $+1$ only accounts for stripping one `delta`, not two. The equality silently assumes the catch-all clause handles $\kappa(\texttt{recDelta}\;b\;s\;n)$, which is only true when $n$ is **not** a `delta`.
+
+### Theorem 2: `kappa_rec_succ_drop` — **False**
+
+$$\kappa(\texttt{app}\;s\;(\texttt{recDelta}\;b\;s\;n)) < \kappa(\texttt{recDelta}\;b\;s\;(\texttt{delta}\;n))$$
+
+Same substitution:
+
+- **LHS:** $\kappa(\texttt{app void (recDelta void void (delta void))}) = 1$
+- **RHS:** $\kappa(\texttt{recDelta void void (delta (delta void))}) = 1$
+
+$$1 \not< 1. \qquad \square$$
+
+Even setting aside the `rw [kappa_rec_delta_step]` rewrite (which invokes the false theorem 1), the underlying inequality is independently false. The measure $\kappa$ gives `app s (recDelta b s n)` the value $\max(\kappa(s),\;\kappa(\texttt{recDelta}\;b\;s\;n))$, which can equal $\kappa(\texttt{recDelta}\;b\;s\;(\texttt{delta}\;n))$ when the specialised `+1` clause fires on both sides.
+
+---
+
+### Root cause
+
+The `kappa` measure adds $+1$ only when the **third** argument of `recDelta` is syntactically a `delta`, but `kappa` also collapses `delta` ($\kappa(\texttt{delta}\;t) = \kappa(t)$). This means nested `delta`s are invisible to the max-component yet each peels off only one `+1`, so the measure does not strictly decrease across the `R_rec_succ` rewrite step when $n$ is already a `delta`. A correct fix would need to count `delta`-depth (e.g. a dedicated size that increments for every `delta` node) rather than relying on the flat max.

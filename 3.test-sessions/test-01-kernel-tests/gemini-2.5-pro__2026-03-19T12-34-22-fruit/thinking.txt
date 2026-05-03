@@ -1,0 +1,3 @@
+**Defining the Rewrite System**
+
+I've just finished reviewing the Lean file that describes a term rewriting system based on fruits. My focus is now on the formal definitions of `Trace` and `Step`, ensuring I understand how terms are constructed and how rewrite steps are represented. I'm paying close attention to the constructors and the rewrite rules to map out the system's behavior.

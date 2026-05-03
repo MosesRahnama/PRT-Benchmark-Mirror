@@ -1,0 +1,53 @@
+Now I need to carefully analyze all three termination measures (mu1, mu2, mu3) against each rewrite rule. A valid termination measure must strictly decrease under every step.
+
+Let me go through each rule:
+
+**Rules:**
+1. `R_int_delta`: `integrate(delta(t)) → void`
+2. `R_merge_void_left`: `merge(void, t) → t`
+3. `R_merge_void_right`: `merge(t, void) → t`
+4. `R_merge_cancel`: `merge(t, t) → t`
+5. `R_rec_zero`: `recDelta(b, s, void) → b`
+
+
+6. `R_rec_succ`: `recDelta(b, s, delta(n)) → app(s, recDelta(b, s, n))`
+7. `R_eq_refl`: `eqW(a, a) → void`
+8. `R_eq_diff`: `eqW(a, b) → integrate(merge(a, b))`
+
+**mu1:**
+
+- `mu1 void = 0`
+- `mu1 (delta t) = 1 + mu1 t`
+- `mu1 (integrate t) = 1 + mu1 t`
+- `mu1 (merge a b) = 1 + mu1 a + mu1 b`
+- `mu1 (app a b) = 1 + mu1 a + mu1 b`
+- `mu1 (recDelta b s n) = 1 + mu1 b + mu1 s + mu1 n`
+- `mu1 (eqW a b) = 3 + mu1 a + mu1 b`
+
+Now I'm verifying that each reduction rule strictly decreases the measure. Starting with R_int_delta, integrating a delta reduces from 2 + mu1(t) down to 0, which works. For R_merge_void_left, merging void with t goes from 1 + mu1(t) down to just mu1(t), confirming the measure decreases.
+
+Checking the remaining merge rules: R_merge_void_right has the same structure, and R_merge_cancel requires 1 + 2*mu1(t) > mu1(t), which holds since mu1(t) is always non-negative. For R_rec_zero, the measure drops from 1 + mu1(b) + mu1(s) to mu1(b), and the final rule R_rec_succ shows the LHS minus RHS equals negative mu1(s), confirming strict decrease. So the measure actually increases when s is non-void, which means mu1 fails to establish termination for the R_rec_succ rule. Moving on to check R_eq_refl, where the LHS measure is 3 + 2*mu1(a) and the RHS is 0, which does satisfy the decreasing property.
+
+For R_eq_diff, I'm computing that the LHS is 3 + mu1(a) + mu1(b) while the RHS simplifies to 2 + mu1(a) + mu1(b), giving a difference of 1, so this one passes. The core issue with mu1 is that it fails on R_rec_succ because the measure increases by mu1(s) rather than decreasing.
+
+Now I'm checking mu2 with its own definition where void maps to 0, delta adds 1, integrate adds 2, and the compound structures like merge, app, recDelta, and eqW each have their own coefficients. I'm checking the rest of the R_rec_succ rule and finding the same issue—mu2 fails here too because the inequality requires mu2(s) to be negative, which is impossible. Moving through the remaining rules, R_eq_refl checks out, but R_eq_diff is cut off mid-calculation.
+
+Now I'm working through mu3, a new measure that assigns higher weights to integrate and app operations. Testing it against the rules: R_int_delta passes with a strict decrease, R_merge_void_left and R_merge_void_right both satisfy the termination condition.
+
+For R_merge_cancel, I need 1 + 2*mu3(t) > mu3(t), which holds since mu3(t) ≥ 0. R_rec_zero also works. But R_rec_succ fails again—the LHS comes out to 2 + mu3(b) + mu3(s) + mu3(n) while the RHS is 3 + mu3(b) + 2*mu3(s) + mu3(n), giving a difference of -1 - mu3(s), which means the measure actually increases on this rule.
+
+The core problem is that when unfolding recDelta, the parameter s gets duplicated—it appears in the original recDelta, in the app wrapper, and again in the recursive call, so any measure that counts s will grow rather than shrink.
+
+Let me try a different approach: if I define the measures parametrically with `mu(recDelta(b, s, n)) = K + mu(b) + c_s·mu(s) + mu(n)` and `mu(app(a, b)) = J + mu(a) + mu(b)`, then for the LHS I get K + mu(b) + c_s·mu(s) + mu(n), and I need to work out what the RHS becomes to find what coefficient c_s must be. The key insight is that the third argument strictly decreases from `delta(n)` to `n`, so if I weight that argument heavily enough in a lexicographic or exponential measure, I might be able to overcome the copying problem with `s`. Let me systematically check whether all three rules fail only on `R_rec_succ` or if there are other problematic cases, particularly revisiting `R_eq_diff` since it was borderline for the earlier measures. all rules except R_rec_succ. Let me carefully re-examine the R_rec_succ case.
+
+The rewriting step is `recDelta(b, s, delta(n)) → app(s, recDelta(b, s, n))`. The critical issue here is that `s` appears once on the left but twice on the right—it gets copied in the rewrite. For a termination measure to work, I need `mu(recDelta(b, s, delta(n))) > mu(app(s, recDelta(b, s, n)))`. The third argument decreases by 1, but the duplication of `s` creates a problem for any linear measure of the form `c_rec + α·mu(b) + β·mu(s) + γ·mu(n)` when applied to `app(a, b) = c_app + mu(a) + mu(b)`.
+
+Working through the inequality: the LHS is `c_rec + α·mu(b) + β·mu(s) + γ·(1 + mu(n))`, and the RHS expands to `c_app + mu(s) + c_rec + α·mu(b) + β·mu(s) + γ·mu(n)`. The difference simplifies to `γ - c_app - mu(s)`, which means for termination I'd need `γ > c_app + mu(s)` for all possible `s`. Since `mu(s)` is unbounded, no linear additive measure of this form can satisfy the constraint—the copied subterm `s` makes the RHS arbitrarily larger regardless of the coefficients I choose.
+
+This confirms all three measures fail on R_rec_succ due to the structural duplication of `s`. Now I'm systematically checking each measure against all the reduction rules to see if there are other failure points or if R_rec_succ is the only problematic case. So mu1 fails on R_rec_succ because the measure either stays equal or increases depending on whether s is void—neither case produces the strict decrease we need. Now I'm checking mu2 systematically through all the rules, and it passes most of them but hits the same problem on R_rec_succ where the measure difference is negative mu2(s), causing it to fail. I'm moving on to mu3 to see if a different weighting helps. The core issue is that all three measures fail on the same rule—R_rec_succ—but for different reasons: mu1 and mu2 only fail when s is non-void (creating a deficit of mu(s)), while mu3 always fails because it has a built-in deficit of at least 1. The structural problem is that this rule duplicates s from appearing once on the left to appearing twice on the right, which any additive linear measure tracking mu(b) + mu(s) + mu(n) will struggle with. `mu(s)` on the RHS. The only compensating decrease is in the third argument (`delta(n)` → `n`, a decrease of exactly 1 due to the `delta` constructor). 
+
+For mu1 and mu2, the coefficient on `delta` (the third arg's `delta` wrapper) is the same as the coefficient on `n` in recDelta (both weight `delta` at +1 beyond the subterm), so the decrease from stripping `delta` is exactly the overhead of `delta` constructor = 1. But the gain from duplicating `s` is `mu(s)`. Net change: `+mu(s) - 1` which is ≥ -1 and becomes positive for any non-trivial s.
+
+For mu1 specifically, recDelta is weighted as `1 + mu1(b) + mu1(s) + mu1(n)`, while `delta` itself costs `1 + mu1(t)`. Stripping `delta(n)` gains exactly 1, but duplicating `s` costs `mu1(s)`, giving a net of `1 - mu1(s)`. This is only positive when `mu1(s) = 0`, so mu1 doesn't work out.
+
+With mu3, the `app` constructor carries weight 2 instead of 1, so the overhead becomes `2 + mu3(s)`. The delta stripping still gives +1, leaving a net change of `1 - 2 - mu3(s)`, which is negative overall.

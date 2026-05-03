@@ -1,0 +1,3 @@
+**Confirming measure unsoundness with counterexamples**
+
+The lexicographic (phase, cost) measure is unsound for termination since rules like merge void t can increase phase from 0 to 1 without decreasing cost, violating well-foundedness. Using t = recDelta b s (delta n) as a counterexample highlights this. The measure and Step rules are defined in TermProof from line 13 to 38, confirming several such problematic cases.

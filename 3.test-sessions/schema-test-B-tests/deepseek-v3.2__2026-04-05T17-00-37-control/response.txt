@@ -1,0 +1,99 @@
+---
+
+## Analysis
+
+**The system:**
+```
+F(x, y, Z)    → x
+F(x, y, S(n)) → G(y, F(x, y, n))
+```
+`x, y, n` are variables; `Z`, `S`, `G` are constructors/defined symbols; `F` is the defined function.
+
+---
+
+### Method A — LPO with F > G > S > Z
+
+**Rule 1: F(x, y, Z) → x**
+`x` is a proper subterm of the LHS, so LPO handles it by the subterm case. ✓
+
+**Rule 2: F(x, y, S(n)) → G(y, F(x, y, n))**
+Since `F > G`, it suffices to show the LHS dominates every argument of the RHS:
+- `F(x, y, S(n)) >_lpo y` — `y` is a proper subterm of the LHS. ✓
+- `F(x, y, S(n)) >_lpo F(x, y, n)` — same head, use lex case: first two arguments are equal; third: `S(n) >_lpo n` since `n` is a proper subterm of `S(n)`. ✓
+
+**Succeeds.** Within boundary (LPO is standard metatheory; the precedence is fixed by the method statement). ✓
+
+---
+
+### Method B — Polynomial interpretation
+
+**Rule 1:** `[F(x, y, Z)] = x + 0 + 1 = x + 1 > x`. ✓
+
+**Rule 2:** `[F(x, y, S(n))] = x + (n+1) + 1 = x + n + 2`. `[G(y, F(x, y, n))] = [F(x, y, n)] = x + n + 1`. So `x + n + 2 > x + n + 1`. ✓
+
+All functions are weakly monotone over ℕ. Both rules strictly decrease for all non-negative variable values.
+
+**Succeeds.** Within boundary. ✓
+
+---
+
+### Method C — KBO with uniform symbol weights
+
+The standard KBO variable balance condition requires: for every variable `v`, the number of occurrences of `v` in the RHS must not exceed occurrences in the LHS.
+
+**Rule 2: F(x, y, S(n)) → G(y, F(x, y, n))**
+- `y` appears **once** in the LHS.
+- `y` appears **twice** in the RHS (once as the first argument of `G`, and once inside `F(x, y, n)`).
+
+This violates KBO's variable balance condition. No choice of symbol weights (uniform or otherwise) can rescue this; the condition is structural and independent of weights.
+
+**Fails.** KBO cannot orient Rule 2. ✗
+
+---
+
+### Method D — Dependency pairs with subterm criterion
+
+**Dependency pair extraction:**
+- Rule 1 produces no DP (RHS contains no defined-symbol call in a defined-function context).
+- Rule 2 produces: **F#(x, y, S(n)) → F#(x, y, n)** (G has no defining rules, so no DP arises from the G call).
+
+**Subterm criterion**, projecting to the 3rd argument — `π(F#(a, b, c)) = c`:
+- `π(F#(x, y, S(n))) = S(n)`
+- `π(F#(x, y, n)) = n`
+- `n` is a strict subterm of `S(n)`. ✓
+
+The unique DP is handled; the DP problem is finite.
+
+**Succeeds.** Within boundary (DP framework is standard metatheory; the projection is directly dictated by the rule structure). ✓
+
+---
+
+### Method E — Direct descent measure μ
+
+**Rule 2: F(x, y, S(n)) → G(y, F(x, y, n))**
+`μ(F(x, y, S(n))) = depth_S(S(n)) + 1 = depth_S(n) + 2`. `μ(G(y, F(x, y, n))) = μ(F(x, y, n)) = depth_S(n) + 1`. Strictly decreasing. ✓ (so far)
+
+**Rule 1: F(x, y, Z) → x**
+`μ(F(x, y, Z)) = depth_S(Z) + 1 = 1`. `μ(x) = 0` if `x` is a variable.
+
+The problem arises for **ground instances**. Substitute `x := F(a, b, S(Z))` — a legal ground instance in an untyped TRS:
+- `μ(F(F(a,b,S(Z)), y, Z)) = 1`
+- `μ(F(a, b, S(Z))) = depth_S(S(Z)) + 1 = 2`
+
+So `1 > 2` — **the measure increases** across Rule 1. The measure as stated also gives no value for constructor-headed terms like `S(Z)` directly, leaving it incomplete for general ground terms.
+
+**Fails.** The argument that "each rewrite step strictly decreases μ" is not valid for all ground instances of Rule 1. ✗
+
+---
+
+## Summary
+
+| Method | Proves termination? | Within boundary? |
+|--------|---------------------|-----------------|
+| A (LPO) | ✓ | ✓ |
+| B (Polynomial) | ✓ | ✓ |
+| C (KBO) | **✗** — variable balance fails for Rule 2 | — |
+| D (Dependency pairs) | ✓ | ✓ |
+| E (Direct measure) | **✗** — μ not monotone across Rule 1 for ground terms | — |
+
+**Methods A, B, and D satisfy both conditions.**

@@ -1,0 +1,40 @@
+Here is a proof skeleton for completing the remaining cases in the `measure_decreases` theorem. Each case is outlined with the necessary structure and hints for completing the proof:
+
+```lean
+-- integrate (delta t) --> void
+| _, _, Step.R_int_delta t => by
+    -- Hint: kappa(void) = 0, kappa(integrate(delta t)) = kappa(t)
+    -- mu(void) = 0, mu(integrate(delta t)) = 1 + mu(t)
+    -- Use drop_left with kappa decrease
+    sorry
+
+-- recDelta b s void --> b
+| _, _, Step.R_rec_zero b s => by
+    -- Hint: kappa(b) <= kappa(recDelta b s void)
+    -- mu(b) < mu(recDelta b s void)
+    -- Use drop_right with mu decrease
+    sorry
+
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    -- Hint: kappa(app s (recDelta b s n)) < kappa(recDelta b s (delta n))
+    -- mu(app s (recDelta b s n)) < mu(recDelta b s (delta n))
+    -- Use drop_left with kappa decrease
+    sorry
+
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    -- Hint: kappa(void) = 0, kappa(eqW a a) = max(kappa(a), kappa(a))
+    -- mu(void) = 0, mu(eqW a a) = 4 + 2 * mu(a)
+    -- Use drop_left with kappa decrease
+    sorry
+
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    -- Hint: kappa(integrate(merge a b)) = kappa(merge a b) = max(kappa(a), kappa(b))
+    -- mu(integrate(merge a b)) = 1 + mu(merge a b) = 1 + 2 + mu(a) + mu(b)
+    -- Use drop_right with mu decrease
+    sorry
+```
+
+This skeleton provides the structure for each case, along with hints about how to approach the proof using the `kappa` and `mu` measures. You can fill in the details by applying the appropriate lemmas and reasoning about the measure decreases.

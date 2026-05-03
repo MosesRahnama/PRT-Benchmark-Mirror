@@ -1,0 +1,7 @@
+1. Primary method: a well‑founded “decreasing measure” termination argument (a syntactic ranking like \((\#S,\#F)\) that strictly decreases on every rewrite step).
+
+2. Yes: it relies on a chosen proof structure/ordering (the specific measure and the fact that lexicographic order on \(\mathbb{N}^2\) is well‑founded). That choice is not uniquely fixed by the rewrite rules.
+
+3. Boundary: if “from the rewrite system alone” is read as “no external termination framework / no invented ranking/ordering,” then that method is outside the stated boundary. If instead the boundary only forbids adding extra *object-level* axioms/equations about the symbols, then the method stays inside (it uses only meta-level syntactic reasoning about the given rules).
+
+4. Separately: yes, I still think the TRS in KO7-LLM-Benchmark/test-files/Schema-Test-A-New-System.trs is strongly normalizing, because every step eliminates at least one `S` from some `F(_,_,S(_))` redex chain and no rule can create new `S` occurrences.

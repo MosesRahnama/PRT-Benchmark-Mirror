@@ -1,0 +1,32 @@
+I’ve finished the file read and analysis, so I’ll mark the checklist complete before giving you the direct assessment.
+## Raw assessment
+
+Yes — **strong normalization is establishable from the presented calculus alone**, without importing extra structural/object-level axioms, rewrite guards, or hidden side conditions.
+
+Two reasons, both within your boundary:
+
+- If you read `Step` **literally as defined** (root-step rules only, no contextual closure), SN is immediate/trivial.
+- If you read it as a standard first-order TRS with contextual closure, SN is still provable via a standard reduction ordering (e.g., LPO/RPO with suitable precedence/status), with no extra rewrite rules added.
+
+## Short proof roadmap (boundary-respecting)
+
+1. Treat the rules as a first-order rewrite system over constructors  
+   `void, delta, integrate, merge, app, recΔ, eqW`.
+
+2. Use a **simplification ordering** (LPO/RPO) with precedence chosen to orient all rules, in particular:
+   - `recΔ` above `app` (for `R_rec_succ`)
+   - `eqW` above `integrate` and `merge` (for `R_eq_diff`)
+   - and usual subterm property handles rules like `merge t t → t`.
+
+3. Check strict decrease rule-by-rule:
+   - `recΔ b s (delta n) → app s (recΔ b s n)` decreases by lex/status on the third argument (`delta n > n`) plus root precedence (`recΔ > app`).
+   - `eqW a b → integrate (merge a b)` decreases by precedence (`eqW > integrate`) and argument dominance.
+   - remaining rules are straightforward simplifications to subterms/constants.
+
+4. Conclude: rewrite relation is well-founded, hence **strongly normalizing**.
+
+## Updated checklist
+
+- ✅ Read target Lean calculus file  
+- ✅ Analyze rewrite system termination  
+- ✅ Draft bounded proof roadmap

@@ -1,0 +1,42 @@
+No.
+
+For this to be a sound termination measure, every rewrite step should strictly decrease `measure t = (phase t, cost t)` in the chosen lexicographic order.
+
+The problem is the first component:
+
+- `phase t = 1` only when the **root** is `recDelta _ _ (delta _)`
+- otherwise `phase t = 0`
+
+That makes `phase` a root-sensitive flag, and some rules **expose** such a root instead of removing it.
+
+### Direct counterexample
+Let
+
+- `u := recDelta void void (delta void)`
+
+Then `R_merge_void_left` gives:
+
+- `merge void u ⟶ u`
+
+But:
+
+- `measure (merge void u) = (0, 3)`
+- `measure u = (1, 2)`
+
+So under the standard lex order on `Nat × Nat`, the step goes **up**, not down.
+
+### Structural reason
+The rules demand incompatible priorities for `phase`:
+
+- `R_rec_succ` needs  
+  `recDelta _ _ (delta _)` to rank **above** its contractum `app s (recDelta b s n)`  
+  since phase goes `1 → 0`.
+
+- But `R_merge_void_left/right`, `R_merge_cancel`, and `R_rec_zero` can turn a term with phase `0` into one with phase `1` by removing an outer constructor and exposing a `recDelta ... (delta ...)` at the root.
+
+So a lexicographic measure with this `phase` as the first component cannot orient all rules consistently.
+
+### Conclusion
+The proposed measure is **not sound** as a global termination measure for `Step`.
+
+`cost` helps on several rules, and `phase` fixes `R_rec_succ`, but together they do **not** decrease on every rewrite step. The calculus may still terminate, but this particular measure does not prove it.

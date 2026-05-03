@@ -1,0 +1,37 @@
+The helper strategy is **unsound** as written. The flaw lies in the intended truth of the helper theorem `kappa_rec_delta_step`:
+
+```lean
+theorem kappa_rec_delta_step (b s n : Trace) :
+  kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1
+```
+
+### Analysis and Calculation
+Because the `kappa` function evaluates `kappa (delta t)` to `kappa t`, arguments wrapped in `.delta` do not increment the measure `kappa n` of the inner term. 
+
+To see why the theorem fails, evaluate both sides when `n` itself is of the form `delta m` (i.e., `n = delta m`):
+
+**Left-Hand Side (LHS):**
+By the first `recDelta` pattern matching rule in `kappa`:
+```lean
+kappa (recDelta b s (delta (delta m))) 
+  = Nat.max (Nat.max (kappa b) (kappa s)) (kappa (delta m)) + 1
+```
+Since `kappa (delta m) = kappa m`, this simplifies to:
+```lean
+LHS = Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1
+```
+
+**Right-Hand Side (RHS):**
+The RHS of the theorem is `kappa (recDelta b s (delta m)) + 1`. 
+Evaluating the inner expression by the first `recDelta` rule again:
+```lean
+kappa (recDelta b s (delta m)) 
+  = Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1
+```
+Adding the `+ 1` from the RHS gives:
+```lean
+RHS = (Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1) + 1
+    = Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 2
+```
+
+Because `LHS ≠ RHS` for `n = delta m`, the equation `kappa_rec_delta_step` is mathematically false. Attempting to prove it or use it as a foundation for `kappa_rec_succ_drop` (which uses a rewrite `rw [kappa_rec_delta_step]`) will fail. The structural measure `kappa` behaves non-monotonically with respect to heavily nested `.delta` arguments.

@@ -1,0 +1,14 @@
+The proposed lexicographic measure is **not sound** as stated. The rule `R_rec_zero` can increase the first component `phase`, so `(phase, cost)` does not strictly decrease for every rewrite.
+
+- In
+, `R_rec_zero` rewrites `recDelta b s void` to `b`.
+- `phase` is `1` exactly when the term is `recDelta _ _ (delta _)`, otherwise `0` (
+).
+- Take `b = recDelta b' s' (delta n)`. Then:
+  - `phase (recDelta b s void) = 0`
+  - `phase b = 1`
+- So `(phase, cost)` **increases** in the first component under `R_rec_zero`, which breaks lexicographic decrease.
+
+Even though `cost` strictly decreases for `R_rec_zero`, a lexicographic order with `phase` first is violated. If you reverse the lexicographic order to prioritize `cost`, then `R_rec_succ` can increase cost, so that ordering fails too.
+
+If you want, I can suggest a corrected measure (or a revised

@@ -1,0 +1,63 @@
+I’m reading the specified Lean file and checking the helper lemmas against the actual definitions in that file. Then I’ll evaluate whether the termination strategy they support is logically sound and show the key measure calculations.
+I’ve checked the definitions directly. The critical point is that `kappa` treats `delta` transparently, so the proposed `+ 1` step only works when the third argument of `recDelta` is not already a `delta` term.
+The helper strategy is not sound as written in KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean. The problem is the special clause for
+KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean
+only adds $1$ when the third argument is syntactically of the form $\delta n$, while the general $\delta$ constructor itself does not increase $\kappa$:
+KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean.
+
+That makes the first helper theorem
+KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean
+false in general. Let
+$$
+M = \max(\max(\kappa b,\kappa s),\kappa m).
+$$
+Take $n = \delta m$. Then
+$$
+\kappa(\operatorname{recDelta}\ b\ s\ (\delta n))
+= \kappa(\operatorname{recDelta}\ b\ s\ (\delta(\delta m)))
+= M + 1,
+$$
+because $\kappa(\delta m)=\kappa m$. But
+$$
+\kappa(\operatorname{recDelta}\ b\ s\ n) + 1
+= \kappa(\operatorname{recDelta}\ b\ s\ (\delta m)) + 1
+= (M+1)+1
+= M+2.
+$$
+So the claimed equality
+$$
+\kappa(\operatorname{recDelta}\ b\ s\ (\delta n))
+=
+\kappa(\operatorname{recDelta}\ b\ s\ n)+1
+$$
+fails. A concrete counterexample is $b=s=m=\operatorname{void}$, where the left side is $1$ and the right side is $2$.
+
+The second helper theorem
+KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean
+also fails on the same input. With $n=\delta m$,
+$$
+\kappa(\operatorname{app}\ s\ (\operatorname{recDelta}\ b\ s\ n))
+=
+\max(\kappa s,\kappa(\operatorname{recDelta}\ b\ s\ (\delta m)))
+=
+\max(\kappa s, M+1)
+=
+M+1,
+$$
+since $M \ge \kappa s$. Meanwhile
+$$
+\kappa(\operatorname{recDelta}\ b\ s\ (\delta n))
+=
+\kappa(\operatorname{recDelta}\ b\ s\ (\delta(\delta m)))
+=
+M+1.
+$$
+So the theorem’s strict inequality becomes
+$$
+M+1 < M+1,
+$$
+which is false.
+
+The sound fragment is narrower: both helper statements do work when $n$ is not itself of the form $\delta m$. In that case the general recDelta clause applies to $\operatorname{recDelta}\ b\ s\ n$, giving $\kappa(\operatorname{recDelta}\ b\ s\ n)=M$, so the successor case is genuinely $M < M+1$. But as universally quantified statements, the helpers are invalid.
+
+There is also a broader warning for any termination argument based only on strict decrease of $\kappa$: several rewrite rules preserve $\kappa$ exactly, for example merge-void, merge-cancel, and eq-diff from [KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean](KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean#L18) through [KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean](KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean#L24). So even apart from the two helper lemmas, $\kappa$ is not a global strictly decreasing ranking function for Step as currently

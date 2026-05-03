@@ -1,0 +1,7 @@
+The helper strategy is unsound as written. The first helper theorem (`kappa_rec_delta_step`) is false in general, as it claims an equality that only holds when `n` is not of the form `delta _`. For a counterexample, assume `kappa b = 0` and `kappa s = 0` for simplicity, and take `n = delta void` (so `kappa n = 0`):
+
+- Left side: `kappa (recDelta b s (delta (delta void))) = max(max 0 0, 0) + 1 = 1`
+- Right side: `kappa (recDelta b s (delta void)) = max(max 0 0, 0) + 1 = 1`
+- The theorem claims left = right + 1 (i.e., 1 = 2), which is false.
+
+The second helper theorem (`kappa_rec_succ_drop`) relies on rewriting with the first theorem, so it inherits this flaw. The overall strategy cannot be used for a sound termination argument without restricting the theorems (e.g., to cases where `n` is not `delta _`) or revising `kappa` to ensure a strict decrease in all rewrite steps.

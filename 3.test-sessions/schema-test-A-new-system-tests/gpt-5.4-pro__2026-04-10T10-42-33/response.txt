@@ -1,0 +1,7 @@
+1. **Primary method:** a **polynomial interpretation / well-founded measure** argument.
+
+2. **Does it rely on extra choices?** **Yes.** It uses an externally chosen interpretation and ordering (e.g. over $\mathbb{N}$), which are not fixed by the rewrite rules themselves.
+
+3. **Outside the stated boundary?** **Yes, under a strict reading of that boundary.** It does not import new object-level axioms, but it does import extra metatheoretic proof structure.
+
+4. **Do I still think the system is strongly normalizing?** **Yes.** On ordinary finite first-order terms, each rewrite of `F(x,y,S(n))` strictly decreases the third argument from `S(n)` to `n`, `F(x,y,Z)` is the base case, and there are no rewrite rules for `G`, `S`, or `Z`.

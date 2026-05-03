@@ -1,0 +1,190 @@
+Below are **Lean proof skeletons** you can drop into the three remaining `sorry` cases. They’re structured to make the ordinal reasoning “modular”: isolate a **big dominating principal ordinal** of the form `omega0 ^ X`, prove each summand is `< omega0 ^ X`, then close by principal-closure-under-addition and monotonicity.
+
+I’m intentionally leaving a few internal sub-lemmas as “fill here” spots—because the exact lemma names in your Mathlib version can vary—but the *shape* of the proof (and the ordinal facts you need) should be stable.
+
+---
+
+## 1) `R_eq_refl`: positivity of `omega0 ^ (...) + 1`
+
+Goal after `simp [mu]` is essentially `0 < omega0 ^ (mu a + mu a + 9) + 1`.
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- goal: 0 < omega0 ^ (mu a + mu a + (9 : Ordinal)) + 1
+    -- It suffices to show 0 < 1 ≤ (ω^E + 1).
+    have h0 : (0 : Ordinal) < (1 : Ordinal) := one_pos
+    have h1 : (1 : Ordinal) ≤ omega0 ^ (mu a + mu a + (9 : Ordinal)) + 1 := by
+      -- `le_add_left` gives: 1 ≤ X + 1 for any X
+      simpa [add_comm, add_left_comm, add_assoc] using
+        (le_add_left (1 : Ordinal) (omega0 ^ (mu a + mu a + (9 : Ordinal))))
+    exact lt_of_lt_of_le h0 h1
+```
+
+Notes:
+- This avoids needing any `opow_pos` lemma at all; it’s just `0 < 1` and `1 ≤ X + 1`.
+
+---
+
+## 2) `R_rec_succ`: show `mu (app ...) < mu (recDelta ... (delta n))`
+
+After `simp [mu]`, the goal is (up to definitional unfolding) of the form:
+\[
+\underbrace{\omega^3(\mu s+1) + \omega^2(\mu(\mathrm{rec}\;n)+1) + 1}_{\mu(\mathrm{app}\;s\;(\mathrm{rec}\;n))}
+\;<\;
+\underbrace{\omega^{X} + \omega(\mu b+1)+1}_{\mu(\mathrm{rec}\;(\delta n))}
+\]
+where \(X := \mu(\delta n) + \mu s + 6\).
+
+The key is: **prove LHS < ω^X**; then it’s automatically `< ω^X + ω*(...) + 1`.
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- After simp, set the dominating exponent:
+    set X : Ordinal := mu (delta n) + mu s + (6 : Ordinal)
+
+    -- Strategy:
+    -- 1) show each summand of mu(app s (recDelta b s n)) is < ω^X
+    -- 2) use principal-closure to sum them still < ω^X
+    -- 3) conclude < ω^X + ω*(mu b+1) + 1 (= mu(recDelta b s (delta n)))
+
+    have hX_ne : X ≠ 0 := by
+      -- X has a +6 term, so it's nonzero
+      -- (any standard lemma turning `6≠0` into `X≠0` works)
+      -- e.g.:
+      --   intro h; have := congrArg (fun t => t) h; ...
+      -- Usually simplest:
+      have : (0 : Ordinal) < X := by
+        -- `0 < ... + 6` is immediate
+        -- fill with your favorite arithmetic lemma
+        sorry
+      exact ne_of_gt this
+
+    have hPrin : IsPrincipal (omega0 ^ X) := by
+      -- In Mathlib, ω^X is (additively) principal when X≠0.
+      -- The lemma name is version-dependent; typical shapes:
+      --   `isPrincipal_omega0_opow` or `isPrincipal_opow` etc.
+      -- You want: `IsPrincipal (omega0 ^ X)`.
+      sorry
+
+    -- A helper: `1 < ω^X` (so the trailing `+ 1` is still below ω^X)
+    have h_one_lt : (1 : Ordinal) < omega0 ^ X := by
+      -- standard: ω^X is infinite for X≠0
+      -- often: `one_lt_opow` / `one_lt_omega0_opow` / `one_lt_omega0` + monotonicity
+      sorry
+
+    -- (A) Bound the `ω^3 * (μ s + 1)` term by ω^X
+    have hA : omega0 ^ (3 : Ordinal) * (mu s + 1) < omega0 ^ X := by
+      -- Typical route:
+      --   show (mu s + 1) < omega0 ^ X, then multiply left by ω^3
+      --   and use that ω^3 * (ω^X) = ω^X (since X is infinite / absorbs finite addends).
+      -- This step is mostly “absorption by ω^X”.
+      sorry
+
+    -- (B) Bound the `ω^2 * (μ (recDelta b s n) + 1)` term by ω^X
+    have hB : omega0 ^ (2 : Ordinal) * (mu (recDelta b s n) + 1) < omega0 ^ X := by
+      -- Similar absorption idea.
+      -- A useful subgoal is to prove:
+      --   mu (recDelta b s n) < omega0 ^ X
+      -- which follows because the leading term of mu(recDelta ...) is ω^(mu n + mu s + 6),
+      -- and you can prove:
+      --   (mu n + mu s + 6) < X
+      -- then use monotonicity of `omega0 ^ _`.
+      sorry
+
+    -- (C) Combine them: ω^3*(...) + ω^2*(...) + 1 < ω^X using principality
+    have hSum : omega0 ^ (3 : Ordinal) * (mu s + 1)
+              + omega0 ^ (2 : Ordinal) * (mu (recDelta b s n) + 1) + 1
+              < omega0 ^ X := by
+      -- Use `hPrin` to add two things < ω^X and stay < ω^X.
+      -- The exact method depends on API; the shape is:
+      --   have hAB : A + B < ω^X := hPrin.add_lt hA hB
+      --   then add the trailing `+ 1` using `h_one_lt` and principality again.
+      sorry
+
+    -- Finally, embed ω^X into ω^X + ω*(mu b+1) + 1:
+    refine lt_of_lt_of_le hSum ?_
+    -- `ω^X ≤ ω^X + ω*(mu b+1) + 1`
+    calc
+      omega0 ^ X ≤ omega0 ^ X + omega0 * (mu b + 1) := le_add_left _ _
+      _ ≤ omega0 ^ X + omega0 * (mu b + 1) + 1 := le_add_right _ _
+```
+
+What you’ll fill in:
+- Proving `0 < X` (hence `X ≠ 0`).
+- Getting `IsPrincipal (omega0 ^ X)`.
+- “Absorption” lemmas of the form: if `T < omega0 ^ X` then `omega0^k * T < omega0 ^ X` for finite `k`, and closure under `+`.
+- The monotonicity step `opow_lt_opow` from `(mu n + mu s + 6) < X`.
+
+This case becomes very manageable once you make `omega0 ^ X` the sole target bound and rely on principality.
+
+---
+
+## 3) `R_eq_diff`: show `mu (integrate (merge a b)) < mu (eqW a b)`
+
+After `simp [mu]`, the goal is essentially:
+\[
+\omega^4(\mu(\mathrm{merge}\ a\ b)+1)+1 \;<\; \omega^{E}+1
+\]
+where \(E := \mu a + \mu b + 9\).
+
+A clean skeleton is: prove `omega0^(4) * (mu (merge a b) + 1) < omega0^E`, then add `+1` on both sides.
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    set E : Ordinal := mu a + mu b + (9 : Ordinal)
+
+    -- Reduce to bounding the pre-+1 part
+    have hMul : omega0 ^ (4 : Ordinal) * (mu (merge a b) + 1) < omega0 ^ E := by
+      -- It suffices to show: mu(merge a b) + 1 < omega0 ^ (mu a + mu b + 5),
+      -- then multiply on the left by ω^4 and rewrite exponents:
+      --   ω^4 * ω^(mu a + mu b + 5) = ω^(4 + (mu a + mu b + 5)) = ω^E.
+      --
+      -- Skeleton:
+
+      have h_merge : mu (merge a b) + 1 < omega0 ^ (mu a + mu b + (5 : Ordinal)) := by
+        -- Expand mu(merge a b):
+        --   mu(merge a b) = ω^3*(μa+1) + ω^2*(μb+1) + 1
+        -- So mu(merge a b) + 1 = ω^3*(μa+1) + ω^2*(μb+1) + 2.
+        --
+        -- Show each summand is < ω^(μa+μb+5) and combine via principality of ω^(...).
+        --
+        -- You’ll likely want:
+        --   hPrin : IsPrincipal (omega0 ^ (mu a + mu b + 5))
+        -- plus monotonicity of `omega0 ^ _` and absorption of finite left-mults.
+        sorry
+
+      -- Multiply the bound by ω^4 on the left
+      have := (mul_lt_mul_left' (omega0 ^ (4 : Ordinal)) h_merge)
+      -- Now rewrite:
+      --   ω^4 * ω^(μa+μb+5) = ω^(4 + (μa+μb+5)) = ω^(μa+μb+9) = ω^E
+      -- using `opow_add` and ordinal arithmetic simp.
+      -- Finish with simp/assoc/comm normalization.
+      simpa [E, opow_add, add_assoc, add_left_comm, add_comm] using this
+
+    -- Add 1 to both sides
+    have h : omega0 ^ (4 : Ordinal) * (mu (merge a b) + 1) + 1 < omega0 ^ E + 1 :=
+      add_lt_add_right hMul 1
+
+    -- Match the exact goal shape
+    simpa [E, add_assoc, add_left_comm, add_comm] using h
+```
+
+What you’ll fill in:
+- The lemma `mul_lt_mul_left'` exists for monotone left-multiplication on ordinals in many Mathlib versions; if not, you can rewrite as `lt_of_lt_of_le` + `mul_le_mul_left'` with strictness handled separately.
+- `opow_add` rewriting: `omega0 ^ (A + B) = omega0 ^ A * omega0 ^ B`. Sometimes it’s `opow_add` or `opow_add` with arguments reversed; adjust accordingly.
+
+---
+
+## How these skeletons fit your existing style
+
+You already used the pattern “prove a strict bound, then use `le_add_left` / `le_add_right` to inject it into a larger sum.” The remaining cases are the same pattern, but with a **principal ordinal** (`omega0 ^ X`) doing the heavy lifting so you don’t have to micro-manage all intermediate `+ 1` and `* (mu t + 1)` terms.
+
+If you want, I can also suggest a small set of *local helper lemmas* (still within this file) that encapsulate:
+- “`omega0 ^ X` is principal when `X ≠ 0`”
+- “if `α < omega0 ^ X` then `omega0 ^ k * α < omega0 ^ X` for finite `k`”
+- “`mu t + 1 < omega0 ^ (mu t + c)` for `c ≥ 1`”
+
+…but I’ll stop here since you asked for a skeleton specifically for the three cases.

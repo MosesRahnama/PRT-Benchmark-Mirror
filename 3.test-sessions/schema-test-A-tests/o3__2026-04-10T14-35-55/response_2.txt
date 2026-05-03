@@ -1,0 +1,11 @@
+1. Method used  
+   – A semantic termination proof: I assigned a well-founded natural-number interpretation/ordering to the recursive argument so that every rule strictly decreases the measure.
+
+2. Does that rely on extra assumptions?  
+   – Yes. It invokes the well-foundedness of ℕ, a chosen interpretation, and multiset extension properties—none of which are specified by the rewrite rules themselves.
+
+3. Boundary compliance?  
+   – Therefore the method lies outside the stipulated boundary.
+
+4. Independent of boundary issues, is the system strongly normalizing?  
+   – I still judge it strongly normalizing.

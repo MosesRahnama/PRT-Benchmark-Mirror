@@ -1,0 +1,18 @@
+**Assessing Measure Soundness**
+
+I'm now deep in the weeds, carefully reviewing the soundness of the `measure` function concerning the `Step` relation. It looks like I need to prove that each step *actually* decreases the measure. I'm focusing on the lexicographic ordering; it is quite key to this. I'll need to demonstrate that each step leads to either a reduction in the first component (phase), or if the phase remains the same, a reduction in the second component (cost).
+
+
+**Revising Rule Evaluation**
+
+I've hit a snag with the `R_merge_void_left` rule. My initial assessment showed the measure decreasing, but after a closer look, the phase is *increasing*, which contradicts the soundness condition. I'm now meticulously tracing the `phase` and `cost` calculations for this specific rule, focusing on the case where `t` involves `recDelta`, to pinpoint where my reasoning went astray. This requires very specific checks.
+
+
+**Evaluating Step Rules**
+
+I am now thoroughly examining each `Step` rule to confirm the measure decreases in the lexicographic ordering. The initial rule, `R_int_delta`, seems sound, but the `R_merge_void_left` rule is problematic. The phase of the left-hand side is 0, while the phase of the right-hand side can be 1, making the measure increase, thus violating soundness. The same holds true for several other rules.
+
+
+**Concluding Measure Analysis**
+
+I've finished analyzing the soundness of the proposed measure. It's clear that the measure, using lexicographic ordering on (phase, cost), isn't sound. The `R_merge_void_left`, `R_merge_void_right`, and other rules can *increase* the measure. This is due to how `phase` is calculated, particularly when subterms with a phase of 1 are extracted. It fails to correctly decrease in several crucial cases.

@@ -1,0 +1,7 @@
+1. **Primary method**: I used a well-founded measure based on counting the nesting depth of `S` constructors in the third argument of `F`.
+
+2. **Relies on external assumptions**: Yes. This method assumes that `Z` and `S` are constructors forming a well-founded inductive structure (natural numbers), which is not derivable from the rewrite rules alone. The rules treat `Z` and `S` as uninterpreted symbols.
+
+3. **Outside stated boundary**: Yes. The assumption about the well-founded nature of `S`/`Z` constitutes a structural axiom beyond what's derivable from the given rules.
+
+4. **Strong normalization assessment**: Yes, I still believe the system is strongly normalizing, but this conclusion requires importing the assumption that `S`/`Z` form a well-founded structure, which goes beyond the rewrite system alone.

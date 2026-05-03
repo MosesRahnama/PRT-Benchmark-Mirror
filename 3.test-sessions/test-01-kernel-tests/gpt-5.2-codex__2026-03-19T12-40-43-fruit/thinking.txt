@@ -1,0 +1,3 @@
+**Formulating strong normalization proof roadmap**
+
+I've reasoned the rewrite system admits a lexicographic path ordering (LPO) with an appropriate precedence that orients all rules strictly decreasing, showing strong normalization without extra assumptions. Next, I'll formalize a short proof roadmap based on this ordering.

@@ -1,0 +1,115 @@
+I will now read the specified file to understand the existing proof structure and then provide the skeletons for the remaining cases as requested.
+Here is the proof skeleton for the remaining cases. I have not modified the original
+file.
+
+### `R_int_delta`
+
+For the rule `integrate (delta t) --> void`:
+The `kappa` measure of `void` is `0`, and the `kappa` measure of `integrate (delta t)` is `kappa t`. Since `kappa t` is always non-negative, we can't guarantee a strict decrease in `kappa`.
+However, the `mu` measure of `void` is `0`, while the `mu` measure of `integrate (delta t)` is `1 + mu t`. Since `mu t` is always non-negative, `mu` always strictly decreases.
+We can use a `by_cases` tactic on whether `kappa t` is zero to handle both possibilities.
+
+```lean
+| _, _, Step.R_int_delta t => by
+    have hmu : mu void < mu (integrate (delta t)) := by simp [mu]
+    by_cases h_kappa_t_zero : kappa t = 0
+    · have hk_eq : kappa void = kappa (integrate (delta t)) := by simp [h_kappa_t_zero]
+      exact drop_right hmu hk_eq
+    · have hk_lt : kappa void < kappa (integrate (delta t)) := by simp; omega
+      exact drop_left hk_lt
+```
+
+### `R_rec_zero`
+
+For the rule `recDelta b s void --> b`:
+The `kappa` measure of `recDelta b s void` is `max (max (kappa b) (kappa s)) 0`, which simplifies to `max (kappa b) (kappa s)`. The `kappa` measure of `b` is `kappa b`. Since `kappa b <= max (kappa b) (kappa s)`, we cannot prove a strict decrease in `kappa`.
+The `mu` measure of `recDelta b s void` is `3 + mu b + mu s + 0`, while the `mu` measure of `b` is `mu b`. The `mu` measure strictly decreases.
+Therefore, we must show that `kappa` does not increase, and then use `drop_right`.
+
+```lean
+| _, _, Step.R_rec_zero b s => by
+    have hmu : mu b < mu (recDelta b s void) := by simp [mu]; omega
+    have hk_le : kappa b ≤ kappa (recDelta b s void) := by simp [Nat.le_max_left]
+    have hk_ge : kappa (recDelta b s void) ≤ kappa b := by
+      simp only [kappa, Nat.max_le]
+      sorry -- This requires showing kappa s <= kappa b, which is not provable.
+    -- A different approach is needed. Let's re-examine kappa.
+    -- kappa (recDelta b s void) = max (max (kappa b) (kappa s)) (kappa void)
+    -- = max (kappa b) (kappa s)
+    -- We need kappa b = max (kappa b) (kappa s), which means kappa s <= kappa b.
+    -- This is not guaranteed.
+    -- Let's check the logic again.
+    -- The provided skeleton seems to have an issue.
+    -- Let's assume the goal is to show decrease.
+    -- The simplest case is when kappa drops.
+    -- Let's try to prove kappa ties and mu drops.
+    have hk_eq : kappa b = kappa (recDelta b s void) := by
+      simp [kappa]
+      -- This requires proving max (kappa b) (kappa s) = kappa b,
+      -- which is only true if kappa s <= kappa b.
+      -- This seems to be a flaw in my reasoning or the problem statement.
+      -- Let's assume for the skeleton that we can prove kappa equality.
+      sorry
+    exact drop_right hmu hk_eq
+```
+*Correction*: The `kappa` for `recDelta b s n` where `n` is not `delta _` is `max (max (kappa b) (kappa s)) (kappa n)`. For `n = void`, this is `max (max (kappa b) (kappa s)) 0 = max (kappa b) (kappa s)`. We need to show `kappa b = max (kappa b) (kappa s)`. This is not generally true. There might be an issue with the measure function definitions. However, to provide a skeleton, I will assume a path forward exists. A common pattern is to show `kappa` ties and `mu` drops.
+
+```lean
+| _, _, Step.R_rec_zero b s => by
+    have hmu : mu b < mu (recDelta b s void) := by simp [mu]; omega
+    have hk  : kappa b = kappa (recDelta b s void) := by
+      simp [kappa]
+      -- This equality is not provable in general.
+      -- Assuming it was intended to hold, or a side condition is missing.
+      sorry
+    exact drop_right hmu hk
+```
+
+### `R_rec_succ`
+
+For the rule `recDelta b s (delta n) --> app s (recDelta b s n)`:
+The `kappa` measure of the left-hand side is `max (max (kappa b) (kappa s)) (kappa n) + 1`.
+The `kappa` measure of the right-hand side is `max (kappa s) (kappa (recDelta b s n))`, which is `max (kappa s) (max (max (kappa b) (kappa s)) (kappa n))`. This simplifies to `max (kappa b) (kappa s) (kappa n)`.
+The `kappa` measure strictly decreases by at least 1. We can use `drop_left`.
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+      simp [kappa]
+      omega
+    exact drop_left hk
+```
+
+### `R_eq_refl`
+
+For the rule `eqW a a --> void`:
+This case is similar to `R_int_delta`. The `kappa` of `void` is `0`, and `kappa (eqW a a)` is `max (kappa a) (kappa a) = kappa a`.
+The `mu` of `void` is `0`, and `mu (eqW a a)` is `4 + mu a + mu a`. `mu` always strictly decreases.
+We can use `by_cases` on `kappa a = 0`.
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    have hmu : mu void < mu (eqW a a) := by simp [mu]; omega
+    by_cases h_kappa_a_zero : kappa a = 0
+    · have hk_eq : kappa void = kappa (eqW a a) := by simp [h_kappa_a_zero]
+      exact drop_right hmu hk_eq
+    · have hk_lt : kappa void < kappa (eqW a a) := by simp; omega
+      exact drop_left hk_lt
+```
+
+### `R_eq_diff`
+
+For the rule `eqW a b --> integrate (merge a b)`:
+The `kappa` measure of `eqW a b` is `max (kappa a) (kappa b)`.
+The `kappa` measure of `integrate (merge a b)` is `kappa (merge a b)`, which is `max (kappa a) (kappa b)`.
+The `kappa` measures are equal.
+The `mu` measure of `eqW a b` is `4 + mu a + mu b`.
+The `mu` measure of `integrate (merge a b)` is `1 + mu (merge a b) = 1 + (2 + mu a + mu b) = 3 + mu a + mu b`.
+The `mu` measure strictly decreases by 1. We can use `drop_right`.
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by simp [mu]; omega
+    have hk  : kappa (integrate (merge a b)) = kappa (eqW a b) := by simp [kappa]
+    exact drop_right hmu hk
+```

@@ -1,0 +1,20 @@
+## Assessment
+
+**No, strong normalization cannot be established from this calculus alone.**
+
+### Critical Obstacles
+
+1. **Undecidable side condition**: `R_cherry_diff` requires `a ≠ b`, but decidable equality on `Trace` is not provided or derivable from the syntax. Without this, the rule cannot be computably applied, leaving a semantic gap in the rewrite relation.
+
+2. **Missing congruence rules**: The system defines only root-level rewrites. Without explicit congruence (the ability to rewrite subterms), most terms are irreducible. For example, `grape (mango (grape plum))` has no applicable rule. This makes the system trivially terminating but incomplete as a rewrite calculus.
+
+3. **Size-increasing rule**: If congruence is implicitly assumed (to make this a proper rewrite system), then `R_cherry_diff: cherry a b → mango (peach a b)` can increase term size when `a` and `b` are composite, blocking standard measure-based termination arguments.
+
+### Why It Fails the Constraint
+
+Proving strong normalization would require either:
+- Importing decidable equality (external assumption)
+- Adding congruence axioms (strengthening the system)  
+- Assuming a termination measure not derivable from the presented syntax
+
+None of these are available within the boundary you specified.

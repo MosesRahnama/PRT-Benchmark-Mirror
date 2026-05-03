@@ -1,0 +1,90 @@
+I’ve pinned down the key technical point: the recursive `banana` rule defeats a naive term-size argument, so I’m checking whether a standard termination ordering still works from the rules alone.
+I’ve got the conclusion: the system is terminating on its own terms, and the proof can stay entirely at the meta-level with a standard interpretation argument.
+## Assessment
+
+Yes — **strong normalization can be established from the presented calculus alone**, with no need to add structural axioms, extra rewrite rules, guards, or hidden object-level assumptions.
+
+The clean way to do it is **not** a naive size-of-term argument, because the rule
+
+\[
+\texttt{banana b s (grape n)} \to \texttt{pear s (banana b s n)}
+\]
+
+can increase raw tree size by duplicating the contribution of `s`. So plain “every rewrite makes the term smaller” fails. But that does **not** block strong normalization: a standard **polynomial interpretation / monotone algebra** proof works directly on the given symbols and rules.
+
+## Short roadmap
+
+Interpret terms into $\mathbb{N}$ by:
+
+\[
+\begin{aligned}
+|\texttt{plum}| &= 0 \\
+|\texttt{grape}(t)| &= |t| + 1 \\
+|\texttt{mango}(t)| &= |t| \\
+|\texttt{peach}(x,y)| &= |x| + |y| + 1 \\
+|\texttt{pear}(x,y)| &= y \\
+|\texttt{banana}(b,s,n)| &= b + n + 1 \\
+|\texttt{cherry}(a,b)| &= a + b + 2
+\end{aligned}
+\]
+
+All these interpretations are monotone in their arguments. Then every rewrite step strictly decreases the interpretation:
+
+- `mango (grape t) -> plum`:
+  \[
+  |t|+1 > 0
+  \]
+
+- `peach plum t -> t`:
+  \[
+  0 + |t| + 1 > |t|
+  \]
+
+- `peach t plum -> t`:
+  \[
+  |t| + 0 + 1 > |t|
+  \]
+
+- `peach t t -> t`:
+  \[
+  2|t|+1 > |t|
+  \]
+
+- `banana b s plum -> b`:
+  \[
+  |b| + 0 + 1 > |b|
+  \]
+
+- `banana b s (grape n) -> pear s (banana b s n)`:
+  \[
+  |b| + (|n|+1) + 1 = |b|+|n|+2 > |b|+|n|+1
+  \]
+  and
+  \[
+  |\texttt{pear s (banana b s n)}| = |\texttt{banana b s n}| = |b|+|n|+1
+  \]
+
+- `cherry a a -> plum`:
+  \[
+  2|a|+2 > 0
+  \]
+
+- `cherry a b -> mango (peach a b)`:
+  \[
+  |a|+|b|+2 > |a|+|b|+1
+  \]
+
+So every allowed rewrite strictly descends in $\mathbb{N}$. Hence no infinite rewrite sequence exists, i.e. the system is strongly normalizing.
+
+## Brief note
+
+The only caveat is interpretive, not structural: `a ≠ b` in `R_cherry_diff` must be read as the ordinary meta-level inequality condition already written in the rule. Under that standard reading, nothing extra is being imported.
+
+## Completion
+
+Checklist status:
+- 1. Inspect rewrite rules — completed
+- 2. Test termination obstacles — completed
+- 3. State bounded conclusion — completed
+
+So the raw verdict is: **yes, SN is provable from the calculus as presented; a simple polynomial interpretation suffices.**

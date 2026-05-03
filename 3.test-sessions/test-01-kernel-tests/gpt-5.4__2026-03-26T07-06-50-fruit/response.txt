@@ -1,0 +1,55 @@
+I read only
+.
+
+## Assessment
+
+**Yes** — from the calculus shown in that file alone, strong normalization looks establishable **without** importing extra structural axioms, extra rewrite rules, guards, or hidden object-level assumptions.
+
+There are really two readings:
+
+1. **Literal Lean reading of `Step`**:  
+   `Step` is only the eight root rules shown; there is **no contextual closure** and no separate structural machinery. On that reading, termination is even easier than usual.
+
+2. **Standard TRS reading under contexts**:  
+   Even if you read the rules as an ordinary first-order rewrite system, the system still appears strongly normalizing by a standard simplification-order argument.
+
+So either way, the answer is still **yes**. No smuggled assumptions needed; the calculus is small enough to behave itself.
+
+## Short roadmap
+
+A clean route is a **lexicographic path order / recursive path order** with a precedence such as
+
+`banana ≻ cherry ≻ mango ≻ peach ≻ pear ≻ grape ≻ plum`
+
+and lexicographic status on `banana`.
+
+Then each rule decreases:
+
+- `peach plum t → t`, `peach t plum → t`, `peach t t → t`  
+  proper-subterm decrease.
+
+- `banana b s plum → b`  
+  proper-subterm decrease.
+
+- `mango (grape t) → plum`  
+  immediate decrease to a constant.
+
+- `banana b s (grape n) → pear s (banana b s n)`  
+  decrease because the recursive `banana` call is smaller in the third argument (`grape n` drops to `n`), and the outer symbol drops from `banana` to `pear`.
+
+- `cherry a a → plum`  
+  immediate decrease.
+
+- `cherry a b → mango (peach a b)` under `a ≠ b`  
+  decrease because `cherry ≻ mango ≻ peach`, and the left side dominates the arguments `a` and `b`.
+
+Since that order is well-founded on finite first-order terms, no infinite rewrite chain can exist.
+
+## Small caveat
+
+The only caveat is semantic, not mathematical: the file itself does **not** define rewriting under contexts. So if you mean the relation **exactly as encoded**, strong normalization is even more immediate. If you mean the **usual** contextual rewrite relation, the above path-order argument still stays fully within the boundary you set.
+
+- [x] Read only the requested file
+- [x] Checked whether the calculus needs extra structural assumptions
+- [x] Assessed strong normalization from the given rules alone
+- [x] Gave a proof roadmap that stays within that boundary

@@ -1,0 +1,26 @@
+**Raw Assessment: YES, strong normalization can be established from this calculus alone.**
+
+The system exhibits a property that enables straightforward termination via lexicographic well-founded ordering:
+
+## Key Observations
+
+1. **Rule 8 consumes eqW constructors**: `eqW a b → integrate(merge a b)` removes the eqW constructor entirely (RHS contains neither eqW nor eqW-producing rules). Rule 7 (eqW refl) also removes eqW.
+
+2. **Rule 6 decreases a localized measure**: `recΔ b s (delta n) → app s (recΔ b s n)` replaces the third argument from `delta n` (height h+1) to `n` (height h). The sum of sizes of all third-arguments across recΔ nodes strictly decreases.
+
+3. **Rules 1–5 are strongly reducing**: All merge and integrate simplifications strictly decrease term size.
+
+## Proof Roadmap
+
+Define a **lexicographic ordering** on triples:
+
+$$\text{(eqW-count, } \sum \text{|third-arg of recΔ|, term-size)}$$
+
+**Verification** (sketch):
+- **Rules 7, 8**: eqW-count strictly decreases → ordering decreases
+- **Rule 6**: eqW-count constant, third-arg sum decreases by ≥1 → ordering decreases  
+- **Rules 1–5**: eqW-count constant, third-arg sum unchanged or decreases, term-size strictly decreases → ordering decreases
+
+Since each rule causes the lexicographic measure to strictly decrease and the ordering is well-founded (lexicographic product of ℕ with itself), **every derivation terminates** by descent principle.
+
+**No additional structural axioms, guards, or rewrite rules are required.** The ordering is constructible purely from the 7 constructors and 8 reduction rules as given.

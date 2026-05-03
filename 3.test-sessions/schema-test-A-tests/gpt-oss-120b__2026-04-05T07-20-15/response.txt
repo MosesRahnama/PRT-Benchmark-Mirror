@@ -1,0 +1,7 @@
+1. **Primary method used:** A decreasing‑measure (well‑founded ordering) argument on the number of `S` constructors in the third argument of `F`.
+
+2. **Reliance on external assumptions:** The method assumes the natural‑number ordering `<` on the count of `S` constructors and that this ordering is well‑founded. These are not part of the rewrite rules themselves but are standard meta‑theoretic notions used to prove termination.
+
+3. **Boundary compliance:** Yes. Introducing the natural‑number ordering and the notion of “measure” is an external proof device, so the method lies outside the strict boundary of “derivable from the given rules alone.”
+
+4. **Strong‑normalisation judgment:** Even with that external reasoning, the system still appears strongly normalising; every rewrite step strictly reduces the `S`‑depth, preventing infinite reductions.

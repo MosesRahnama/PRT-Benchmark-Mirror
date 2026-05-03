@@ -1,0 +1,5 @@
+**Crafting the answer on strong normalization**
+
+I’m preparing a response affirming that strong normalization indeed holds. The reasoning is straightforward: all rules are root-contracting and either reduce to proper subterms or constants. At most, we deal with a finite depth of nested structures, meaning there's no possibility for infinite reductions.
+
+To clarify, I will outline a size measure to show how each rule strictly decreases this measure with every step. This reasoning ensures that the rewriting process remains finite. I also want to warn that if contexts are omitted, it might lead to misconceptions about rule application, but overall, strong normalization is achievable without additional conditions.

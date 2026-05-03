@@ -1,0 +1,7 @@
+1. Primary method: Syntactic multiset measure on S/Z-nesting depths of F-redex third arguments (decreases strictly per reduction); supported by dependency pairs (DP) and RPO.
+
+2. No: Methods are purely syntactic (rule patterns dictate matching/decrease); precedence/status choices are validated directly by rules (F-head removal or arg decrease); no external interpretations/axioms needed.
+
+3. N/A
+
+4. Yes.

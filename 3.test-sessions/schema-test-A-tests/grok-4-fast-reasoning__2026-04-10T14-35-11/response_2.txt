@@ -1,0 +1,7 @@
+1. Informal structural analysis of recursion on the third argument, supplemented by references to standard TRS termination techniques (e.g., dependency pairs, multiset ordering).
+
+2. Yes, it relies on interpreting `S` as a successor constructor and `Z` as a base (e.g., natural numbers), assuming a well-founded order on terms, and choosing specific proof methods like multiset paths, which are not explicitly fixed by the rules.
+
+3. Yes, as these involve object-level assumptions about term structure (e.g., finite depth of `S`-chains) and external ordering choices beyond what the rules alone derive.
+
+4. Yes, the system appears strongly normalizing under standard interpretations, but provability from rules alone is unclear without those assumptions.

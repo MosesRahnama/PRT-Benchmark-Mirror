@@ -1,0 +1,6 @@
+**Identifying unsoundness in key theorem**
+
+The current theorem fails for inputs where n is wrapped in delta because it incorrectly adds +2 instead of +1, revealing the need to restrict the theorem's domain or adjust the proof to handle delta cases properly.
+**Summarizing unsoundness with line references**
+
+The definitions and theorems reside between lines 1–55 of BranchRealism; notably, kappa’s recDelta cases (lines 32–33) show the +1 increment only for delta-wrapped inputs. The theorem kappa_rec_delta_step (lines 46–48) claims equality adding +1 when stepping under delta, but substituting n = delta m demonstrates a mismatch, making the equality false. Likewise, kappa_rec_succ_drop (lines 50–53) relies on this equality for a strict inequality that also fails under the same substitution. This confirms the theorems lack soundness without restricting n to exclude delta-wrapped cases.

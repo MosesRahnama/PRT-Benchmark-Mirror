@@ -1,0 +1,7 @@
+1. Primary method: a reduction-ordering argument (LPO/RPO-style), by choosing a precedence (e.g. \(F \succ G\)) so both rules orient decreasing.
+
+2. Yes. That method depends on an externally chosen well-founded ordering / precedence (and the meta-theorem “LPO/RPO orientation ⇒ termination”), none of which is fixed by the rewrite rules themselves.
+
+3. Yes, if the boundary is read strictly as “no additional proof structure/choices beyond what the rules themselves determine”, then that specific LPO/RPO presentation is outside the stated boundary (it imports extra proof machinery/choices, even though it’s standard meta-theory).
+
+4. Separately: yes, I still think the TRS is strongly normalizing. A direct rule-derived measure works: take the multiset of “\(S\)-depth of the 3rd argument” over all occurrences of \(F(\_,\_,\_)\). Rule 1 removes an \(F\) occurrence; rule 2 replaces one \(F(\_,\_,S(t))\) by \(F(\_,\_,t)\) (depth strictly decreases by 1) and does not introduce any new \(F\) occurrences. No rule can ever create an \(S(\cdot)\) at the top of a subterm that wasn’t already there. So every rewrite step strictly decreases that multiset in a well-founded way, ruling out infinite reductions.

@@ -1,0 +1,109 @@
+Use this unverified skeleton for the three open cases.
+
+```lean
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    let E  : Ordinal := mu n + mu s + (6 : Ordinal)
+    let E' : Ordinal := mu (delta n) + mu s + (6 : Ordinal)
+
+    -- First isolate the size of the recursive-call measure.
+    have hrec :
+        mu (recDelta b s n) + 1 < omega0 ^ (E + 1) := by
+      -- Expand `mu (recDelta b s n)`.
+      simp [mu, E]
+      -- Goal shape:
+      --   omega0 ^ E + omega0 * (mu b + 1) + 2 < omega0 ^ (E + 1)
+      --
+      -- Intended proof:
+      -- 1. `omega0 * (mu b + 1) + 2 < omega0 ^ E` because `E` contains `+ 6`.
+      -- 2. Hence `omega0 ^ E + (...) < omega0 ^ E * 2`.
+      -- 3. And `omega0 ^ E * 2 < omega0 ^ (E + 1)`.
+      sorry
+
+    -- Then bound the application measure below a single `omega`-power.
+    have happ :
+        omega0 ^ (3 : Ordinal) * (mu s + 1)
+          + omega0 ^ (2 : Ordinal) * (mu (recDelta b s n) + 1) + 1
+          < omega0 ^ E' := by
+      -- Split into the two summands.
+      have hs :
+          omega0 ^ (3 : Ordinal) * (mu s + 1) < omega0 ^ E' := by
+        -- Show `3 < E'` (trivial since `E'` contains `+ 6`)
+        -- and absorb the coefficient `(mu s + 1)` into the larger power.
+        sorry
+      have hrec2 :
+          omega0 ^ (2 : Ordinal) * (mu (recDelta b s n) + 1) < omega0 ^ E' := by
+        -- Use `hrec`, multiply on the left by `omega0 ^ 2`,
+        -- rewrite `omega0 ^ 2 * omega0 ^ (E + 1)` as `omega0 ^ (2 + (E + 1))`,
+        -- then compare exponents with `E'`.
+        --
+        -- This is the critical comparison:
+        --   2 + (E + 1) < E'
+        --
+        -- If this is where the proof gets stuck, the current `mu` is likely too weak.
+        sorry
+      -- Since both summands are below the principal ordinal `omega0 ^ E'`,
+      -- their sum (and the trailing `+ 1`) is also below `omega0 ^ E'`.
+      sorry
+
+    calc
+      mu (app s (recDelta b s n))
+          = omega0 ^ (3 : Ordinal) * (mu s + 1)
+            + omega0 ^ (2 : Ordinal) * (mu (recDelta b s n) + 1) + 1 := by
+              simp [mu]
+      _ < omega0 ^ E' := happ
+      _ <= omega0 ^ E' + omega0 * (mu b + 1) + 1 := by
+            exact le_trans (le_add_right _ _) (le_add_right _ _)
+      _ = mu (recDelta b s (delta n)) := by
+            simp [mu, E']
+
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    exact Ordinal.pos_iff_ne_zero.mpr (by
+      apply ne_of_gt
+      exact add_pos_right _ one_pos)
+
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    let A : Ordinal := mu a + mu b
+
+    have hmerge :
+        mu (merge a b) + 1 < omega0 ^ (A + 5) := by
+      simp [mu, A]
+      -- Goal shape:
+      --   omega0 ^ 3 * (mu a + 1) + omega0 ^ 2 * (mu b + 1) + 2 < omega0 ^ (A + 5)
+      --
+      -- Intended proof:
+      -- 1. `omega0 ^ 3 * (mu a + 1) < omega0 ^ (A + 4)`
+      -- 2. `omega0 ^ 2 * (mu b + 1) < omega0 ^ (A + 4)`
+      -- 3. Use add-principality of `omega0 ^ (A + 5)` to absorb both terms and `+ 2`.
+      sorry
+
+    have hint :
+        omega0 ^ (4 : Ordinal) * (mu (merge a b) + 1) + 1
+          < omega0 ^ (A + 9) := by
+      -- From `hmerge`, multiply on the left by `omega0 ^ 4`.
+      -- Rewrite:
+      --   omega0 ^ 4 * omega0 ^ (A + 5) = omega0 ^ (4 + (A + 5))
+      -- and compare `4 + (A + 5)` with `A + 9`.
+      sorry
+
+    calc
+      mu (integrate (merge a b))
+          = omega0 ^ (4 : Ordinal) * (mu (merge a b) + 1) + 1 := by
+              simp [mu]
+      _ < omega0 ^ (A + 9) := hint
+      _ < omega0 ^ (A + 9) + 1 := lt_add_one _
+      _ = mu (eqW a b) := by
+            simp [mu, A]
+```
+
+Two notes:
+
+1. `R_eq_refl` should close exactly as above.
+2. `R_rec_succ` is the delicate one. The key missing inequality is the comparison between the exponent coming from  
+   `omega0 ^ (2 : Ordinal) * (mu (recDelta b s n) + 1)` and the source exponent `E'`.  
+   If that comparison does not go through, the obstruction is likely real: the current `mu` may need strengthening, not just a different tactic script.

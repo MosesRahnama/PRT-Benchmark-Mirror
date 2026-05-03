@@ -1,0 +1,8 @@
+**Yes**, strong normalization holds.
+
+**Proof roadmap**: Define the measure $\mu(t)$ as the *multiset* of sizes (in the term algebra) of *all* third arguments of $F$-subterms in $t$.
+
+- Rule 1: $F(x,y,Z) \to x$ removes $\mathrm{sz}(Z)$ from the multiset ($\mu$ decreases).
+- Rule 2: $F(x,y,S(n)) \to G(y,F(x,y,n))$ replaces $\mathrm{sz}(S(n)) = 1 + \mathrm{sz}(n)$ with $\mathrm{sz}(n)$ in the multiset for that $F$ (other $F$-third-args unchanged; $\mu$ decreases in multiset order).
+
+Since $>_{\sqcup}$ (multiset extension of $>$ on $\mathbb{N}$) is well-founded, no infinite reductions.

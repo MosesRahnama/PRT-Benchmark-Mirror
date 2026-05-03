@@ -1,0 +1,3 @@
+**Yes**, strong normalization can be established from the rewrite system alone.
+
+The rules define a simple primitive recursion on the third argument: `F(x, y, Z) → x` (base case, collapses to subterm) and `F(x, y, S(n)) → G(F(x, y, n))` (inductive step, peels one `S` and wraps in `G`). Reductions strictly decrease the successor depth of the third argument until hitting `Z`, after which `G`-terms (normal forms) and subterms halt. The rules are non-overlapping, left-linear, and admit a terminating order (e.g., lexicographic path order with `S > Z, G > F` and multiset on arguments, decreasing on third position). No infinite sequences or cycles possible without external axioms.

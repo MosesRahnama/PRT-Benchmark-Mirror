@@ -1,0 +1,29 @@
+**Assessment:**
+
+Yes, strong normalization (SN) can be established directly from the presented calculus without importing any structural axioms, extra rewrite rules, side conditions, or object-level assumptions. The rewrite rules form a terminating term rewriting system (TRS).
+
+**Proof Roadmap:**
+
+Since the system does not involve variable binding, beta-reduction, or complex matching constraints, SN can be proven trivially by constructing a **Polynomial Interpretation** over the natural numbers (where all term weights evaluate to an integer $\ge 1$). 
+
+We can assign the following structural weights $[\![ \cdot ]\!]$ to the constructors:
+*   $[\![\text{void}]\!] = 1$
+*   $[\![\text{delta}(t)]\!] = [\![t]\!] + 1$
+*   $[\![\text{integrate}(t)]\!] = [\![t]\!] + 1$
+*   $[\![\text{merge}(a, b)]\!] = [\![a]\!] + [\![b]\!] + 1$
+*   $[\![\text{app}(a, b)]\!] = [\![a]\!] + [\![b]\!] + 1$
+*   $[\![\text{eqW}(a, b)]\!] = [\![a]\!] + [\![b]\!] + 3$
+*   $[\![\text{recΔ}(b, s, t)]\!] = [\![b]\!] + [\![t]\!] \times ([\![s]\!] + 2)$
+
+By substituting these interpretations into the left and right-hand sides of every step in the `Step` relation, we can verify that every rewrite rule causes a strict algebraic decrease in the total weight:
+1.  **R_int_delta**: $[\![t]\!] + 2 > 1$ 
+2.  **R_merge_void_left**: $1 + [\![t]\!] + 1 > [\![t]\!]$
+3.  **R_merge_void_right**: $[\![t]\!] + 1 + 1 > [\![t]\!]$
+4.  **R_merge_cancel**: $2[\![t]\!] + 1 > [\![t]\!]$
+5.  **R_rec_zero**: $[\![b]\!] + 1 \times ([\![s]\!] + 2) > [\![b]\!]$
+6.  **R_rec_succ**: $[\![b]\!] + ([\![n]\!]+1)([\![s]\!]+2) > [\![s]\!] + ([\![b]\!] + [\![n]\!]([\![s]\!]+2)) + 1$ 
+    *(which simplifies to $[\![s]\!] + 2 > [\![s]\!] + 1$)*
+7.  **R_eq_refl**: $2[\![a]\!] + 3 > 1$
+8.  **R_eq_diff**: $[\![a]\!] + [\![b]\!] + 3 > [\![a]\!] + [\![b]\!] + 2$
+
+Because all polynomial functions are strictly monotonic over domains $\ge 1$, and evaluating every rewrite rule results in strictly decreasing sizes ($LHS > RHS$), infinite rewrite chains are impossible. Strong normalization is fully guaranteed strictly within the calculus boundary.

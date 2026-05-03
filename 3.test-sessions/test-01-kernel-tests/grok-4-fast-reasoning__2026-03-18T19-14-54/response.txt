@@ -1,0 +1,15 @@
+Yes, strong normalization can be established from the presented calculus alone using structural induction on terms combined with a lexicographic well-founded measure on the syntax tree.
+
+**Short proof roadmap:**
+
+Define a measure μ(t) = (e(t), c(t)), where e(t) is the total number of eqW constructors in t (multiset over all occurrences), and c(t) is the "complexity" of the eqW-free skeleton of t, defined as the pair (number of (integrate + merge + recΔ + app) constructors, sum over all recΔ subterms of the delta-nesting depth in their third argument). Both components are natural numbers (or finite multisets for precision), and < on μ is lexicographic with well-founded order on ℕ.
+
+Prove by induction on μ(t) that every t is strongly normalizing (SN): every one-step reduct t → t' has μ(t') < μ(t), and base cases (μ(t) = (0,0), i.e., void or delta-chains) are irreducible.
+
+- If t has no root-active rule, reducts are proper subterm reductions; by IH on smaller μ, t' is SN, so t is SN.
+- For root rules:
+  - eqW rules: e decreases by 1 (eqW removed, no eqW created on RHS); c may increase slightly due to added integrate/merge/app, but e dominates lex.
+  - Other rules (int_delta, merge_*, rec_*): e unchanged, but c decreases (removes a constructor or delta-depth in rec arg; rec_succ duplicates s but consumes a delta layer, netting decrease in c's second component).
+- Contexts preserve the decrease: reducing inside a subterm decreases μ there, hence overall (fewer constructors/depths in that branch).
+
+This uses only the given syntax (constructors, nesting) and rules (no creation of eqW/delta, consuming nature of reductions), with no extra axioms, guards, or assumptions.

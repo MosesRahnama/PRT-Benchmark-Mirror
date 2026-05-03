@@ -1,0 +1,1 @@
+Let me read the Lean 4 file to understand the structure and provide proof skeletons for the remaining sorry cases.

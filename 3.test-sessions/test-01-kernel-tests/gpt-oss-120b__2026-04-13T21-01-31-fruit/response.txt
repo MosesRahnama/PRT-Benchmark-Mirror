@@ -1,0 +1,73 @@
+**Assessment – strong normalization holds**
+
+The rewrite system defined by the inductive type `Trace` and the relation `Step` is *strongly normalising*: every `Trace` term admits only finite reduction sequences, and no infinite chain of `Step`‑steps can be built from the rules that are given.
+
+---
+
+### Why the system terminates
+
+1. **A decreasing measure for most rules**  
+   For a term `t` let  
+
+   \[
+   |t| = \text{the total number of constructors occurring in }t .
+   \]
+
+   The rules  
+
+   * `R_mango_grape`, `R_peach_*`, `R_peach_cancel`, `R_banana_zero`,
+   * `R_cherry_refl`  
+
+   all replace a term by a strictly smaller one (the right‑hand side has
+   fewer constructors than the left‑hand side). Hence each application of
+   any of these rules strictly decreases `|t|`.
+
+2. **The only potentially size‑increasing rule**  
+
+   ```
+   R_apple_orange : ∀ b s n, Step (banana b s (grape n))
+                                   (pear s (banana b s n))
+   ```
+
+   *The left‑hand side contains a `grape` constructor; the right‑hand side
+   contains none.*  
+   No rule in the system ever **creates** a `grape`. The only occurrences of
+   `grape` can be present in the original term or be introduced as a
+   sub‑term of the left‑hand side of `R_mango_grape` (which immediately
+   reduces to `plum`). Consequently, each use of `R_apple_orange` strictly
+   **decreases the number of `grape` constructors**.
+
+3. **Lexicographic well‑founded order**  
+
+   Define the measure  
+
+   \[
+   \mu(t) = \bigl(\#\text{grape}(t),\;|t|\bigr)
+   \]
+
+   ordered lexicographically (first component decreasing, then second).
+   * Every rule except `R_apple_orange` reduces the second component while
+     leaving the first unchanged.  
+   * `R_apple_orange` reduces the first component (the count of `grape`) and
+     may increase the second component, but the lexicographic order still
+     goes down because the first component strictly drops.
+
+   Since the pair of natural numbers with the lexicographic order is
+   well‑founded, there cannot be an infinite descending chain of
+   `μ(t)`. Hence no infinite `Step`‑reduction sequence exists.
+
+4. **No hidden side‑conditions**  
+   All rules are unconditional (apart from the explicit inequality
+   `a ≠ b` in `R_cherry_diff`, which is a decidable propositional check and
+   does not affect termination). No additional axioms, guards, or external
+   memory are required.
+
+---
+
+### Conclusion
+
+Using the simple well‑founded measure \(\mu\) above, one can prove by
+lexicographic induction that every reduction strictly decreases \(\mu\).
+Therefore the rewrite calculus **is strongly normalising** solely from the
+syntax and the eight rewrite rules presented, without importing any extra
+structural axioms or object‑level assumptions.

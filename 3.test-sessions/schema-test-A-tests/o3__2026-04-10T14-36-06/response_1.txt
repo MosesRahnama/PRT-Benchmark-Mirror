@@ -1,0 +1,9 @@
+Yes — strong normalization follows directly from the two rewrite rules themselves.
+
+Reasoning  
+1. Pick a well-founded measure on terms that counts the size of the third argument of `F` (interpret `Z` as 0 and `S( )` as the successor constructor).  
+2. Rule 1, `F(x, y, Z) → x`, removes the outer `F` in one step and therefore strictly decreases that measure.  
+3. Rule 2, `F(x, y, S(n)) → G(y, F(x, y, n))`, replaces `S(n)` with the strictly smaller `n`, so the measure again decreases; the added `G` wrapper does not introduce any new redexes because no rules rewrite a term headed by `G`.  
+4. Because every reduction step strictly lowers a natural-number measure and ℕ is well founded, infinite reduction sequences are impossible.
+
+Thus the system is terminating (strongly normalizing) without needing any additional structural axioms or external assumptions.

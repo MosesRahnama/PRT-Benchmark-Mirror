@@ -1,0 +1,7 @@
+1. The primary method used was reduction orderings (specifically, the lexicographic path ordering) to demonstrate termination.
+
+2. Yes, it relies on choosing a specific ordering on function symbols and terms, which is an external proof structure not inherent to the rewrite rules themselves.
+
+3. Yes, this places the method outside the stated boundary, as reduction orderings are not derivable from the given rules and constitute imported proof assumptions.
+
+4. Yes, I still think the system is strongly normalizing, as reductions clearly terminate without cycles.

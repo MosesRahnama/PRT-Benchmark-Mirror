@@ -1,0 +1,120 @@
+**Defining Proof Requirements**
+
+I'm currently focused on extracting the necessary proof steps for the remaining cases in `Test-02 -Completion-Nat-Lex.lean`. The goal is to provide a comprehensive structure. Right now, I'm specifically looking at the `Step.R_int_delta t` case and determining its proof properties, and what theorems I might need to leverage for a successful completion.
+
+
+**Evaluating Proof Structures**
+
+I'm now deep-diving into the `R_int_delta t` case. I've successfully defined the parameters `a` and `b` and am now working through the properties. I am aiming to establish how `kappa` and `mu` behave in this context. I'm considering the relationship between `kappa (integrate (delta t))` and `kappa void`, and how `mu` changes. Currently, it seems `kappa` either drops or stays the same, while `mu` definitely drops, but I'm checking the relation between `omega` and `LexOrder`.
+
+
+**Dissecting R_int_delta t**
+
+I'm now detailing the requirements for the `R_int_delta t` case. I've confirmed that `kappa void = 0` and `mu void = 0`. This is the first step toward building the proof. I'm focusing on the relationship between `LexOrder` and the behavior of `kappa` and `mu`. Then I will check `mu (integrate (delta t)) = 1 +  mu t`. It seems that the proof structure might necessitate the use of `rcases` for handling potential cases where `kappa` either drops or remains the same, which will determine the choice of `left` or `right` in the `LexOrder`.
+
+
+**Revisiting Case Analysis**
+
+I'm now back at the `R_int_delta t` case. I've successfully broken down the properties, including relationships between `kappa`, `mu`, and the `LexOrder`. I've determined that `kappa void = 0`, and considered cases where `kappa t` can equal zero. I am exploring the use of `omega` and `rcases` to handle the `LexOrder` application directly, and have constructed some initial case analysis. I also re-evaluated how the other cases might behave.
+
+
+**Decomposing Case Proofs**
+
+I'm now focusing on outlining the complete proofs for each case. The `R_int_delta t` case required extensive examination, but now the solution seems clearer, as I had forgotten the fact that Lean's `LexOrder` utilizes `Prod.Lex`. Furthermore, by breaking down each case, I was able to determine the optimal structure, particularly for `R_rec_succ`. I'm going to finish the remaining proofs.
+
+
+**Structuring the Remaining Proofs**
+
+I'm now implementing the plan for each case, building upon the initial case analyses. My next step will be to finalize the `by_cases` structure for cases with potential equality in `kappa` and applying `drop_left` or `drop_right` as necessary. This approach allows a clear and concise proof. I'm focusing on the `Prod.Lex` implementation and using `omega` to handle `Nat` comparisons.
+
+
+**Defining Proof Skeletons**
+
+I'm now outlining the `by_cases` structures for the first two cases. For `R_int_delta t` and `R_rec_zero`, I'll use `by_cases` to handle the `kappa` and `mu` comparisons. I'm leveraging `Prod.Lex.left` and `Prod.Lex.right` alongside `omega` to handle the `LexOrder` for cases where the kappa values are potentially equal.
+
+
+**Defining Case Proof Structures**
+
+I'm developing the basic structure for the remaining cases. Specifically, I'm focusing on the proofs' skeletons: leveraging `by_cases` for cases where `kappa` may be equal, such as `R_int_delta t` and `R_rec_zero`. I'm using `omega` to handle `Nat` comparisons within the `LexOrder` structure, along with  `Prod.Lex.left` and `Prod.Lex.right` where appropriate.
+
+
+**Completing Case Proofs**
+
+I'm now in the process of finalizing the skeleton proofs for each case, building directly on the foundation of the initial analysis and case breakdowns. I'm focusing on leveraging `by_cases` structures, using `omega` to handle `Nat` comparisons within `LexOrder`, and applying `Prod.Lex.left` and `Prod.Lex.right`. The structure is ready for the application of `drop_left` and `drop_right` as required.
+
+
+**Implementing Case Proofs**
+
+I'm now fully confident about the structure for all the proofs. I've broken each case down into either a `drop_left`, `drop_right`, or `by_cases` approach, with `omega` used to resolve the required `Nat` comparisons. My focus now is ensuring that each `by_cases` structure is correctly set up for resolving potential equality scenarios.
+
+
+**Structuring the Final Proofs**
+
+I'm now satisfied with the structure of the skeleton proofs. Specifically, the cases requiring analysis on `kappa` and `mu` will use a `by_cases` structure, while the remaining cases can leverage `drop_left` and `drop_right`. The `omega` tactic will handle the necessary `Nat` comparisons within `LexOrder`.
+
+
+**Refining Proof Skeletons**
+
+I'm now refining the proof skeletons. Based on my analysis, I'll leverage `by_cases` with `omega` for cases where `kappa` may be equal, such as `R_int_delta t` and `R_rec_zero`. I'll use `drop_left` for `R_rec_succ`, and `drop_right` for `R_eq_diff`, which will streamline the proofs. I've also verified that the existing `simp` lemmas work as expected, to ensure compatibility with `omega`'s handling of `Nat` comparisons within `LexOrder`.
+
+
+**Implementing Final Proof Structures**
+
+I'm now fully confident about the structure for all the proofs. I've broken each case down into either a `drop_left`, `drop_right`, or `by_cases` approach, with `omega` used to resolve the required `Nat` comparisons. My focus now is ensuring that each `by_cases` structure is correctly set up for resolving potential equality scenarios.
+
+
+**Constructing Final Proofs**
+
+I'm now fully confident about the structure for all the proofs. I have prepared the code skeletons needed for the completion of the remaining five cases in `Test-02 -Completion-Nat-Lex.lean`, including the appropriate use of `drop_left`, `drop_right`, and `by_cases` with `omega` to handle `Nat` comparisons. I've also verified the efficacy of `simp` for simplifying key `kappa` and `mu` terms.
+
+
+**Implementing the Final Skeletons**
+
+I'm now fully confident about the structure for all the proofs. I'm providing the code skeletons for the completion of the five cases, which include the appropriate use of `drop_left`, `drop_right`, and `by_cases` with `omega` to handle the `Nat` comparisons. I've also verified the efficacy of `simp` for simplifying key `kappa` and `mu` terms.
+
+```lean
+-- integrate (delta t) --> void
+| _, _, Step.R_int_delta t => by
+    unfold LexOrder measure
+    by_cases hk : kappa void < kappa (integrate (delta t))
+    · exact  Prod.Lex.left _ _ hk
+    · have heq : kappa void = kappa (integrate (delta t)) := by 
+        unfold kappa; simp at hk ⊢; omega
+      rw [heq]
+      apply Prod.Lex.right
+      simp; omega
+
+-- rec Delta b s void --> b
+| _, _, Step.R_rec_zero b s => by
+    unfold LexOrder measure
+    by_cases hk : kappa b < kappa (recDelta b s void)
+    · exact Prod.Lex.left _ _ hk
+    · have heq  : kappa b = kappa (recDelta b s void) := by 
+        unfold kappa; simp at hk ⊢; omega
+      rw [heq]
+      apply Prod.Lex.right
+      simp; omega
+
+-- recDelta b s (delta n) --> app s (recDelta  b s n)
+| _, _, Step.R_rec_succ b s n => by
+    have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+      unfold kappa; simp; omega
+    exact drop_left  hk
+
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    unfold LexOrder measure
+    by_cases hk : kappa void < kappa (eqW a a)
+    · exact Prod.Lex.left _ _ hk
+    · have  heq : kappa void = kappa (eqW a a) := by 
+        unfold kappa; simp at hk ⊢; omega
+      rw [heq]
+      apply Prod.Lex.right
+      simp; omega
+
+-- eqW a b --> integrate (merge a b)
+|  _, _, Step.R_eq_diff a b => by
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by simp; omega
+    have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by simp
+     exact drop_right hmu hk
+```

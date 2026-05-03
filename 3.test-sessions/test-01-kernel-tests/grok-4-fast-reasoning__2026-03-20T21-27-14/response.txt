@@ -1,0 +1,29 @@
+### Assessment
+Yes, strong normalization can be established for this term rewriting system (TRS) using only the given syntax (ground terms over the `Trace` constructors) and rewrite rules (the one-step `Step` relation, extended to its reflexive-transitive closure for multi-step reduction `→`). The system is terminating: every reduction sequence from any ground term is finite, and every term reaches a normal form (a term with no applicable `Step` rules). No infinite reductions are possible due to the structure of the rules, which either strictly decrease term complexity or unfold recursion in a bounded manner without cycles or unbounded growth.
+
+This holds without importing external axioms (e.g., no need for arithmetic beyond what's derivable from `delta` nesting, no choice principles, no structural subterm properties beyond basic term induction). Proofs can rely on Lean's built-in well-founded recursion/induction over `nat` (for measures) and structural induction over `Trace`, treating the TRS as a relation in Prop.
+
+### Short Proof Roadmap
+The proof proceeds by showing strong normalization (SN) via a well-founded measure on terms that strictly decreases (or lexicographically decreases) under each one-step reduction. Use structural induction on terms to show every term is strongly normalizing (SN(t) : Prop, meaning no infinite `t → t₁ → t₂ → ...`).
+
+1. **Define term measures** (purely from syntax, no extra axioms):
+   - **Delta-depth** `d(t : Trace) : nat`: Maximum nesting depth of `delta` constructors in `t`, ignoring other structure (e.g., `d(void) = 0`, `d(delta t) = d(t) + 1`, `d(merge t₁ t₂) = max d(t₁) d(t₂)`, etc.; computable by recursion on `Trace`).
+   - **Rec-potential** `r(t : Trace) : nat`: Sum over all subterms of form `recΔ b s n` of `d(n)` (measures "unfolding work" needed; 0 if no `recΔ`).
+   - **Size** `sz(t : Trace) : nat`: Number of constructor applications (standard term size; `sz(void) = 0`, `sz(delta t) = 1 + sz(t)`, etc.).
+   - **Global measure** `μ(t) : Lex (Multiset nat) × nat`: Lexicographic on `(multiset of all r(subterms of t), sz(t))`, where the multiset collects r values from all `recΔ` subterms (well-founded via Lean's `WellFounded` on `Multiset.Lex nat` and `nat`).
+
+2. **Show measure decreases on each rule** (case analysis on `Step` rules; all derivable from syntax):
+   - **Decreasing rules** (strict drop in μ): `R_int_delta`, `R_merge_void_left/right`, `R_merge_cancel`, `R_rec_zero`, `R_eq_refl` all replace a compound term with a proper subterm or simpler structure, reducing sz by ≥1 and preserving/ reducing r (e.g., `merge t t → t` halves the multiset contribution if t has recΔ).
+   - **Unfolding rule** (`R_rec_succ`): `recΔ b s (delta n) → app s (recΔ b s n)`. Here, r decreases (d(delta n) = d(n) + 1 → d(n), so multiset loses 1 in the recΔ's contribution). Although sz may increase by `sz(s)` (extra copy in `app`), the primary lex component (multiset of r) strictly decreases, ensuring well-founded progress. No other rules increase r.
+   - **Expansion rule** (`R_eq_diff`): `eqW a b → integrate (merge a b)`. sz may increase (by ~sz(a) + sz(b) - sz(a) - sz(b) + 2, but bounded), but r is unchanged or decreases (eqW adds no recΔ; integrate/merge propagate subterm r). Since this is a one-step expansion to a normal-form-like term (no further rules apply unless subterms reduce), it doesn't enable infinite chains.
+
+3. **Inductive SN proof**:
+   - Base: `SN(void)` (normal form, no rules).
+   - Inductive step: Assume SN for all proper subterms. For root constructor c in t, case on c:
+     - If no rule applies, t normal → SN(t).
+     - If rule applies to t → t', show μ(t) > μ(t') (from step 2), so by well-founded induction on μ, SN(t') implies SN(t) (no infinite chain from t, as all paths go to smaller μ).
+   - Handles all cases: Recursion unfolds bounded by initial d(n) ≤ sz(t); merges/integrates/eqW simplify without regenerating complexity; no critical pairs or overlaps create loops (system is orthogonal: left-hand sides disjoint).
+
+4. **Completeness**: Every ground term reduces to a normal form (e.g., fully unfolded recΔ to apps/b, simplified merges/eqW to voids or irreducible integrates/merges). Confluence is not needed for SN but follows similarly if desired (via Newman's lemma, as locally confluent by case analysis on overlaps, e.g., no overlapping redexes).
+
+This stays within the boundary: All measures and inductions use only `Trace` syntax, `Step` rules, and Lean's nat/Prop machinery (no guards, extra rules, or assumptions like subterm convergence). The system is "simple" enough that no advanced TRS tools (e.g., dependency pairs) are required beyond basic lex measures.

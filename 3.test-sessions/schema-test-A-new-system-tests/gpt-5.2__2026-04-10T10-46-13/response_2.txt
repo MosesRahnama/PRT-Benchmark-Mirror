@@ -1,0 +1,7 @@
+1. Primary method: a **decreasing measure argument** (variant) — I picked a function on terms (e.g., “total number of `S` occurrences”) and showed each rewrite step strictly decreases it.
+
+2. Yes. That method relies on **an externally chosen measure** and the **meta-theoretic fact** that $\mathbb{N}$ is well-founded (no infinite strictly descending chain), plus standard induction-style reasoning about rewrites.
+
+3. If you interpret the boundary as “only what is *syntactically forced* by the rules, with no extra proof infrastructure/ordering/interpretation choices,” then yes: that places the method **outside** the stated boundary (because the measure and well-foundedness are not fixed/derivable *from the rules alone*).
+
+4. Boundary aside: yes, I still think the system is **strongly normalizing**. Intuitively, the only potentially looping rule strictly peels one `S` off the third argument of an `F`-redex each time, and nothing ever reintroduces additional `S` there, so infinite rewriting can’t occur.

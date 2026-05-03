@@ -1,0 +1,34 @@
+Here’s the short verdict with the key counterexample.
+
+## Assessment
+
+The proposed lexicographic measure `measure t = (phase t, cost t)` is **not sound** (assuming the standard lexicographic order on $ \mathbb{N} \times \mathbb{N} $ with smaller first component preferred).
+
+The issue: several rewrite rules can **increase** `phase` from 0 to 1, which makes the lexicographic measure larger even if `cost` drops.
+
+### Concrete counterexample
+
+Let  
+- $t := \texttt{recDelta b s (delta n)}$  
+Then `phase t = 1`.
+
+Apply rule `R_merge_void_left` to `merge void t`:
+
+- LHS `merge void t` has `phase = 0`
+- RHS `t` has `phase = 1`
+
+So the measure goes from `(0, 1 + cost t)` to `(1, cost t)`, which **increases** lexicographically.
+
+The same problem arises with `R_merge_void_right`, `R_merge_cancel`, and `R_rec_zero` when the RHS is a `recDelta _ _ (delta _)`.
+
+### Conclusion
+
+The measure is **not a decreasing measure for all steps**, so it does **not** prove termination as stated.
+
+## ✅ Progress
+
+- [x] Read the specified Lean file  
+- [x] Analyze termination measure soundness  
+- [x] Summarize assessment for user  
+
+If you want, I can suggest a corrected measure or a proof strategy that *does* work with these rules.

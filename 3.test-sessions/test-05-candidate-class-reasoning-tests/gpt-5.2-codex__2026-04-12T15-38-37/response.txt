@@ -1,0 +1,33 @@
+Here’s a concise assessment of the three candidates against the rewrite rules in
+.
+
+**Key requirement:** For a termination measure $\mu$, every rule must strictly decrease $\mu$ from LHS to RHS.
+
+- **`mu1` fails.**
+  - Rule `R_eq_diff`:  
+    LHS $\mu_1(\text{eqW }a\,b)=3+\mu_1(a)+\mu_1(b)$  
+    RHS $\mu_1(\text{integrate (merge }a\,b))=1+(1+\mu_1(a)+\mu_1(b))=2+\mu_1(a)+\mu_1(b)$  
+    This *does* decrease.
+  - Rule `R_rec_succ`:  
+    LHS $\mu_1(\text{recDelta }b\,s\,(\delta n))=1+\mu_1(b)+\mu_1(s)+(1+\mu_1(n))$  
+    RHS $\mu_1(\text{app }s\,(\text{recDelta }b\,s\,n))=1+\mu_1(s)+(1+\mu_1(b)+\mu_1(s)+\mu_1(n))$  
+    RHS $=$ LHS $+\mu_1(s)$, so it *increases* whenever $\mu_1(s)>0$.  
+    Therefore `mu1` is not a termination measure.
+
+- **`mu2` also fails.**
+  - Rule `R_rec_succ` has the same structural issue, with even larger constants:  
+    LHS $=5+\mu_2(b)+\mu_2(s)+(1+\mu_2(n))$  
+    RHS $=1+\mu_2(s)+(5+\mu_2(b)+\mu_2(s)+\mu_2(n))$  
+    RHS $=$ LHS $+\mu_2(s)$, so it strictly increases when $\mu_2(s)>0$.  
+    Therefore `mu2` is not a termination measure.
+
+- **`mu3` fails as well.**
+  - Rule `R_rec_succ`:  
+    LHS $=1+\mu_3(b)+\mu_3(s)+(1+\mu_3(n))$  
+    RHS $=2+\mu_3(s)+(1+\mu_3(b)+\mu_3(s)+\mu_3(n))$  
+    RHS $=$ LHS $+1+\mu_3(s)$, always larger.  
+    Therefore `mu3` is not a termination measure.
+
+**Bottom line:** none of `mu1`, `mu2`, or `mu3` decrease on `R_rec_succ`, so all three fail as global termination measures.
+
+If you want, I can suggest a corrected measure or a lexicographic pairing that handles `recDelta` properly.

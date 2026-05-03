@@ -1,0 +1,53 @@
+Now I have the Lean 4 file. Let me analyze the three termination measures (mu1, mu2, mu3) against the rewrite system defined by the Step relation.
+
+The rewrite system has 8 rules:
+1. R_int_delta: integrate (delta t) → void
+2. R_merge_void_left: merge void t → t
+3. R_merge_void_right: merge t void → t
+4. R_merge_cancel: merge t t → t
+5. R_rec_zero: recDelta b s void → b
+6. R_rec_succ: recDelta b s (delta n) → app s (recDelta b s n)
+7. R_eq_refl: eqW a a → void
+8. R_eq_diff: eqW a b → integrate (merge a b)
+
+For a measure to establish termination, it must strictly decrease for each rewrite rule.
+
+Let me analyze each rule for each measure:
+
+**Rule 1: integrate (delta t) → void**
+- mu1(void) = 0, mu1(integrate (delta t)) = 1 + (1 + mu1 t) = 2 + mu1 t ✓ (decreases)
+- mu2(void) = 0, mu2(integrate (delta t)) = 2 + (1 + mu2 t) = 3 + mu2 t ✓ (decreases)
+- mu3(void) = 0, mu3(integrate (delta t)) = 2 + (1 + mu3 t) = 3 + mu3 t ✓ (decreases)
+
+**Rule 2: merge void t → t**
+- mu1(t) vs mu1(merge void t) = 1 + mu1 void + mu1 t = 1 + 0 + mu1 t = 1 + mu1 t ✓ (decreases)
+
+
+- mu2(t) vs mu2(merge void t) = 2 + 0 + mu2 t = 2 + mu2 t ✓ (decreases)
+- mu3(t) vs mu3(merge void t) = 1 + 0 + mu3 t = 1 + mu3 t ✓ (decreases)
+
+**Rule 3: merge t void → t**
+- mu1(t) vs mu1(merge t void) = 1 + mu1 t + 0 = 1 + mu1 t ✓ (decreases)
+- mu2(t) vs mu2(merge t void) = 2 + mu2 t + 0 = 2 + mu2 t ✓ (decreases)
+- mu3(t) vs mu3(merge t void) = 1 + mu3 t + 0 = 1 + mu3 t ✓ (decreases)
+
+**Rule 4: merge t t → t**
+All three measures show the left side strictly dominates the right side. For mu1, we get 1 + 2*mu1 t, for mu2 we get 2 + 2*mu2 t, and for mu3 we get 1 + 2*mu3 t, all decreasing.
+
+**Rule 5: recDelta b s void → b**
+The left side has an extra 1 + mu1 s term compared to the right for mu1, and similarly mu2 gains 5 + mu2 s while mu3 gains 1 + mu3 s, confirming termination.
+
+**Rule 6: recDelta b s (delta n) → app s (recDelta b s n)**
+Left side expands to 1 + mu(b) + mu(s) + (1 + mu(n)), while the right side becomes 2 + mu(b) + 2*mu(s) + mu(n). Need to verify the measures work here.
+
+For mu1: LHS = 2 + mu1(b) + mu1(s) + mu1(n), RHS = 2 + mu1(b) + 2*mu1(s) + mu1(n). The difference is mu1(s), which means this measure fails to guarantee termination. For mu2: LHS = 6 + mu2(b) + mu2(s) + mu2(n), RHS = 6 + mu2(b) + 2*mu2(s) + mu2(n), again differing by mu2(s). For mu3: LHS = 2 + mu3(b) + mu3(s) + mu3(n), RHS = 3 + mu3(b) + 2*mu3(s) + mu3(n), which increases by 1 + mu3(s). None of the three measures work for this rule.
+
+**Rule 7: eqW a a → void**
+The left side has measure 3 + 2*mu1 a while the right side is 0, so this clearly terminates.
+
+**Rule 8: eqW a b → integrate (merge a b)**
+For mu1, the left side is 3 + mu1(a) + mu1(b) and the right side is 2 + mu1(a) + mu1(b), which decreases. For mu2, LHS = 5 + mu2(a) + mu2(b) and RHS = 4 + mu2(a) + mu2(b), also decreasing. For mu3, LHS = 4 + mu3(a) + mu3(b) and RHS = 3 + mu3(a) + mu3(b), which also works.
+
+The fundamental problem is Rule 6: recDelta b s (delta n) → app s (recDelta b s n). All three measures show the right-hand side growing larger than the left-hand side, making it impossible to establish a valid termination argument with any of them.
+
+For mu1 specifically, the LHS has measure 2 + mu1(b) + mu1(s) + mu1(n), while the RHS becomes 2 + mu1(b) + 2*mu1(s) + mu1(n). The extra copy of mu1(s) on the right means the measure increases unless s is void. The same pattern holds for mu2 and mu3—each one fails to decrease on this rule because the recursive structure persists while s gets duplicated. This indicates all three candidates are insufficient for proving termination through standard measure-based methods. Rule 6 is the core issue—it's an expansion that introduces a new `app` node, causing the measure to grow rather than shrink. I'm considering whether a multiset or lexicographic ordering might better capture the termination behavior, or if a more nuanced measure accounting for structural properties could work. Across all three candidates, Rules 1-5 and 7-8 check out, but they uniformly fail on Rule 6. The measures differ in their scaling factors (mu2 uses 5 for certain constructors while mu1 and mu3 use smaller constants), yet this distinction doesn't resolve the fundamental problem. The real obstacle is that none of them can handle the expansion inherent in Rule 6.

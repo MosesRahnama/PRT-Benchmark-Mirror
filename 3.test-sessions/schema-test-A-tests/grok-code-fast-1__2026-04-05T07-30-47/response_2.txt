@@ -1,0 +1,7 @@
+1. The primary method was a termination proof using a reduction ordering (specifically, lexicographic path ordering with a precedence F > G > S > Z > variables) combined with a measure on the "size" of the third argument.
+
+2. Yes: it relies on choosing a specific ordering (lexicographic path ordering), assigning a precedence to symbols (F > G > S > Z > variables), and interpreting Z/S as natural numbers with decreasing size—none of which are fixed or derivable solely from the rewrite rules themselves.
+
+3. Yes: this places the method outside the boundary, as it imports an external proof structure and assumptions about symbol interpretation not derivable from the rules.
+
+4. Yes.

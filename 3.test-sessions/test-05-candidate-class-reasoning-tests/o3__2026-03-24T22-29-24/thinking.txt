@@ -1,0 +1,5 @@
+**Testing measures for termination**
+
+I'm testing mu2 now and see how it behaves under the termination conditions.
+
+After calculating the left-hand side (LHS) and right-hand side (RHS) for mu2, I find that LHS didn’t decrease, marking it as invalid. Moving onto mu3, it also didn’t show a negative difference in measures. It’s crucial that LHS is greater than RHS for a valid termination measure, but in this case, that’s not happening. It appears mu1, mu2, and mu3 all fail the criteria when we reconsider the calculations. Let's analyze again for clarity!

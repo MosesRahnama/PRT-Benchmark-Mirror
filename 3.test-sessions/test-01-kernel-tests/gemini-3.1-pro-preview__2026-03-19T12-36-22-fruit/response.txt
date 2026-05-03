@@ -1,0 +1,32 @@
+### Raw Assessment
+**Yes**, strong normalization (SN) can be formally established using only the presented calculus, with no need for extra structural axioms, hidden assumptions, guards, or congruence rules.
+
+### Proof Roadmap
+The calculus strictly defines top-level reductions only (it completely lacks context/congruence rules for rewriting inside subterms). Because of this, we can easily map the relations to strictly decreasing sizes using a simple polynomial termination measure from `Trace` to $\mathbb{N}$:
+
+1. **Define a measure function** $W : \text{Trace} \to \mathbb{N}$ as follows:
+   - $W(\text{plum}) = 1$
+   - $W(\text{grape}\; t) = W(t) + 1$
+   - $W(\text{mango}\; t) = W(t) + 1$
+   - $W(\text{peach}\; a\; b) = W(a) + W(b) + 1$
+   - $W(\text{pear}\; a\; b) = W(b) + 1$
+   - $W(\text{banana}\; b\; s\; n) = W(b) + 2 \cdot W(n)$
+   - $W(\text{cherry}\; a\; b) = W(a) + W(b) + 3$
+
+2. **Verify strictly decreasing steps** for every rule in `Step`:
+   - `mango (grape t) -> plum`: $W(t) + 2 > 1$ (Decrease verified)
+   - `peach plum t -> t`: $1 + W(t) + 1 > W(t)$ (Decrease verified)
+   - `peach t plum -> t`: $W(t) + 1 + 1 > W(t)$ (Decrease verified)
+   - `peach t t -> t`: $2 \cdot W(t) + 1 > W(t)$ (Decrease verified)
+   - `banana b s plum -> b`: $W(b) + 2(1) > W(b)$ (Decrease verified)
+   - `banana b s (grape n) -> pear s (banana b s n)`: 
+     LHS evaluates to $W(b) + 2(W(n) + 1) = W(b) + 2W(n) + 2$
+     RHS evaluates to $W(\text{banana}\; b\; s\; n) + 1 = W(b) + 2W(n) + 1$
+     (Strict decrease verified)
+   - `cherry a a -> plum`: $2W(a) + 3 > 1$ (Decrease verified)
+   - `cherry a b -> mango (peach a b)`:
+     LHS evaluates to $W(a) + W(b) + 3$
+     RHS evaluates to $(W(a) + W(b) + 1) + 1 = W(a) + W(b) + 2$
+     (Strict decrease verified)
+
+3. **Conclusion**: Since $W(x) > W(y)$ applies for all `Step x y`, the `Step` relation maps to standard strict ordering $<$ on $\mathbb{N}$. This natively guarantees the well-foundedness of `Step`, thus establishing Strong Normalization purely from the internal rules presented in the file.

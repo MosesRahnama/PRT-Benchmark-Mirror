@@ -1,0 +1,70 @@
+I'll analyze the Lean 4 file to assess the soundness of the helper theorems.
+
+## Analysis
+
+### The `kappa` Measure
+
+The `kappa` function is defined as:
+- `kappa void = 0`
+- `kappa (delta t) = kappa t`
+- `kappa (integrate t) = kappa t`
+- `kappa (merge a b) = max (kappa a) (kappa b)`
+- `kappa (app a b) = max (kappa a) (kappa b)`
+- `kappa (recDelta b s (delta n)) = max (max (kappa b) (kappa s)) (kappa n) + 1`
+- `kappa (recDelta b s n) = max (max (kappa b) (kappa s)) (kappa n)` (when third arg is NOT `delta _`)
+- `kappa (eqW a b) = max (kappa a) (kappa b)`
+
+---
+
+### Theorem 1: `kappa_rec_delta_step`
+
+**Claim:** `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`
+
+**Counterexample:** Let `b = void`, `s = void`, `n = delta void`.
+
+- **LHS:** `kappa (recDelta void void (delta (delta void)))`
+  - Matches the `delta n` case with `n = delta void`
+  - = `max (max 0 0) (kappa (delta void)) + 1`
+  - = `max 0 (kappa void) + 1 = 0 + 1 = 1`
+
+- **RHS:** `kappa (recDelta void void (delta void)) + 1`
+  - `kappa (recDelta void void (delta void))` matches the `delta n` case with `n = void`
+  - = `max (max 0 0) (kappa void) + 1 = 0 + 1 = 1`
+  - So RHS = `1 + 1 = 2`
+
+**Result:** LHS = 1 ≠ 2 = RHS. **Theorem 1 is unsound.**
+
+The flaw: when `n` itself is `delta m`, the RHS evaluates `kappa (recDelta b s (delta m))` which triggers the `+1` case, yielding an extra increment.
+
+---
+
+### Theorem 2: `kappa_rec_succ_drop`
+
+**Claim:** `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`
+
+**Counterexample:** Same values: `b = void`, `s = void`, `n = delta void`.
+
+- **LHS:** `kappa (app void (recDelta void void (delta void)))`
+  - = `max (kappa void) (kappa (recDelta void void (delta void)))`
+  - = `max 0 1 = 1`
+
+- **RHS:** `kappa (recDelta void void (delta (delta void)))`
+  - = 1 (calculated above)
+
+**Result:** LHS = 1, RHS = 1. The claim `1 < 1` is false. **Theorem 2 is unsound.**
+
+---
+
+### Root Cause
+
+The `kappa` measure fails to capture the **nesting depth of `delta` constructors**. Specifically:
+- `kappa (delta t) = kappa t` discards delta nesting information
+- `kappa (recDelta b s (delta n))` only adds 1 for the *immediate* `delta`, but doesn't account for whether `n` itself contains nested `delta`s
+
+This causes the measure to be non-monotonic with respect to the rewrite rule `R_rec_succ`, which unfolds one `delta` layer but may expose another.
+
+---
+
+### Conclusion
+
+**Both helper theorems are unsound.** The termination strategy as written cannot succeed because `kappa` does not strictly decrease on the `R_rec_succ` step when `n` contains nested `delta` constructors. A correct measure would need to track total delta depth or use a lexicographic ordering.

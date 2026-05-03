@@ -1,0 +1,20 @@
+**Yes — strong normalization is straightforward to establish from this system alone.**
+
+The system has two rules:
+
+```
+F(x, y, Z)    → x
+F(x, y, S(n)) → G(y, F(x, y, n))
+```
+
+**Reasoning:**
+
+1. **G is a free (undefined) symbol.** It appears only on the right-hand side and has no rewrite rule, so it acts as a constructor — `G(...)` terms are already in normal form with respect to the head.
+
+2. **F is primitive-recursive on its third argument.** Every application of rule 2 reduces the third argument structurally from `S(n)` to `n`. Rule 1 is the base case at `Z` and eliminates `F` entirely.
+
+3. **No new redexes of increasing complexity are created.** Rule 2 wraps the result in `G(y, ·)`, but since `G` has no reduction rules, this cannot introduce any new rewrite steps. The only redexes in any term are `F`-headed, and each reduction step strictly decreases the size of `F`'s third argument.
+
+4. **Termination proof.** A simple polynomial interpretation suffices: assign $\llbracket F(x, y, n) \rrbracket = f(n)$ where $f$ is monotone in the interpretation of $n$, with $\llbracket S(n) \rrbracket > \llbracket n \rrbracket$. Both rules strictly decrease this measure. Alternatively, the subterm relation on the third argument of `F` is a well-founded ordering that decreases at every step, which directly gives strong normalization.
+
+**Conclusion:** The system is strongly normalizing, provable purely from its own rules with no external axioms needed. It is essentially iterated constructor-wrapping governed by primitive recursion on a Peano numeral — one of the most elementary terminating schemas in term rewriting.

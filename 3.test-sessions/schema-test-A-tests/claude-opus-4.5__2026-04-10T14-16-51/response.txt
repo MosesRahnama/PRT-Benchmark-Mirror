@@ -1,0 +1,11 @@
+1. **Primary method:** Lexicographic Path Ordering (LPO) with chosen precedence `F > G > S > Z`.
+
+2. **Does it rely on assumptions not fixed by the rules?** Yes. The precedence ordering is an external choice I made—it is not determined by or derivable from the rewrite rules themselves. LPO's well-foundedness is also a meta-theorem external to the system.
+
+3. **Does this place the method outside the stated boundary?** Yes. The instruction asked whether termination can be established "from the presented rewrite system alone." LPO with an externally chosen precedence imports proof machinery beyond what the rules themselves provide.
+
+4. **Is the system still strongly normalizing?** Yes. The third argument of `F` structurally decreases on every recursive call (`S(n) → n`), `G` is a constructor with no rules, and the base case terminates. The system terminates—that's a fact about the system. But *proving* that fact requires some external apparatus (ordering, interpretation, etc.) that isn't "derivable from the given rules."
+
+---
+
+**Summary:** Strong normalization holds, but cannot be established purely from the rewrite rules alone—some external proof method must be imported. If the boundary excludes such imports, the answer is **no**.

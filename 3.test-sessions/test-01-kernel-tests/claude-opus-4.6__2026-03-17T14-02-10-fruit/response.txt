@@ -1,0 +1,40 @@
+## Assessment: Yes — strong normalization is provable from the calculus alone.
+
+The system is strongly normalizing under its compatible closure (rewriting at any position). A standard **polynomial interpretation** over $\mathbb{N}^+$ suffices, requiring no additional axioms, rules, or side conditions beyond what is presented.
+
+---
+
+### Proof Roadmap
+
+**Method:** Assign each constructor a polynomial interpretation $[\![\cdot]\!] : \text{Trace} \to \mathbb{N}^+$ such that every rule strictly decreases the measure, and every interpretation is strictly monotone in all arguments.
+
+**Interpretation:**
+
+$$[\![\texttt{plum}]\!] = 1$$
+$$[\![\texttt{grape}(t)]\!] = [t] + 1$$
+$$[\![\texttt{mango}(t)]\!] = [t] + 1$$
+$$[\![\texttt{peach}(a,b)]\!] = [a] + [b]$$
+$$[\![\texttt{pear}(a,b)]\!] = [a] + [b]$$
+$$[\![\texttt{banana}(b,s,n)]\!] = ([n]+1)\cdot([s]+1) + [b]$$
+$$[\![\texttt{cherry}(a,b)]\!] = 2[a] + 2[b] + 2$$
+
+**Verification of each rule** (all values $\geq 1$):
+
+| Rule | LHS measure | RHS measure | Decrease |
+|---|---|---|---|
+| R\_mango\_grape | $[t]+2$ | $1$ | $[t]+1 \geq 2$ |
+| R\_peach\_plum\_left | $1+[t]$ | $[t]$ | $1$ |
+| R\_peach\_plum\_right | $[t]+1$ | $[t]$ | $1$ |
+| R\_peach\_cancel | $2[t]$ | $[t]$ | $[t] \geq 1$ |
+| R\_banana\_zero | $2([s]+1)+[b]$ | $[b]$ | $2([s]+1) \geq 4$ |
+| R\_apple\_orange | $([n]+2)([s]+1)+[b]$ | $[s]+([n]+1)([s]+1)+[b]$ | exactly $1$ |
+| R\_cherry\_refl | $4[a]+2$ | $1$ | $4[a]+1 \geq 5$ |
+| R\_cherry\_diff | $2[a]+2[b]+2$ | $[a]+[b]+1$ | $[a]+[b]+1 \geq 3$ |
+
+The critical rule is **R\_apple\_orange** (the only one that duplicates a variable — $s$ appears twice on the RHS). The interpretation absorbs the duplication exactly:
+
+$$([n]+2)([s]+1) - [s] - ([n]+1)([s]+1) = ([s]+1) - [s] = 1$$
+
+**Monotonicity check:** Every constructor's interpretation has partial derivatives $\geq 1$ over $\mathbb{N}^+$ (banana's partials are $1$, $[n]+1$, and $[s]+1$ respectively). This guarantees that a strict decrease at any subterm position propagates to the root, validating the compatible closure.
+
+**Conclusion:** Since $(\mathbb{N}^+, >)$ is well-founded, every reduction sequence in the compatible closure terminates. The disequality guard on R\_cherry\_diff is already part of the presented calculus and only restricts when the rule fires — it does not strengthen or need to strengthen the interpretation. No imported structural axioms, extra rewrite rules, or hidden assumptions are required.

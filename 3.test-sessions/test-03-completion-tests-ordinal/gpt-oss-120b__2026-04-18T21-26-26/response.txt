@@ -1,0 +1,93 @@
+Below are three **proof‑skeletons** you can paste into the `mu_decreases` theorem to replace the remaining `sorry`s.  
+Each skeleton follows the same pattern used for the already‑proved cases:
+
+* `simp [mu]` to unfold the ordinal measure.  
+* Introduce the key inequalities (`lt_add_one`, `le_mul_right`, `opow_pos`, etc.).  
+* Use a `calc` block that chains the strict inequality you need.  
+* End the block with a `sorry`‑placeholder where the detailed ordinal‑arithmetic argument would go.  
+
+You can then fill in the missing arithmetic steps (or replace the final `sorry` with a concrete proof) without touching any other part of the file.
+
+```lean
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    -- Goal: μ (app s (recDelta b s n)) < μ (recDelta b s (delta n))
+    simp [mu]                     -- unfold both sides
+    -- The left‑hand side is
+    --   ω^(μ (delta n) + μ s + 6) + ω * (μ b + 1) + 1
+    --   = ω^(ω^5 * (μ n + 1) + 1 + μ s + 6) + ω * (μ b + 1) + 1
+    --
+    -- The right‑hand side is
+    --   ω^3 * (μ s + 1) + ω^2 * (μ (recDelta b s n) + 1) + 1
+    --
+    -- The dominant exponent on the LHS (ω^5 * (μ n + 1)) strictly dominates
+    -- every exponent appearing on the RHS.  The following lemmas will be useful:
+    --   * `opow_lt_opow_iff`  – monotonicity of exponentiation
+    --   * `lt_of_lt_of_le`   – chaining inequalities
+    --   * `le_mul_right` / `le_mul_left` – bounding products
+    --
+    -- Sketch of the argument:
+    --   1️⃣ Show `ω^(ω^5 * (μ n + 1) + …) > ω^(μ n + μ s + 6)`.
+    --   2️⃣ Conclude the whole LHS dominates the `ω^2 * (…)` term on the RHS.
+    --   3️⃣ The remaining `ω^3 * (μ s + 1)` term is also dominated because
+    --      `ω^5 * (μ n + 1) > μ s + 1`.
+    --   4️⃣ Add the positive “+ ω * (μ b + 1) + 1” on the LHS and the final “+ 1”
+    --      on the RHS – these do not affect the strict inequality.
+    --
+    -- Replace the `sorry` below with the detailed `calc` chain that
+    -- implements the steps above.
+    sorry
+```
+
+```lean
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    -- Goal: 0 < μ (eqW a a) = ω^(μ a + μ a + 9) + 1
+    simp [mu]                     -- reduces to `0 < ω^(2 * μ a + 9) + 1`
+    -- Positivity follows from:
+    --   * `zero_lt_iff_ne_zero` together with `ne_of_gt (opow_pos …)`
+    --   * `add_pos_of_pos_of_nonneg` for the final “+ 1”.
+    --
+    -- Sketch:
+    --   have hpos : 0 < ω^(2 * μ a + 9) := opow_pos _ omega0_pos
+    --   exact lt_of_lt_of_le hpos (lt_add_of_pos_right _ one_pos)
+    --
+    -- Replace the `sorry` with the concrete `calc` proof.
+    sorry
+```
+
+```lean
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    -- Goal: μ (integrate (merge a b)) < μ (eqW a b)
+    simp [mu]                     -- unfold both sides
+    -- LHS = ω^4 * (μ (merge a b) + 1) + 1
+    --      = ω^4 * (ω^3 * (μ a + 1) + ω^2 * (μ b + 1) + 1 + 1) + 1
+    -- RHS = ω^(μ a + μ b + 9) + 1
+    --
+    -- The dominant exponent on the RHS, `μ a + μ b + 9`,
+    -- is far larger than the highest exponent appearing on the LHS,
+    -- namely `4 + 3 = 7` (coming from `ω^4 * ω^3`).  The following lemmas
+    -- are useful:
+    --   * `opow_lt_opow_iff` to compare `ω^(μ a + μ b + 9)` with `ω^7`.
+    --   * `lt_of_lt_of_le` to chain the inequalities.
+    --   * `le_mul_right` / `le_mul_left` to bound the product terms.
+    --
+    -- Sketch of the argument:
+    --   1️⃣ Show `ω^4 * (ω^3 * (μ a + 1) + …) ≤ ω^7 * (μ a + μ b + 2)`.
+    --   2️⃣ Prove `ω^7 * (μ a + μ b + 2) < ω^(μ a + μ b + 9)` using
+    --      `opow_lt_opow_iff` (since `7 < μ a + μ b + 9` for all traces).
+    --   3️⃣ Conclude the strict inequality after adding the final “+ 1”
+    --      on both sides.
+    --
+    -- Replace the `sorry` with a `calc` block that implements the steps above.
+    sorry
+```
+
+### How to use the skeletons
+
+1. **Copy** each block (including the comment header) into the corresponding `| _, _, Step.…` branch in the file.  
+2. **Replace** the final `sorry` with the concrete `calc` proof that follows the sketch.  
+3. Keep the surrounding `by` and `simp [mu]` lines unchanged – they match the style of the already‑proved cases.  
+
+When you finish filling in the three `calc` chains, the `mu_decreases` theorem will be completely proved, and the `strong_normalization` proof will compile.

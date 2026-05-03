@@ -1,0 +1,33 @@
+**Yes**, strong normalization holds for this system.
+
+**Short proof roadmap** (purely from syntax/rules, via size-based structural induction in Lean):
+
+Define `SN t := Acc (flip Step) t`.
+
+Prove `∀ t, SN t` by induction on `size(t)` (standard `measure := size`, well-founded).
+
+**Cases on `t` head constructor** (using `DecidableEq`, constructor injectivity):
+
+- `void`: No rules apply → `SN`.
+- `delta t`: No rules → `SN`.
+- `app t u`: No rules → `SN`.
+- `integrate t`:
+  - If `¬ ∃ v, t = delta v`: No rules → `SN`.
+  - Else `t = delta v` (< size): `Step t void`, `SN void` → `SN t`.
+- `merge t u`:
+  - `t = void`: `Step (merge void u) u` (< size), IH → `SN`.
+  - `u = void`: Similar.
+  - `t = u`: `Step (merge t t) t` (< size), IH → `SN`.
+  - Else: No rules → `SN`.
+- `recΔ b s n`:
+  - `n = void`: `Step (recΔ b s void) b` (< size), IH → `SN`.
+  - `n = delta m` (< size): `Step (recΔ b s (delta m)) (app s (recΔ b s m))`.
+    - `app s v` (`v := recΔ b s m`): No rules → `SN (app s v)` (IH on `v` unused, vacuous).
+  - Else: No rules → `SN`.
+- `eqW a b` (case split `a =?= b`):
+  - `a = b`: `Step (eqW a a) void`, `SN void` → `SN`.
+  - `a ≠ b`: `Step (eqW a b) (integrate (merge a b))`.
+    - `integrate (merge a b)`: `merge a b ≠ delta _` (head mismatch) → No `R_int_delta`.
+      - Also ≠ other LHS heads → No rules → `SN`.
+
+All RHS either smaller (IH) or irreducible (vacuous `Acc`). No cycles/infinite chains (size ↓ or ↑ then halt; no contexts).

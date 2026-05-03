@@ -1,0 +1,11 @@
+**1. Primary method used**  
+I argued by a *size‑decreasing measure*: each use of the second rule removes one outer `S` from the third argument, so the term’s “size” strictly decreases until the base case `Z` is reached, after which the first rule applies.
+
+**2. Does the method rely on any external assumption?**  
+Yes. The argument invokes a well‑founded ordering (the natural‑number size of the third argument) that is not encoded in the rewrite rules themselves.
+
+**3. Does that place the method outside the stated boundary?**  
+If “outside the boundary” means *only* using what is derivable from the rules without any meta‑level ordering, then yes—the method introduces an external measure/ordering not fixed by the rules.
+
+**4. Is the system still strongly normalizing?**  
+Yes. Even with the above meta‑level reasoning, the rewrite system itself guarantees that every reduction sequence terminates (either to `x` or to a term containing `G`), so the system is strongly normalizing.

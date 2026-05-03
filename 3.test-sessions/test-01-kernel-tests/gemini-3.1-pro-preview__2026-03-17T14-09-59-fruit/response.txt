@@ -1,0 +1,23 @@
+**Raw Assessment:**
+Yes, strong normalization (SN) can be fully established from the presented calculus alone. The provided system is structurally terminating without any need to strengthen it, import axioms, or rely on the `a ≠ b` side condition. 
+
+The conditional guard `a ≠ b` in `R_cherry_diff` is completely irrelevant to the termination proof; even if that rule were unconditional (firing for all `a, b`), the system strictly decreases in complexity at every step.
+
+**Proof Roadmap:**
+You can establish SN natively using a standard **Lexicographic Path Ordering (LPO)**, which does not require any additional rewrite axioms. 
+
+1. **Establish a Precedence:** 
+   Define a strict partial order over the signature: 
+   `cherry > mango`, `cherry > peach`, `banana > pear`, `mango > plum`, `peach > plum`.
+
+2. **Orient the Rules via LPO:**
+   * **Subterm Reductions:** 
+     `R_peach_plum_left`, `R_peach_plum_right`, `R_peach_cancel`, `R_banana_zero`, and `R_mango_grape` reduce to strict subterms or constants of lower precedence, which trivially orient left-to-right in LPO.
+   * **Recursive Iterator (`R_apple_orange`):** 
+     `banana b s (grape n) > pear s (banana b s n)`
+     Holds because `banana > pear` in the precedence, `s` is an immediate subterm of the LHS, and lexicographically, the subterm `grape n` in the third position is strictly greater than `n`.
+   * **Expansion Reductions (`R_cherry_diff`):** 
+     `cherry a b > mango (peach a b)`
+     Holds because the LHS head (`cherry`) has higher precedence than `mango` and `peach`. Under LPO, we must then guarantee the LHS is greater than the inner arguments `a` and `b`. Since `a` and `b` are immediate subterms of the LHS, this condition is trivially met. `R_cherry_refl` also orients easily since `cherry > plum`.
+
+Because all rules (root reductions) orient strictly left-to-right under an LPO, the rewrite system is inherently and unconditionally strongly normalizing.

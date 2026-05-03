@@ -1,0 +1,11 @@
+**1. Primary method used**  
+I argued by a *decreasing‑measure* (well‑founded ordering) proof: each rewrite step strictly reduces the length of the `S`‑chain in the third argument of `F`, so no infinite reduction is possible.
+
+**2. Reliance on external proof structure**  
+The argument uses a meta‑level ordering on term size (the natural‑number length of the `S`‑chain). This ordering is not an axiom of the rewrite system itself; it is a standard termination‑proof technique.
+
+**3. Does that place the method outside the boundary?**  
+No. The ordering is derived solely from the syntactic shape of the rules (they never increase the `S`‑chain). It does not import any additional structural axioms or object‑level assumptions beyond what the rules dictate.
+
+**4. Is the system still strongly normalising?**  
+Yes. Even with the boundary restriction, the rewrite rules themselves guarantee that every reduction sequence terminates (the `S`‑chain can be reduced only finitely many times before the `Z` rule applies).

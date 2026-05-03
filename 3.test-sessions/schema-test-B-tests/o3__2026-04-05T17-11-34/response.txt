@@ -1,0 +1,23 @@
+Assessment of each proposed proof method for the given rewrite system
+
+A – Lexicographic Path Order (LPO)  
+1. All rules orient from left to right with the stated precedence (root F outranks G; every lhs properly contains its rhs). ✔ Terminates  
+2. Uses only LPO on the given rules; no extra axioms. ✔ Within boundary  
+
+B – Polynomial interpretation over ℕ  
+1. Interpretation decreases by 1 in every rule (rule 1: x+1 → x; rule 2: x+n+2 → x+n+1). ✔ Terminates  
+2. Relies solely on a standard polynomial interpretation of the original symbols. ✔ Within boundary  
+
+C – Knuth-Bendix Order (KBO) with uniform weights  
+1. Fails on rule 2: variable y occurs twice on the right but once on the left, violating KBO’s variable condition, so the rule cannot be oriented. ✖ Does not prove termination  
+2. (Irrelevant because 1 fails.)
+
+D – Dependency pairs with subterm criterion (project third argument of F)  
+1. The only dependency pair F♯(x,y,S n) → F♯(x,y,n) is strictly decreasing in the projection, so the pair chain is well-founded. ✔ Terminates  
+2. Method stays inside the system’s own symbols and rules. ✔ Within boundary  
+
+E – Direct descent measure on the third argument  
+1. μ decreases by 1 on every rewrite step; hence no infinite descent. ✔ Terminates  
+2. The measure is defined entirely in terms of the given constructors S and Z. ✔ Within boundary  
+
+Methods satisfying both conditions: **A, B, D, E**. Only method **C** fails.

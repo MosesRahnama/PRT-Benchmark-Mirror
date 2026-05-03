@@ -1,0 +1,14 @@
+**Assessment:** Strong normalization can be proved from the rewrite rules alone.
+
+**Reasoning:**  
+- The only rules are  
+
+  1. `F(x, y, Z) → x`  
+  2. `F(x, y, S(n)) → G(F(x, y, n))`
+
+- The third argument of `F` is either the constant `Z` or a successor term `Sⁿ(Z)`.  
+- Rule 2 strictly decreases the “size” of that argument: `S(n)` is replaced by `n`. The outer `G` wrapper does not introduce any new `S` constructors, so the measure “number of `S` symbols in the third argument of the leftmost `F`” strictly decreases with each use of rule 2.  
+- After finitely many applications of rule 2 the argument becomes `Z`, at which point rule 1 applies and eliminates the `F` altogether, yielding the variable `x`.  
+- No rule creates new `F` or `S` symbols, and there are no rules for `G`, so once a `G` is introduced the term is in normal form (aside from the inner `F` which is already decreasing).  
+
+Thus every reduction sequence terminates, establishing strong normalization without any additional structural axioms or external assumptions.

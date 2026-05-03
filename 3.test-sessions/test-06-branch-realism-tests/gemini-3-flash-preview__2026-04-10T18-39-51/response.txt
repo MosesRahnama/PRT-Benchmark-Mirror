@@ -1,0 +1,42 @@
+The helper strategy as written in
+is **unsound**. The measure `kappa` and the accompanying theorems fail to account for nested `delta` constructors correctly, leading to contradictions for certain `Trace` values.
+
+### Analysis of the Soundness
+
+The primary issue lies in the definition of `kappa` for `recDelta` and how it interacts with the `kappa (delta t) = kappa t` identity.
+
+#### 1. Counterexample for `kappa_rec_delta_step`
+The theorem claims:
+$$\kappa(\text{recDelta } b \ s \ (\text{delta } n)) = \kappa(\text{recDelta } b \ s \ n) + 1$$
+
+Let $K_{bs} = \max(\kappa(b), \kappa(s))$. Consider the case where $n = \text{delta void}$:
+- **LHS:** $\kappa(\text{recDelta } b \ s \ (\text{delta (delta void)}))$
+  - Matches the first branch of `kappa`: `.recDelta b s (.delta n)` with $n = \text{delta void}$.
+  - Result: $\max(K_{bs}, \kappa(\text{delta void})) + 1 = \max(K_{bs}, 0) + 1 = K_{bs} + 1$.
+- **RHS:** $\kappa(\text{recDelta } b \ s \ (\text{delta void})) + 1$
+  - $\kappa(\text{recDelta } b \ s \ (\text{delta void}))$ matches the first branch with $n = \text{void}$.
+  - Result: $(\max(K_{bs}, 0) + 1) + 1 = K_{bs} + 2$.
+
+Since $K_{bs} + 1 \neq K_{bs} + 2$, the theorem is **false** for any $n$ that is itself a `delta`.
+
+#### 2. Counterexample for `kappa_rec_succ_drop`
+The theorem claims a strict decrease for the `R_rec_succ` rule:
+$$\kappa(\text{app } s \ (\text{recDelta } b \ s \ n)) < \kappa(\text{recDelta } b \ s \ (\text{delta } n))$$
+
+Again, let $n = \text{delta void}$:
+- **LHS:** $\kappa(\text{app } s \ (\text{recDelta } b \ s \ (\text{delta void})))$
+  - $\max(\kappa(s), \kappa(\text{recDelta } b \ s \ (\text{delta void})))$
+  - $\max(\kappa(s), K_{bs} + 1) = K_{bs} + 1$ (since $K_{bs} \ge \kappa(s)$).
+- **RHS:** $\kappa(\text{recDelta } b \ s \ (\text{delta (delta void)})) = K_{bs} + 1$.
+
+The theorem asserts $K_{bs} + 1 < K_{bs} + 1$, which is **false**.
+
+### Conclusion on Termination
+The "helper strategy" is intended to support a termination argument. However:
+1.  **The Theorems are False:** As shown above, both lemmas fail when $n$ contains a leading `delta`.
+2.  **Measure is Non-Decreasing:** The structural measure `kappa` does not strictly decrease for the rewrite rule `R_rec_succ` when $n = \text{delta } n'$. Furthermore, `kappa` remains constant for several other rules:
+    - `R_int_delta`: $\kappa(\text{integrate (delta t)}) = \kappa(t)$ and $\kappa(\text{void}) = 0$. (No decrease if $\kappa(t) = 0$).
+    - `R_merge_cancel`: $\kappa(\text{merge t t}) = \kappa(t)$. (No decrease).
+    - `R_eq_diff`: $\kappa(\text{eqW a b}) = \max(\kappa a, \kappa b) = \kappa(\text{integrate (merge a b)})$. (No decrease).
+
+Because the measure `kappa` is "flat" regarding `delta` and `integrate` constructors, it cannot serve as a valid termination measure for this calculus in its current form.

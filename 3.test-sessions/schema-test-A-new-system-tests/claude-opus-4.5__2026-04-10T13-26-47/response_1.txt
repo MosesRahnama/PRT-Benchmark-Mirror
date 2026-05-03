@@ -1,0 +1,30 @@
+## Assessment: Yes, Strong Normalization is Provable
+
+**The system:**
+```
+F(x, y, Z) → x
+F(x, y, S(n)) → G(F(x, y, n))
+```
+
+**Reasoning:**
+
+Strong normalization can be established via a standard polynomial interpretation with no additional axioms:
+
+| Symbol | Interpretation |
+|--------|----------------|
+| Z | 0 |
+| S(n) | n + 1 |
+| G(x) | x + 1 |
+| F(x,y,n) | x + 2n + 1 |
+
+**Verification:**
+
+1. **Rule 1:** `[F(x,y,Z)] = x + 1 > x = [x]` ✓
+
+2. **Rule 2:** `[F(x,y,S(n))] = x + 2(n+1) + 1 = x + 2n + 3`  
+   `[G(F(x,y,n))] = (x + 2n + 1) + 1 = x + 2n + 2`  
+   And `x + 2n + 3 > x + 2n + 2` ✓
+
+Both rules strictly decrease the interpretation, proving termination.
+
+**Intuition:** The third argument acts as a decreasing "fuel" counter (Peano-style natural). Each recursive call strips one `S`, and `G` is inert (has no rules). The recursion bottoms out at `Z`. This is a textbook primitive-recursive-like pattern that terminates unconditionally.

@@ -1,0 +1,27 @@
+Based on the provided Lean 4 calculus, I can assess strong normalization directly from the given rewrite rules. Here's my analysis:
+
+**Assessment:** Strong normalization **cannot** be established solely from the presented calculus without additional structural axioms or assumptions.
+
+**Reason:** The `recΔ` recursion rule (`R_rec_succ`) creates a potential non-termination path:
+```lean
+recΔ b s (delta n) ⟶ app s (recΔ b s n)
+```
+This allows recursive expansion without guaranteed size reduction. Consider:
+1. When `s` contains another `recΔ`
+2. When `n` itself is a `recΔ` application
+3. When `s` produces terms that re-trigger `recΔ`
+
+The calculus lacks:
+1. A well-founded measure (e.g., ordinals/sizes) to bound reductions
+2. Guard conditions on `recΔ` arguments
+3. Lexicographic ordering constraints
+
+**Proof Roadmap (if possible within constraints):**  
+A termination proof would require:
+1. Defining a size metric for `Trace` terms
+2. Showing all rules decrease this metric
+3. Proving `recΔ` recursion decreases its third argument
+
+Since the calculus provides no size metric or ordinal structure, and the rules include a potentially unbounded recursion, strong normalization cannot be established from the given axioms alone.
+
+**Conclusion:** The system needs either (1) additional well-foundedness axioms or (2) structural constraints on `recΔ` arguments to prove strong normalization. The current rules are insufficient for a self-contained termination proof.

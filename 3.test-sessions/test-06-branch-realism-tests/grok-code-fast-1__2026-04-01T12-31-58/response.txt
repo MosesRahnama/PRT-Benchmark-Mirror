@@ -1,0 +1,36 @@
+The helper theorems (`kappa_rec_delta_step` and `kappa_rec_succ_drop`) are sound as written. They correctly establish that the structural measure `kappa` decreases under the `R_rec_succ` rewrite step, supporting a termination argument for the calculus.
+
+### Supporting Calculations
+The measure `kappa` is defined recursively on traces. For the relevant cases:
+
+- `kappa (recDelta b s n) = max(max(kappa b, kappa s), kappa n)`
+- `kappa (recDelta b s (delta n)) = max(max(kappa b, kappa s), kappa n) + 1`
+- `kappa (app s (recDelta b s n)) = max(kappa s, kappa (recDelta b s n))`
+
+#### Theorem 1: `kappa_rec_delta_step`
+This states `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`.  
+Directly from the definition:  
+`kappa (recDelta b s (delta n)) = max(max(kappa b, kappa s), kappa n) + 1`  
+`kappa (recDelta b s n) = max(max(kappa b, kappa s), kappa n)`  
+Thus, the equation holds by construction.
+
+#### Theorem 2: `kappa_rec_succ_drop`
+This states `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`.  
+Rewriting via Theorem 1: `kappa (app s (recDelta b s n)) < kappa (recDelta b s n) + 1`.  
+
+Compute `kappa (app s (recDelta b s n))`:  
+`kappa (app s (recDelta b s n)) = max(kappa s, kappa (recDelta b s n))`  
+`kappa (recDelta b s n) = max(max(kappa b, kappa s), kappa n)`  
+
+Since `kappa s ≤ max(kappa b, kappa s) ≤ max(max(kappa b, kappa s), kappa n)`, it follows that:  
+`max(kappa s, max(max(kappa b, kappa s), kappa n)) = max(max(kappa b, kappa s), kappa n)`  
+
+Thus:  
+`kappa (app s (recDelta b s n)) = kappa (recDelta b s n)`  
+
+And `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`  
+
+Therefore:  
+`kappa (app s (recDelta b s n)) = kappa (recDelta b s n) < kappa (recDelta b s n) + 1`  
+
+The inequality holds strictly for all traces `b`, `s`, and `n`, ensuring the measure decreases in the `R_rec_succ` step.

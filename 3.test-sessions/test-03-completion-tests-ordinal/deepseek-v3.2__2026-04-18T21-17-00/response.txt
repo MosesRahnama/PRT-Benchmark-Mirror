@@ -1,0 +1,126 @@
+Now I can see the complete structure. There are three remaining cases marked `sorry`:
+
+1. `Step.R_rec_succ b s n` - the recursion successor case
+2. `Step.R_eq_refl a` - the equality reflexivity case  
+3. `Step.R_eq_diff a b` - the equality difference case
+
+Let me provide a proof skeleton for each of these cases:
+
+## Proof Skeleton for the Remaining Cases
+
+### 1. Case `Step.R_rec_succ b s n`
+
+This is the most complex case. The key insight is that the left-hand side has an exponent containing `omega^5 * (mu(n) + 1)` which dominates all terms on the right-hand side.
+
+```lean4
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- Step 1: Expand both sides
+    have lhs : mu (app s (recDelta b s n)) = 
+        omega0 ^ (3 : Ordinal) * (mu s + 1) + omega0 ^ (2 : Ordinal) * (mu (recDelta b s n) + 1) + 1 := rfl
+    have rhs : mu (recDelta b s (delta n)) = 
+        omega0 ^ (mu (delta n) + mu s + (6 : Ordinal)) + omega0 * (mu b + 1) + 1 := rfl
+    
+    -- Step 2: Expand mu(delta n)
+    have mu_delta_n : mu (delta n) = omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 := rfl
+    
+    -- Step 3: Expand mu(recDelta b s n)
+    have mu_rec_n : mu (recDelta b s n) = 
+        omega0 ^ (mu n + mu s + (6 : Ordinal)) + omega0 * (mu b + 1) + 1 := rfl
+    
+    -- Step 4: Show omega^(omega^5 * (mu n + 1) + mu s + 7) dominates all terms
+    -- The key inequality: omega^5 * (mu n + 1) > mu n + mu s + 6 for all n, s
+    have h_exp_dom : omega0 ^ (5 : Ordinal) * (mu n + 1) > mu n + mu s + (6 : Ordinal) := by
+      -- Since omega^5 is an infinite ordinal, omega^5 * (mu n + 1) ≥ omega^5
+      -- and omega^5 > any finite sum like mu n + mu s + 6
+      apply lt_of_lt_of_le ?_ (mul_le_mul_right _ (by omega))
+      exact omega_pos
+    
+    -- Step 5: Use ordinal arithmetic properties
+    -- omega^(large_exponent) > omega^3 * (mu s + 1) + omega^2 * (omega^(smaller_exponent) + ...)
+    apply lt_of_lt_of_le ?_ (opow_le_opow_right omega0_pos ?_)
+    -- Fill in the specific ordinal comparisons
+    
+    sorry  -- Complete the ordinal arithmetic
+```
+
+### 2. Case `Step.R_eq_refl a`
+
+This is the simplest case - just showing positivity:
+
+```lean4
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- We need: 0 < omega0 ^ (mu a + mu a + (9 : Ordinal)) + 1
+    -- This follows because:
+    -- 1. omega0 ^ (mu a + mu a + 9) ≥ omega0 ^ 9 > 0 (since omega0 > 1)
+    -- 2. Adding 1 preserves positivity
+    
+    -- Approach 1: Direct positivity
+    have h1 : 0 < omega0 ^ (mu a + mu a + (9 : Ordinal)) := by
+      apply opow_pos (mu a + mu a + 9) omega0_pos
+    exact lt_add_of_pos_right _ h1
+    
+    -- Alternative approach using existing lemmas:
+    -- apply add_pos_right
+    -- apply opow_ne_zero (mu a + mu a + 9) omega0_ne_zero
+```
+
+### 3. Case `Step.R_eq_diff a b`
+
+This case requires showing that `omega^(mu a + mu b + 9)` dominates the nested omega powers:
+
+```lean4
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- We need: omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 2) + 1 < omega^(mu a + mu b + 9) + 1
+    
+    -- Step 1: The key inequality is: mu a + mu b + 9 > 4
+    -- This is true because mu a, mu b ≥ 0, so mu a + mu b + 9 ≥ 9 > 4
+    
+    -- Step 2: For any ordinals α, β where α > β, we have omega^α > omega^β * k for any finite k
+    have h_exp_gt : mu a + mu b + (9 : Ordinal) > (4 : Ordinal) := by
+      omega  -- or: linarith [show mu a ≥ 0 from by simp, show mu b ≥ 0 from by simp]
+    
+    -- Step 3: Use the property: if α > β, then omega^α > omega^β * C for any C < omega^α
+    have h_main : omega0 ^ (mu a + mu b + (9 : Ordinal)) > 
+                  omega0 ^ (4 : Ordinal) * (omega0 ^ (3 : Ordinal) * (mu a + 1) + omega0 ^ (2 : Ordinal) * (mu b + 1) + 2) := by
+      -- This follows from ordinal arithmetic: omega^α > omega^β * k when α > β
+      apply lt_of_le_of_lt ?_ (opow_lt_opow_right omega0_gt_one h_exp_gt)
+      -- Need to show the multiplication term is < omega^(mu a + mu b + 9)
+      sorry  -- Complete the comparison
+    
+    -- Step 4: The result follows
+    exact lt_of_lt_of_le (by exact h_main) (le_add_right _ _)
+```
+
+## Key Mathematical Insights Needed
+
+For the complete proofs, you'll need these ordinal arithmetic facts from Mathlib:
+
+1. **Basic properties**:
+   - `omega0_pos : 0 < omega0`
+   - `omega0_gt_one : 1 < omega0`
+   - `opow_pos (a : Ordinal) (h : 0 < b) : 0 < b ^ a`
+
+2. **Exponent comparison**:
+   - `opow_lt_opow_right (h : 1 < a) (h2 : b < c) : a ^ b < a ^ c`
+   - `opow_le_opow_right (h : 0 < a) (h2 : b ≤ c) : a ^ b ≤ a ^ c`
+
+3. **Multiplication properties**:
+   - `mul_le_mul_right (a : Ordinal) (h : b ≤ c) : a * b ≤ a * c`
+   - `le_mul_right (a b : Ordinal) : b ≤ a * b` when `0 < a`
+
+4. **Addition properties**:
+   - `lt_add_of_pos_right (a : Ordinal) (h : 0 < b) : a < a + b`
+   - `add_le_add_left (h : a ≤ b) (c : Ordinal) : c + a ≤ c + b`
+
+## Recommended Approach
+
+1. **For `R_eq_refl`**: This is straightforward - just use `opow_pos` and basic positivity.
+
+2. **For `R_eq_diff`**: The key is that `mu a + mu b + 9 > 4`, so `omega^(mu a + mu b + 9)` dominates `omega^4 * (finite_expression)`.
+
+3. **For `R_rec_succ`**: This is the most technical. You need to show that `omega^5 * (mu n + 1) > mu n + mu s + 6`, which follows because `omega^5` is infinite while the right side is bounded by finite sums of finite ordinals.
+
+The proof structure above provides the skeleton; filling in the details requires careful application of Mathlib's ordinal arithmetic lemmas.

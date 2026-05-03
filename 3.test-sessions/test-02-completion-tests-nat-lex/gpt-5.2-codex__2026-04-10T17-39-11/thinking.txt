@@ -1,0 +1,3 @@
+**Providing proof skeleton guidance**
+
+I'm preparing a Lean proof skeleton with example snippets without modifying the file, referencing the existing file path per guidelines, and avoiding line numbers.

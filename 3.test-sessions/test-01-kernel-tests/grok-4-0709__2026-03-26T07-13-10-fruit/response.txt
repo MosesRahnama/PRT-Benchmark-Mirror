@@ -1,0 +1,9 @@
+Yes, strong normalization can be established from the presented calculus alone.
+
+### Proof Roadmap
+- Recursively define term size: size(plum) = 1; for other constructors, size = 1 + sum of subterm sizes.
+- Classify rules: strictly size-decreasing (mango-grape, all peach, banana-plum, cherry-refl); non-decreasing (banana-grape if size(s) ≥ 1, cherry-diff).
+- Non-decreasing rules reduce to normal forms (pear-root or mango with non-grape arg, unmatched by any rule).
+- Thus, sequences have ≤1 non-decreasing step (if any, it's terminal).
+- Purely decreasing sequences have length ≤ initial size (each decreases size ≥1).
+- All sequences finite; hence SN.

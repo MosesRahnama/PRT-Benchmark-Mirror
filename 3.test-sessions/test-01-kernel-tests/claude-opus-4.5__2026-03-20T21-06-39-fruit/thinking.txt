@@ -1,0 +1,47 @@
+I have the full file. Let me analyze this rewrite system:
+
+**Syntax (Term constructors):**
+- `plum` : a constant (0-ary)
+- `grape : Trace → Trace` : unary
+- `mango : Trace → Trace` : unary
+- `peach : Trace → Trace → Trace` : binary
+- `pear : Trace → Trace → Trace` : binary
+- `banana : Trace → Trace → Trace → Trace` : ternary
+- `cherry : Trace → Trace → Trace` : binary
+
+**Rewrite Rules:**
+1. `mango (grape t) → plum`
+2. `peach plum t → t`
+3. `peach t plum → t`
+4. `peach t t → t`
+5. `banana b s plum → b`
+6. `banana b s (grape n) → pear s (banana b s n)`
+7. `cherry a a → plum`
+8. `cherry a b → mango (peach a b)` when `a ≠ b`
+
+The user asks whether strong normalization can be established from the calculus alone.
+
+Let me think about this carefully:
+
+**Strong normalization** means every reduction sequence terminates - there are no infinite reduction sequences.
+
+**Standard proof methods for strong normalization:**
+1. **Lexicographic path ordering (LPO)** / **Recursive path ordering (RPO)**
+2. **Polynomial interpretations**
+3. **Matrix interpretations**
+4. **Dependency pairs**
+5. **Semantic labeling**
+
+**Analysis of the rules:**
+
+Rule 6: `banana b s (grape n) → pear s (banana b s n)`
+
+This is the problematic rule. Looking at it:
+- LHS: `banana b s (grape n)` - contains subterms b, s, n
+
+
+- RHS: `pear s (banana b s n)` - contains s and a recursive call to banana
+
+The term `banana b s n` appears on the RHS where `n` is a strict subterm of `grape n` from the LHS. If I measure the third argument of banana, this decreases from `grape n` to `n`, which is well-founded. The `pear` wrapper doesn't create new reduction opportunities since `pear` appears nowhere on any LHS. Rule 8 has a side condition `a ≠ b` that's syntactically observable, so it doesn't require external information. A polynomial interpretation assigning weights to each constructor should work: I can assign `banana` a weight that depends heavily on its third argument, ensuring the decrease in that argument dominates any growth from wrapping in `pear`.
+
+More concretely, I can use a lexicographic measure combining: the count of `cherry` constructors (strictly decreases on rule 8), the count of `grape` constructors (strictly decreases on rules 1 and 6), and a structural size measure for the remaining rules. Since rules 2, 3, 4, 5, and 7 all visibly reduce term size or eliminate constructors, and rule 6 consumes `grape` nodes without creating new ones, the measure is strictly decreasing across all rules. This establishes strong normalization without importing additional axioms.

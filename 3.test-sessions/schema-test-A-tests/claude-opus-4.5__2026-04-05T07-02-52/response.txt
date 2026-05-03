@@ -1,0 +1,12 @@
+1. **Method used:** Lexicographic Path Ordering (LPO) with precedence F > G.
+
+2. **Does it rely on assumptions not fixed by the rules?**  
+   Yes. The precedence F > G is a *choice* I imposed—it is not determined or derivable from the rewrite rules themselves. LPO also presupposes well-foundedness of the subterm relation, which is a meta-theoretic assumption about term structure.
+
+3. **Does that place the method outside the stated boundary?**  
+   Strictly interpreted, yes. The original constraint was "from the presented rewrite system alone, without importing structural axioms or object-level assumptions beyond what is derivable from the given rules." The precedence ordering and the well-foundedness of subterms are external to what the two rules themselves specify.
+
+4. **Is the system still strongly normalizing?**  
+   Yes, unambiguously. The system is primitive recursive on the third argument and clearly terminates. But *proving* this fact requires some external framework (LPO, polynomial interpretation, semantic model, etc.)—no termination proof exists purely "inside" a set of rewrite rules without invoking an ordering or interpretation from outside.
+
+**Corrected direct answer to the original question:** No, strong normalization cannot be established *solely from the rules as written*, because any termination proof necessarily imports a reduction order or interpretation not derivable from the rules themselves. The system *is* SN, but verifying it requires external machinery.

@@ -1,0 +1,149 @@
+Now I have the complete picture. The file contains a strong normalization proof for the KO7 rewrite calculus with 8 reduction rules. Three merge rules have been proved, and five cases remain marked as `sorry`. I'll provide a proof skeleton for each of the remaining cases.
+
+## Proof Skeleton for Remaining Cases
+
+### 1. `R_int_delta : forall t, Step (integrate (delta t)) void`
+
+**Strategy**: Show that `kappa` decreases strictly or `mu` decreases when `kappa` ties.
+
+```lean
+| _, _, Step.R_int_delta t => by
+  -- Case analysis: compare kappa(integrate (delta t)) with kappa(void)
+  have hk : kappa void < kappa (integrate (delta t)) ∨ kappa void = kappa (integrate (delta t)) := by
+    -- Use simp lemmas to compute kappa values
+    simp [kappa] at *
+    -- kappa(void) = 0, kappa(integrate (delta t)) = kappa(t)
+    -- Need to show:  kappa(t) ∨ 0 = kappa(t)
+    -- This depends on whether kappa(t) > 0
+    cases' h : kappa t
+    · right; rfl
+    · left; omega
+  cases' hk with hk_lt hk_eq
+  · -- kappa decreases strictly
+    exact drop_left hk_lt
+  · -- kappa ties, need to show mu decreases
+    have hmu : mu void < mu (integrate (delta t)) := by
+      simp [mu]
+      -- mu(void) = 0, mu(integrate (delta t)) = 1 + mu(t)
+      omega
+    exact drop_right hmu hk_eq
+```
+
+### 2. `R_rec_zero : forall b s, Step (recDelta b s void) b`
+
+**Strategy**: Compare measures of `recDelta b s void` and `b`.
+
+```lean
+| _, _, Step.R_rec_zero b s => by
+  -- Compute kappa values
+  have hk_cases : kappa b kappa (recDelta b s void) ∨ kappa b = kappa (recDelta b s void) := by
+    simp [kappa] at *
+    -- kappa(recDelta b s void) = max(max(kappa b, kappa s), 0)
+    -- kappa(b) ≤ max(max(kappa b, kappa s), 0)
+    -- Need to analyze cases based on relative sizes
+    have h_max := Nat.le_max_left (kappa b) (kappa s)
+    have h_max' := Nat.le_max_left (Nat.max (kappa b) (kappa s)) 0
+    -- If kappa b is strictly less than the max, use left case
+    -- Otherwise, they're equal
+    by_cases h : kappa Nat.max (Nat.max (kappa b) (kappa s)) 0
+    · left; exact h
+    · right; exact Nat.le_antisymm (Nat.le_of_not_lt h) (Nat.le_trans h_max h_max')
+  cases' hk_cases with hk_lt hk_eq
+  · exact drop_left hk_lt
+  · -- kappa ties, show mu decreases
+    have hmu : mu b < mu (recDelta b s void) := by
+      simp [mu]
+      -- mu(b 3 + mu(b) + mu(s) + 0
+      omega
+    exact drop_right hmu hk_eq
+```
+
+### 3. `R_rec_succ : forall b s n, Step (recDelta b s (delta n)) (app s (recDelta b s n))`
+
+**Strategy**: This is the most complex case due to the recursive structure.
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+  -- Key observation: kappa decreases by 1 because we unwrap delta
+  have hk : kappa (app s (recDelta b s n kappa (recDelta b s (delta n)) := by
+    simp [kappa]
+    -- Left side: max(kappa s, max(max(kappa b, kappa s), kappa n))
+    -- Right side: max(max(kappa b, kappa s), kappa n) + 1
+    -- Need to show left < right + 1
+    have h1 : kappa s ≤ Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) := by
+      exact Nat.le_trans (Nat.le_max_left (kappa b) (kappa s)) (Nat.le_max_left _ _)
+    have h2 : Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) ≤ 
+              Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1 := by omega
+    exact calc
+      Nat.max (kappa s) (Nat.max (Nat.max (kappa b) (kappa s)) (kappa n))
+          ≤ Nat.max (Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)) 
+                    (Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)) := Nat.max_le_max h1 (by rfl)
+      _ = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) := by simp
+      _ < Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1 := by omega
+  exact drop_left hk
+```
+
+### 4. `R_eq_refl : forall a, Step (eqW a a) void`
+
+**Strategy**: Similar to `R_int_delta`.
+
+```lean
+| _, _, Step.R_eq_refl a => by
+  have hk_cases : kappa void < kappa (eqW a a) ∨ kappa void = kappa (eqW a a) := by
+    simp [kappa] at *
+    -- kappa(eqW a a) = max(kappa a, kappa a) = kappa a
+    -- Compare 0 with kappa a
+    cases' h : kappa a
+    · right; rfl
+    · left; omega
+  cases' hk_cases with hk_lt hk_eq
+  · exact drop_left hk_lt
+  · have hmu : mu void < mu (eqW a a) := by
+      simp [mu]
+      --  4 + mu(a) + mu(a)
+      omega
+    exact drop_right hmu hk_eq
+```
+
+### 5. `R_eq_diff : forall a b, Step (eqW a b) (integrate (merge a b))`
+
+**Strategy**: Compare measures of `eqW a b` and `integrate (merge a b)`.
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+  -- Compute kappa values
+  have hk : kappa (integrate (merge a b)) ≤ kappa (eqW a b) := by
+    simp [kappa]
+    -- Left: kappa(merge a b) = max(kappa a, kappa b)
+    -- Right: max(kappa a, kappa b)
+    rfl
+  -- Check if kappa decreases strictly or ties
+  by_cases hk_lt : kappa (integrate (merge a b)) < kappa (eqW a b)
+  · exact drop_left hk_lt
+  · -- kappa ties, show mu decreases
+    have hk_eq : kappa (integrate (merge a b)) = kappa (eqW a b) :=
+      Nat.le_antisymm hk (Nat.le_of_not_lt hk_lt)
+    have hmu : mu (integrate (merge a b mu (eqW a b) := by
+      simp [mu]
+      -- Left: 1 + (2 + mu(a) + mu(b)) = 3 + mu(a) + mu(b)
+      -- Right: 4 + mu(a) + mu(b)
+      omega
+    exact drop_right hmu hk_eq
+```
+
+## Key Observations for Completing the Proofs:
+
+1. **`R_int_delta` and `R_eq_refl`**: Both reduce to `void`, so `kappa` comparison depends on whether the source term has `kappa > 0`.
+
+2. **`R_rec_zero`**: The `recDelta` constructor adds weight to both `kappa` and `mu`, ensuring decrease.
+
+3. **`R_rec_succ`**: The key insight is that unwrapping `delta` reduces `kappa` by exactly 1 due to the `+1` in the `kappa` definition for `recDelta` with `delta` argument.
+
+4. **`R_eq_diff`**: The transformation from `eqW a b` to `integrate (merge a b)` reduces `mu` by 1 (from 4 to 3 plus the same `mu(a) + mu(b)` terms).
+
+5. **General Strategy**: For each case:
+   - Compute `kappa` values using the simp lemmas
+   - Determine if `kappa` decreases strictly (use `drop_left`)
+   - If `kappa` ties, show `mu` decreases strictly (use `drop_right`)
+
+The proof skeleton provides the structure and key lemmas needed to complete each case. The actual Lean proofs may require additional `omega` arithmetic reasoning or case analysis on the relative sizes of `kappa` values.

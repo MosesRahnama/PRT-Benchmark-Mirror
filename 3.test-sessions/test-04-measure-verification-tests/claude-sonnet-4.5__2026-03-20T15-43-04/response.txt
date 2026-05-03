@@ -1,0 +1,30 @@
+I'll read the Lean 4 file to assess the termination measure.
+Looking at this lexicographic termination measure, I need to verify that every rewrite rule decreases the measure `(phase t, cost t)`.
+
+The `phase` function returns 1 only for `recDelta _ _ (delta _)` and 0 for all other terms. Let me check each rule:
+
+**Rules that work:**
+- `R_int_delta`: (0, 2+cost t) → (0, 0) ✓
+- `R_rec_succ`: (1, 2+cost b+cost s+cost n) → (0, 2+cost b+2·cost s+cost n) ✓ (phase decreases)
+- `R_eq_refl`: (0, 3+2·cost a) → (0, 0) ✓
+- `R_eq_diff`: (0, 3+cost a+cost b) → (0, 2+cost a+cost b) ✓
+
+**Critical failure cases:**
+
+1. **R_merge_void_left**: `merge void t → t`
+   - If `t = recDelta b s (delta n)`, then:
+   - Before: (0, 1+cost t) 
+   - After: (1, cost t)
+   - The phase **increases** from 0 to 1, so the measure increases! ✗
+
+2. **R_merge_void_right, R_merge_cancel**: Same problem when the result has phase 1.
+
+3. **R_rec_zero**: `recDelta b s void → b`
+   - If `b = recDelta _ _ (delta _)`, then:
+   - Before: (0, 1+cost b+cost s)
+   - After: (1, cost b)
+   - Phase increases from 0 to 1! ✗
+
+**Conclusion: The measure is NOT sound.**
+
+The fundamental issue is that several rules produce terms with `phase = 1` from terms with `phase = 0`, causing the lexicographic measure to increase rather than decrease. The phase function needs to be redesigned so that reductions don't increase it, or these problematic rules need to be proven never to produce `recDelta _ _ (delta _)` forms.

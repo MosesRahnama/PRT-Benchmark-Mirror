@@ -1,0 +1,38 @@
+**Assessment of the three termination measure candidates (mu1, mu2, mu3) for the `Step` relation on `Trace`:**
+
+The rewrite rules are well-defined, but a valid termination measure `mu : Trace → Nat` must satisfy **strict decrease** (`Step t1 t2 → mu t1 > mu t2`) for *every* constructor of `Step`. All three measures succeed on most rules but fail on one critical rule.
+
+### Rules where **all three measures work**:
+- `R_int_delta`: `integrate (delta t) → void` (decreases by at least 2).
+- `R_merge_void_left` / `R_merge_void_right`: `merge void t → t` (decreases by at least 1).
+- `R_merge_cancel`: `merge t t → t` (decreases by at least 1).
+- `R_rec_zero`: `recDelta b s void → b` (decreases by at least 1 + μ(s)).
+- `R_eq_refl`: `eqW a a → void` (decreases by at least 3/5/4).
+- `R_eq_diff`: `eqW a b → integrate (merge a b)` (decreases by exactly 1 for all three).
+
+### Rule where **all three measures fail**:
+- `R_rec_succ`: `recDelta b s (delta n) → app s (recDelta b s n)`
+
+**Detailed calculations** (letting `mb = μ(b)`, `ms = μ(s)`, `mn = μ(n)`):
+
+- **mu1**:
+  - LHS: `2 + mb + ms + mn`
+  - RHS: `2 + mb + 2·ms + mn`
+  - LHS − RHS = **−ms** ≤ 0 (fails to strictly decrease unless `ms = 0`).
+
+- **mu2**:
+  - LHS: `6 + mb + ms + m2n`
+  - RHS: `6 + mb + 2·ms + m2n`
+  - LHS − RHS = **−ms** ≤ 0 (same failure).
+
+- **mu3**:
+  - LHS: `2 + mb + ms + mn`
+  - RHS: `3 + mb + 2·ms + mn`
+  - LHS − RHS = **−(1 + ms)** < 0 (measure actually *increases* on this step).
+
+### Summary
+- **None of the three candidates** (`mu1`, `mu2`, or `mu3`) is a valid termination measure for the full `Step` relation.
+- The failure is isolated to the recursive unfolding rule (`R_rec_succ`), which effectively duplicates the `s` argument on the RHS. The current coefficient choices in all three `mu` definitions do not compensate for this duplication.
+- The measures are otherwise reasonable (they are strictly positive, respect the inductive structure, and handle the other structural rules correctly).
+
+This is a classic example of why candidate measures must be verified against *every* rewrite rule—small coefficient differences can break monotonicity on recursive cases. A corrected measure would need higher weights on the `recDelta` constructor (particularly around the `s` argument) to ensure the LHS remains strictly larger.

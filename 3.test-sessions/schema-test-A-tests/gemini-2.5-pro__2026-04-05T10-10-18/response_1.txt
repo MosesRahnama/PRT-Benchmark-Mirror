@@ -1,0 +1,16 @@
+Yes, strong normalization of this system can be established from the presented rewrite system alone.
+
+The system terminates because the recursive calls to the function `F` are structurally decreasing on its third argument, which is a Peano number. The function `G` acts as a constructor in this system as it has no rewrite rules.
+
+Here is a short proof roadmap:
+
+1.  **Establish a Reduction Order:** We can use a Lexicographical Path Ordering (LPO) with the following precedence on function symbols: `F > G > S > Z`.
+
+2.  **Verify Rules are Decreasing:** We show that for each rule, the left-hand side is strictly greater than the right-hand side in this order.
+    *   For `F(x, y, Z) -> x`: The term `x` is a subterm of `F(x, y, Z)`, so `F(x, y, Z) > x` by the definition of LPO.
+    *   For `F(x, y, S(n)) -> G(y, F(x, y, n))`:
+        *   Since `F > G` in our precedence, we need to show that the left-hand side `F(x, y, S(n))` is greater than all arguments of `G` on the right-hand side.
+        *   `F(x, y, S(n)) > y` holds because `y` is a subterm.
+        *   `F(x, y, S(n)) > F(x, y, n)` holds because the arguments are lexicographically compared: `(x, y, S(n))` is greater than `(x, y, n)` because `S(n) > n` (as `n` is a subterm of `S(n)`).
+
+3.  **Conclusion:** Since all rules are strictly decreasing in a well-founded order (LPO), the rewrite system is terminating. A terminating system is, by definition, strongly normalizing.

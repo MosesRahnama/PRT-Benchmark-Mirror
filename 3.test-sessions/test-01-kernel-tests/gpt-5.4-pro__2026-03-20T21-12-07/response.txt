@@ -1,0 +1,44 @@
+**Raw assessment:** **yes**.
+
+Two points:
+
+1. **Literally as written in
+**, `Step` is only a **root-step** relation, not a contextual rewrite closure. Under that reading, strong normalization is essentially immediate.
+
+2. **Even under the standard term-rewriting reading** (rules usable in all contexts), strong normalization still looks provable **from the given calculus alone**, with no extra axioms or hidden guards.
+
+A short roadmap is to use a **polynomial interpretation into $\mathbb{N}$**. For example, assign:
+
+$$
+\begin{aligned}
+\| \texttt{void} \| &= 0 \\
+\| \texttt{delta}(x) \| &= x+1 \\
+\| \texttt{integrate}(x) \| &= x \\
+\| \texttt{merge}(x,y) \| &= x+y+1 \\
+\| \texttt{app}(x,y) \| &= x+y \\
+\| \texttt{eqW}(x,y) \| &= x+y+2 \\
+\| \texttt{recΔ}(b,s,n) \| &= b + (n+1)^2(s+1)
+\end{aligned}
+$$
+
+Then each rule strictly decreases this value:
+
+- `integrate (delta t) → void`
+- `merge void t → t`
+- `merge t void → t`
+- `merge t t → t`
+- `recΔ b s void → b`
+- `recΔ b s (delta n) → app s (recΔ b s n)`
+- `eqW a a → void`
+- `eqW a b → integrate (merge a b)`
+
+The only nontrivial case is `recΔ`-successor, but with the above interpretation:
+
+$$
+\| \texttt{recΔ}(b,s,\texttt{delta }n)\| - \| \texttt{app}(s,\texttt{recΔ}(b,s,n))\|
+= (2n+2)s + 2n + 3 > 0.
+$$
+
+Since all symbols are monotone, every rewrite in any context strictly lowers a natural-number measure, so there can be no infinite reduction chain.
+
+So the answer is: **strong normalization is establishable from the presented rules alone**.

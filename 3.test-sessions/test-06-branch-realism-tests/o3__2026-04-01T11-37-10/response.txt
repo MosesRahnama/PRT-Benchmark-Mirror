@@ -1,0 +1,24 @@
+Both lemmas are consistent with the definition of the structural measure `kappa`, hence the helper strategy is mathematically sound.
+
+1. kappa\_rec\_delta\_step  
+   • Definition look-up  
+     kappa (recDelta b s (delta n)) = max (max (κ b) (κ s)) (κ n) + 1  
+     kappa (recDelta b s n)     = max (max (κ b) (κ s)) (κ n)  
+   • Therefore   
+     kappa (recDelta b s (delta n))  
+      = kappa (recDelta b s n) + 1.  
+   The lemma is exactly this equality, so it is correct.
+
+2. kappa\_rec\_succ\_drop  
+   • Rewrite-rule R\_rec\_succ rewrites  
+     recDelta b s (delta n) ⟶ app s (recDelta b s n).  
+   • Using the first lemma, set  
+     K = max (max (κ b) (κ s)) (κ n).  
+     Then κ(recDelta b s (delta n)) = K + 1.  
+   • For the right-hand term  
+     κ(app s (recDelta b s n)) = max (κ s, κ(recDelta b s n))  
+                = max (κ s, K) = K, because K ≥ κ s.  
+   • Hence K < K + 1, i.e.  
+     κ(app s (recDelta b s n)) < κ(recDelta b s (delta n)).  
+
+Since κ strictly decreases along R\_rec\_succ and is unaffected or decreases for the other rules, these lemmas provide a sound basis for a termination argument.

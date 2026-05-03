@@ -1,0 +1,15 @@
+Based on the provided Lean 4 file, strong normalization of the calculus as presented **cannot** be established.
+
+The system contains a rewrite rule that can lead to non
+-terminating reductions. Specifically, the rule `R_apple_orange` can create a term that is larger and more complex than the term it reduces, allowing for an infinite reduction sequence.
+
+Consider the rule:
+`R_apple_orange: ∀ b s n, Step (banana b s (grape n)) (pear s (banana b s n))`
+
+Let's analyze the size of the terms, where size is the number of constructors.
+*   The size of the left-hand side `banana b s (grape n)` is `1 + size(b) + size(s) + (1 + size(n)) = 2 + size(b) + size(s) + size(n)`.
+*   The size of the right-hand side `pear s (banana b s n)` is `1 + size(s) + (1 + size(b) + size(s) + size(n)) = 2 + size(b) + 2 * size(s) + size(n)`.
+
+The size of the term increases with each application of this rule if `size(s)` is greater than 0. This increase in size and complexity opens the door for a reduction sequence that never terminates.
+
+For example, a term like `banana b s (grape (grape (...)))` would continually expand, with the `pear` constructor adding to the term's size in a way that is not bounded. Because a standard measure of term size does not decrease with every step, a standard termination proof based on simple size reduction fails. More sophisticated well-founded orderings would also likely fail because of the generative nature of the `R_apple_orange` rule.

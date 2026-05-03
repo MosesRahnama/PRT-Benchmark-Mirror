@@ -1,0 +1,44 @@
+Based on the file content, I'll analyze the lexicographic termination measure defined in the Lean 4 code. The measure is defined as a tuple `(phase t, cost t)` where:
+
+1. **Phase function**:
+```lean
+def phase : Trace → Nat
+| .recDelta _ _ (.delta _) => 1
+| _ => 0
+```
+This assigns phase 1 to `recDelta` terms with a `delta` in the third argument, and phase 0 to all other terms.
+
+2. **Cost function**:
+```lean
+def cost : Trace → Nat
+| .void            => 0
+| .delta t         => 1 + cost t
+| .integrate t     => 1 + cost t
+| .merge a b       => 1 + cost a + cost b
+| .app a b         => 1 + cost a + cost b
+| .recDelta b s n  => 1 + cost b + cost s + cost n
+| .eqW a b         => 3 + cost a + cost b
+```
+This recursively calculates the size of the term.
+
+### Soundness Assessment
+The lexicographic termination measure `(phase t, cost t)` appears **sound** for the following reasons:
+
+1. **Phase decreases or stays the same**:
+   - All rewrite rules either preserve phase (0→0) or decrease it (1→0)
+   - Example: `R_rec_succ` rewrites a phase 1 term to a term with phase 0
+
+2. **Cost decreases when phase is preserved**:
+   - When phase remains 0, cost strictly decreases:
+     - `R_int_delta`: Cost reduces from (1 + (1 + cost t)) = 2 + cost t to 0
+     - `R_merge_void_left`: Cost reduces from 1 + cost t to cost t
+     - `R_merge_void_right`: Similar to left case
+     - `R_merge_cancel`: Cost reduces from 1 + 2*cost t to cost t
+     - `R_eq_refl`: Cost reduces from 3 + 2*cost a to 0
+
+3. **Well-founded ordering**:
+   - The lexicographic ordering on `(Nat, Nat)` is well-founded
+   - Phase can only decrease finitely many times (from 1 to 0)
+   - Cost decreases in each step when phase is preserved
+
+The measure satisfies the requirements for termination as it decreases lexicographically with each rewrite step.

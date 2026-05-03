@@ -1,0 +1,13 @@
+Yes. My raw assessment is that strong normalization is establishable from the rewrite system alone.
+
+Reasoning: the only recursive rule
+$$
+F(x,y,S(n)) \to G(F(x,y,n))
+$$
+strictly removes one outer $S$ from the third argument of the active $F$. There are no rules that rewrite $G$, introduce new $S$ constructors, or rebuild an $F(\_,\_,S(\_))$ from the right-hand side. The base rule
+$$
+F(x,y,Z) \to x
+$$
+then removes that $F$ completely.
+
+A simple decreasing measure is: sum, over all occurrences of $F(u,v,w)$ in the term, of $1 +$ the number of leading $S$ constructors on $w$. The recursive rule decreases this sum by exactly $1$, and the base rule removes one whole $F$ contribution. Since the rules do not duplicate redexes or create a larger recursive argument, there is no way to form an infinite rewrite chain. So, from the presented rules alone and without extra axioms, the system is strongly normalizing.

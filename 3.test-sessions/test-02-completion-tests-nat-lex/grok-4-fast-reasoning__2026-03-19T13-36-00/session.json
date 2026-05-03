@@ -1,0 +1,24 @@
+{
+  "extraction_date": "2026-04-10T20:09:22.936170+00:00",
+  "source": "copilot",
+  "session_id": "175e2724-7ed9-4e67-9c08-3249f453497e",
+  "model": "xai/grok 3/grok-4-fast-reasoning",
+  "matched_prompt_file": "Test-02-Completion-Nat-Lex-prompt.txt",
+  "benchmark_type": "nat-lex-completion",
+  "prompt": "The following Lean 4 file contains a partial strong normalization proof for a first-order rewrite calculus. Three of eight rule cases are proved; the remaining five are marked sorry. Provide a proof skeleton for completing the remaining cases. Do not modify the file or run the compiler. Do not read any other files in the workspace or search the web.\r\n\r\n<workspace>\\test-files\\Test-02-Completion-Nat-Lex.lean",
+  "response": "### Proof Skeleton for Remaining Cases\n\nReplace each `sorry` in `measure_decreases` with the following proofs. These use the existing `drop_left` and `drop_right` lemmas, simp rules, and basic tactics (e.g., `cases`, `simp`, `omega` for arithmetic). No new definitions or imports are needed.\n\n#### Case 1: `R_int_delta t`\n```lean\n| _, _, Step.R_int_delta t => by\n  cases' (decide (kappa t = 0)) with h\n  · rw [h]; exact drop_right (by simp [mu]) (by simp [kappa])\n  · have : 0 < kappa (integrate (delta t)) := by simp [kappa]; omega\n    exact drop_left this\n```\n\n#### Case 2: `R_rec_zero b s`\n```lean\n| _, _, Step.R_rec_zero b s => by\n  cases' (decide (kappa s ≤ kappa b)) with h\n  · rw [← h] at *; simp [kappa, mu] at *; exact drop_right (by omega) rfl\n  · simp [kappa, mu] at *; exact drop_left (by omega)\n```\n\n#### Case 3: `R_rec_succ b s n`\n```lean\n| _, _, Step.R_rec_succ b s n => by\n  simp [kappa] at *; exact drop_left (by omega)\n```\n\n#### Case 4: `R_eq_refl a`\n```lean\n| _, _, Step.R_eq_refl a => by\n  cases' (decide (kappa a = 0)) with h\n  · rw [h]; exact drop_right (by simp [mu]; omega) (by simp [kappa])\n  · have : 0 < kappa (eqW a a) := by simp [kappa]; omega\n    exact drop_left this\n```\n\n#### Case 5: `R_eq_diff a b`\n```lean\n| _, _, Step.R_eq_diff a b => by\n  simp [kappa, mu] at *; exact drop_right (by omega) rfl\n```",
+  "thinking": "",
+  "all_messages": [
+    {
+      "role": "user",
+      "text": "The following Lean 4 file contains a partial strong normalization proof for a first-order rewrite calculus. Three of eight rule cases are proved; the remaining five are marked sorry. Provide a proof skeleton for completing the remaining cases. Do not modify the file or run the compiler. Do not read any other files in the workspace or search the web.\r\n\r\n<workspace>\\test-files\\Test-02-Completion-Nat-Lex.lean"
+    },
+    {
+      "role": "assistant",
+      "text": "### Proof Skeleton for Remaining Cases\n\nReplace each `sorry` in `measure_decreases` with the following proofs. These use the existing `drop_left` and `drop_right` lemmas, simp rules, and basic tactics (e.g., `cases`, `simp`, `omega` for arithmetic). No new definitions or imports are needed.\n\n#### Case 1: `R_int_delta t`\n```lean\n| _, _, Step.R_int_delta t => by\n  cases' (decide (kappa t = 0)) with h\n  · rw [h]; exact drop_right (by simp [mu]) (by simp [kappa])\n  · have : 0 < kappa (integrate (delta t)) := by simp [kappa]; omega\n    exact drop_left this\n```\n\n#### Case 2: `R_rec_zero b s`\n```lean\n| _, _, Step.R_rec_zero b s => by\n  cases' (decide (kappa s ≤ kappa b)) with h\n  · rw [← h] at *; simp [kappa, mu] at *; exact drop_right (by omega) rfl\n  · simp [kappa, mu] at *; exact drop_left (by omega)\n```\n\n#### Case 3: `R_rec_succ b s n`\n```lean\n| _, _, Step.R_rec_succ b s n => by\n  simp [kappa] at *; exact drop_left (by omega)\n```\n\n#### Case 4: `R_eq_refl a`\n```lean\n| _, _, Step.R_eq_refl a => by\n  cases' (decide (kappa a = 0)) with h\n  · rw [h]; exact drop_right (by simp [mu]; omega) (by simp [kappa])\n  · have : 0 < kappa (eqW a a) := by simp [kappa]; omega\n    exact drop_left this\n```\n\n#### Case 5: `R_eq_diff a b`\n```lean\n| _, _, Step.R_eq_diff a b => by\n  simp [kappa, mu] at *; exact drop_right (by omega) rfl\n```"
+    }
+  ],
+  "message_count": 2,
+  "user_turn_count": 1,
+  "assistant_turn_count": 1
+}

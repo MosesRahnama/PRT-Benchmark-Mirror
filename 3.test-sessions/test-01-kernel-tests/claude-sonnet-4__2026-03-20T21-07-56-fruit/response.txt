@@ -1,0 +1,28 @@
+Based on my analysis of the rewrite calculus in Test-01-Kernel-Fruit.lean, here is my assessment:
+
+## Raw Assessment
+
+**Strong normalization can likely be established**, but it requires a non-trivial termination argument that stays within the given system boundaries.
+
+## Key Observations
+
+The system defines a first-order term rewriting system over `Trace` constructors with 8 rewrite rules. The critical challenges for termination are:
+
+1. **Rule R_apple_orange**: `banana b s (grape n) → pear s (banana b s n)` 
+   - Embeds the `banana` term in a new `pear` context while reducing grape-depth
+   
+2. **Rule R_cherry_diff**: `cherry a b → mango (peach a b)` when `a ≠ b`
+   - Can increase term size, but the resulting form has limited reduction potential
+
+## Proof Roadmap (If Tractable)
+
+A termination proof could use a **lexicographic measure**:
+1. **Grape depth**: Maximum nesting of `grape` constructors  
+2. **Banana count**: Number of `banana` constructors
+3. **Weighted term size**: With careful constructor weights
+
+**Key insight**: Rule R_apple_orange decreases grape-depth (removing one `grape`), while R_cherry_diff produces terms with limited further reduction potential since `mango (peach a b)` can only reduce if `a = plum` or `b = plum`, and then only if the result matches `mango (grape t)`.
+
+The termination argument would verify that each rule decreases this lexicographic measure, with the most complex case being the interaction between rules 6 and 8.
+
+**Verdict**: Strong normalization appears achievable using standard termination techniques (lexicographic/multiset path orderings) without additional axioms, though the proof requires careful case analysis of the reduction patterns.

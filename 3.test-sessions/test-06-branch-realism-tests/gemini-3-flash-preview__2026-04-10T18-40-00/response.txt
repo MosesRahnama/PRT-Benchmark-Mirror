@@ -1,0 +1,36 @@
+The helper strategy for the termination argument as written in
+is **unsound**. The structural measure `kappa` fails to strictly decrease for the recursion step when the argument is already a successor (`delta`), and both helper theorems are false in general.
+
+### 1. Analysis of `kappa`
+The definition of `kappa` for `recDelta` treats the `delta` wrapper specially only at the top level of the third argument:
+- $K(\text{recDelta } b\ s\ (\delta n)) = \max(K(b), K(s), K(n)) + 1$
+- $K(\text{recDelta } b\ s\ n) = \max(K(b), K(s), K(n))$ (for non-delta $n$)
+
+Crucially, the global definition $K(\delta t) = K(t)$ means that nested `delta`s do not increase the measure.
+
+### 2. Counter-example for `kappa_rec_delta_step`
+The theorem states: $K(\text{recDelta } b\ s\ (\delta n)) = K(\text{recDelta } b\ s\ n) + 1$.
+Let $n = \delta v$ where $v = \text{void}$.
+- **LHS**: $K(\text{recDelta } b\ s\ (\delta (\delta v))) = \max(K(b), K(s), K(\delta v)) + 1 = \max(K(b), K(s), K(v)) + 1$.
+- **RHS**: $K(\text{recDelta } b\ s\ (\delta v)) + 1 = (\max(K(b), K(s), K(v)) + 1) + 1 = \max(K(b), K(s), K(v)) + 2$.
+Since $X + 1 \neq X + 2$, the theorem is **false**.
+
+### 3. Counter-example for `kappa_rec_succ_drop`
+The theorem states: $K(\text{app } s\ (\text{recDelta } b\ s\ n)) < K(\text{recDelta } b\ s\ (\delta n))$.
+Let $n = \delta v$.
+- **LHS**: $K(\text{app } s\ (\text{recDelta } b\ s\ (\delta v)))$
+  - $K(\text{app } a\ b) = \max(K(a), K(b))$
+  - $K(\text{recDelta } b\ s\ (\delta v)) = \max(K(b), K(s), K(v)) + 1$
+  - LHS $= \max(K(s), \max(K(b), K(s), K(v)) + 1) = \max(K(b), K(s), K(v)) + 1$.
+- **RHS**: $K(\text{recDelta } b\ s\ (\delta (\delta v)))$
+  - RHS $= \max(K(b), K(s), K(\delta v)) + 1 = \max(K(b), K(s), K(v)) + 1$.
+The comparison becomes $X + 1 < X + 1$, which is **false**.
+
+### 4. General Soundness of the Calculus
+Beyond the helper theorems, the measure `kappa` is stationary for several other reduction rules, making it unsuitable for a termination proof of the `Step` relation:
+- **`R_merge_cancel`**: $K(\text{merge } t\ t) = \max(K(t), K(t)) = K(t)$. No decrease.
+- **`R_eq_diff`**: $K(\text{eqW } a\ b) = \max(K(a), K(b))$ and $K(\text{integrate }(\text{merge } a\ b)) = \max(K(a), K(b))$. No decrease.
+- **`R_merge_void_left/right`**: $K(\text{merge void } t) = \max(0, K(t)) = K(t)$. No decrease.
+
+### Conclusion
+The strategy is unsound because the measure `kappa` does not properly account for the depth of terms or the complexity of the rewrite rules, and the proposed lemmas used to justify the recursion step are mathematically incorrect under the provided definitions.

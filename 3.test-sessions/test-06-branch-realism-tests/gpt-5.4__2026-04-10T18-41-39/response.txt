@@ -1,0 +1,177 @@
+The helper strategy is **not sound as written**.
+
+## Why
+
+The key intended chain is:
+
+- `R_rec_succ` rewrites
+  `recDelta b s (delta n) ⟶ app s (recDelta b s n)`
+- then prove termination by showing
+  `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`
+
+This depends on the first helper theorem:
+
+```lean
+theorem kappa_rec_delta_step (b s n : Trace) :
+  kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1
+```
+
+But this equality is **false in general**.
+
+## Calculation
+
+Let
+
+$$
+M := \max(\max(\kappa b,\kappa s),\kappa n).
+$$
+
+From the definition:
+
+- $$\kappa(\mathrm{recDelta}\ b\ s\ (\delta n)) = M + 1$$
+
+But for `recDelta b s n`, there are two cases.
+
+### Case 1: `n` is not of the form `delta _`
+
+Then
+
+$$
+\kappa(\mathrm{recDelta}\ b\ s\ n)=M
+$$
+
+so in this case
+
+$$
+\kappa(\mathrm{recDelta}\ b\ s\ (\delta n))
+= M+1
+= \kappa(\mathrm{recDelta}\ b\ s\ n)+1.
+$$
+
+So the theorem holds here.
+
+### Case 2: `n = delta m`
+
+Then by the special clause for `recDelta`,
+
+$$
+\kappa(\mathrm{recDelta}\ b\ s\ n)
+= \kappa(\mathrm{recDelta}\ b\ s\ (\delta m))
+= \max(\max(\kappa b,\kappa s),\kappa m)+1.
+$$
+
+Also `kappa (delta m) = kappa m`, so
+
+$$
+\kappa(\mathrm{recDelta}\ b\ s\ (\delta n))
+= \kappa(\mathrm{recDelta}\ b\ s\ (\delta(\delta m)))
+= \max(\max(\kappa b,\kappa s),\kappa m)+1.
+$$
+
+Thus
+
+$$
+\kappa(\mathrm{recDelta}\ b\ s\ (\delta n))
+= \kappa(\mathrm{recDelta}\ b\ s\ n),
+$$
+
+not `... = ... + 1`.
+
+So the theorem fails whenever `n` itself is a `delta`.
+
+## Concrete counterexample
+
+Take
+
+- `b = void`
+- `s = void`
+- `n = delta void`
+
+Then:
+
+- `kappa void = 0`
+- `kappa (delta void) = 0`
+
+Hence
+
+$$
+\kappa(\mathrm{recDelta}\ void\ void\ (\delta(\delta void))) = 1
+$$
+
+and also
+
+$$
+\kappa(\mathrm{recDelta}\ void\ void\ (\delta void)) = 1.
+$$
+
+But the claimed theorem would require
+
+$$
+1 = 1 + 1,
+$$
+
+impossible.
+
+## Effect on the second helper
+
+The second theorem is:
+
+```lean
+theorem kappa_rec_succ_drop (b s n : Trace) :
+  kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+  rw [kappa_rec_delta_step]
+  sorry
+```
+
+Since it rewrites using a false theorem, the strategy is already unsound.
+
+Worse, the target inequality itself is also **false in general**.
+
+Let again `b = void`, `s = void`, `n = delta void`. Then
+
+- `kappa (recDelta void void (delta void)) = 1`
+- `kappa (app void (recDelta void void (delta void))) = max 0 1 = 1`
+- `kappa (recDelta void void (delta (delta void))) = 1`
+
+So the theorem claims
+
+$$
+1 < 1,
+$$
+
+false.
+
+## What actually happens
+
+For `R_rec_succ`:
+
+$$
+\kappa(\mathrm{recDelta}\ b\ s\ (\delta n)) = M+1
+$$
+
+while
+
+$$
+\kappa(\mathrm{app}\ s\ (\mathrm{recDelta}\ b\ s\ n))
+= \max(\kappa s,\kappa(\mathrm{recDelta}\ b\ s\ n)).
+$$
+
+If `n` is not `delta _`, then `kappa (recDelta b s n) = M`, so RHS is at most `M`, and the strict drop works.
+
+But if `n = delta m`, then `kappa (recDelta b s n) = M+1`, hence
+
+$$
+\kappa(\mathrm{app}\ s\ (\mathrm{recDelta}\ b\ s\ n)) = M+1,
+$$
+
+so there is **no drop at all**.
+
+## Conclusion
+
+The helper strategy is **unsound** because:
+
+1. `kappa_rec_delta_step` is false in general.
+2. `kappa_rec_succ_drop` is also false in general.
+3. Therefore `kappa` as defined does **not** support a strict one-step decrease proof for `R_rec_succ` on all inputs.
+
+So the current measure does not justify termination of that branch by these helpers alone.

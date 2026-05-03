@@ -1,0 +1,28 @@
+Yes – the two rules are already strongly normalising.  
+A standard recursive-path ordering (RPO) proof is enough; no extra structural axioms are needed.
+
+Proof roadmap (sketch)
+
+1. Signature  
+   • Function symbols: F/3 , G/2 , S/1 , Z/0.  
+   • Variables: x, y, n.
+
+2. Precedence and status  
+   Take the strict precedence  
+   F  >  G  >  S  >  Z  
+   and give F and G lexicographic status; variables are minimal.
+
+3. Decrease of each rule under RPO  
+   a) F(x, y, Z) → x     Left-hand side’s top symbol F outranks the variable x ⇒ decrease.  
+   b) F(x, y, S(n)) → G(y, F(x, y, n))  
+
+     • Top symbols differ: F > G, so it suffices to show  
+       F(x, y, S(n)) > y and F(x, y, S(n)) > F(x, y, n).  
+     • First inequality is immediate (variable).  
+     • Second: same top symbol F, lexicographic comparison of arguments gives  
+       S(n) > n (because S > variable), hence the whole term decreases.
+
+   Both rules are strictly decreasing; therefore the rewrite relation is terminating.
+
+4. Conclusion  
+   Termination implies every reduction sequence is finite; thus all terms are strongly normalising with respect to the given rewrite system alone.

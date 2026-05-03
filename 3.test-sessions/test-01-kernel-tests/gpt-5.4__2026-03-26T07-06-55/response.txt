@@ -1,0 +1,77 @@
+I read only
+, as requested.
+
+- [x] Read the presented calculus in
+- [x] Checked whether the given rules alone admit a termination proof
+- [x] Checked for obvious looping/duplication hazards
+- [x] Kept the assessment within the file’s own syntax and rules
+
+## Raw assessment
+
+**Yes** — strong normalization can be established from the presented calculus **from the rewrite rules alone**, without adding structural axioms, guards, side conditions, or object-level assumptions.
+
+There is a standard purely syntactic termination proof available. In fact:
+
+- **If you mean exactly the Lean relation `Step` as written** (root-step only, no contextual closure), termination is immediate.
+- **If you mean the usual term-rewriting closure under contexts**, termination still looks provable by a standard simplification ordering such as **recursive path ordering / lexicographic path ordering**.
+
+## Why the system still terminates
+
+The only potentially nontrivial rules are:
+
+- `R_rec_succ : recΔ b s (delta n) → app s (recΔ b s n)`
+- `R_eq_diff : eqW a b → integrate (merge a b)`
+
+These do **not** create a cycle:
+
+- `recΔ` rewrites to an `app` at the root, and the recursive call is on the **strict subterm** `n` rather than `delta n`.
+- `eqW` rewrites to `integrate (...)`, and there is **no rule** turning `integrate` or `merge` back into `eqW`.
+
+So the system branches, but it does not feed back into itself.
+
+## Short proof roadmap
+
+A clean route is to orient all rules by a recursive path ordering with a precedence such as
+
+$$
+recΔ \succ eqW \succ integrate \succ merge \succ app \succ delta \succ void.
+$$
+
+Then:
+
+- `merge void t → t`, `merge t void → t`, `merge t t → t`, `recΔ b s void → b`  
+  are decreasing by the **subterm property**.
+
+- `integrate (delta t) → void`  
+  decreases because `integrate \succ void`.
+
+- `recΔ b s (delta n) → app s (recΔ b s n)`  
+  decreases because:
+  - the root drops from `recΔ` to `app`, and
+  - the left side is greater than both arguments on the right:
+    - greater than `s` by subterm,
+    - greater than `recΔ b s n` since `delta n` is strictly bigger than `n`.
+
+- `eqW a a → void`  
+  decreases since `eqW \succ void`.
+
+- `eqW a b → integrate (merge a b)`  
+  decreases since `eqW \succ integrate`, and the left side is greater than `merge a b` because it is greater than both `a` and `b` by subterm.
+
+Since recursive path ordering is well-founded, the rewrite system is strongly normalizing.
+
+## One important caveat
+
+This system is **not obviously confluent**, because `eqW a a` matches both:
+
+- `R_eq_refl : eqW a a → void`
+- `R_eq_diff : eqW a a → integrate (merge a a)`
+
+and the second branch reduces to `integrate a`, not generally to `void`.
+
+But that affects **confluence**, not **strong normalization**. So it does **not** block a termination proof.
+
+## Bottom line
+
+**Yes — strong normalization is obtainable from the presented calculus alone.**  
+A standard first-order syntactic termination proof (e.g. recursive path ordering) is enough; no extra rules, guards, side conditions, or external assumptions are needed.

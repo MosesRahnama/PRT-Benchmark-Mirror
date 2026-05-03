@@ -1,0 +1,47 @@
+Looking at the file you've provided, let me analyze the rewrite system.
+
+## Assessment: **Yes, strong normalization can be established**
+
+The system is strongly normalizing. Here's why:
+
+### Key Structural Observation
+
+No rewrite rule **creates** either `delta` or `eqW` constructors:
+- `delta` only appears in initial terms; rules only **consume** it (`R_int_delta`, `R_rec_succ`)
+- `eqW` only appears in initial terms; rules only **eliminate** it (`R_eq_refl`, `R_eq_diff`)
+
+### Termination Measure
+
+Define the lexicographic measure `μ(t) = (δ(t), ε(t), σ(t))` where:
+- `δ(t)` = number of `delta` nodes in `t`
+- `ε(t)` = number of `eqW` nodes in `t`  
+- `σ(t)` = total size (constructor count) of `t`
+
+Each rule decreases `μ`:
+
+| Rule | δ | ε | σ | Lexicographic effect |
+|------|---|---|---|---------------------|
+| `R_int_delta` | ↓ | — | — | decreases (δ drops) |
+| `R_rec_succ` | ↓ | — | — | decreases (δ drops) |
+| `R_eq_refl` | — | ↓ | — | decreases (ε drops) |
+| `R_eq_diff` | — | ↓ | ↑ | decreases (ε drops) |
+| `R_merge_*` | — | — | ↓ | decreases (σ drops) |
+| `R_rec_zero` | — | — | ↓ | decreases (σ drops) |
+
+### Why This Works
+
+1. **`R_rec_succ`** is the apparent danger: `recΔ b s (delta n) → app s (recΔ b s n)` creates an `app` node and might increase size. But it **must consume a `delta`**, and `delta` is never created—so only finitely many such steps are possible.
+
+2. **`R_eq_diff`** expands `eqW a b` into `integrate (merge a b)`, potentially growing the term. But it **eliminates an `eqW`**, and no rule creates `eqW`—so only finitely many such steps are possible.
+
+3. All other rules strictly decrease size.
+
+Since `μ` maps to `ℕ³` with the standard well-founded lexicographic order, and every reduction step strictly decreases `μ`, all reduction sequences must terminate.
+
+### Proof Roadmap
+
+1. Define `δ`, `ε`, `σ` as above (purely syntactic, no axioms needed)
+2. Show each `Step` rule decreases the lexicographic tuple
+3. Conclude by well-foundedness of `ℕ³` under lexicographic ordering
+
+This uses only the given syntax and rewrite rules—no external axioms, guards, or hidden assumptions.

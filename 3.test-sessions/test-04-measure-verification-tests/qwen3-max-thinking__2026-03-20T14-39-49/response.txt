@@ -1,0 +1,52 @@
+Looking at this Lean 4 file, I need to assess whether the lexicographic termination measure `measure(t) = (phase(t), cost(t))` is sound for proving termination of the rewrite system defined by the `Step` relation.
+
+Let me analyze each rewrite rule to see if it strictly decreases the measure in lexicographic order:
+
+1. **R_int_delta**: `integrate (delta t) → void`
+   - LHS: `phase = 0` (not recDelta with delta), `cost = 1 + (1 + cost t) = 2 + cost t`
+   - RHS: `phase = 0`, `cost = 0`
+   - Measure goes from `(0, 2 + cost t)` to `(0, 0)` ✓ (decreases)
+
+2. **R_merge_void_left**: `merge void t → t`
+   - LHS: `phase = 0`, `cost = 1 + 0 + cost t = 1 + cost t`
+   - RHS: `phase = phase(t)`, `cost = cost(t)`
+   - If `phase(t) = 0`: measure goes from `(0, 1 + cost t)` to `(0, cost t)` ✓
+   - If `phase(t) = 1`: measure goes from `(0, 1 + cost t)` to `(1, cost t)` ✗ (increases in first component!)
+
+3. **R_merge_void_right**: `merge t void → t`
+   - Same analysis as above - problematic when `phase(t) = 1`
+
+4. **R_merge_cancel**: `merge t t → t`
+   - LHS: `phase = 0`, `cost = 1 + 2*cost t`
+   - RHS: `phase = phase(t)`, `cost = cost(t)`
+   - Again, if `phase(t) = 1`, measure goes from `(0, 1 + 2*cost t)` to `(1, cost t)` ✗
+
+5. **R_rec_zero**: `recDelta b s void → b`
+   - LHS: `phase = 0` (third arg is void, not delta), `cost = 1 + cost b + cost s + 0`
+   - RHS: `phase = phase(b)`, `cost = cost(b)`
+   - If `phase(b) = 1`, measure increases from `(0, ...)` to `(1, ...)` ✗
+
+6. **R_rec_succ**: `recDelta b s (delta n) → app s (recDelta b s n)`
+   - LHS: `phase = 1` (matches recDelta with delta), `cost = 1 + cost b + cost s + (1 + cost n) = 2 + cost b + cost s + cost n`
+   - RHS: `phase = 0` (app constructor), `cost = 1 + cost s + (1 + cost b + cost s + cost n) = 2 + cost b + 2*cost s + cost n`
+   - Measure goes from `(1, 2 + cost b + cost s + cost n)` to `(0, 2 + cost b + 2*cost s + cost n)` ✓ (decreases in first component)
+
+7. **R_eq_refl**: `eqW a a → void`
+   - LHS: `phase = 0`, `cost = 3 + 2*cost a`
+   - RHS: `phase = 0`, `cost = 0`
+   - Measure goes from `(0, 3 + 2*cost a)` to `(0, 0)` ✓
+
+8. **R_eq_diff**: `eqW a b → integrate (merge a b)`
+   - LHS: `phase = 0`, `cost = 3 + cost a + cost b`
+   - RHS: `phase = 0`, `cost = 1 + (1 + cost a + cost b) = 2 + cost a + cost b`
+   - Measure goes from `(0, 3 + cost a + cost b)` to `(0, 2 + cost a + cost b)` ✓
+
+The critical issue is with rules 2, 3, 4, and 5. When the right-hand side has `phase = 1` (i.e., contains a `recDelta` with a `delta` argument), the measure increases in the first component from 0 to 1, which violates the lexicographic ordering requirement.
+
+For example, consider `merge void (recDelta b s (delta n)) → recDelta b s (delta n)`:
+- LHS measure: `(0, 1 + 0 + (1 + cost b + cost s + 1 + cost n)) = (0, 3 + cost b + cost s + cost n)`
+- RHS measure: `(1, 1 + cost b + cost s + 1 + cost n) = (1, 2 + cost b + cost s + cost n)`
+
+Since `(0, ...)` < `(1, ...)` in lexicographic order, this rewrite step **increases** the measure, making the termination proof unsound.
+
+**Conclusion**: The lexicographic termination measure is **not sound** because several rewrite rules can increase the measure when the right-hand side contains terms with `phase = 1`.

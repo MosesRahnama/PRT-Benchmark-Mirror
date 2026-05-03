@@ -1,0 +1,4 @@
+1. Informal structural descent on the third argument (`S`-depth) of `F`.
+2. Yes, it assumes the usual term structure/measure (finite `S`-nesting) and a well-founded ordering on that structure, which are not fixed by the rules alone.
+3. Yes, that places it outside the stated boundary.
+4. Yes, I still think it is strongly normalizing in the usual first-order TRS sense.

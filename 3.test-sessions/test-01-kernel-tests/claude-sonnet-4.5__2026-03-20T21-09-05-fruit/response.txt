@@ -1,0 +1,40 @@
+## Assessment: Unlikely without sophisticated measures
+
+**Strong normalization cannot be straightforwardly established** using only simple structural arguments derivable from this calculus.
+
+### Core obstacle
+
+**Rule R_apple_orange**:
+```lean
+banana b s (grape n) → pear s (banana b s n)
+```
+
+This rule:
+- Duplicates subterms `b` and `s` on the right-hand side
+- Increases constructor count (adds `pear`, duplicates `banana`)
+- Does not decrease any obvious size measure
+
+**Rule R_cherry_diff** similarly increases syntactic size:
+```lean
+cherry a b → mango (peach a b)  (when a ≠ b)
+```
+
+### Why standard measures fail
+
+- **Term size**: Violated by R_apple_orange and R_cherry_diff
+- **Constructor count**: Same problem
+- **Structural recursion depth**: R_apple_orange creates nested pear/banana structures
+
+### Potential approach (requires substantial machinery)
+
+A **lexicographic measure** counting:
+1. Maximum depth of `grape`-nesting in any `banana`'s third argument (primary)
+2. Some secondary metric on overall term structure
+
+This would work because R_apple_orange "peels off" one `grape` layer while everything else is non-increasing on that specific metric.
+
+**However**: Defining such a measure, proving it decreases on each step, and establishing well-foundedness requires going beyond the immediate syntactic structure into semantic ordinal/natural number interpretations—standard machinery, but not "derivable from syntax alone" in the strict sense.
+
+### Verdict
+
+**No simple proof roadmap exists** that stays within purely syntactic arguments. A rigorous SN proof would require either lexicographic path orderings, polynomial interpretations, or dependency pair techniques—all standard methods, but requiring substantial metatheoretic setup beyond the raw calculus.

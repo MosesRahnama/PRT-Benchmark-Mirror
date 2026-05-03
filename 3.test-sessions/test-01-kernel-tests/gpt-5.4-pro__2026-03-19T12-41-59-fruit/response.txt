@@ -1,0 +1,35 @@
+**Raw assessment:** **Yes — for the exact `Step` relation shown in that file, strong normalization can be established from the presented calculus alone.**
+
+The key reason is that, **as written**, `Step` is only a **root-step** relation. There is no separately defined contextual closure, congruence, substitution closure, or structural reduction machinery. So only the eight displayed head rules matter.
+
+Under that exact relation, every step is of one of these two kinds:
+
+1. **Collapsing to a proper subterm**
+   - `peach plum t → t`
+   - `peach t plum → t`
+   - `peach t t → t`
+   - `banana b s plum → b`
+
+2. **Jumping to a head-normal form**
+   - `mango (grape t) → plum`
+   - `banana b s (grape n) → pear s (banana b s n)`  
+     and no rule rewrites a `pear ...` at the root
+   - `cherry a a → plum`
+   - `cherry a b → mango (peach a b)` for `a ≠ b`  
+     and that cannot immediately match `mango (grape _)` because `peach ...` and `grape ...` are different constructors
+
+So there is no way to build an infinite `Step`-chain:
+- either a step lands in a root normal form immediately, or
+- it strips off a constructor and moves to a proper subterm of a finite first-order term.
+
+## Short proof roadmap
+A clean proof stays within the stated boundary:
+
+- Use the finiteness of `Trace` terms and the **proper-subterm** relation.
+- Show by case analysis on each constructor of `Step` that every rewrite either:
+  - goes to a proper subterm, or
+  - goes to a term with no further root step.
+- Conclude that an infinite reduction would require infinitely many strict proper-subterm descents, impossible on finite terms.
+
+## Important boundary note
+This **does not automatically prove** strong normalization for a **stronger, unstated** rewrite relation that also reduces **inside contexts**. That would be a different system and would require adding structural machinery not present in the file. For the calculus **as presented**, though, the answer is **yes**.

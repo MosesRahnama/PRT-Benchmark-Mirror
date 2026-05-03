@@ -1,0 +1,27 @@
+Yes. Strong normalization follows from the rules themselves; no extra axioms or hidden side-conditions are needed.
+
+Sketch of a termination proof (road-map):
+
+1.  Define two natural-number measures on a term t:  
+    • d(t) = number of outermost `delta` wrappers occurring in the third argument of every `recΔ`.  
+    • s(t) = ordinary structural size (total constructor count).
+
+   Order terms by the lexicographic pair (d, s) with the usual < on ℕ.
+
+2.  Check every rewrite rule:
+
+    • `integrate (delta _)   → void`  (d decreases, s decreases)  
+    • `merge void _ | merge _ void | merge t t → t` (d unchanged, s decreases)  
+    • `recΔ b s void         → b`    (d decreases (0), s decreases)  
+    • `recΔ b s (delta n)    → app s (recΔ b s n)`  
+       – the outermost `delta` is removed, so d strictly decreases;  
+       – s may grow by one (`app`), but this is irrelevant because d already dropped.
+
+    • `eqW a a → void`, `eqW a b → integrate (merge a b)`  
+       Both remove the `eqW` node, so s decreases; d unchanged.
+
+3.  Every rule therefore strictly lowers (d, s) in the well-founded lexicographic order, so no infinite reduction chain exists.
+
+4.  Because every term is finitely rewritable and no new redexes can create an infinite descent in d, the system is strongly normalizing.
+
+No extra rewrite rules or structural principles are introduced; the argument is internal to the given calculus.

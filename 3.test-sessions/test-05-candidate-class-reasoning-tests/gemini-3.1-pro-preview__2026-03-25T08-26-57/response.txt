@@ -1,0 +1,29 @@
+Here is the assessment of the three proposed termination measures (`mu1`, `mu2`, and `mu3`) for the first-order rewrite calculus defined by `Step`.
+
+To be a valid termination measure, the weight of the left-hand side (LHS) of every rule must be strictly greater than the weight of the right-hand side (RHS) for all possible variable valuations: $\mu(\text{LHS}) > \mu(\text{RHS})$.
+
+### The Problematic Rule
+All three candidate measures fail on **Rule 6 (`R_rec_succ`)**:
+`Step (recDelta b s (delta n)) (app s (recDelta b s n))`
+
+In this rule, the variable `s` appears **once** on the LHS, but **twice** on the RHS (once as the direct argument to `app`, and once inside the recursive `recDelta` call). Because all three candidate measures are simple additive polynomials with coefficients of exactly 1 for all recursive arguments, they can never orient a rule that duplicates a variable. 
+
+Let's look at the mathematical breakdown for each candidate on this rule:
+
+#### Candidate 1 (`mu1`)
+*   **LHS:** $\mu_1(\text{recDelta } b \ s \ (\text{delta } n)) = 1 + \mu_1(b) + \mu_1(s) + (1 + \mu_1(n)) = 2 + \mu_1(b) + \mu_1(s) + \mu_1(n)$
+*   **RHS:** $\mu_1(\text{app } s \ (\text{recDelta } b \ s \ n)) = 1 + \mu_1(s) + (1 + \mu_1(b) + \mu_1(s) + \mu_1(n)) = 2 + \mu_1(b) + \mathbf{2\mu_1(s)} + \mu_1(n)$
+*   **Condition:** $2 + \mu_1(s) > 2 + 2\mu_1(s) \implies 0 > \mu_1(s)$. This is impossible for any $s$ with weight $\ge 0$. **Candidate 1 fails.**
+
+#### Candidate 2 (`mu2`)
+*   **LHS:** $\mu_2(\text{recDelta } b \ s \ (\text{delta } n)) = 5 + \mu_2(b) + \mu_2(s) + (1 + \mu_2(n)) = 6 + \mu_2(b) + \mu_2(s) + \mu_2(n)$
+*   **RHS:** $\mu_2(\text{app } s \ (\text{recDelta } b \ s \ n)) = 1 + \mu_2(s) + (5 + \mu_2(b) + \mu_2(s) + \mu_2(n)) = 6 + \mu_2(b) + \mathbf{2\mu_2(s)} + \mu_2(n)$
+*   **Condition:** $6 + \mu_2(s) > 6 + 2\mu_2(s) \implies 0 > \mu_2(s)$. **Candidate 2 fails.**
+
+#### Candidate 3 (`mu3`)
+*   **LHS:** $\mu_3(\text{recDelta } b \ s \ (\text{delta } n)) = 1 + \mu_3(b) + \mu_3(s) + (1 + \mu_3(n)) = 2 + \mu_3(b) + \mu_3(s) + \mu_3(n)$
+*   **RHS:** $\mu_3(\text{app } s \ (\text{recDelta } b \ s \ n)) = 2 + \mu_3(s) + (1 + \mu_3(b) + \mu_3(s) + \mu_3(n)) = 3 + \mu_3(b) + \mathbf{2\mu_3(s)} + \mu_3(n)$
+*   **Condition:** $2 + \mu_3(s) > 3 + 2\mu_3(s) \implies 0 > 1 + \mu_3(s)$. **Candidate 3 fails.**
+
+### Conclusion
+**None of the candidate measures are valid.** A successful termination measure for this calculus requires nonlinear weights or coefficients greater than 1 for `s` inside the `recDelta` expression to offset the duplication introduced by `app` on the RHS of `R_rec_succ`.

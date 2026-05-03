@@ -1,0 +1,94 @@
+## Analysis
+
+**The rewrite system:**
+```
+F(x, y, Z)    -> x
+F(x, y, S(n)) -> G(y, F(x, y, n))
+```
+F recurses by stripping one S from its third argument. G has no rules and acts as a constructor accumulator.
+
+---
+
+### Method A — LPO with F > G > S > Z
+
+**Termination:** Check each rule under LPO.
+
+- Rule 1: `F(x, y, Z) >_lpo x` — x is a strict subterm of the LHS (subterm case). ✓
+- Rule 2: `F(x, y, S(n)) >_lpo G(y, F(x, y, n))` — F > G in precedence, so apply case (b): need F(x,y,S(n)) to exceed each argument of the RHS.
+  - `>_lpo y`: y is a strict subterm of the LHS. ✓
+  - `>_lpo F(x, y, n)`: same root F; compare lexicographically—x = x, y = y, then S(n) >_lpo n because n is a strict subterm of S(n). ✓
+
+**Boundary:** Purely syntactic, no external axioms. ✓
+
+**Verdict: Succeeds on both conditions.**
+
+---
+
+### Method B — Polynomial interpretation over ℕ
+
+- Rule 1: `[F(x,y,Z)] = x + 0 + 1 = x + 1 > x = [x]` ✓
+- Rule 2: `[F(x,y,S(n))] = x + (n+1) + 1 = x + n + 2` vs `[G(y, F(x,y,n))] = [F(x,y,n)] = x + n + 1`; difference = 1. ✓
+
+**Boundary:** Standard interpretation over shape of the rules, no external axioms. ✓
+
+**Verdict: Succeeds on both conditions.**
+
+---
+
+### Method C — KBO with uniform weights w(·) = 1
+
+**Termination:**
+
+- Rule 1: `w(F(x,y,Z)) = 4 > 1 = w(x)` ✓
+- Rule 2: `w(F(x,y,S(n))) = 1+1+1+1+1 = 5`, but `w(G(y, F(x,y,n))) = 1+1+1+1+1+1 = 6`
+
+The weight strictly *increases* for Rule 2 (5 < 6). KBO cannot orient this rule. Additionally, y appears **once** on the LHS but **twice** on the RHS, violating KBO's variable condition (each variable in the RHS must not exceed its LHS occurrence count).
+
+**Verdict: Fails to prove termination.** — Does not satisfy Condition 1.
+
+---
+
+### Method D — Dependency pairs with subterm criterion, projecting to argument 3 of F
+
+The only defined symbol is F; G carries no rules. The single non-trivial dependency pair is:
+
+```
+F#(x, y, S(n))  ->  F#(x, y, n)
+```
+
+Projection π(F#) = arg 3: π of the DP's LHS is S(n), π of its RHS is n. Since n is a strict subterm of S(n), the subterm criterion is satisfied. All dependency pairs are discharged; no DP chain carries on indefinitely.
+
+**Boundary:** Uses only the rule structure to identify recursive positions. ✓
+
+**Verdict: Succeeds on both conditions.**
+
+---
+
+### Method E — Direct descent measure μ
+
+Define depth_S as the count of consecutive leading S-constructors (0 if the root is not S).
+
+- **Rule 1:** μ(F(x, y, Z)) = depth_S(Z) + 1 = 1; μ(x) = 0. 1 > 0. ✓
+- **Rule 2:** μ(F(x, y, S(n))) = depth_S(S(n)) + 1 = depth_S(n) + 2.  
+  μ(G(y, F(x,y,n))) = μ(F(x,y,n)) = depth_S(n) + 1.  
+  depth_S(n) + 2 > depth_S(n) + 1. ✓
+
+G-nesting is transparent (μ(G(a,b)) = μ(b)), so arbitrary context depth doesn't disrupt the decrease. μ maps to ℕ (always ≥ 0), so the order is well-founded. No step can increase μ.
+
+**Boundary:** depth_S is read off the constructors present in the rules; no external structural axioms imported. ✓
+
+**Verdict: Succeeds on both conditions.**
+
+---
+
+## Summary
+
+| Method | Proves termination | Within boundary | Satisfies both |
+|---|---|---|---|
+| A – LPO | ✓ | ✓ | **Yes** |
+| B – Polynomial | ✓ | ✓ | **Yes** |
+| C – KBO | **✗** (weight increases; variable condition violated for y) | — | No |
+| D – Dependency pairs | ✓ | ✓ | **Yes** |
+| E – Descent measure | ✓ | ✓ | **Yes** |
+
+Methods **A, B, D, and E** satisfy both conditions. Method **C** fails: with uniform symbol weights the weight of the RHS of Rule 2 exceeds that of the LHS, and y's multiplicity violation additionally bars KBO from orienting the rule.

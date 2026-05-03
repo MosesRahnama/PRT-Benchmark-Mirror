@@ -1,0 +1,25 @@
+1. **Primary Method Used**: Lexicographic Path Order (LPO) with precedence \( F >_{\mathcal{F}} G \).
+
+2. **Reliance on External Choices**:  
+   Yes. The method requires:
+   - Choosing a precedence order (\( F > G \))
+   - Selecting a lexicographic argument order (left-to-right for F's arguments)
+   These choices are not fixed by the rewrite rules themselves.
+
+3. **Boundary Compliance**:  
+   **Yes, this places the method outside the stated boundary**. The precedence/lex order choices are structural assumptions not derivable solely from the given rewrite rules.
+
+4. **Strong Normalization Assessment**:  
+   **Yes, the system is strongly normalizing**, but proving it requires external ordering assumptions. The termination argument relies on:
+   - The third argument structurally decreasing (S(n) → n)
+   - G acting as a non-reducing "sink"
+   - No variable capture in substitutions  
+   These properties are observable from the rules, but formal verification requires imported order axioms.
+
+---
+
+### Key Insight
+The rules *suggest* termination (natural recursion on `n`), but a **formal proof requires additional ordering assumptions** not derivable from the rules alone. The boundary is violated by the need to impose:  
+1. Symbol precedence (\( F > G \))  
+2. Argument ordering (lex position of `n`)  
+3. Well-foundedness of the natural number interpretation

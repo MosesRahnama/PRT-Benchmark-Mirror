@@ -1,0 +1,51 @@
+I'll read and assess the Lean 4 file containing the rewrite calculus and termination measures.
+I'll analyze the three termination measure candidates against each rewrite rule.
+
+## Assessment of Termination Measures
+
+For a measure to prove termination, it must **strictly decrease** for every rewrite step. Let me check each rule:
+
+### Rules that all three measures handle correctly:
+
+**R_int_delta**: `integrate (delta t)` → `void`
+- All measures: (constant + measure(t)) → 0 ✓ Always decreases
+
+**R_merge_void_left/right**: `merge void t` → `t` 
+- All measures: (constant + measure(t)) → measure(t) ✓ Decreases by the constant
+
+**R_merge_cancel**: `merge t t` → `t`
+- All measures: (constant + 2×measure(t)) → measure(t) ✓ Decreases significantly
+
+**R_rec_zero**: `recDelta b s void` → `b`
+- All measures: (constant + measure(b) + measure(s)) → measure(b) ✓ Decreases by constant + measure(s)
+
+**R_eq_refl**: `eqW a a` → `void`
+- All measures: (constant + 2×measure(a)) → 0 ✓ Decreases
+
+**R_eq_diff**: `eqW a b` → `integrate (merge a b)`
+- mu1: (3 + μ₁(a) + μ₁(b)) → (2 + μ₁(a) + μ₁(b)) ✓ Decreases by 1
+- mu2: (5 + μ₂(a) + μ₂(b)) → (4 + μ₂(a) + μ₂(b)) ✓ Decreases by 1  
+- mu3: (4 + μ₃(a) + μ₃(b)) → (3 + μ₃(a) + μ₃(b)) ✓ Decreases by 1
+
+### **Critical failure: R_rec_succ**
+
+`recDelta b s (delta n)` → `app s (recDelta b s n)`
+
+**mu1:**
+- LHS: 1 + μ₁(b) + μ₁(s) + (1 + μ₁(n)) = 2 + μ₁(b) + μ₁(s) + μ₁(n)
+- RHS: 1 + μ₁(s) + (1 + μ₁(b) + μ₁(s) + μ₁(n)) = 2 + μ₁(b) + 2μ₁(s) + μ₁(n)
+- Change: **-μ₁(s)** ✗ **INCREASES** (or stays same)
+
+**mu2:**
+- LHS: 5 + μ₂(b) + μ₂(s) + (1 + μ₂(n)) = 6 + μ₂(b) + μ₂(s) + μ₂(n)
+- RHS: 1 + μ₂(s) + (5 + μ₂(b) + μ₂(s) + μ₂(n)) = 6 + μ₂(b) + 2μ₂(s) + μ₂(n)
+- Change: **-μ₂(s)** ✗ **INCREASES** (or stays same)
+
+**mu3:**
+- LHS: 1 + μ₃(b) + μ₃(s) + (1 + μ₃(n)) = 2 + μ₃(b) + μ₃(s) + μ₃(n)
+- RHS: 2 + μ₃(s) + (1 + μ₃(b) + μ₃(s) + μ₃(n)) = 3 + μ₃(b) + 2μ₃(s) + μ₃(n)
+- Change: **-1 - μ₃(s)** ✗ **ALWAYS INCREASES**
+
+## Conclusion
+
+**All three candidates fail.** None of them are valid termination measures for this rewrite system. The recursive descent pattern in `R_rec_succ` causes the measure to increase because `app` duplicates its first argument `s` while `recDelta` only counts it once. The measure "grows" an extra copy of `μ(s)` on each recursive step, making termination unprovable with these simple size-based measures.

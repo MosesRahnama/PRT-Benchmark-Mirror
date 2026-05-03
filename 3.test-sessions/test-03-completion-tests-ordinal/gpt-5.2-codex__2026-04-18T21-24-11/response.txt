@@ -1,0 +1,131 @@
+Here’s a proof‑skeleton outline for the three remaining cases. I’ll keep it minimal, focusing on the key lemmas/steps you can slot into the `by` blocks without editing the file.
+
+## Remaining cases — proof skeletons
+
+### 1) `Step.R_rec_succ`  
+Goal:  
+`mu (app s (recDelta b s n)) < mu (recDelta b s (delta n))`
+
+Key idea: the leading term on the RHS is  
+$\omega^{\mu(\delta n)+\mu(s)+6}$  
+and since $\mu(\delta n)=\omega^5(\mu n+1)+1$ this exponent strictly dominates any exponent appearing in $\mu(\text{recDelta } b\, s\, n)$ and thus dominates the whole LHS.
+
+Skeleton:
+
+- `simp [mu]` to expand.
+- Show:
+  1. `omega0 ^ (mu (delta n) + mu s + 6)` strictly dominates
+     - `omega0 ^ (mu n + mu s + 6)` (appears inside `mu (recDelta b s n)`), and
+     - the lower-order `omega0^3*(mu s+1)` and `omega0^2*(...)` parts.
+  2. Then use ordinal addition monotonicity to finish.
+
+Potential structure:
+
+```
+  simp [mu]
+  -- set A := mu (delta n) + mu s + 6
+  -- set B := mu n + mu s + 6
+  have hAgtB : B < A := by
+    -- use mu (delta n) = omega^5 * (mu n + 1) + 1
+    -- show: B < omega^5*(mu n + 1) + 1 + mu s + 6
+    -- can use: lt_add_of_pos_left, opow_pos, add_pos_right, etc.
+  have hExp : omega0 ^ B < omega0 ^ A := opow_lt_opow (by exact omega0_pos) hAgtB
+  -- use hExp to show:
+  -- omega0^2 * (omega0^B + ...)  < omega0^A
+  -- apply: (mul_lt_mul_left) or bound by le_of_lt, then add_left/right
+  -- finish by additive monotonicity
+```
+
+Common lemmas that help:
+- `opow_lt_opow` or `opow_lt_opow_left` (depending on the library lemma naming)
+- `lt_add_of_pos_left`, `lt_add_of_pos_right`
+- `add_lt_add_left`, `add_lt_add_right`
+- `mul_lt_mul_left` with `opow_pos` to show `omega0^2 * X < omega0^A` once you have `X < omega0^A`.
+
+---
+
+### 2) `Step.R_eq_refl`
+
+Goal:  
+`0 < omega0 ^ (mu a + mu a + 9) + 1`
+
+Skeleton:
+
+```
+  simp [mu]
+  -- want: 0 < omega0 ^ (mu a + mu a + 9) + 1
+  have hpos : (0 : Ordinal) < omega0 ^ (mu a + mu a + 9) :=
+    opow_pos _ omega0_pos
+  exact lt_of_lt_of_le hpos (le_add_right _ _)
+```
+
+Or even simpler:
+
+```
+  simp [mu]
+  exact Ordinal.pos_iff_ne_zero.mpr (by
+    -- show omega0^(...) + 1 ≠ 0
+    exact ne_of_gt (add_pos_right _ one_pos))
+```
+
+---
+
+### 3) `Step.R_eq_diff`
+
+Goal:  
+`mu (integrate (merge a b)) < mu (eqW a b)`
+
+Key idea: RHS leading term is $\omega^{\mu a + \mu b + 9}$ which dwarfs the entire LHS $\omega^4 * (\omega^3*(\mu a+1)+\omega^2*(\mu b+1)+2)+1$.
+
+Skeleton:
+
+- `simp [mu]` to expand.
+- Show the LHS is bounded above by `omega0 ^ (mu a + mu b + 9)` using a general lemma: any `omega^k * C` with finite `k` is `< omega^α` when `α` is large enough (here `mu a + mu b + 9`).
+- Use `opow_lt_opow` with a lemma that `4 + (something small) < mu a + mu b + 9`. This is done by noting `mu a + mu b + 9` is a limit/large ordinal and `4` is finite; use `lt_add_of_pos_left` and `lt_add_of_pos_right` together with `opow_pos`.
+
+Sketch:
+
+```
+  simp [mu]
+  -- set E := mu a + mu b + 9
+  have hEpos : (0:Ordinal) < E := by
+     -- use omega0_pos indirectly; or show 9>0 then add_pos_right...
+  have hdom :
+      omega0 ^ (4:Ordinal) * (omega0 ^ (3:Ordinal) * (mu a + 1) + omega0 ^ (2:Ordinal) * (mu b + 1) + 2)
+      < omega0 ^ E := by
+        -- use: omega^4 * X < omega^E since 4 < E and X < omega^E
+        -- show 4 < E by: lt_of_lt_of_le (by decide) (le_add_left _ _)
+        -- show X < omega^E using boundedness and opow_pos
+  -- then add 1 on both sides:
+  exact lt_of_lt_of_le hdom (le_add_right _ _)
+```
+
+Useful lemmas:
+- `opow_pos` for positivity of $\omega^\alpha$.
+- `lt_add_of_pos_left/right` and `add_lt_add_left/right`.
+- `mul_lt_mul_left` for ordinal multiplication by positive ordinals.
+- If available: `opow_lt_opow` with `omega0_pos`.
+- General “finite < large ordinal” lemma: use `lt_add_of_pos_right` to show `4 < mu a + mu b + 9`.
+
+---
+
+## Quick checklist of helper facts (likely to use)
+- `opow_pos` : $0 < \omega^\alpha$ for $\alpha > 0$
+- `lt_add_one`, `add_pos_right`, `add_pos_left`
+- `le_add_left`, `le_add_right`, `add_lt_add_left`, `add_lt_add_right`
+- `le_mul_right` or `mul_le_mul_left`
+- `opow_lt_opow` (or similar lemma name in Mathlib)
+
+---
+
+## ✅ Progress & Next Steps
+
+I’ve read the file and outlined proof skeletons for all remaining `sorry`s. If you want, I can refine any skeleton into more concrete Lean steps based on which lemmas you prefer to use.
+
+## ✅ Updated task list
+
+- [x] Review file and locate sorry cases  
+- [x] Draft proof skeletons for remaining cases  
+- [x] Summarize steps to complete proofs  
+
+If you’d like, tell me which case you want fully fleshed out, and I’ll produce a more detailed proof script (still without editing the file).

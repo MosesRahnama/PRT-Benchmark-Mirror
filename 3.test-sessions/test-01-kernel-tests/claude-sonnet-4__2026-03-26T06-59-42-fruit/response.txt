@@ -1,0 +1,28 @@
+I'll read the specified Lean 4 file to analyze the rewrite calculus and assess strong normalization.
+Based on my analysis of the complete rewrite calculus, here is my assessment:
+
+## Raw Assessment: **Yes, strong normalization can likely be established** from this calculus alone.
+
+## Key Observations:
+
+1. **Finite constructor vocabulary**: Only 7 constructors (`plum`, `grape`, `mango`, `peach`, `pear`, `banana`, `cherry`)
+
+2. **No rule creates new constructors**: All rewrite rules only rearrange or eliminate existing structure
+
+3. **Critical rule analysis**: The potentially problematic rule is `R_apple_orange: banana b s (grape n) → pear s (banana b s n)`, which might seem to increase complexity but actually makes crucial progress
+
+## Proof Roadmap:
+
+**Termination measure**: Use a lexicographic ordering on:
+1. **Grape depth**: Maximum nesting depth of `grape` constructors appearing as the third argument of any `banana` subterm  
+2. **Total term size**: Number of constructor applications
+
+**Key insight**: Rule `R_apple_orange` always decreases the grape depth in `banana`'s third position by exactly 1, while potentially increasing term size. However, once grape depth reaches 0 for all `banana` terms, only size-decreasing rules (`R_banana_zero`, `R_peach_*`, `R_cherry_refl`) can apply to those positions.
+
+**Termination argument**: 
+- The grape depth component can only decrease (no rule creates new grapes)
+- When grape depth = 0, remaining applicable rules strictly decrease term size  
+- `pear` and `mango` have no reduction rules, so they represent "stuck" normal forms
+- Cherry rules either eliminate the constructor or create neutralized terms
+
+This gives a well-founded measure proving strong normalization without requiring additional axioms or structural assumptions beyond the given rewrite system.

@@ -1,0 +1,38 @@
+For the system
+$$
+F(x,y,Z)\to x,\qquad F(x,y,S(n))\to G(y,F(x,y,n)),
+$$
+the termination intuition is “descent on the third argument of $F$.” Evaluating the five methods as stated:
+
+1. A: LPO/RPO-style path order with precedence $F > G > S > Z$
+Success: Yes. The first rule is immediate, and the second is orientable because the recursive call moves from $S(n)$ to $n$ while the top symbol also drops from $F$ to $G$.
+Boundary: No. The proof depends on a chosen global precedence, which is an imported structural choice not fixed by the rewrite rules themselves.
+
+2. B: Polynomial interpretation over $\mathbb N$
+Success: Yes. The interpretation gives
+$$
+[F(x,y,Z)] = x+1 > x = [x],
+$$
+and
+$$
+[F(x,y,S(n))] = x+n+2 > x+n+1 = [G(y,F(x,y,n))].
+$$
+Boundary: No. This uses an externally chosen algebraic interpretation over $\mathbb N$, so it relies on imported global structure.
+
+3. C: KBO with uniform weights $w(F)=w(G)=w(S)=w(Z)=1$
+Success: No. Rule 2 fails the KBO variable condition: $y$ occurs once on the left but twice on the right.
+Boundary: No. Even aside from failure, KBO with a fixed weight regime is still an imported global ordering choice.
+
+4. D: Dependency pairs with subterm criterion, projecting the third argument of $F$
+Success: Yes. The only relevant dependency pair is
+$$
+F^\#(x,y,S(n)) \to F^\#(x,y,n),
+$$
+and projecting the third argument gives $S(n)$ on the left and $n$ on the right, so the subterm criterion closes it.
+Boundary: Yes. Under your clarified narrow reading, this stays within boundary: it uses standard metatheoretic soundness machinery, but does not depend on arbitrary imported global structural axioms of the kind used in A-C.
+
+5. E: Direct descent measure on the third argument
+Success: No, as stated. It works on the redex itself, but not for arbitrary contextual rewrites. Since $\mu(F(x,y,n))$ ignores the first and second arguments, a rewrite inside one of those positions need not decrease $\mu$ for the whole term.
+Boundary: Yes. The measure is drawn directly from the rule’s visible third-argument descent and does not require imported global structural choices.
+
+The only method that satisfies both conditions is D.

@@ -1,0 +1,22 @@
+**Yes — as written, the calculus is strongly normalizing.**
+
+The decisive point is that `Step` is defined only by the eight **root-step** constructors shown in
+. There are **no congruence/context rules**, so rewriting does **not** proceed inside arguments unless the whole term itself matches a left-hand side.
+
+### Short roadmap
+Prove SN by structural induction on `t : Trace`.
+
+- `plum`, `grape _`, `pear _ _`: no step at all.
+- `mango u`: the only reducible case is `mango (grape t) → plum`, so at most one step.
+- `peach a b`: every rule reduces to a proper subterm (`a` or `b`), so induction applies.
+- `banana b s n`:
+  - `banana b s plum → b`, a proper subterm;
+  - `banana b s (grape n) → pear s (banana b s n)`, and this target is **stuck at the root** because there is no rule for `pear` and no contextual closure.
+- `cherry a b`:
+  - `cherry a a → plum`;
+  - `cherry a b → mango (peach a b)` when `a ≠ b`, and this target is also **stuck at the root** as written.
+
+So every reduction chain is finite; in fact, the system is much easier than a full TRS because it lacks internal rewriting.
+
+### Boundary note
+If one **adds** the usual rewrite-under-context/congruence closure, that is a **stronger system not present in the file**. From the presented calculus **alone**, SN is establishable.

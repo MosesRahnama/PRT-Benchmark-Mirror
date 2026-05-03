@@ -1,0 +1,3 @@
+**Providing proof skeletons with placeholders**
+
+I'm outlining five case proofs using Lean snippets with placeholders (sorrys) and tactics like simp and omega, referencing the instructions file path without modifying it.

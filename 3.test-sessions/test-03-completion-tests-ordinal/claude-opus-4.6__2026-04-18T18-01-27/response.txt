@@ -1,0 +1,115 @@
+Here are proof skeletons for the three `sorry` cases:
+
+---
+
+### Case `R_rec_succ` (line 148)
+
+The goal after `simp [mu]` reduces to showing that `mu(app s (recDelta b s n))` is strictly less than `mu(recDelta b s (delta n))`.
+
+**LHS** (the `app`):
+$$\omega^3 \cdot (\mu(s)+1) + \omega^2 \cdot (\omega^{\mu(n)+\mu(s)+6} + \omega\cdot(\mu(b)+1)+1+1) + 1$$
+
+**RHS** (the `recDelta` with `delta n`):
+$$\omega^{\omega^5\cdot(\mu(n)+1)+1+\mu(s)+6} + \omega\cdot(\mu(b)+1) + 1$$
+
+**Strategy:** The RHS exponent contains $\omega^5\cdot(\mu(n)+1)$, which is strictly larger than $\mu(n)+\mu(s)+6$ (the largest exponent appearing anywhere in the LHS). Therefore:
+
+```lean
+-- Step 1: Bound every summand in the LHS by a single omega-power.
+--   The largest subterm in the LHS is
+--     omega^2 * (omega^(mu n + mu s + 6) + ...)
+--   which is bounded by omega^(mu n + mu s + 8)  (since omega^2 * omega^k = omega^(k+2)).
+--
+-- Step 2: Show that the RHS exponent dominates:
+--   omega^5 * (mu n + 1) + 1 + mu s + 6
+--     >= omega^5 * (mu n + 1) + mu s + 7
+--     >  mu n + mu s + 8
+--   because omega^5 * (mu n + 1) > mu n + mu s + 8 for all ordinals.
+--
+-- Step 3: Conclude via Ordinal.opow_lt_opow_right omega0_pos
+--   that LHS < omega^(RHS exponent), and then
+--   omega^(RHS exponent) <= RHS.
+--
+-- Concrete tactic outline:
+--   have exp_lhs_bound : mu n + mu s + 8 < omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6 := by
+--     calc mu n + mu s + 8
+--       _ < omega0 ^ 5 * (mu n + 1) + mu s + 8 := by linarith [opow_pos 5 omega0_pos, ...]
+--       _ ≤ omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6 := by ring_nf; omega
+--   have lhs_lt_opow : omega0 ^ 3 * (mu s + 1)
+--       + omega0 ^ 2 * (omega0 ^ (mu n + mu s + 6) + omega0 * (mu b + 1) + 2) + 1
+--       < omega0 ^ (omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6) := by
+--     -- use opow_lt_opow_right and ordinal absorption
+--     sorry
+--   calc ... < ... + omega0 * (mu b + 1) + 1 := le_add_right _ _
+```
+
+---
+
+### Case `R_eq_refl` (line 162)
+
+The goal is `0 < omega0 ^ (mu a + mu a + 9) + 1`. This is pure positivity:
+
+```lean
+-- The term omega^(mu a + mu a + 9) + 1 is positive because 1 > 0
+-- and addition of a non-negative ordinal preserves this.
+exact add_pos_right _ one_pos
+-- (or equivalently:)
+-- exact Ordinal.pos_iff_ne_zero.mpr (by
+--   apply ne_of_gt
+--   exact add_pos_right _ one_pos)
+```
+
+This mirrors the technique already used in `R_int_delta`. It should close with `exact add_pos_right _ one_pos` (possibly after `Ordinal.zero_lt_one` or `one_pos` depending on Mathlib naming).
+
+---
+
+### Case `R_eq_diff` (line 175)
+
+The goal after `simp [mu]` is:
+
+$$\omega^4\cdot\bigl(\omega^3\cdot(\mu(a)+1)+\omega^2\cdot(\mu(b)+1)+2\bigr)+1 \;<\; \omega^{\mu(a)+\mu(b)+9}+1$$
+
+**Strategy:** Show the LHS (without the `+1`) is strictly less than `omega0 ^ (mu a + mu b + 9)`, then use `add_lt_add_right`.
+
+```lean
+-- Step 1: Simplify the LHS omega-power product.
+--   omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 2)
+--   The dominant term inside the parentheses is omega^3 * (mu a + 1),
+--   so the whole product is bounded by omega^(3 + 4) * (mu a + 1) + lower
+--   = omega^7 * (mu a + 1) + lower terms.
+--
+-- Step 2: Bound omega^7 * (mu a + 1) < omega^(mu a + mu b + 9).
+--   Since mu a + mu b + 9 >= 9 > 7, and the exponent mu a + mu b + 9
+--   also absorbs the (mu a + 1) multiplier via omega-absorption:
+--     omega^7 * (mu a + 1) < omega^(mu a + 8) <= omega^(mu a + mu b + 9)
+--
+-- Step 3: Conclude with add_lt_add_right ... one.
+--
+-- Concrete tactic outline:
+--   have inner_bound : omega0 ^ 3 * (mu a + 1) + omega0 ^ 2 * (mu b + 1) + 2
+--       < omega0 ^ (mu a + mu b + 5) := by
+--     -- bound each summand by an omega-power and use opow absorption
+--     sorry
+--   have lhs_bound : omega0 ^ 4 * (omega0 ^ (mu a + mu b + 5))
+--       ≤ omega0 ^ (mu a + mu b + 9) := by
+--     rw [← opow_add]
+--     exact opow_le_opow_right omega0_pos (by omega)
+--   have main : omega0 ^ 4 * (omega0 ^ 3 * (mu a + 1) + omega0 ^ 2 * (mu b + 1) + 2)
+--       < omega0 ^ (mu a + mu b + 9) :=
+--     calc _ < omega0 ^ 4 * omega0 ^ (mu a + mu b + 5) :=
+--             mul_lt_mul_of_pos_left inner_bound (opow_pos 4 omega0_pos)
+--       _ ≤ omega0 ^ (mu a + mu b + 9) := lhs_bound
+--   exact add_lt_add_right main 1
+```
+
+---
+
+### Summary
+
+| Case | Core difficulty | Key lemma family |
+|---|---|---|
+| `R_rec_succ` | Exponent $\omega^5\cdot(\mu(n)+1)$ dominates $\mu(n)+\mu(s)+6$ | `opow_lt_opow_right`, omega-absorption |
+| `R_eq_refl` | Positivity of $\omega^k + 1$ | `add_pos_right _ one_pos` |
+| `R_eq_diff` | $\omega^4 \cdot \omega^7 \cdot c < \omega^{c+9}$ via absorption | `opow_add`, `mul_lt_mul_of_pos_left` |
+
+The `R_eq_refl` case is essentially trivial and should close with a single tactic. The other two require 3–5 intermediate `have` steps each, all following the same pattern: bound sub-expressions by omega-powers, compare exponents, and appeal to `Ordinal.opow_lt_opow_right omega0_pos`.

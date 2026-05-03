@@ -1,0 +1,5 @@
+**Analyzing measures for mu1, mu2, mu3**
+
+I’m comparing the differences between the left-hand side (LHS) and right-hand side (RHS) for \(\mu_2\) and finding it negative, indicating \(\mu_2\) fails too. Now, I’m moving on to \(\mu_3\), but the difference again is negative—clearly none of these candidates guarantee a strict decrease.
+
+Next, I’m checking eqW rules and finding positives in the differences for \(\mu_1\), \(\mu_2\), and \(\mu_3\). It seems the issue lies predominantly with the recDelta step, so I might need to adjust the weightings and analyze which candidate is strongest to salvage the situation!

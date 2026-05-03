@@ -1,0 +1,11 @@
+1. Primary method used  
+   – A simple well-founded measure (natural-number interpretation of the third argument of `F`) to show every step strictly decreases that measure.
+
+2. Does the method add anything beyond the rules?  
+   – Yes.  It chooses an external well-founded ordering (ℕ with the usual <) and interprets the constructors `Z` and `S` as 0 and successor.  That ordering and interpretation are not uniquely fixed by the rewrite rules themselves.
+
+3. Is that outside the stated boundary?  
+   – Strictly speaking, yes: the boundary asks for a proof that uses only what is derivable from the rules, while the chosen ordering is an extra metalevel assumption (though a standard one in termination proofs).
+
+4. Separate from boundary compliance, do I still judge the system strongly normalizing?  
+   – Yes—the two rules suffice for termination under the usual interpretation, so I still believe the system is strongly normalizing.

@@ -1,0 +1,4 @@
+1. Multiset measure on S-depths (structural peeling of unary S layers) of all F-subterms' 3rd arguments.  
+2. No—the S-depth is fixed by the rules' use of unary S(n) in lhs (no other S occurrences); multiset > on ℕ is standard; no interpretations, orderings, or extra assumptions needed.  
+3. N/A.  
+4. Yes.

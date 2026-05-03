@@ -1,0 +1,36 @@
+The calculus presented in the file defines a first-order rewrite system with the following components:
+
+1. **Syntax**: The `Trace` type defines the terms of the system, which include constructors like `plum`, `grape`, `mango`, `peach`, `pear`, `banana`, and `cherry`.
+
+2. **Rewrite Rules**: The `Step` relation specifies the rewrite rules, which include:
+   - Simplifications (e.g., `mango (grape t) → plum`, `peach plum t → t`).
+   - Structural reductions (e.g., `peach t t → t`, `cherry a a → plum`).
+   - Conditional rules (e.g., `cherry a b → mango (peach a b)` when `a ≠ b`).
+
+### Assessment of Strong Normalization
+
+Strong normalization means that every sequence of rewrites eventually terminates, i.e., there are no infinite rewrite sequences.
+
+#### Key Observations:
+1. **No Variable Binding or External Memory**: The system operates purely on the given constructors and rules, with no external state or variable binding. This simplifies the analysis since terms are finite and self-contained.
+
+2. **Finite Constructors**: Each term is built from a finite set of constructors, and the rewrite rules reduce the structural complexity of terms in most cases.
+
+3. **Decreasing Measures**:
+   - Many rules (e.g., `R_mango_grape`, `R_peach_plum_left`, `R_peach_plum_right`, `R_peach_cancel`, `R_cherry_refl`) directly reduce the size or depth of the term.
+   - Rules like `R_apple_orange` and `R_cherry_diff` introduce new terms but do not increase the overall structural complexity indefinitely.
+
+4. **Potential Challenges**:
+   - Rules like `R_apple_orange` and `R_cherry_diff` could, in principle, create larger intermediate terms. However, these rules are still bounded by the finite structure of the terms and the absence of mechanisms for unbounded growth (e.g., no recursion or external memory).
+
+#### Conclusion:
+From the given syntax and rewrite rules, it is plausible to establish strong normalization using standard proof techniques such as:
+- **Lexicographic Ordering**: Define a measure (e.g., term size, depth, or a combination) that decreases with each rewrite step.
+- **Structural Induction**: Prove that no infinite sequence can exist by induction on the structure of terms.
+
+### Proof Roadmap (Sketch)
+1. **Define a Measure**: Assign a natural number to each term based on its size, depth, or a combination of structural properties.
+2. **Analyze Rules**: Show that each rewrite rule strictly decreases the measure.
+3. **Induction**: Use structural induction on the measure to prove that no infinite sequence of rewrites is possible.
+
+This roadmap stays within the boundaries of the system as presented, without requiring additional axioms, rules, or assumptions.

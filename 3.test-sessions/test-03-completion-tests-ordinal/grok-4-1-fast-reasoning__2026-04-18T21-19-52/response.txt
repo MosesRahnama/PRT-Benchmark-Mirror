@@ -1,0 +1,28 @@
+```lean
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+  simp [mu]
+  set mn := mu n
+  set ms := mu s
+  set mb := mu b
+  set md := mu (delta n)
+  set mr := mu (recDelta b s n)
+  -- Bound RHS < ω^(mn + ms + 9)
+  have rhs_bound : mu (app s (recDelta b s n)) < omega0 ^ (mn + ms + 9) := by
+    simp [mu, mr] at * 
+    have h1 : mr < omega0 ^ (mn + ms + 6) * 2 := lt_add_lt_add (Ordinal.opow_pos _ _) (lt_add_one _)
+      -- since lower terms ω*(mb+1)+1 < ω^(mn+ms+6)
+    have h2 : omega0 ^ 2 * (mr + 1) < omega0 ^ 2 * omega0 ^ (-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+  simp [mu]
+  set mn := mu n
+  set ms := mu s
+  set mb := mu b
+  set md := mu (delta n)
+  set mr := mu (recDelta b s n)
+  -- Bound RHS < ω^(mn + ms + 9)
+  have rhs_bound : mu (app s (recDelta b s n)) < omega0 ^ (mn + ms + 9) := by
+    simp [mu, mr] at * 
+    have h1 : mr < omega0 ^ (mn + ms + 6) * 2 := lt_add_lt_add (Ordinal.opow_pos _ _) (lt_add_one _)
+      -- since lower terms ω*(mb+1)+1 < ω^(mn+ms+6)
+    have h2 : omega0 ^ 2 * (mr + 1) < omega0 ^ 2 * omega0 ^ (

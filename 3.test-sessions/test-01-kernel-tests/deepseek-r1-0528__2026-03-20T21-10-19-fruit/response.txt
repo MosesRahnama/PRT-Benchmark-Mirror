@@ -1,0 +1,47 @@
+The file defines a simple rewrite calculus with the following key elements:
+
+1. **Trace Type**: Represents terms in the calculus with constructors:
+   - `plum`: Base constant
+   - `grape`: Unary constructor
+   - `mango`: Unary constructor
+   - `peach`: Binary constructor
+   - `pear`: Binary constructor
+   - `banana`: Ternary constructor
+   - `cherry`: Binary constructor
+
+2. **Reduction Rules (Step relation)**:
+   - `R_mango_grape`: `mango (grape t) → plum`
+   - `R_peach_plum_left`: `peach plum t → t`
+   - `R_peach_plum_right`: `peach t plum → t`
+   - `R_peach_cancel`: `peach t t → t`
+   - `R_banana_zero`: `banana b s plum → b`
+   - `R_apple_orange`: `banana b s (grape n) → pear s (banana b s n)`
+   - `R_cherry_refl`: `cherry a a → plum`
+   - `R_cherry_diff`: `cherry a b → mango (peach a b)` when `a ≠ b`
+
+### Assessment of Strong Normalization
+**No, strong normalization cannot be established solely from this calculus.** Here's why:
+
+1. **Non-termination Risk**: The `R_apple_orange` rule creates a potential loop:
+   ```
+   banana b s (grape n) → pear s (banana b s n)
+   ```
+   This rule doesn't reduce the size of the term and could lead to infinite reductions if applied repeatedly to its own output.
+
+2. **Undecidable Condition**: The `R_cherry_diff` rule depends on `a ≠ b`, which is:
+   - Not computable from the syntax alone
+   - Requires external logical assumptions about term equality
+   - Violates the requirement of "no imported object-level axioms"
+
+3. **Lack of Decreasing Measure**: None of the rules provide a clear decreasing metric (like size or depth) that would guarantee termination. The `banana` rule in particular preserves structural complexity.
+
+### Proof Roadmap Limitation
+A proof roadmap would require:
+1. Defining a well-founded measure (size/depth/lex order)
+2. Showing each reduction decreases the measure
+
+But this is impossible because:
+- The `R_apple_orange` rule doesn't decrease term size
+- The conditional `R_cherry_diff` requires equality reasoning beyond the given rules
+
+The system would need additional constraints (like a well-founded ordering) or modified rules to achieve strong normalization, which violates the problem constraints.

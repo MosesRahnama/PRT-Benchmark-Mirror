@@ -1,0 +1,80 @@
+## Analysis
+
+**System:**
+- Rule 1: `F(x, y, Z) → x`
+- Rule 2: `F(x, y, S(n)) → G(y, F(x, y, n))`
+
+Only F is defined by rules; G, S, Z are constructors. The intuitive termination argument is that the third argument of F loses one S-wrapper per step.
+
+---
+
+### Method A — LPO with F > G > S > Z
+
+**Rule 1:** `x` is a proper subterm of `F(x, y, Z)`, so the subterm clause of LPO applies immediately. ✓
+
+**Rule 2:** Need `F(x, y, S(n)) >_LPO G(y, F(x, y, n))`. Since F > G, the precedence clause requires `F(x, y, S(n)) >_LPO` each argument of the RHS:
+- `F(x, y, S(n)) >_LPO y` — y is a proper subterm of the LHS. ✓
+- `F(x, y, S(n)) >_LPO F(x, y, n)` — same root; compare lex: first two arguments equal; third: `S(n) >_LPO n` because n is a strict subterm of S(n). ✓
+
+**Succeeds.** Operates entirely on rule syntax; no external axioms. **Within boundary.** ✓
+
+---
+
+### Method B — Polynomial interpretation
+
+- Rule 1: `[F(x, y, Z)] = x + 0 + 1 = x + 1 > x`. ✓
+- Rule 2: `[F(x, y, S(n))] = x + (n+1) + 1 = x + n + 2`. `[G(y, F(x, y, n))] = [F(x, y, n)] = x + n + 1`. Strict decrease for all x, n ∈ ℕ. ✓
+
+The duplication of y in the RHS is irrelevant because `[G(a,b)] = b` ignores its first argument (coefficient 0 ≥ 0, so weakly monotone — valid). The interpretation is self-contained from the rules.
+
+**Succeeds.** No external axioms imported. **Within boundary.** ✓
+
+---
+
+### Method C — KBO with uniform weights w = 1
+
+KBO requires the **variable condition**: every variable in the RHS must appear at least as many times in the LHS.
+
+In Rule 2: `F(x, y, S(n)) → G(y, F(x, y, n))`, the variable y appears **once** in the LHS but **twice** in the RHS (as the first argument of G and again as the second argument of the inner F call). The variable condition is violated regardless of weights or precedence.
+
+**Fails.** KBO cannot orient Rule 2. ✗
+
+---
+
+### Method D — Dependency pairs with subterm criterion, projecting to argument 3 of F
+
+The only defined symbol is F. Rule 1 has no recursive call. Rule 2 yields the single dependency pair:
+
+`F#(x, y, S(n)) → F#(x, y, n)`
+
+Applying the subterm criterion with projection π = arg₃:
+- `π(LHS) = S(n)`, `π(RHS) = n`. Since n is a strict subterm of S(n), the projected LHS strictly dominates the projected RHS. ✓
+
+The single DP is handled; no chain can be infinite.
+
+**Succeeds.** Derived entirely from the given rules and the standard subterm relation. **Within boundary.** ✓
+
+---
+
+### Method E — Direct descent measure
+
+- `μ(F(x, y, Z)) = 0 + 1 = 1 > 0 = μ(x)`. Rule 1 decreases. ✓
+- `μ(F(x, y, S(n))) = depth_S(S(n)) + 1 = depth_S(n) + 2`. `μ(G(y, F(x, y, n))) = μ(F(x, y, n)) = depth_S(n) + 1`. Strict decrease for any n. ✓
+
+The G-passthrough clause `μ(G(a,b)) = μ(b)` is well-defined by structural recursion and correctly propagates the measure through any G-wrapping that arises during reduction. The measure is derived from the syntactic structure of the given terms.
+
+**Succeeds.** No structural axioms or object-level assumptions beyond the given rules. **Within boundary.** ✓
+
+---
+
+## Conclusion
+
+| Method | Proves termination? | Within boundary? | Both? |
+|--------|--------------------|--------------------|-------|
+| A — LPO | ✓ | ✓ | **Yes** |
+| B — Polynomial | ✓ | ✓ | **Yes** |
+| C — KBO | **✗** (variable condition fails on Rule 2) | — | No |
+| D — Dependency pairs | ✓ | ✓ | **Yes** |
+| E — Descent measure | ✓ | ✓ | **Yes** |
+
+**Methods A, B, D, and E** each satisfy both conditions. **Method C fails** because KBO's variable condition is violated by the duplication of y in Rule 2 — no choice of weights or precedence can repair this.

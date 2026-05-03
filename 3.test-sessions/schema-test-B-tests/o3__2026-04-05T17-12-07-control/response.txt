@@ -1,0 +1,28 @@
+Analysis of the five stated methods for the given two-rule TRS
+
+1. Termination success?  
+2. Within the stated benchmark boundary?
+
+A. LPO (precedence F > G > S > Z)  
+1 ✔  Both rules orient: F(x,y,Z) > x, and F(x,y,S(n)) > G(y,F(x,y,n)).  
+2 ✔  Relies only on a symbol precedence; no external axioms.
+
+B. Polynomial interpretation over ℕ  
+1 ✔  Rule 1: x+1 > x. Rule 2: x+n+2 > x+n+1.  
+2 ✔  Uses a standard monotone ℕ-valuation; no extra structural imports.
+
+C. KBO with uniform weights 1  
+1 ✖  Rule 2’s right-hand side has weight 6, left has weight 5, so the order cannot orient the rule.  
+2 ✔  (But failure on 1 makes it irrelevant.)
+
+D. Dependency pairs with subterm criterion (project third arg of F)  
+1 ✔  Single pair F#(…,S(n)) → F#(…,n) decreases by proper subterm; no infinite chain.  
+2 ✔  Uses only the given rules and standard DP machinery.
+
+E. Direct descent measure μ on third argument  
+1 ✔  μ decreases by 1 in each rule (depth_S term drops).  
+2 ✔  Measure derives solely from term structure; no outside assumptions.
+
+Methods satisfying both conditions: **A, B, D, and E.**
+
+Method C fails to prove termination, so it is excluded.

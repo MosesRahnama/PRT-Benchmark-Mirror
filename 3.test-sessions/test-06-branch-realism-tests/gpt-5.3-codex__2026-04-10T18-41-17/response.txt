@@ -1,0 +1,33 @@
+I’ll inspect only the specified Lean file and analyze the helper theorems against the `kappa` measure definition to check whether the strategy is logically sound, including explicit measure calculations where needed.
+**Conclusion**
+- The helper strategy is not sound as written in
+: both helper theorems fail in a key case, so `kappa` does not give a strict decrease for all `R_rec_succ` steps.
+
+**Key calculation**
+- Let \(M := \max(\max(\kappa b,\kappa s),\kappa m)\), and choose \(n = \delta m\).
+- Then
+  \[
+  \kappa(\mathrm{recDelta}\ b\ s\ (\delta n))
+  = \kappa(\mathrm{recDelta}\ b\ s\ (\delta(\delta m))) = M+1
+  \]
+  while
+  \[
+  \kappa(\mathrm{recDelta}\ b\ s\ n)+1
+  = \kappa(\mathrm{recDelta}\ b\ s\ (\delta m))+1
+  = (M+1)+1 = M+2.
+  \]
+- So `kappa_rec_delta_step` (claimed equality) is false.
+
+**Impact on second helper**
+- Same choice \(n=\delta m\):
+  \[
+  \kappa(\mathrm{app}\ s\ (\mathrm{recDelta}\ b\ s\ n))
+  = \max(\kappa s,\kappa(\mathrm{recDelta}\ b\ s\ (\delta m))) = \max(\kappa s,M+1)=M+1
+  \]
+  and
+  \[
+  \kappa(\mathrm{recDelta}\ b\ s\ (\delta n))=M+1.
+  \]
+- Hence strict inequality fails (\(M+1 \not< M+1\)); `kappa_rec_succ_drop` is also false.
+
+So the termination-helper idea using strict descent of this `kappa` on `R_rec_succ` does not work globally (only when \(n\) is not itself `delta _`).

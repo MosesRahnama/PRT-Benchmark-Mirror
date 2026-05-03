@@ -1,0 +1,35 @@
+**Raw assessment:** **Yes.** Strong normalization can be established from the presented calculus alone, with no extra object-level axioms, extra rewrite rules, guards, or side conditions beyond the displayed system.
+
+A standard **lexicographic/recursive path ordering** is enough.
+
+### Short roadmap
+Orient the rules by an LPO/RPO with a precedence such as
+\[
+\texttt{cherry} \succ \texttt{banana} \succ \texttt{mango} \succ \texttt{pear} \succ \texttt{peach} \succ \texttt{grape} \succ \texttt{plum}.
+\]
+
+Then check each rule:
+
+- `mango (grape t) → plum`  
+  decreases by precedence.
+
+- `peach plum t → t`, `peach t plum → t`, `peach t t → t`, `banana b s plum → b`  
+  all decrease by the **subterm property**.
+
+- `banana b s (grape n) → pear s (banana b s n)`  
+  works because:
+  - `banana b s (grape n) > banana b s n` since the third argument strictly drops from `grape n` to `n`;
+  - `banana ≻ pear`, so the left side dominates the `pear` root once it also dominates both arguments `s` and `banana b s n`.
+
+- `cherry a a → plum`  
+  decreases by precedence.
+
+- `cherry a b → mango (peach a b)`  
+  works because `cherry a b > peach a b` (root precedence plus domination of subterms `a,b`), and then `cherry ≻ mango`.
+
+Since every rule strictly decreases a well-founded path ordering, the rewrite system is strongly normalizing. This already stays within the presented calculus; it is a standard meta-proof, not a strengthening of the system.
+
+### Boundary note
+The only background fact used is the ordinary **free-constructor reading** of the inductive syntax (so syntactic equality/inequality is meaningful). That is part of the term syntax itself, not an added object-level axiom.
+
+If `Step` is meant literally as the **root-only** relation, the claim is even easier; but the ordering argument above already covers the usual contextual rewrite closure as well.

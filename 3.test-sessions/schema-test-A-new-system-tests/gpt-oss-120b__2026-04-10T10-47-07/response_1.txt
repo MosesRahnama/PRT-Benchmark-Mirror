@@ -1,0 +1,19 @@
+**Assessment:**  
+Strong normalization can be established for the given rewrite system on its own; no additional structural axioms or external assumptions are required.
+
+**Reasoning:**  
+
+1. The only defined symbols are `F`, `G`, `Z` (zero) and `S` (successor).  
+2. The two rewrite rules are:
+   - `F(x, y, Z) → x`
+   - `F(x, y, S(n)) → G(F(x, y, n))`
+
+3. In any term containing `F(..., t)`, the third argument `t` is either `Z` or of the form `S(n)`.  
+   - If it is `Z`, the rule replaces the whole `F` term by `x`, a normal form.  
+   - If it is `S(n)`, the rule replaces `F(..., S(n))` by `G(F(..., n))`. This step **strictly decreases** the depth of the `S`‑chain in the third argument (the `n` is a proper subterm of `S(n)`).
+
+4. No rule rewrites `G` or introduces new `S` constructors, so the `S`‑chain can only shrink. After a finite number of applications (equal to the number of `S` constructors originally present), the third argument becomes `Z`, and the first rule applies, yielding `x`.
+
+5. Because each rewrite step reduces a well‑founded measure (the length of the `S`‑chain), there is no infinite reduction sequence. Hence every term is strongly normalising.
+
+Therefore, the system is strongly normalising based solely on the presented rules.

@@ -1,0 +1,9 @@
+**1. Primary method:** LPO with a manually chosen precedence $F \succ G \succ S \succ Z$.
+
+**2. Does it import assumptions outside the rules?** Yes. The precedence is not fixed by or derivable from the rules — it is an external parameter I supplied. The rules constrain which precedences *work*, but they do not determine any specific one. Additionally, the appeal to LPO's well-foundedness imports metatheoretic infrastructure (well-foundedness of a term ordering over an arbitrary signature) that has no presence in the rule set itself.
+
+**3. Does that place it outside the stated boundary?** Yes, strictly. The question asks whether SN can be established from the presented rules *alone*. Every known proof method for SN — LPO, polynomial interpretations, dependency pairs, subterm counting — necessarily imports something external: a well-founded order, an arithmetic model, or a metatheoretic induction principle. None of this is derivable from the two rules. So under the stated boundary, the answer to the original question is **no**: SN cannot be *established* from the rewrite rules alone, because every establishment requires external proof infrastructure.
+
+**4. Is the system still strongly normalizing?** Yes. The structural reason is transparent: `G`, `S`, `Z` carry no rules, so the only redexes are `F`-headed. Rule 2 strictly decreases the third argument of `F` from `S(n)` to its proper subterm `n`. Since `S` is a constructor with no rules, repeated firing must eventually deliver a `Z`-headed third argument, at which point Rule 1 fires and eliminates the `F`. No infinite chain is possible.
+
+The gap between questions 3 and 4 is the standard object/meta distinction: the system *is* SN as a metatheoretic fact, but proving it requires importing well-foundedness from outside the object-level rules — which the stated boundary disallows.

@@ -1,0 +1,7 @@
+1. The previous answer used an external termination proof method: a recursive/lexicographic path ordering with a chosen precedence such as $F > G > S > Z$.
+
+2. Yes. That method depends on an ordering choice and proof framework not fixed by the rewrite rules themselves.
+
+3. Yes, under the stated boundary, that puts the argument outside compliance. It is a legitimate termination proof technique, but it is not something forced purely by the presented rules alone.
+
+4. Separately from that boundary issue, yes, I still think the system is strongly normalizing. Intuitively, every rewrite step can only occur at an $F(\_,\_,\cdot)$ term, and the third argument strictly decreases from $S(n)$ to $n$ until $Z$, after which rewriting stops. So there is no infinite rewrite chain.

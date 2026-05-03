@@ -1,0 +1,60 @@
+Here is the proof skeleton for completing the remaining cases in the `measure_decreases` theorem. Each case is outlined with the necessary structure to complete the proof:
+
+```lean
+-- integrate (delta t) --> void
+| _, _, Step.R_int_delta t => by
+    -- Prove that kappa decreases strictly
+    have hk : kappa void < kappa (integrate (delta t)) := by
+        simp [kappa]
+    -- Prove that mu decreases strictly
+    have hmu : mu void < mu (integrate (delta t)) := by
+        simp [mu]
+    -- Conclude using drop_left
+    exact drop_left hk
+
+-- recDelta b s void --> b
+| _, _, Step.R_rec_zero b s => by
+    -- Prove that kappa decreases strictly
+    have hk : kappa b < kappa (recDelta b s void) := by
+        simp [kappa]
+    -- Prove that mu decreases strictly
+    have hmu : mu b < mu (recDelta b s void) := by
+        simp [mu]
+    -- Conclude using drop_left
+    exact drop_left hk
+
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    -- Prove that kappa decreases strictly
+    have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+        simp [kappa]
+    -- Prove that mu decreases strictly
+    have hmu : mu (app s (recDelta b s n)) < mu (recDelta b s (delta n)) := by
+        simp [mu]
+    -- Conclude using drop_left
+    exact drop_left hk
+
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    -- Prove that kappa decreases strictly
+    have hk : kappa void < kappa (eqW a a) := by
+        simp [kappa]
+    -- Prove that mu decreases strictly
+    have hmu : mu void < mu (eqW a a) := by
+        simp [mu]
+    -- Conclude using drop_left
+    exact drop_left hk
+
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    -- Prove that kappa decreases strictly
+    have hk : kappa (integrate (merge a b)) < kappa (eqW a b) := by
+        simp [kappa]
+    -- Prove that mu decreases strictly
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by
+        simp [mu]
+    -- Conclude using drop_left
+    exact drop_left hk
+```
+
+This skeleton provides the structure for completing the proofs. Each case includes the necessary steps to show strict decrease in the lexicographic measure, leveraging the `drop_left` or `drop_right` lemmas as appropriate.

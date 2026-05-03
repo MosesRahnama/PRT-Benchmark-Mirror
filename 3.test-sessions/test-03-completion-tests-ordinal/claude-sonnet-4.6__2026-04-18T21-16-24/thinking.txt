@@ -1,0 +1,61 @@
+Now I understand the file. Let me analyze the three sorry cases:
+
+1. **R_rec_succ**: `recDelta b s (delta n) --> app s (recDelta b s n)`
+   - `mu(recDelta b s (delta n))` = `omega^(mu(delta n) + mu(s) + 6) + omega * (mu(b) + 1) + 1`
+   - where `mu(delta n) = omega^5 * (mu(n) + 1) + 1`
+   - so LHS = `omega^(omega^5 * (mu(n) + 1) + 1 + mu(s) + 6) + omega * (mu(b) + 1) + 1`
+   - For the RHS, I need to compute `mu(app s (recDelta b s n))` using the application rule, which gives me `omega^3 * (mu(s) + 1) + omega^2 * (mu(recDelta b s n) + 1) + 1`, and substituting the measure of the recursive call yields the full RHS expression.
+   - The crucial observation is that the LHS (the `recDelta` side) has an omega exponent of `omega^5 * (mu(n) + 1) + 1 + mu(s) + 6`, which dominates the RHS where the largest power is only `omega^(mu(n) + mu(s) + 8)`.
+   - Now I'm checking the base case where n is void to verify the inequality holds.
+
+For the void case, the LHS exponent becomes `omega^5 + mu(s) + 7` while the RHS is just `mu(s) + 8`, and since `omega^5` vastly exceeds any finite number, the inequality clearly holds. I need to formalize this in Lean 4 using lemmas about ordinal exponentiation, particularly ones that show how larger exponents produce larger powers.
+
+For the reflexivity case with `eqW a a`, I need to prove `0 < mu(eqW a a)`, which reduces to showing `0 < omega^(mu(a) + mu(a) + 9) + 1`. This is straightforward since any ordinal power is non-negative, and adding 1 makes it positive—I can use basic positivity reasoning or successor lemmas.
+
+Now for the equality difference case, I'm checking that `mu(integrate (merge a b)) < mu(eqW a b)`. Let me expand the measure of the integrated merge: it's `omega^4` times the measure of the merge plus 1, then plus 1 again. The merge itself has measure involving `omega^3` scaled by `mu(a)` and `omega^2` scaled by `mu(b)`. Substituting this in gives me a tower of ordinal expressions that I need to verify is strictly smaller than the measure of `eqW a b`.
+
+The measure of `eqW a b` is `omega` raised to the power `mu(a) + mu(b) + 9`, plus 1. So I need to show that my expanded expression is less than this exponential tower. Since both `mu(a)` and `mu(b)` are non-negative, the exponent is at least 9, which should give me enough room to verify the inequality.
+
+But wait—ordinals can be infinite, so `mu(a)` itself might be arbitrarily large. When `mu(a)` is large, `omega^7 * (mu(a)+1)` grows significantly, but `omega^(mu(a)+mu(b)+9)` has an exponent that's even larger, so the exponential should dominate the polynomial factor.
+
+Let me verify this with ordinal exponentiation rules. For finite `n`, I can check that `omega^7 * n < omega^(n+7)` by testing small cases: when `n=1`, `omega^8 > omega^7`; when `n=2`, `omega^9 > omega^7 * 2`. This pattern holds, so `omega^7 * (mu(a)+1) < omega^(mu(a)+8)` regardless of what `mu(a)` is.
+
+Now I'm looking for the right lemma to formalize this—something about how multiplying by a successor ordinal stays below a sufficiently large exponent. The exact inequality might be `omega^e * (gamma + 1) ≤ omega^(e + gamma + 1)` or similar, but the core idea is that exponentiation grows faster than multiplication. Since these are proof skeletons rather than complete proofs, I should focus on the key structural steps and let the user fill in the formal lemma applications.
+
+For the recursive successor case, the crucial observation is that the exponent on the left side—`mu(delta n) + mu(s) + 6`—dominates what appears on the right. The right-hand side has two main terms involving `omega^3` and `omega^2`, both of which are bounded by much smaller exponents than what the left produces, so the inequality should follow from ordinal arithmetic properties. I'm checking whether the inequality holds across different values of mu(n). For mu(n) = 0, 1, and omega, the right side dominates significantly due to the omega^5 factor. The key insight is that omega^5 * (mu(n)+1) grows much faster than mu(n) itself, so the inequality should hold generally.
+
+Now I'm laying out the proof strategy for R_rec_succ: I'll define the left-hand exponent as omega^5 times (mu(n)+1) plus mu(s) plus 6, and the right-hand exponent as the maximum possible value from the application side, which is mu(n) plus mu(s) plus 8. Then I just need to show that the right-hand side is strictly smaller.
+
+Once I have that inequality, I can apply the ordinal exponentiation lemma to lift it to the omega powers, which gives me the bound I need for the recursive case. For the equality reflection case, after simplifying the definition of mu, the goal reduces to showing that 0 is less than omega to some power plus 1, which follows immediately from positivity lemmas. I need to figure out which lemma applies here. `add_pos_right` requires `0 < b → 0 < a + b`, so I can use `Ordinal.add_pos_right` with the ordinal expression and `one_pos` to get `0 < omega^(mu a + mu a + 9) + 1`. Alternatively, I could use `pos_iff_ne_zero` and show the result is nonzero. Now moving to the case where `R_eq_diff` after simplifying with `mu`.
+
+After simplification, the goal becomes showing `omega^4 * (omega^3*(mu a + 1) + omega^2*(mu b + 1) + 2) < omega^(mu a + mu b + 9)`. Expanding the left side gives `omega^7*(mu a + 1) + omega^6*(mu b + 1) + omega^4*2`, and the dominant term `omega^7*(mu a+1)` is what I need to bound against the right side.
+
+Let me check if `omega^7 * (mu a + 1) ≤ omega^(mu a + 8)` holds across different values. For small values like `mu(a) = 0` or `mu(a) = 1`, this clearly works since `omega^7` and `omega^7 * 2` are both less than `omega^8` and `omega^9` respectively. Even for larger values like `mu(a) = omega` or `mu(a) = omega^7`, the inequality continues to hold as the exponential growth of omega dominates the multiplicative factor.
+
+The underlying principle seems to be that for any ordinal `alpha >= 1` and any `n`, we have `omega^n * alpha < omega^(n + alpha)`, which should follow from ordinal exponentiation properties in Mathlib. I'm trying to recall the exact lemma names—something like `opow_add` combined with a successor inequality—but I'd need to verify the precise formulation.
+
+Now I'm thinking about what proof skeletons to write for the different cases. For the reflexivity case, it's straightforward using positivity tactics. For the merge cancellation case, it looks like the proof might already be complete with a calculation chain, so I should double-check what's actually needed.
+
+The three cases that need work are the recursive successor, reflexivity, and difference cases. Let me sketch out what each one requires, starting with the recursive successor case where I need to show the ordinal inequality after simplification.
+
+Writing proof skeletons... Writing the ordinal arithmetic proof... Continuing with the proof strategy...
+
+Now I'm working through the algebraic manipulations to show that omega^2 times omega^(mu n + mu s + 6) simplifies to omega^(mu n + mu s + 8), then establishing that the cubic term dominates when the exponent is sufficiently large. I'm setting up a calculation chain to connect all the inequalities together. I need to be more careful about what the proof skeleton should actually look like—the user wants something that guides completion without necessarily being runnable code. Let me think through the specific goals after simplification for each case to make the strategy clear and identify which Mathlib lemmas are essential. For the reflexivity case, I'm reducing to showing that zero is less than a positive ordinal expression, which should follow from basic positivity lemmas. For the equality case with different arguments, I need to work out what the left and right sides simplify to after applying the definition of `mu` to the merged structure. `) < omega^(mu a + mu b + 9)`. I need to establish that `omega^7*(mu a+1) < omega^(mu a + mu b + 9)`. For finite ordinals this is straightforward—when `mu a = 0`, I get `7 < 9`, which works. For larger ordinals, I'm looking for a general principle about how ordinal exponentiation scales, something like `omega^n * (alpha + 1) <= omega^(alpha + n + 1)`.
+
+Let me verify this with concrete cases. When `alpha = 0`, I get `omega^n * 1 = omega^n`, which equals `omega^(0+n)`. When `alpha = 1`, I'm comparing `omega^n * 2` against `omega^(n+1)`, and since `omega^n * 2 < omega^n * omega`, this holds. For larger ordinals like `alpha = omega`, the pattern continues...
+
+Actually, I think the cleanest approach here is to set up a proof skeleton with strategic `have` statements and `sorry` placeholders for the Mathlib lemmas I need to look up, rather than trying to work through all the ordinal arithmetic by hand. I need to bound the left-hand side by showing that omega^3*(mu a+1) + omega^2*(mu b+1) + 2 is strictly less than omega^(mu a + mu b + 5), then multiply through by omega^4 and apply the exponent addition rule to get the strict inequality I need. Continuing with the multiplication inequality by applying the left monotonicity of multiplication with the ordinal exponent, then simplifying through exponent addition and ring normalization. Now moving to the recursive successor case, where I need to show that the omega^5 term in the delta measure dominates the recursive measure component. Writing the proof steps... Continuing the proof chain, I'm applying the ordinal exponentiation lemma to show the strict inequality holds, then setting up the final calculation step where the recDelta measure's contribution dominates the left-hand side. I'm trying to figure out which lemma in Lean 4 Mathlib will let me prove that something plus one is positive. The key insight is that for ordinals, adding 1 is the same as taking the successor, and there's a lemma stating that the successor of any ordinal is positive.
+
+I could use the `positivity` tactic directly since it should recognize that `X + 1 > 0` when `X ≥ 0` and `1 > 0`. Now I want to write out clean proof skeletons that would guide someone through the remaining steps, and I need to think through what `simp [mu]` actually does based on how the `mu` function is defined. matching, so `simp [mu]` should unfold one level. But there might be issues with the definitional unfolding for complex terms. The existing proofs use `simp [mu]` and it seems to work.
+
+Let me write clean skeletons. I'll be careful about `omega0` vs `Ordinal.omega` naming, and use the same style as the existing proved cases.
+
+Here's my final plan:
+
+**R_eq_refl**: One-liner using positivity of `X + 1`.
+
+**R_eq_diff**: Use `add_lt_add_right` to reduce to showing `omega^4 * (...) < omega^(mu a + mu b + 9)`, then bound the `(...)` part by `omega^(mu a + mu b + 5)`, then use `mul_lt_mul_of_pos_left` and `opow_add` to finish.
+
+**R_rec_succ**: The `app` measure needs to be bounded, leveraging the fact that the delta exponent towers over it.
+
+Now I'll write out the final response.

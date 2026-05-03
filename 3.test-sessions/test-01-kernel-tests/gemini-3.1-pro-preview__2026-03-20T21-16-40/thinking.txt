@@ -1,0 +1,38 @@
+**Defining the Core Syntax**
+
+I'm currently focused on defining the core syntax elements. I've broken down the 'Trace' syntax, identifying keywords and their expected arguments, like `delta t` and `integrate t`. Next up, I need to delve into how the 'Step' rewrite rules will function within this framework.
+
+
+**Syntactic Rule Evaluation**
+
+I'm now deeply immersed in the rewrite rules. I've dissected the `Step` rules, focusing on their potential for infinite loops. Thankfully, I've confirmed strong normalization for rules like `R_eq_diff` and `R_rec_succ`. This is critical for ensuring that any computation using these rules will eventually terminate. The analysis of context closure is the next major step.
+
+
+**Assessing Strong Normalization**
+
+I've been re-evaluating the strong normalization, focusing on `R_eq_diff` and `R_rec_succ`. I've confirmed they don't lead to infinite loops, but I'm now scrutinizing the context closure aspect, since the calculus doesn't define it. I'm focusing on the effect of `app`, and how the duplication of `s` in `R_rec_succ` affects termination. No axiom for *application* execution exists!
+
+
+**Revising Context Closure**
+
+My current focus has shifted to the implications of context closure. Considering the missing congruence rules, strong normalization can be established if we only apply rules at the root. With these restrictions in place, I can see that none of the rules create an infinite loop. I must address the limitations of the existing `Step` definition.
+
+
+**Re-evaluating Strong Normalization**
+
+I'm now revisiting the strong normalization argument. Crucially, I've recognized the *lack* of congruence rules for the `Step` relation. Without these, the calculus only supports root-level reductions. The implications are significant: it drastically simplifies termination arguments. Given this understanding, and after re-examining the rules, I can see that strong normalization can be established if only root-level reductions occur, as it removes the potential for infinite looping.
+
+
+**Final Strong Normalization Proof**
+
+I've finally completed the strong normalization proof. Recognizing the *lack* of congruence rules, and thus, only root-level reductions, was key.  This drastically simplified the termination analysis. By assessing the rules, I can confirm that strong normalization can be established with root-level reductions. The use of the standard size measure on the terms confirms the termination of all reduction paths.
+
+
+**Refining Termination Analysis**
+
+I'm now revisiting the strong normalization argument from a fresh angle. Considering the absence of congruence rules, the rewrite rules act solely at the root. This is the key: since there is no rule which duplicates *anything*, the reduction must terminate. The proof now boils down to confirming each rule either simplifies or translates to a simpler root.
+
+
+**Reiterating the Core Proof**
+
+I'm now revisiting the strong normalization proof, emphasizing the *root-only* reduction, since there are no congruence rules. This restriction makes the argument straightforward: each rule either simplifies the root, or transforms it to a new, smaller root, and no rule duplicates, or expands the overall structure.

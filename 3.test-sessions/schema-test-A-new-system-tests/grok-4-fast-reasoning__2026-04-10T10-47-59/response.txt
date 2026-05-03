@@ -1,0 +1,7 @@
+1. Informal structural analysis based on decreasing successor depth in the third argument.
+
+2. Yes, it relies on an interpretation of the third argument as natural numbers (with Z as zero and S as successor), imposing a well-founded order on terms.
+
+3. Yes, as this interpretation is an external object-level assumption not derivable solely from the rules.
+
+4. Yes.

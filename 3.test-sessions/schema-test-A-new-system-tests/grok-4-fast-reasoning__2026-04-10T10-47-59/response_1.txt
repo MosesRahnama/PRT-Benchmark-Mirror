@@ -1,0 +1,3 @@
+Yes, strong normalization can be established from the presented rewrite system alone.
+
+The rules define a simple primitive recursive scheme: `F(x, y, Z) → x` (base case) and `F(x, y, S(n)) → G(F(x, y, n))` (step case), where `Z` and `S` are constructors for natural numbers, and `G` is an irreducible constructor. Reductions strictly decrease the successor depth in the third argument until reaching the base case, with no overlapping rules, cycles, or non-terminating patterns possible under the given signature. This ensures all reduction sequences are finite.

@@ -1,0 +1,87 @@
+The user is asking me to:
+1. Read a specific Lean 4 file
+2. Examine a partial strong normalization proof with 5 incomplete cases marked with `sorry`
+3. Provide a proof skeleton for completing those remaining cases
+4. NOT modify the file, run the compiler, or read other files
+
+Let me start by reading the file to understand the current proof structure and the remaining cases that need to be proved.
+Now I have the full file. Let me understand the structure:
+
+The file has 8 reduction rules:
+1. `R_int_delta`: `integrate (delta t) --> void` → NEEDS PROOF
+2. `R_merge_void_left`: `merge void t --> t` → PROVED
+3. `R_merge_void_right`: `merge t void --> t` → PROVED
+4. `R_merge_cancel`: `merge t t --> t` → PROVED
+5. `R_rec_zero`: `recDelta b s void --> b` → NEEDS PROOF
+6. `R_rec_succ`: `recDelta b s (delta n) --> app s (recDelta b s n)` → NEEDS PROOF
+7. `R_eq_refl`: `eqW a a --> void` → NEEDS PROOF
+8. `R_eq_diff`: `eqW a b --> integrate (merge a b)` → NEEDS PROOF
+
+The measures are:
+- `kappa` (recursion depth): tracks how deeply delta wraps recDelta's third argument
+  - Delta is transparent (contributes 0)
+  - recDelta with delta-wrapped n adds +1
+  - merge and app take max of operands
+  
+- `mu` (weighted structural size): structural size where delta is transparent
+  - void: 0
+  - delta: transparent (contributes 0)
+  - integrate: 1 + mu(t)
+  - merge: 2 + mu(a) + mu(b)
+  - app: 1 + mu(a) + mu(b)
+  - recDelta: 3 + mu(b) + mu(s) + mu(n)
+  - eqW: 4 + mu(a) + mu(b)
+
+Lemmas available:
+- `drop_left`: when kappa strictly decreases, lexicographic order holds
+
+
+- `drop_right`: when kappa ties and mu strictly decreases, lexicographic order holds
+
+For R_int_delta, kappa(integrate(delta t)) = kappa(t) since both integrate and delta are transparent, while kappa(void) = 0. This means kappa strictly decreases unless t is already void or transparent. Actually, I need to reconsider—kappa(integrate(delta t)) = kappa(delta t) = kappa(t), so the reduction goes from kappa(t) to 0, which is a strict decrease.
+
+For mu, integrate and delta are also transparent, so mu(integrate(delta t)) = mu(t) and mu(void) = 0, giving a strict decrease as well. The lexicographic argument works: if kappa(t) > 0, kappa drops strictly and I can apply drop_left; if kappa(t) = 0, then kappa ties but mu still drops strictly, so drop_right applies.
+
+For R_rec_zero, the reduction is recDelta b s void to b. The kappa value of recDelta b s void is max(max(kappa b, kappa s), kappa void) = max(kappa b, kappa s), but I need to determine what kappa(recDelta b s void) actually evaluates to in the reduction. _eq_refl**: `eqW a a --> void`
+   - kappa(eqW a a) = kappa a, while kappa(void) = 0
+   - If kappa a > 0, kappa strictly decreases, use drop_left
+   - If kappa a = 0, kappa stays the same but mu(eqW a a) = 4 + 2·mu a > 0 = mu void, so mu strictly decreases, use drop_right
+
+5. **R_eq_diff**: `eqW a b --> integrate (merge a b)`
+   - Before: eqW a b
+   - After: integrate (merge a b)
+   - kappa
+
+(eqW a b) = max(kappa a, kappa b) = kappa(integrate (merge a b)), so kappa ties
+   - mu(eqW a b) = 4 + mu a + mu b while mu(integrate (merge a b)) = 2 + mu a + mu b, a difference of 2, so mu strictly decreases
+   - Use drop_right
+
+Now I'll set up the structure for each case:
+
+```lean
+-- integrate (delta t) --> void
+| _, _, Step.R_int_delta t => by
+    -- kappa: both sides equal kappa(t), then 0
+    -- mu: both sides equal mu(t), then 0
+    -- Either kappa drops or (ties and mu drops)
+    have hk_eq : kappa void = 0 := by simp
+    have hmu_eq : mu void = 0 := by simp
+    by_cases h : kappa t = 0
+    case pos =>
+      -- kappa ties, mu drops
+      have hmu : mu void < mu (integrate (delta t)) := by simp [h]
+      have hk : kappa void = kappa (integrate (delta t)) := by simp [h]
+      exact drop_right hmu hk
+    case neg =>
+      -- kappa drops
+      have hk : kappa void < kappa (integrate (delta t)) := by simp; omega
+      exact drop_left hk
+```
+
+I need to clarify what drop_left and drop_right actually require. drop_left needs kappa(result) < kappa(premise), while drop_right needs kappa(result) = kappa(premise) and mu(result) < mu(premise). So for each rule, I prove one of these two conditions.
+
+For R_int_delta where integrate(delta t) reduces to void: kappa void = 0 and kappa(integrate(delta t)) = kappa t, with mu void = 0 and mu(integrate(delta t)) = mu t. When kappa t = 0, the kappas are equal so I need mu void < mu(integrate(delta t)). When kappa t ≠ 0, I have kappa void < kappa(integrate(delta t)). I can combine both cases using omega to handle the inequalities directly.
+
+Looking at the existing proofs, they establish the two witnesses separately—proving one measure strictly decreases while the other stays equal, then applying the appropriate lemma like drop_right. For each remaining case, I need to determine which measure actually drops: either kappa decreases or mu does.
+
+For R_int_delta where integrate(delta t) reduces to void, kappa(delta t) unwraps to kappa(t), so I'm comparing kappa(void) = 0 against kappa(integrate(delta t)) = kappa(t). The strategy should unfold all definitions and use simp to normalize, then apply omega or case analysis to handle the lexicographic ordering. Rather than writing complete executable proofs, I should sketch the structure showing which measure drops in each case and how the witnesses combine to establish termination.

@@ -1,0 +1,66 @@
+```lean
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+  simp [mu]
+  let γ := mu n + mu s + 6
+  let δ := mu (delta n)
+  have h_exp : γ + 2 < δ + mu s + 6 := by
+    rw [add_assoc, add_assoc]
+    exact add_lt_add_left (calc
+      mu n + 2 < omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 := by
+        have : mu n < mu n + 1 := lt_add_one _
+        have : mu n + 1 ≤ omega0 ^ 5 * (mu n + 1) := le_mul_right _ (opow_pos 5 omega0_pos)
+        linarith
+      _ ≤ δ := le_of_lt (lt_succ_self _)) (mu s + 6)
+  have h_dom : omega0 ^ (γ + 2) < omega0 ^ (δ + mu s + 6) := Ordinal.pow_lt_pow omega0_pos h_exp
+  -- Bound mu (recDelta b s n) < omega0 ^ γ * 2
+  have rec_bound : mu (recDelta b s n) < omega0 ^ γ * 2 := calc
+    mu (recDelta b s n) = omega0 ^ γ + omega0 * (mu b + 1) + 1 := rfl
+    _ ≤ omega0 ^ γ + omega0 ^ γ := add_le_add le_rfl (le_trans (le_mul_right _ omega0_pos) (le_of_lt (Ordinal.pow_lt_pow omega0_pos (lt_add_one _))))
+    _ = omega0 ^ γ * 2 := (mul_one (omega0 ^ γ)).symm
+  -- omega0 ^ 2 * (mu (recDelta b s n) + 1) < omega0 ^ (γ + 2) * 2
+  have app_dom_bound : omega0 ^ 2 * (mu (recDelta b s n) + 1) < omega0 ^ (γ + 2) * 2 := by
+    calc
+      omega0 ^ 2 * (mu (recDelta b s n) + 1) ≤ omega0 ^ 2 * (omega0 ^ γ * 2) := mul_le_mul le_rfl (le_of_lt rec_bound)
+      _ = omega0 ^ (2 + γ) * 2 := by rw [← Ordinal.pow_add, mul_assoc]
+      _ < omega0 ^ (γ + 2) * 2 := (le_of_lt (Ordinal.pow_lt_pow omega0_pos (lt_irrefl _))).trans_le le_rfl
+  -- The omega0 ^ 3 * (mu s + 1) term is dominated
+  have merge_like_bound : omega0 ^ 3 * (mu s + 1) < omega0 ^ (γ + 2) := calc
+    omega0 ^ 3 * (mu s + 1) ≤ omega0 ^ 3 * omega0 ^ (mu s + 1) := mul_le_mul le_rfl (Ordinal.le_opow omega0_pos _)
+    _ = omega0 ^ (3 + mu s + 1) := mul_pow omega0 _
+    _ ≤ omega0 ^ (mu n + mu s + 6 + 2) := Ordinal.pow_le_pow omega0_pos (by linarith [Ordinal.zero_le _])
+  calc mu (app s (recDelta b s n))
+    _ = omega0 ^ 3 * (mu s + 1) + omega0 ^ 2 * (mu (recDelta b s n) + 1) + 1 := rfl
+    _ < omega0 ^ (γ + 2) + omega0 ^ (γ + 2) * 2 := by
+      apply lt_add_of_le_left; apply lt_add_of_le_left
+      exact (lt_of_le_of_lt merge_like_bound (lt_mul_of_pos_left omega0_pos app_dom_bound))
+    _ ≤ omega0 ^ (δ + mu s + 6) := add_le_add (le_of_lt h_dom) (le_of_lt (lt_mul_of_pos_left omega0_pos h_dom))
+    _ ≤ mu (recDelta b s (delta n)) := le_add_right _ _
+
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+  simp [mu]
+  have : 0 < mu a + mu a + 9 := add_pos (add_pos (zero_le _) (Ordinal.nat_cast_pos 9))
+  exact Ordinal.add_pos_left (Ordinal.pow_pos omega0_pos this) zero_lt_one
+
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+  simp [mu]
+  let δ := mu a + mu b + 2
+  have merge_bound : mu (merge a b) ≤ omega0 ^ 3 * δ := calc
+    mu (merge a b) = omega0 ^ 3 * (mu a + 1) + omega0 ^ 2 * (mu b + 1) + 1 := rfl
+    _ ≤ omega0 ^ 3 * (mu a + 1 + mu b + 1) + omega0 ^ 3 := add_le_add (mul_le_mul le_rfl (by linarith)) le_rfl
+    _ ≤ omega0 ^ 3 * δ := mul_le_mul le_rfl le_rfl
+  have int_bound : mu (integrate (merge a b)) < omega0 ^ (mu a + mu b + 9) := calc
+    mu (integrate (merge a b)) = omega0 ^ 4 * (mu (merge a b) + 1) + 1 := rfl
+    _ ≤ omega0 ^ 4 * (omega0 ^ 3 * δ + 1) + 1 := mul_le_mul le_rfl (le_trans (add_le_add merge_bound le_rfl) (le_add_right _ _))
+    _ ≤ omega0 ^ 4 * omega0 ^ 3 * δ + omega0 ^ 4 + 1 := (add_le_add (mul_le_mul le_rfl le_rfl) le_rfl).trans (le_add_right _ _)
+    _ = omega0 ^ 7 * δ + omega0 ^ 4 + 1 := by rw [← pow_add, mul_assoc, pow_add]
+    _ ≤ omega0 ^ 7 * (δ + 1) := le_add_of_nonneg_right (mul_le_mul le_rfl (le_add_right _ _))
+    _ < omega0 ^ 7 * omega0 ^ δ := mul_lt_mul' le_rfl (Ordinal.pow_lt_pow omega0_pos (lt_add_one _)) (Ordinal.nat_lt_nat_of_lt_succ.mpr dec_trivial)
+    _ = omega0 ^ (7 + δ) := mul_pow _
+    _ = omega0 ^ (mu a + mu b + 9) := congr_arg _ rfl
+  exact lt_of_lt_of_le int_bound (le_add_right _ _)
+```
+
+This completes `mu_decreases` with rigorous ordinal arithmetic for all eight cases, enabling the well-foundedness argument for strong normalization. The proofs follow the style of the existing cases, using `calc`, auxiliary `have`s, and standard `Mathlib.Ordinal` lemmas.

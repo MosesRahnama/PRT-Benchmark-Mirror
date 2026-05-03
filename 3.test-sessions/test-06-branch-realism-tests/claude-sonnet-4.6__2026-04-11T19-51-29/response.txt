@@ -1,0 +1,82 @@
+The helper strategy has a critical unsoundness. Here is the full analysis.
+
+---
+
+## Structure of the Argument
+
+The file defines `kappa` and attempts two stepping-stone lemmas to justify that `R_rec_succ` terminates:
+
+$$\text{recDelta}(b,s,\delta(n)) \;\longrightarrow\; \text{app}(s,\,\text{recDelta}(b,s,n))$$
+
+The intended proof sketch is:
+1. **`kappa_rec_delta_step`** — `kappa(recDelta b s (delta n)) = kappa(recDelta b s n) + 1`
+2. **`kappa_rec_succ_drop`** — `kappa(app s (recDelta b s n)) < kappa(recDelta b s (delta n))`
+
+Claim: together these show `kappa` strictly decreases under `R_rec_succ`.
+
+---
+
+## Lemma 1 — `kappa_rec_delta_step`
+
+Expand both sides from the definition.
+
+$$\kappa(\text{recDelta}\,b\,s\,(\delta\,n)) = \max(\max(\kappa_b,\kappa_s),\kappa_n) + 1$$
+
+For the right-hand side, the third argument is `n` (not `delta n`). The pattern match in `kappa` gives the **non-delta branch**:
+
+$$\kappa(\text{recDelta}\,b\,s\,n) = \max(\max(\kappa_b,\kappa_s),\kappa_n)$$
+
+So the equation becomes:
+
+$$\max(\max(\kappa_b,\kappa_s),\kappa_n) + 1 = \max(\max(\kappa_b,\kappa_s),\kappa_n) + 1 \quad \checkmark$$
+
+This holds **only when `n` does not match the `delta _` pattern** in the `kappa` definition — i.e. only when `n ≠ delta _`. However, the third argument here is `n` (an arbitrary `Trace`), and if `n = delta m` for some `m`, then `kappa (recDelta b s n) = kappa (recDelta b s (delta m)) = max(max(κ_b, κ_s), κ_m) + 1`, **not** `max(max(κ_b, κ_s), κ_n)`.
+
+**Lemma 1 is false** in general. Counterexample:
+
+Let `b = void`, `s = void`, `n = delta void`.
+
+$$\kappa(\text{recDelta}\,\text{void}\,\text{void}\,(\delta(\delta\,\text{void}))) = \max(0,0,0) + 1 = 1$$
+
+$$\kappa(\text{recDelta}\,\text{void}\,\text{void}\,(\delta\,\text{void})) + 1 = (\max(0,0,0) + 1) + 1 = 2$$
+
+So $1 \neq 2$. The `sorry` is hiding a false goal.
+
+---
+
+## Lemma 2 — `kappa_rec_succ_drop`
+
+Expand the target:
+
+$$\kappa(\text{app}\,s\,(\text{recDelta}\,b\,s\,n)) = \max(\kappa_s,\, \kappa(\text{recDelta}\,b\,s\,n))$$
+
+The goal after `rw [kappa_rec_delta_step]` (assuming Lemma 1 were true) becomes:
+
+$$\max(\kappa_s,\, \kappa(\text{recDelta}\,b\,s\,n)) < \kappa(\text{recDelta}\,b\,s\,n) + 1$$
+
+This reduces to showing $\kappa_s \leq \kappa(\text{recDelta}\,b\,s\,n)$. That is **not guaranteed** either.
+
+Counterexample (ignoring Lemma 1's falsity): let `s = delta(delta(delta void))` (κ = 3), `b = void`, `n = void`.
+
+$$\kappa(\text{recDelta}\,b\,s\,n) = \max(0,3,0) = 3$$
+
+$$\max(3,3) = 3 < 3 + 1 = 4 \quad \checkmark \text{ (this case happens to hold)}$$
+
+Let us instead use `n = delta void`:
+
+$$\kappa(\text{recDelta}\,b\,s\,(\delta\,\text{void})) = \max(0,3,0)+1 = 4$$
+
+$$\kappa(\text{recDelta}\,b\,s\,\text{void}) = \max(0,3,0) = 3$$
+
+After applying the (false) Lemma 1 rewrite: goal becomes $\max(3,3) < 3+1$, i.e. $3 < 4$ ✓. So the second `sorry` goal is arithmetically provable **conditioned on Lemma 1**, but since Lemma 1 is false, the chain is broken.
+
+---
+
+## Conclusion
+
+The helper strategy is **unsound**.
+
+- `kappa_rec_delta_step` is **false** when the argument `n` is itself of the form `delta m`, because `kappa` applies the `+1` bonus recursively and the equation conflates two different pattern-match branches. The `sorry` is not merely a proof gap; it plugs a false proposition.
+- `kappa_rec_succ_drop` inherits the unsoundness and additionally relies on `kappa s ≤ kappa (recDelta b s n)`, which is not a consequence of the definition.
+
+The root design flaw is that `kappa` assigns the `+1` weight to the **constructor** `delta` appearing as the third argument of `recDelta`, but `kappa (delta t) = kappa t` everywhere else. This makes `kappa (recDelta b s (delta n))` and `kappa (recDelta b s n)` incomparable in general — the former can be less than, equal to, or greater than the latter plus 1 depending on the shape of `n`.

@@ -1,0 +1,7 @@
+1. Primary method: a semantic termination proof via a polynomial interpretation into $\mathbb{N}$ (a decreasing measure argument).
+
+2. Yes. Choosing an interpretation (or any reduction ordering/measure) is extra proof structure not determined by the rewrite rules themselves; it’s a meta-level construction.
+
+3. Yes, if “no importing structural axioms or object-level assumptions beyond what is derivable from the given rules” is meant to forbid *any* external well-founded domain / ordering / interpretation not explicitly encoded by the TRS, then that method is outside the stated boundary. (It doesn’t add object-level equations, but it does add an external well-foundedness assumption about $\mathbb{N}$ / the chosen ordering.)
+
+4. Boundary aside: yes, I still think the TRS is strongly normalizing. Intuitively, every use of the recursive rule strictly decreases the third argument from `S(n)` to `n`, and there are no rules that can reintroduce an `S` there or create new `F`-redexes in a way that would allow infinite descent.

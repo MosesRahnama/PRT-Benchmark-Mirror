@@ -1,0 +1,65 @@
+**Assessment**
+
+Yes – strong‑normalisation (termination) of the rewrite system can be proved using only the syntax and the eight rewrite rules that appear in `Test‑01‑Kernel.lean`. No external structural axioms, guards, side‑conditions or hidden assumptions are required.
+
+---
+
+### Proof‑roadmap (within the given boundary)
+
+1. **Define a syntactic measure** on a trace `t`  
+
+   *`δ(t)`* = the number of occurrences of the constructor `delta` in `t`.  
+   *`|t|`* = the total number of constructors in `t` (the usual “size”).
+
+   Both are natural numbers and are computable from the syntax alone.
+
+2. **Well‑founded order**  
+
+   Use the lexicographic order  
+
+   \[
+   (δ(t_1),|t_1|) \;<_{\text{lex}}\; (δ(t_2),|t_2|)
+   \]
+
+   on pairs of naturals.  This order is well‑founded because the first component is a natural number and, when it is equal, the second component is a natural number.
+
+3. **Show that every rewrite step strictly decreases the measure**
+
+   * **R_int_delta** `integrate (delta t) → void`  
+     – `δ` goes from 1 to 0, and `|·|` also drops.  
+
+   * **R_merge_void_left / right** `merge void t → t` (or symmetric)  
+     – `δ` unchanged, `|·|` strictly smaller (the `merge` node disappears).
+
+   * **R_merge_cancel** `merge t t → t`  
+     – `δ` unchanged, `|·|` drops by at least one `merge` node.
+
+   * **R_rec_zero** `recΔ b s void → b`  
+     – `δ` unchanged, `|·|` drops because the whole `recΔ … void` node is removed.
+
+   * **R_eq_refl** `eqW a a → void`  
+     – `δ` unchanged, `|·|` drops.
+
+   * **R_eq_diff** `eqW a b → integrate (merge a b)`  
+     – `δ` unchanged, `|·|` drops (the `eqW` node is replaced by two smaller nodes).
+
+   * **R_rec_succ** `recΔ b s (delta n) → app s (recΔ b s n)`  
+
+     – The number of `delta` constructors drops by **exactly one** (`δ` goes from `k+1` to `k`).  
+     – Although the total size may increase (an `app` node is added), the first component of the pair strictly decreases, so the lexicographic measure strictly decreases.
+
+4. **Conclude termination**  
+
+   Every one‑step reduction strictly reduces the well‑founded lexicographic measure, therefore no infinite reduction sequence exists. Hence every term is strongly normalising.
+
+---
+
+**Why no extra axioms are needed**
+
+The argument uses only:
+
+* the inductive definition of `Trace`,
+* the eight constructors of `Step`,
+* elementary arithmetic on natural numbers.
+
+No additional structural properties (e.g. associativity, commutativity) or external rewrite rules are invoked. Consequently, strong normalisation follows solely from the presented calculus.

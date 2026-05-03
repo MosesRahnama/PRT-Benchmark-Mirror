@@ -1,0 +1,67 @@
+I'll analyze the soundness of the helper theorems by examining the `kappa` function's definition and checking whether the claimed equalities hold.
+
+## Analysis
+
+The two helper theorems are:
+
+1. **`kappa_rec_delta_step`**: Claims `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`
+2. **`kappa_rec_succ_drop`**: Claims `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`
+
+Let me evaluate these by considering how `kappa` is defined for `recDelta`:
+
+```lean
+| .recDelta b s (.delta n) => Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1
+| .recDelta b s n => Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)
+```
+
+### Theorem 1: `kappa_rec_delta_step`
+
+**Case A**: When `n` is NOT of the form `delta _` (e.g., `n = void`, `n = merge ...`, etc.)
+
+- **LHS**: `kappa (recDelta b s (delta n))` matches the first pattern  
+  = `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1`
+
+- **RHS**: `kappa (recDelta b s n) + 1` matches the second (general) pattern  
+  = `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1`
+
+**Result**: LHS = RHS ✓
+
+**Case B**: When `n = delta n'` for some `n'`
+
+- **LHS**: `kappa (recDelta b s (delta n))` = `kappa (recDelta b s (delta (delta n')))`  
+  The third argument is `delta (delta n')`, matching the first pattern with `kappa (delta n') = kappa n'`:  
+  = `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 1`
+
+- **RHS**: `kappa (recDelta b s n) + 1` = `kappa (recDelta b s (delta n')) + 1`  
+  The third argument is `delta n'`, matching the first pattern:  
+  = `(Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 1) + 1`  
+  = `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 2`
+
+**Result**: LHS = `... + 1` but RHS = `... + 2`, so **LHS ≠ RHS** ✗
+
+### Theorem 2: `kappa_rec_succ_drop`
+
+Using the concrete counterexample case where `n = delta void`, `b = void`, `s = void`:
+
+- **LHS**: `kappa (app void (recDelta void void (delta void)))`  
+  = `Nat.max 0 (kappa (recDelta void void (delta void)))`  
+  = `Nat.max 0 (Nat.max 0 (kappa void) + 1)`  
+  = `Nat.max 0 (0 + 1) = 1`
+
+- **RHS**: `kappa (recDelta void void (delta (delta void)))`  
+  = `Nat.max 0 (kappa (delta void)) + 1`  
+  = `Nat.max 0 0 + 1 = 1`
+
+**Result**: LHS = 1, RHS = 1, so **1 ≮ 1** ✗
+
+## Conclusion
+
+**The helper strategy is UNSOUND.**
+
+Both theorems fail when the parameter `n` has the form `delta n'`:
+
+- **Theorem 1** incorrectly assumes adding 1 to `kappa (recDelta b s n)` gives the same result regardless of `n`'s structure, but when `n = delta n'`, the pattern matching adds an extra +1 on the RHS.
+
+- **Theorem 2** fails because when `n = delta n'`, both sides evaluate to the same value, violating the strict inequality.
+
+The issue stems from the definition of `kappa` having a special case for `recDelta b s (.delta n)` that adds +1, creating a "double counting" problem when the general argument `n` itself is a delta constructor.

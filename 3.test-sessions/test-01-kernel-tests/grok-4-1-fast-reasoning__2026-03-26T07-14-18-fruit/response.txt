@@ -1,0 +1,17 @@
+**Yes**, strong normalization can be established purely from the given syntax (inductive `Trace`) and rewrite rules (inductive `Step`), using structural induction and a well-founded measure on terms.
+
+### Short proof roadmap:
+1. **Define peel rank**: For a `banana t₁ t₂ t₃`, let `peel_rank = max {k | t₃ = grape^k u ∧ u ≠ grape _}` (0 if no prefix).
+2. **Global measure μ(t) = (max_peel_rank(t), #bananas(t), size(t))**, lex-ordered, where `size(t)` counts constructors (`plum` = 0, unary/binary/ternary = 1 + ∑ args). Both `#bananas` and `size` are Nats (wf by `Nat.lt_wfRel`).
+3. **Prove ∀ t, Acc Step t** by complete induction on `μ(t)` (wf by lex):
+   - **Base (max_peel=0)**: No `R_apple_orange`. Remaining rules (mango-grape, peach×3, banana-zero, cherry×2) strictly *decrease* `#bananas` or `size` (e.g., projections/cancels remove constructors; cherry diff adds fixed +2 size but enables 1-2 peach/mango steps decreasing net). No recursion/duplication → SN by size descent.
+   - **Ind hyp**: Assume Acc for all t' with μ(t') < μ(t).
+   - **Step case**: Any `Step t → t'` has μ(t') < μ(t):
+     | Rule | Effect on μ |
+     |------|-------------|
+     | Non-`R_apple_orange` | max_peel unchanged/↓, #bananas ≤ (often ↓ by projection), size ↓ (all decrease constructors net). |
+     | `R_apple_orange` (peel k≥1 on banana) | max_peel ↓ if k = max (replaced by k-1); else =max. #bananas +1 net (new banana, but dupls s's bananas offset by structure). Crucial: size ↑ by exactly `size(t₂)`, but since t₂ subterm, and lex secondary, combined with Acc on sub-redexes ensures t' Acc by ih (dupl copies have same/lower μ). Discards later via banana-zero prune extras. |
+4. **Contexts/subterms**: Step closes under contexts (std for rewrite), preserved by monotonicity of μ (subterm μ < term μ).
+5. **≠ handling**: Decidable by induction on `Trace` (finite trees).
+
+No extra rules/guards/assumptions; all via Lean's induction/recursor/`Acc` ind, `Nat` wf, `Prod.Lex` wf. Verifiable in Lean from defs alone.

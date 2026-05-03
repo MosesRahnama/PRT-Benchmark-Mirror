@@ -1,0 +1,3 @@
+**Yes**, strong normalization can be established purely from the given rewrite rules without additional axioms.
+
+**Reasoning**: The TRS is orthogonal (no critical pairs) and follows a constructor discipline on the third argument (Z as base, S as constructor). Reductions strictly decrease a suitable measure: the multiset of "nat-depths" across all F-redexes' third arguments (depth(Z)=0, depth(S(t))=1+depth(t); non-matching args have infinite depth but don't reduce). Rule 1 removes an F-redex (depth 0). Rule 2 preserves F-count but decreases one depth by 1 (S(n) → n). No new F-redexes are created, ensuring all sequences terminate. This is provable syntactically via dependency pairs (F ⊳ F with strict decrease on usable S-args) or RPO with precedence F > G > S > Z.

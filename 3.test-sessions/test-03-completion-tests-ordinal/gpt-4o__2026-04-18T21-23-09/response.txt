@@ -1,0 +1,37 @@
+The file already contains a partial proof for the `mu_decreases` theorem, with five cases proved and three cases marked as `sorry`. Below is a proof skeleton for the remaining cases, providing a structured outline for completing them. This skeleton does not modify the file but gives a clear direction for each case.
+
+### Proof Skeleton for Remaining Cases
+
+1. **Case: `Step.R_rec_succ`**
+   - Goal: Prove that `mu(app s (recDelta b s n)) < mu(recDelta b s (delta n))`.
+   - Key Insight:
+     - The left-hand side (LHS) has an exponent containing `omega^(omega^5 * (mu(n) + 1))`, which dominates all terms in the right-hand side (RHS).
+     - Use ordinal arithmetic to show that the LHS strictly decreases compared to the RHS.
+   - Steps:
+     - Expand `mu` for both sides.
+     - Compare the dominant terms in the exponents.
+     - Show that the LHS exponent dominates the RHS exponent.
+
+2. **Case: `Step.R_eq_refl`**
+   - Goal: Prove that `0 < omega^(2 * mu(a) + 9) + 1`.
+   - Key Insight:
+     - This is a positivity argument.
+     - The term `omega^(2 * mu(a) + 9)` is positive because `omega` raised to any ordinal is positive.
+   - Steps:
+     - Simplify the expression.
+     - Use the positivity of `omega` and ordinal arithmetic to conclude.
+
+3. **Case: `Step.R_eq_diff`**
+   - Goal: Prove that `mu(integrate (merge a b)) < mu(eqW a b)`.
+   - Key Insight:
+     - The RHS has a much larger exponent (`mu(a) + mu(b) + 9`) compared to the LHS terms.
+     - The LHS terms involve `omega^4` and smaller exponents, which are dominated by the RHS.
+   - Steps:
+     - Expand `mu` for both sides.
+     - Compare the dominant terms in the exponents.
+     - Show that the RHS exponent dominates the LHS exponent.
+
+### Next Steps
+- Use the provided skeleton to complete the proofs by filling in the ordinal arithmetic details.
+- Focus on comparing the dominant terms in the exponents for each case.
+- Ensure that all inequalities are justified using properties of ordinals, such as positivity and monotonicity of `omega` powers.

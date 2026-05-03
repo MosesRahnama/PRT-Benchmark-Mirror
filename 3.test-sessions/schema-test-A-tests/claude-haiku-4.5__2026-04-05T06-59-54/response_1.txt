@@ -1,0 +1,21 @@
+**Raw Assessment: YES, strong normalization can be established from these rules alone.**
+
+## Proof Roadmap
+
+This system has a natural termination structure that admits a straightforward lexicographic weight argument:
+
+1. **Primary measure**: Count of F-redexes in the term.
+2. **Secondary measure**: Sum of S-nesting depths in the third argument of all F-redexes.
+
+**Why both rules terminate:**
+- **Rule 1** [F(x, y, Z) → x]: Eliminates one F-redex (primary measure decreases).
+- **Rule 2** [F(x, y, S(n)) → G(y, F(x, y, n))]: Substitutes S(n) with n in the recursive call, strictly decreasing the secondary measure (nesting depth of the third argument) while keeping the F-count constant or decreasing after subsequent Rule 1 applications.
+
+Since G has no rewrite rules, it acts as an inert constructor and creates no new reductions. The system is essentially **primitive recursion** over Peano-structure in the third argument.
+
+**Minimal ingredients needed:**
+- Standard first-order term syntax (finite depth)
+- Subterm ordering (standard TRS semantics)
+- No external structural axioms required beyond these basics.
+
+The system is unambiguously strongly normalizing.

@@ -1,0 +1,31 @@
+**Assessment:**  
+Strong normalization **can** be proved from the two rewrite rules alone; no additional structural axioms or object‑level assumptions are needed.
+
+**Proof roadmap**
+
+1. **Define a well‑founded measure**  
+   - For any term `t`, let `μ(t)` be the *height* of the third argument of the outermost `F`‑symbol, i.e. the number of `S` constructors surrounding the base constant `Z`.  
+   - `μ(t) ∈ ℕ` and the usual order `<` on natural numbers is well‑founded.
+
+2. **Show each rewrite step strictly decreases the measure**  
+
+   - **Rule 1:** `F(x, y, Z) → x`  
+     The left‑hand side has `μ = 0`; the right‑hand side contains no `F` at all, so the measure drops from `0` to “undefined” (i.e. no larger value).  
+
+   - **Rule 2:** `F(x, y, S(n)) → G(y, F(x, y, n))`  
+     The left‑hand side has `μ = 1 + μ(n)`.  
+     The right‑hand side contains a single `F(x, y, n)` whose measure is `μ(n)`, which is strictly smaller:  
+     `μ(F(x, y, S(n))) = 1 + μ(n) > μ(F(x, y, n))`.  
+     The surrounding `G` does not introduce any new `F`‑terms, so the overall measure of the whole term drops.
+
+3. **Termination argument**  
+   - Any rewrite sequence must strictly decrease the natural‑number measure at each step.  
+   - Because the natural numbers are well‑founded, there cannot be an infinite descending chain.  
+   - Consequently every reduction sequence is finite; every term has a normal form.
+
+4. **No hidden cycles**  
+   - The only symbol that can be rewritten is `F`.  
+   - Both rules replace an `F` with either a variable (`x`) or a `G` that contains a *smaller* `F`.  
+   - No rule creates a larger `F` or re‑introduces the same `S`‑depth, so cycles are impossible.
+
+**Conclusion:** The given first‑order term rewriting system is strongly normalising solely by virtue of the two rules shown. The proof proceeds by a simple decreasing‑measure argument on the natural‑number argument of `F`.

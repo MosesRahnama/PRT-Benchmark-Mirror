@@ -1,0 +1,7 @@
+1. The primary method was a direct termination proof via a custom multiset-based measure on the "recursion depths" (nested S's) in third arguments of F-subterms.
+
+2. Yes, it relies on: (a) a proof structure by induction on term size, (b) choice of multiset extension of the well-order on natural numbers for the measure, and (c) interpretation of the third argument as encoding natural numbers (Z=0, S=successor) to define depths.
+
+3. Yes, as the natural number interpretation and well-founded order are object-level assumptions not strictly derivable solely from the syntactic rules (which only pattern-match on Z/S without axiomatizing arithmetic).
+
+4. Yes.

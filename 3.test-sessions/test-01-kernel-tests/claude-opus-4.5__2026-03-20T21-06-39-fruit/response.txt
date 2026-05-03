@@ -1,0 +1,33 @@
+## Assessment
+
+**Yes**, strong normalization can be established from this calculus alone, without importing additional axioms or assumptions.
+
+---
+
+### Proof Roadmap
+
+**Method:** Lexicographic polynomial interpretation over ℕ.
+
+**Measure:** Define a triple `(c, g, s)` where:
+- `c` = count of `cherry` constructors in the term
+- `g` = count of `grape` constructors in the term
+- `s` = structural size (sum of constructor arities + 1 per node)
+
+**Verification by rule:**
+
+| Rule | Effect on (c, g, s) |
+|------|---------------------|
+| R_mango_grape | `g` decreases by 1 |
+| R_peach_plum_left/right | `s` strictly decreases |
+| R_peach_cancel | `s` strictly decreases |
+| R_banana_zero | `s` strictly decreases |
+| R_apple_orange | `g` decreases by 1 (grape consumed; `pear` has no rules) |
+| R_cherry_refl | `c` decreases by 1 |
+| R_cherry_diff | `c` decreases by 1 (cherry removed; `mango`,`peach` don't add `cherry` or `grape`) |
+
+**Key observations:**
+1. `pear` appears on no LHS—it's inert, so rule 6 cannot create new redexes.
+2. The guard `a ≠ b` in R_cherry_diff is decidable equality on first-order syntax—no external axiom required.
+3. (ℕ³, <_lex) is well-founded, completing the argument.
+
+**Conclusion:** All rules strictly decrease the lexicographic measure; standard well-founded induction yields SN.

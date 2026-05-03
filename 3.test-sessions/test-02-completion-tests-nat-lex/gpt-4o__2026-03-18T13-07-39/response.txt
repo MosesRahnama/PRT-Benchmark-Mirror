@@ -1,0 +1,41 @@
+Here is a proof skeleton for the remaining cases in the `measure_decreases` theorem. Each case is outlined with the necessary structure to complete the proof, but the actual reasoning is left as `sorry` for now:
+
+```lean
+-- integrate (delta t) --> void
+| _, _, Step.R_int_delta t => by
+    -- Goal: Show LexOrder (measure void) (measure (integrate (delta t)))
+    -- Hint: kappa decreases to 0, mu decreases by mu(integrate(delta t))
+    sorry
+
+-- recDelta b s void --> b
+| _, _, Step.R_rec_zero b s => by
+    -- Goal: Show LexOrder (measure b) (measure (recDelta b s void))
+    -- Hint: kappa decreases, mu decreases by mu(recDelta b s void)
+    sorry
+
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    -- Goal: Show LexOrder (measure (app s (recDelta b s n))) (measure (recDelta b s (delta n)))
+    -- Hint: kappa ties, mu decreases by mu(delta n)
+    sorry
+
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    -- Goal: Show LexOrder (measure void) (measure (eqW a a))
+    -- Hint: kappa decreases to 0, mu decreases by mu(eqW a a)
+    sorry
+
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    -- Goal: Show LexOrder (measure (integrate (merge a b))) (measure (eqW a b))
+    -- Hint: kappa ties, mu decreases by mu(eqW a b) - mu(integrate(merge a b))
+    sorry
+```
+
+### Explanation of the Skeleton
+1. **Case Structure**: Each case begins with the pattern matching for the specific rule in the `Step` relation.
+2. **Goal Description**: The goal is to show that the lexicographic measure strictly decreases for the given rule.
+3. **Hints**: Each case includes hints about how `kappa` and `mu` behave for the transition, which will guide the proof.
+4. **`sorry` Placeholder**: The actual proof steps are left as `sorry`, as requested.
+
+This skeleton provides a clear roadmap for completing the remaining cases.

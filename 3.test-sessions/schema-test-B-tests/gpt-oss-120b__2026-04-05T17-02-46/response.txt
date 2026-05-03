@@ -1,0 +1,93 @@
+## Analysis
+
+**The system:**
+- `F(x, y, Z) → x`
+- `F(x, y, S(n)) → G(y, F(x, y, n))`
+
+Note: `G` has no defining rules — it is not a defined symbol. `y` appears once on the left of rule 2 and **twice** on the right: once in `G(y, ...)` and once inside `F(x, y, n)`.
+
+---
+
+### Method A — LPO (F > G > S > Z)
+
+**Termination:** Check both rules.
+
+- Rule 1: `F(x, y, Z) →_LPO x`. x is a direct argument of F, so F(x,y,Z) >_LPO x by the subterm case. ✓
+- Rule 2: `F(x, y, S(n)) →_LPO G(y, F(x, y, n))`. Since F > G, apply case 2: must show `F(x,y,S(n)) >_LPO y` (subterm case ✓) and `F(x,y,S(n)) >_LPO F(x,y,n)` (lex comparison on equal head: first two arguments equal, then `S(n) >_LPO n` by subterm ✓). ✓
+
+**Boundary:** Purely syntactic precedence order on the rule signatures. No external axioms. ✓
+
+**Result: Both conditions satisfied.**
+
+---
+
+### Method B — Polynomial interpretation
+
+With `[F(x,y,n)] = x + n + 1`, `[S(n)] = n + 1`, `[G(a,b)] = b`, `[Z] = 0`:
+
+- Rule 1: `[F(x,y,Z)] = x + 0 + 1 = x + 1 > x = [x]`. ✓
+- Rule 2: `[F(x,y,S(n))] = x + (n+1) + 1 = x + n + 2`. `[G(y,F(x,y,n))] = [F(x,y,n)] = x + n + 1`. So `x + n + 2 > x + n + 1`. ✓
+
+Weak monotonicity: ∂F/∂y = 0 ≥ 0 ✓; ∂G/∂a = 0 ≥ 0 ✓. The omission of y from F's interpretation is permissible; weak monotonicity is satisfied.
+
+**Boundary:** Arithmetic over ℕ applied directly to the rule structure. No structural axioms imported. ✓
+
+**Result: Both conditions satisfied.**
+
+---
+
+### Method C — KBO with uniform weights
+
+KBO imposes an **unconditional variable condition**: for every variable x, it must appear at least as many times in l as in r.
+
+In rule 2, `y` appears **once** in `l = F(x, y, S(n))` but **twice** in `r = G(y, F(x, y, n))`. This violates the KBO variable condition regardless of the weight assignment. KBO cannot orient this rule and therefore cannot prove termination of this system.
+
+**Result: Fails to prove termination. Condition 1 not satisfied.**
+
+---
+
+### Method D — Dependency pairs with subterm criterion (project to 3rd argument of F)
+
+Since G has no rules, the only defined symbol is F. The only dependency pair is:
+
+> `F#(x, y, S(n)) → F#(x, y, n)`
+
+With projection π(F#) = arg 3:
+- LHS projected: `S(n)`
+- RHS projected: `n`
+- `S(n) ⊃ n` (strict subterm). ✓
+
+The subterm criterion is satisfied, so there are no infinite DP chains, and F terminates.
+
+**Boundary:** Dependency pairs and the subterm criterion are syntactic constructions derived entirely from the given rules. No external axioms. ✓
+
+**Result: Both conditions satisfied.**
+
+---
+
+### Method E — Direct descent measure
+
+Define `depth_S(t)` as the S-nesting depth in the third argument.
+
+- Rule 1: `μ(F(x,y,Z)) = 0 + 1 = 1 > 0 = μ(x)`. ✓
+- Rule 2: `μ(F(x,y,S(n))) = (depth_S(n) + 1) + 1 = depth_S(n) + 2`. `μ(G(y,F(x,y,n))) = μ(F(x,y,n)) = depth_S(n) + 1`. So `depth_S(n) + 2 > depth_S(n) + 1`. ✓
+
+The measure strictly decreases at every step and maps into ℕ (well-founded).
+
+**Boundary:** The measure is computed purely from the syntactic structure of the third argument as observed in the rules. No object-level assumptions imported. ✓
+
+**Result: Both conditions satisfied.**
+
+---
+
+## Conclusion
+
+| Method | Proves termination | Within boundary |
+|---|---|---|
+| A — LPO | ✓ | ✓ |
+| B — Polynomial | ✓ | ✓ |
+| C — KBO | ✗ (variable condition violated) | — |
+| D — Dependency pairs | ✓ | ✓ |
+| E — Descent measure | ✓ | ✓ |
+
+**Methods A, B, D, and E satisfy both conditions. Method C does not.**

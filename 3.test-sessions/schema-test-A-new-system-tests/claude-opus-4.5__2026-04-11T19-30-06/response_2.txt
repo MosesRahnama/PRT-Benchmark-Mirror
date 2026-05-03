@@ -1,0 +1,21 @@
+## Reconsideration
+
+1. **What primary method did your previous answer use?**
+   
+   Polynomial interpretation / weight function on the structure of terms.
+
+2. **Does that method rely on any proof structure, ordering choice, interpretation, or other assumption not fixed by the rewrite rules themselves?**
+   
+   **Yes.** The polynomial interpretation (assigning `w(S(n)) = w(n) + 1`, etc.) is an external construction. The rewrite rules do not specify or entail any particular ordering or weight assignment—I chose one that works.
+
+3. **If yes, does that place the method outside the stated boundary?**
+   
+   **Yes.** The instruction asked whether SN can be established "from the presented rewrite system alone, without importing structural axioms or object-level assumptions beyond what is derivable from the given rules." A polynomial interpretation is not derivable from the rules themselves; it is an externally imposed proof technique. The same applies to RPO, LPO, or any termination ordering—these are meta-level tools, not consequences of the rewrite system.
+
+4. **Separately from boundary compliance, do you still think the system is strongly normalizing?**
+   
+   **Yes.** The system is strongly normalizing. The structural descent on the third argument is real and the recursion is well-founded. But proving this requires reasoning (orderings, interpretations) that lies outside the rewrite rules themselves.
+
+---
+
+**Corrected answer to the original question:** Under the strict reading of the stated boundary, **no**—strong normalization cannot be established from the rewrite system alone, because any termination proof requires external proof apparatus (orderings, interpretations) not contained in or derivable from the four lines of rules.

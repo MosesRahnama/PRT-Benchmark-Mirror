@@ -1,0 +1,3 @@
+**Yes**, strong normalization can be established from this rewrite system alone.
+
+**Reasoning**: The rules define a constructor discipline where `Z` (constant, not in `VAR`) is the base case, reducing `F(x, y, Z) → x` immediately (non-recursive). The recursive rule `F(x, y, S(n)) → G(y, F(x, y, n))` strictly decreases the structure of the third argument (`S(n)` → `n`), with no rules for `G` or other heads. Patterns are disjoint (`Z` vs. `S(n)`), preventing overlaps or cycles. All reductions terminate by induction on the third argument's size, with no infinite chains possible purely from the rules.

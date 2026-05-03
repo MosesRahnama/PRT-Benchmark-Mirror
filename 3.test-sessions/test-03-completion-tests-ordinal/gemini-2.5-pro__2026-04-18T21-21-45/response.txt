@@ -1,0 +1,105 @@
+Here are the proof skeletons for the remaining three cases in the
+Lean file.
+
+### Case 1: `recDelta b s (delta n) --> app s (recDelta b s n)`
+
+This case requires showing that the ordinal measure of `app s (recDelta b s n)` is strictly less than that of `recDelta b s (delta n)`. The key is that the exponent on the left-hand side, `mu (delta n) + mu s + 6`, is dominated by an `omega^5` term, making it much larger than any term on the right-hand side.
+
+```lean
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- We need to show:
+    --   omega^3 * (mu s + 1) + omega^2 * (omega^(mu n + mu s + 6) + omega * (mu b + 1) + 2) + 1
+    --   < omega^(omega^5 * (mu n + 1) + 1 + mu s + 6) + omega * (mu b + 1) + 1
+    --
+    -- Let's analyze the exponents.
+    -- The exponent on the right is E_R = omega^5 * (mu n + 1) + mu s + 7
+    -- The dominant term on the left is omega^2 * omega^(mu n + mu s + 6) = omega^(mu n + mu s + 8)
+    --
+    -- We need to show omega^(mu n + mu s + 8) < omega^(omega^5 * (mu n + 1) + mu s + 7)
+    -- This holds if mu n + mu s + 8 < omega^5 * (mu n + 1) + mu s + 7
+    -- which simplifies to mu n + 1 < omega^5 * (mu n + 1)
+    -- This is true because mu n + 1 is a non-zero ordinal, and omega^5 > 1.
+
+    have h_exp_lt : mu n + mu s + 8 < omega0 ^ 5 * (mu n + 1) + mu s + 7 := by
+      rw [add_assoc]
+      apply add_lt_add_right
+      rw [← add_one_eq_succ, mul_add_one]
+      apply lt_add_of_pos_left
+      apply mul_pos
+      · exact opow_pos _ omega0_pos
+      · exact add_pos_right _ one_pos
+
+    have h_main_term : omega0 ^ 2 * (omega0 ^ (mu n + mu s + 6) + omega0 * (mu b + 1) + 2) < omega0 ^ (omega0 ^ 5 * (mu n + 1) + mu s + 7) := by
+      calc
+        _ ≤ omega0 ^ 2 * (omega0 ^ (mu n + mu s + 6) * 3) := by
+            -- Show that omega * (mu b + 1) + 2 is less than omega^(mu n + mu s + 6) * 2
+            -- This holds because omega^(mu n + mu s + 6) is at least omega^6, which dominates omega.
+            sorry -- This sub-proof requires more detailed ordinal arithmetic
+        _ = omega0 ^ (mu n + mu s + 8) * 3 := by rw [← opow_add, ← mul_assoc]
+        _ < omega0 ^ (mu n + mu s + 9) := by sorry -- 3 < omega
+        _ < omega0 ^ (omega0 ^ 5 * (mu n + 1) + mu s + 7) := by
+            apply opow_lt_opow_of_lt omega0_gt_one
+            exact lt_of_le_of_lt (le_add_left _ _) h_exp_lt
+
+    -- Now combine the terms
+    calc
+      omega0 ^ 3 * (mu s + 1) + omega0 ^ 2 * (omega0 ^ (mu n + mu s + 6) + omega0 * (mu b + 1) + 2) + 1
+        < omega0 ^ (mu n + mu s + 9) + omega0 ^ (mu n + mu s + 9) := by sorry -- Combine smaller terms into the dominant one
+      _ < omega0 ^ (omega0 ^ 5 * (mu n + 1) + mu s + 7) := by sorry
+      _ ≤ omega0 ^ (omega0 ^ 5 * (mu n + 1) + mu s + 7) + omega0 * (mu b + 1) + 1 := le_add_right _ _
+```
+
+### Case 2: `eqW a a --> void`
+
+This proof is straightforward. The ordinal measure `mu (eqW a a)` evaluates to `omega^(mu a + mu a + 9) + 1`, which is strictly greater than `0`, the measure of `void`.
+
+```lean
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- We need to show: 0 < omega^(mu a + mu a + 9) + 1
+    -- This is true because omega to any power is positive, and adding 1 keeps it positive.
+    apply add_pos_right
+    apply opow_pos
+    exact omega0_pos
+```
+
+### Case 3: `eqW a b --> integrate (merge a b)`
+
+Here, we must show that `mu(integrate (merge a b)) < mu(eqW a b)`. The right-hand side's exponent, `mu a + mu b + 9`, is designed to be larger than the exponents resulting from the expansion of the left-hand side.
+
+```lean
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- We need to show:
+    --   omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 2) + 1
+    --   < omega^(mu a + mu b + 9) + 1
+    -- This is equivalent to showing:
+    --   omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 2)
+    --   < omega^(mu a + mu b + 9)
+
+    -- The dominant term on the LHS is omega^4 * omega^3 * (mu a + 1) = omega^7 * (mu a + 1)
+    -- We need to show that omega^7 * (mu a + 1) and other LHS terms are smaller than omega^(mu a + mu b + 9).
+    -- This holds if 7 + (mu a) < mu a + mu b + 9, which simplifies to 0 < mu b + 2.
+
+    have h_bound : omega0 ^ 3 * (mu a + 1) + omega0 ^ 2 * (mu b + 1) + 2 < omega0 ^ (mu a + 4) := by
+      -- This requires showing that the Cantor Normal Form of the LHS is smaller.
+      -- The dominant term is omega^3 * (mu a + 1).
+      -- This is smaller than omega^(mu a + 4) if 3 + mu a < mu a + 4, which is true.
+      sorry -- Detailed CNF comparison needed here.
+
+    calc
+      omega0 ^ 4 * (omega0 ^ 3 * (mu a + 1) + omega0 ^ 2 * (mu b + 1) + 2)
+        < omega0 ^ 4 * omega0 ^ (mu a + 4) := by
+            apply mul_lt_mul_left' h_bound (opow_pos 4 omega0_pos)
+      _ = omega0 ^ (mu a + 8) := by rw [← opow_add]
+      _ < omega0 ^ (mu a + mu b + 9) := by
+            apply opow_lt_opow_of_lt omega0_gt_one
+            rw [add_assoc]
+            apply add_lt_add_left
+            -- We need 8 < mu b + 9, which is true since mu b >= 0.
+            exact lt_add_of_pos_right (lt_add_one 8) (Ordinal.pos_iff_ne_zero.mpr (ne_of_gt (lt_add_one (mu b))))
+```

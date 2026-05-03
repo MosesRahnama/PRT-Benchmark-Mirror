@@ -1,0 +1,31 @@
+Based on my analysis of the Lean 4 file, here's my raw assessment:
+
+## Assessment: Strong normalization likely establishable
+
+**System overview:**
+- 7 constructors: `plum` (nullary), `grape`/`mango` (unary), `peach`/`pear`/`cherry` (binary), `banana` (ternary)
+- 8 rewrite rules with varying structural effects
+
+**Key observation:** The system has a **grape-elimination property** - every rule that involves `grape` constructors strictly eliminates them:
+- `R_mango_grape`: `mango (grape t) → plum` (eliminates both `mango` and `grape`)
+- `R_apple_orange`: `banana b s (grape n) → pear s (banana b s n)` (eliminates `grape`, preserves underlying `n`)
+
+No rule introduces new `grape` constructors.
+
+## Proof Roadmap (within boundary)
+
+**Termination measure:** Lexicographic ordering on `(g, s)` where:
+- `g` = number of `grape` constructors in the term  
+- `s` = structural measure (e.g., term size or custom weighting)
+
+**Argument:**
+1. **Grape-elimination**: Rules involving `grape` strictly decrease `g`
+2. **Structural control**: When `g` remains constant, other rules either decrease `s` or preserve well-founded structure:
+   - `R_peach_*` rules eliminate constructors
+   - `R_cherry_refl` eliminates constructors  
+   - `R_cherry_diff` preserves arguments in controlled transformation
+   - `R_banana_zero` eliminates constructors
+
+**Critical step:** Verify that `R_cherry_diff` and the recursive nature of `R_apple_orange` don't create pathological cycles when `g = 0`.
+
+The purely syntactic nature of the rules and the grape-elimination property suggest strong normalization should be provable using standard lexicographic termination techniques, without requiring external axioms or structural extensions beyond the given calculus.

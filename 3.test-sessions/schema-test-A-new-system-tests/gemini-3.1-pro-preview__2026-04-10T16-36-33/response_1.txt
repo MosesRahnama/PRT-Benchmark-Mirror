@@ -1,0 +1,8 @@
+**Assessment:** Yes, strong normalization can be established entirely from the presented rewrite system without needing any external structural axioms or object-level assumptions. 
+
+**Reasoning:**
+The rules define a strictly decreasing structural recursion based on the third argument:
+1. `F(x, y, Z) -> x` eliminates the function symbol `F` and reduces to a subterm `x`, which strictly decreases the size of the term.
+2. `F(x, y, S(n)) -> G(F(x, y, n))` evaluates the recursive call on `n`, which is an immediate, strictly smaller structural subterm of `S(n)`. 
+
+Because every application of `F` either terminates immediately (base case `Z`) or strictly decreases the structural depth of its third argument (recursive case `S(n)`), the rewrite process must eventually halt for any finite input term. This termination can be rigorously proven using standard, purely syntactic term rewriting techniques—such as a Lexicographic Path Ordering (LPO) with a simple precedence of `F > G`—relying exclusively on the rules provided in the file.

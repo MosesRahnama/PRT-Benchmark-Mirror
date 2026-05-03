@@ -1,0 +1,13 @@
+**Assessing Rewrite Rules**
+
+I'm currently focused on the Lean 4 file's rewrite system. My primary task is dissecting the `Trace` inductive type and the `Step` predicate. Understanding their interaction and implications for strong normalization is key. I'm taking a close look at how the rules are defined.
+
+
+**Deconstructing Rewrite Steps**
+
+I'm now carefully examining the `Step` rules themselves. The rule `R_rec_succ` is immediately grabbing my attention. Its unfolding behavior looks potentially problematic for strong normalization; however, I must now trace how this unfolds within the context of the `Trace` constructors and the other reduction rules, especially when intertwined with the `merge` and `integrate` constructors. I must analyze potential infinite loops.
+
+
+**Scrutinizing Recursion Rules**
+
+I am now focusing on the `recΔ` rules, specifically `R_rec_succ`. This rule's effect on the size of the term is crucial. It seems like the recursion is well-founded, but I need to make sure the arguments to `recΔ` are, in some sense, getting smaller. I'll need to look closely at the relationship between the `delta` terms and the overall term structure.

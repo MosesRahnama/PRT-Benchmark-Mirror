@@ -1,0 +1,72 @@
+The file contains exactly 21 lines defining:
+
+1. An inductive type `Trace` with 7 constructors: `void`, `delta`, `integrate`, `merge`, `app`, `recΔ`, `eqW`
+2. An inductive relation `Step` with 8 rewrite rules
+
+Let me analyze whether strong normalization (SN) holds for this system.
+
+Key observations:
+
+**The rules:**
+- `R_int_delta`: `integrate (delta t) → void` — eliminates both constructors
+- `R_merge_void_left`: `merge void t → t` — reduces size
+
+
+- `R_merge_void_right`: `merge t void → t` — reduces size
+- `R_merge_cancel`: `merge t t → t` — reduces size
+- `R_rec_zero`: `recΔ b s void → b` — eliminates recΔ
+- `R_rec_succ`: `recΔ b s (delta n) → app s (recΔ b s n)` — this is the critical rule that could cause issues
+- `R_eq_refl`: `eqW a a → void` — eliminates eqW
+- `R_eq_diff`: `eqW a b → integrate (merge a b)` — introduces new structure
+
+Now I'm checking whether the system is strongly normalizing. The tricky part is that `R_eq_refl` and `R_eq_diff` can both apply when `a = b`, creating potential overlap — `R_eq_diff` would produce `integrate (merge a a)` which then reduces to `integrate a` via `R_merge_cancel`. This doesn't necessarily terminate further unless `a` has a specific form, but having multiple applicable rules doesn't break strong normalization, just means the system is non-confluent. What matters is whether every reduction sequence eventually terminates.
+
+The critical rule to examine is `R_rec_succ`, which unfolds `recΔ b s (delta n)` into `app s (recΔ b s n)`. The recursion argument `n` is a proper subterm of `delta n`, so it's decreasing, but `app` is just a constructor with no rewrite rules, meaning `app s (recΔ b s n)` can only reduce if the inner `recΔ b s n` reduces. When `n = void`, the recursion bottoms out.
+
+But the third argument to `recΔ` can be any `Trace`, not just `void` or `delta` constructors—if it's something like `merge (delta x) (delta y)`, then `recΔ b s (merge (delta x) (delta y))` is already in normal form since neither base rule applies.
+
+Actually, I need to reconsider what `Step` really is here. Looking back at the rules, they only match at the root level with no context closure rules defined, so this is a root-step relation, not a contextual one. That means reduction only happens at the top level, which actually makes strong normalization much easier to argue for since reduction sequences are severely constrained—most terms can't reduce at all unless they have the right outermost constructor.
+
+But wait, let me trace through an example more carefully. If I apply `R_rec_succ` to `recΔ b s (delta (delta void))`, I get `app s (recΔ b s (delta void))`. Now the subterm `recΔ b s (delta void)` is buried under `app`, so without contextual closure rules, I can't reduce it further. The result is stuck in normal form even though it contains a potential redex underneath. This means the system as stated is actually quite restricted—after one root reduction step, you often hit a wall because the reduct has a different outermost constructor that doesn't match any rule.
+
+The real question is whether strong normalization holds when we allow reduction anywhere in the term, not just at the root. That's where things get interesting. The key issue is that `R_eq_diff` can blow up term size and create complex interactions with the other rules. For instance, `eqW (delta t) (delta t)` can reduce via `R_eq_refl` to `void`, but it can also go through `R_eq_diff` to produce `integrate (merge (delta t) (delta t))`, which then simplifies back down. I need to check whether these branching paths can create infinite reduction sequences.
+
+Looking at the merge rules more carefully — they only produce `void`, the original term, or one of the arguments, never new `delta` terms. So `integrate (merge a b)` can only reduce further if the merge itself reduces to something that triggers `R_int_delta`. This constrains what's possible.
+
+Now for the real concern: `R_rec_succ` duplicates the successor function `s` in the recursive call, but since there are no rewrite rules for the `app` constructor itself, that duplication doesn't lead anywhere — `app` just remains inert at the root level.
+
+To find a non-terminating sequence, I need to look for terms that actually expand under reduction. The candidates are `R_rec_succ`, which wraps the result in `app` and shrinks the third argument, and `R_eq_diff`, which nests more constructors around the arguments. The key constraint is whether the third argument in `R_rec_succ` can keep decreasing indefinitely while still triggering the rule.
+
+When `s` gets duplicated through reductions, it's not being modified—just copied. So any reductions within those copies are bounded by the redexes already in `s` times the number of copies, and the number of copies is limited by how many times we unfold `delta`. Since `delta` unfoldings are bounded by the depth of the third argument, which strictly decreases, this suggests the system should terminate.
+
+But with contextual closure and duplication in play, I need to be more rigorous. Let me try assigning weights to constructors and verify that every reduction rule strictly decreases the total weight.
+
+Assigning weights to each constructor and checking whether the reduction rules preserve strict decrease... For R_rec_succ, the challenge is finding a weight function where the recursive case grows fast enough—specifically, the weight of `recΔ b s (delta n)` must exceed `w(s) + w(recΔ b s n) + 1`. If I model the weight as something like `(s + 1) · g(n) + b`, then `g` needs to grow superlinearly to handle the accumulating `w(s) + 1` overhead at each recursion step.
+
+Let me explore an exponential approach instead—something like `f(b, s, n) = (s + 2)^n · (b + 1)` might work better. Actually, I should think through a multivariate polynomial interpretation more systematically. I'll define the weight function recursively: `void` has weight 1, `delta(t)` adds 1 to the weight of `t`, `integrate(t)` also adds 1, `merge` combines the weights of its arguments, and `app` will follow a similar pattern.
+
+Checking the recursive case...
+
+The left side expands to (⟦s⟧ + 1)·⟦n⟧ + ⟦s⟧ + 1 + ⟦b⟧, while the right side gives ⟦s⟧ + (⟦s⟧ + 1)·⟦n⟧ + ⟦b⟧. When I subtract them, the terms cancel out cleanly, which is what I need for this to work.
+
+Now I'm verifying the base case where the recursion terminates with void—the left side evaluates to ⟦s⟧ + 1 + ⟦b⟧ while the right side is just ⟦b⟧, giving a difference of ⟦s⟧ + 1, which is positive as required. I'm also checking the integration rule for delta functions, where integrating delta(t) should give ⟦t⟧ + 2.
+
+Moving through the merge operations now—when merging void with any term t, the left side adds an extra unit of cost compared to just t alone, satisfying the inequality. The same holds when void appears on the right. For the merge cancellation case where we're combining identical terms, I need to verify that the cost difference remains positive.
+
+Now checking the equality rules. The reflexivity case shows that comparing a term with itself produces a cost strictly greater than void, which checks out. For the inequality case with different terms, I'm verifying the cost differential holds as well.
+
+Looking at the cost of comparing two distinct terms against integrating their merge, I'm getting zero difference—the costs are identical. That's not strict enough for the proof, so I need to adjust my cost model. Let me try removing the extra unit cost from integration and see if that resolves the issue.
+
+With this simpler cost function, the delta rule now shows a strict decrease: integrating delta costs one more than void. For the equality rule, comparing two terms costs one more than merging and integrating them. Let me verify this adjustment holds across all the reduction rules.
+
+Now I need to check that each constructor's interpretation is monotone in its arguments—this ensures the cost function remains strictly decreasing even when rules are applied in larger contexts. So the key insight is that all the function interpretations are weakly monotone in their arguments—delta and integrate preserve their input measures, while merge and app are additive across their components—which means the contextual closure preserves the strict decrease property of the reduction ordering. I'm verifying that the equality interpretation is also weakly monotone, then confirming all rules strictly decrease their interpretations—which by the polynomial interpretation theorem guarantees strong normalization. There's a subtle point about non-linear left-hand sides in rules like `R_merge_cancel` and `R_eq_refl`, but this doesn't break the argument since we just substitute the same value for repeated variables.
+
+I'm also noticing that `R_eq_diff` has no side condition preventing `a = b`, so it overlaps with `R_eq_refl` in non-deterministic rewriting. However, the polynomial interpretation still works because every reduction path terminates regardless of which rule fires—the measure always decreases.
+
+Let me verify the interpretation for `R_eq_diff` once more: the left side `eqW a b` evaluates to ⟦a⟧ + ⟦b⟧ + 1, while the right side `integrate(merge(a, b))` evaluates to ⟦a⟧ + ⟦b⟧, giving a decrease of 1.
+
+So the proof strategy is to define a polynomial interpretation from Trace to ℕ, verify all 8 rules strictly decrease under this interpretation, confirm constructor interpretations are weakly monotone, and then apply the standard polynomial interpretation theorem to establish strong normalization for the compatible closure.
+
+I need to be precise about what "compatible closure" means here—`Step` is a root-step relation, and the contextual closure allows reducing any subterm, which requires monotonicity of the constructors to ensure the polynomial interpretation still works. One thing worth noting: `R_eq_diff` can transform a normal-form term into a non-normal form that then reduces further, like `eqW void (delta void)` eventually reaching `void`, but these chains still terminate. I'm convinced strong normalization follows directly from the calculus using polynomial interpretation without needing additional axioms or guards.
+
+The overlap between `R_eq_diff` and `R_eq_refl` doesn't matter for termination—the polynomial interpretation guarantees strict decrease on every rule application regardless of which rule fires. Non-linearity in the left-hand sides like `merge t t` and `eqW a a` also doesn't break the argument; the interpretation handles substitution correctly even with repeated variables. I'm ready to write this up.

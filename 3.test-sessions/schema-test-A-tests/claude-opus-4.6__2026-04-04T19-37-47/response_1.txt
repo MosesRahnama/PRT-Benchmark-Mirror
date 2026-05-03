@@ -1,0 +1,27 @@
+**Yes.** Strong normalization of this system can be established from the rules alone.
+
+## The system
+
+| Rule | |
+|---|---|
+| `F(x, y, Z) → x` | base case |
+| `F(x, y, S(n)) → G(y, F(x, y, n))` | recursive case |
+
+`G` is a **free** (undefined) symbol — it has no rewrite rules, so `G(…)` terms are constructor-like and never reduce.
+
+## Proof roadmap
+
+**Method: polynomial interpretation over $\mathbb{N}$.**
+
+Assign:
+
+$$[Z] = 0, \quad [S(n)] = n + 1, \quad [G(a, b)] = b + 1, \quad [F(x, y, n)] = 2n + x + 1$$
+
+Verify both rules are strictly decreasing:
+
+1. **Rule 1:** $[F(x, y, Z)] = 2 \cdot 0 + x + 1 = x + 1 > x = [x]$ ✓
+2. **Rule 2:** $[F(x, y, S(n))] = 2(n+1) + x + 1 = 2n + x + 3$, while $[G(y, F(x,y,n))] = [F(x,y,n)] + 1 = 2n + x + 2$. Since $2n + x + 3 > 2n + x + 2$ ✓
+
+Both orientations are strict, the interpretation is monotone in all arguments, and all coefficients are non-negative, so the system is **strongly normalizing** by the standard polynomial-interpretation termination theorem.
+
+**Why no external axioms are needed:** The only defined symbol is `F`, whose recursion is controlled entirely by the Peano structure in its third argument (strictly decreasing from `S(n)` to `n`). `G` is free and contributes no reductions. The termination argument is self-contained.

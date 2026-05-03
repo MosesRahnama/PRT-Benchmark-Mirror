@@ -1,0 +1,8 @@
+Next I’ll re-read with line numbers in mind, then give a termination/SN assessment based purely on these two rules.
+Yes — strong normalization (termination) follows from the rewrite rules alone in KO7-LLM-Benchmark/test-files/Schema-Test-A-New-System.trs.
+
+- The only rule that can “recur” is the `S(n)` rule: `F(x, y, S(n)) -> G(F(x, y, n))`. Each time it fires, it removes exactly one outer `S` from the third argument of that `F`-redex, and it does not introduce any new `S` anywhere.
+- The base rule at `F(x, y, Z) -> x` strictly drops the `F`-node (replaces by a proper subterm), so it can’t contribute to nontermination.
+- A simple global variant works: let $m(t)$ be the total number of occurrences of the constructor `S` in the whole term $t$. Then applying the rule on line 4 strictly decreases $m$ by 1, and applying the rule on line 3 does not increase $m$ (and strictly decreases term size). Since $m(t)\in\mathbb{N}$, there can be no infinite rewrite sequence.
+
+So you don’t need any imported “structural axioms” beyond standard TRS rewriting; the rules themselves admit a direct well-founded measure proving termination.

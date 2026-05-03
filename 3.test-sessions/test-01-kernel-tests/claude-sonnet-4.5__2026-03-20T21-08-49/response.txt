@@ -1,0 +1,33 @@
+I'll analyze the rewrite calculus for strong normalization.
+## Raw Assessment
+
+**Strong normalization is NOT provably establishable from this calculus alone** using only what's directly derivable from the presented syntax and rewrite rules.
+
+### Critical obstacles:
+
+1. **Rule R_eq_diff is size-increasing**: 
+   - `eqW a b → integrate (merge a b)` replaces 1 constructor with 3 constructors
+   - Creates a structurally larger term from a smaller one
+
+2. **Rule R_rec_succ is size-ambiguous**:
+   - `recΔ b s (delta n) → app s (recΔ b s n)` wraps the recursive call in `app s (...)` 
+   - While the third argument shrinks (`delta n → n`), overall term size may grow depending on `s`
+
+3. **No simple syntactic measure works**:
+   - Term size: violated by R_eq_diff
+   - Constructor count: ambiguous for R_rec_succ
+   - Height: fails for similar reasons
+
+4. **Rules R_eq_refl and R_eq_diff overlap** at `eqW t t`, creating non-deterministic expansion potential
+
+### Why standard proof methods fail the boundary constraint:
+
+Proving termination would require:
+- Lexicographic/multiset orderings with carefully chosen weights
+- Polynomial interpretations or semantic methods
+- Dependency pairs
+- Reducibility predicates
+
+All of these require importing **ordering-theoretic axioms** or **measure-construction principles** that go beyond what's derivable from these 8 rewrite rules and 7 constructors alone. The "right" measure exists in principle but cannot be justified purely from the calculus without additional well-foundedness assumptions.
+
+**No proof roadmap within the stated boundary.** The system may be SN, but proving it requires external termination theory.

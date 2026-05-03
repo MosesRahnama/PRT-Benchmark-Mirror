@@ -1,0 +1,60 @@
+I'll read and assess the termination measure candidates in that Lean 4 file.
+I'll analyze the three termination measure candidates for this first-order rewrite calculus.
+
+## Assessment of Termination Measures
+
+The file defines a rewrite system with 8 rules. For a measure to be valid, it must strictly decrease on every rewrite step. Let me check each candidate:
+
+### **mu1** - FAILS
+
+Weights: `eqW = 3`, others = 1
+
+**Failing case:** `R_rec_succ: recDelta b s (delta n) → app s (recDelta b s n)`
+
+- **LHS:** `1 + mu1(b) + mu1(s) + (1 + mu1(n)) = 2 + mu1(b) + mu1(s) + mu1(n)`
+- **RHS:** `1 + mu1(s) + (1 + mu1(b) + mu1(s) + mu1(n)) = 2 + mu1(b) + 2·mu1(s) + mu1(n)`
+
+For decrease: `mu1(s) > 2·mu1(s)` ⟹ `mu1(s) < 0` — **IMPOSSIBLE**
+
+The measure increases (or stays equal when `s = void`), violating termination.
+
+---
+
+### **mu2** - FAILS (worse)
+
+Weights: `integrate = 2`, `merge = 2`, `recDelta = 5`, `eqW = 5`, others = 1
+
+**Failing case:** Same rule `R_rec_succ`
+
+- **LHS:** `5 + mu2(b) + mu2(s) + (1 + mu2(n)) = 6 + mu2(b) + mu2(s) + mu2(n)`
+- **RHS:** `1 + mu2(s) + (5 + mu2(b) + mu2(s) + mu2(n)) = 6 + mu2(b) + 2·mu2(s) + mu2(n)`
+
+Same problem: requires `mu2(s) < 0`. The higher weight on `recDelta` doesn't help because the recursive call appears on both sides.
+
+---
+
+### **mu3** - FAILS (worst)
+
+Weights: `integrate = 2`, `app = 2`, `eqW = 4`, others = 1
+
+**Failing case:** Same rule `R_rec_succ`
+
+- **LHS:** `1 + mu3(b) + mu3(s) + (1 + mu3(n)) = 2 + mu3(b) + mu3(s) + mu3(n)`
+- **RHS:** `2 + mu3(s) + (1 + mu3(b) + mu3(s) + mu3(n)) = 3 + mu3(b) + 2·mu3(s) + mu3(n)`
+
+For decrease: `2 + mu3(s) > 3 + 2·mu3(s)` ⟹ `mu3(s) < -1` — **IMPOSSIBLE**
+
+The weight of 2 on `app` makes this even worse than mu1.
+
+---
+
+## Conclusion
+
+**All three measures fail** on `R_rec_succ`. The fundamental issue is that this rule expands `recDelta b s (delta n)` into `app s (recDelta b s n)`, creating a new outer constructor (`app`) while the recursive call `recDelta b s n` still appears nested inside. Any simple size measure will see the term grow rather than shrink.
+
+A valid termination measure would need a more sophisticated approach, such as:
+- A lexicographic combination considering both size and structure
+- A dependency pair method tracking the `n` argument specifically
+- Matrix interpretations assigning non-linear weights
+
+None of the proposed size-based measures can prove termination of this system.

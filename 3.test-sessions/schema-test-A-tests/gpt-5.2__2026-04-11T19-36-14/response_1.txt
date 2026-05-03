@@ -1,0 +1,10 @@
+Yes — strong normalization (termination) can be established from the rewrite rules alone in KO7-LLM-Benchmark/test-files/Schema-Test-A.trs.
+
+The key point is that the only self-recursive call is in the second rule, and it is on a strictly smaller third argument:  
+\(F(x,y,S(n)) \to G(y, F(x,y,n))\), where \(n\) is a proper subterm of \(S(n)\). Intuitively, each time you fire rule 2 at the top, you “peel off” one outer \(S\) from the third argument of \(F\); eventually the third argument is no longer of the form \(S(\_)\), and no further top-step by rule 2 is possible (and if it becomes \(Z\), rule 1 applies and removes the outer \(F\) entirely).
+
+Formally, you can orient both rules with a standard well-founded reduction ordering such as a lexicographic path ordering (LPO) / recursive path ordering (RPO) by taking a precedence like \(F \succ G\) (and \(S \succ Z\) if you want, though it’s not the critical part). Then:
+- \(F(x,y,Z) \to x\) decreases by the subterm property (the RHS is an argument of the LHS).
+- \(F(x,y,S(n)) \to G(y, F(x,y,n))\) decreases because the top symbol drops from \(F\) to \(G\), and the recursive call \(F(x,y,n)\) is smaller than \(F(x,y,S(n))\) since \(n \prec S(n)\).
+
+Because LPO/RPO is closed under contexts and substitutions, this covers reductions happening inside \(n\) as well; you don’t need any extra “structural axioms” beyond the TRS semantics.

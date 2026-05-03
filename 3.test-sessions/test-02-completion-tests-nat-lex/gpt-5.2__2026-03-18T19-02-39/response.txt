@@ -1,0 +1,149 @@
+I’ve identified the five remaining `sorry` rule cases and the intended lexicographic argument for each; next I’ll provide Lean proof skeletons that match the style of the three completed merge cases (using `drop_left` when $\\kappa$ drops and `drop_right` when $\\kappa$ ties but $\\mu$ drops).
+## Proof skeletons for the 5 remaining `sorry` cases
+
+Below are *drop-in* proof **skeletons** matching your existing style in `measure_decreases` (use `drop_left` when $\\kappa$ strictly drops; use `drop_right` when $\\kappa$ ties and $\\mu$ strictly drops). I’m not modifying the file; this is just the code you’d paste in place of each `sorry`.
+
+---
+
+### 1) `integrate (delta t) --> void` (`R_int_delta`)
+
+Key point: $\\kappa$ may or may not drop (depends on whether `kappa t = 0`), but $\\mu$ always drops to `0`, so split on `kappa t = 0`.
+
+```lean
+| _, _, Step.R_int_delta t => by
+    by_cases hk0 : kappa t = 0
+    · -- kappa ties: 0 = kappa t
+      have hk : kappa void = kappa (integrate (delta t)) := by
+        simp [kappa, hk0]
+      have hmu : mu void < mu (integrate (delta t)) := by
+        -- goal becomes essentially: 0 < 1 + mu t
+        -- a robust way: use succ_pos and rewrite 1+n = n+1
+        simpa [mu, Nat.succ_eq_add_one, Nat.add_comm, Nat.add_left_comm, Nat.add_assoc] using
+          (Nat.succ_pos (mu t))
+      exact drop_right hmu hk
+    · -- kappa drops: 0 < kappa t
+      have hkpos : 0 < kappa t := Nat.pos_of_ne_zero hk0
+      have hk : kappa void < kappa (integrate (delta t)) := by
+        simpa [kappa] using hkpos
+      exact drop_left hk
+```
+
+---
+
+### 2) `recDelta b s void --> b` (`R_rec_zero`)
+
+Key point: $\\kappa$ ties iff `kappa s ≤ kappa b`; otherwise $\\kappa$ drops (because `kappa s` contributes to the max). So split on that comparison.
+
+```lean
+| _, _, Step.R_rec_zero b s => by
+    by_cases hsb : kappa s ≤ kappa b
+    · -- kappa ties (max picks kappa b); mu strictly drops (recDelta has +3 weight)
+      have hk : kappa b = kappa (recDelta b s void) := by
+        -- kappa(recDelta b s void) = max (max (kappa b) (kappa s)) 0 = kappa b
+        -- first max collapses by hsb; second collapses by 0 ≤ kappa b
+        simp [kappa, Nat.max_eq_left hsb, Nat.max_eq_left (Nat.zero_le (kappa b))]
+      have hmu : mu b < mu (recDelta b s void) := by
+        -- mu(recDelta b s void) = 3 + mu b + mu s
+        -- prove: mu b < mu b + (3 + mu s)
+        have hpos3 : 0 < (3 : Nat) := by decide
+        have hpos : 0 < 3 + mu s :=
+          lt_of_lt_of_le hpos3 (Nat.le_add_right 3 (mu s))
+        have : mu b < mu b + (3 + mu s) := Nat.lt_add_of_pos_right _ hpos
+        simpa [mu, Nat.add_assoc, Nat.add_left_comm, Nat.add_comm] using this
+      exact drop_right hmu hk
+    · -- kappa drops (since kappa b < kappa s and kappa s ≤ kappa(recDelta...))
+      have hlt : kappa b < kappa s := Nat.lt_of_not_ge hsb
+      have hs_le : kappa s ≤ kappa (recDelta b s void) := by
+        -- kappa(recDelta...) = max (max (kappa b) (kappa s)) 0
+        -- and kappa s ≤ max (kappa b) (kappa s) ≤ max (max ...) 0
+        have : kappa s ≤ Nat.max (Nat.max (kappa b) (kappa s)) 0 :=
+          le_trans (Nat.le_max_right (kappa b) (kappa s)) (Nat.le_max_left _ _)
+        simpa [kappa] using this
+      have hk : kappa b < kappa (recDelta b s void) := Nat.lt_of_lt_of_le hlt hs_le
+      exact drop_left hk
+```
+
+---
+
+### 3) `recDelta b s (delta n) --> app s (recDelta b s n)` (`R_rec_succ`)
+
+Key point: $\\kappa$ strictly drops by 1 *uniformly* (LHS is `m+1`, RHS is `m` for the same `m := max(max kb ks) kn`). So a straight `drop_left`.
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    -- Let m := max (max (kappa b) (kappa s)) (kappa n).
+    -- LHS kappa = m + 1, RHS kappa = m.
+    have hk :
+        kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+      -- After simp (plus max associativity/commutativity), goal becomes: m < m + 1
+      simpa [kappa, Nat.max_assoc, Nat.max_left_comm, Nat.max_comm] using
+        (Nat.lt_succ_self (Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)))
+    exact drop_left hk
+```
+
+(If simp doesn’t normalize the nested `Nat.max` the way you want, keep the same idea but add a couple targeted `simp`/`rw` steps to rewrite `max ks (max (max kb ks) kn)` into `max (max kb ks) kn` using associativity/commutativity.)
+
+---
+
+### 4) `eqW a a --> void` (`R_eq_refl`)
+
+Same shape as `R_int_delta`: $\\kappa$ may or may not drop (depends on `kappa a`), but $\\mu$ always drops to `0`, so split on `kappa a = 0`.
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    by_cases hk0 : kappa a = 0
+    · have hk : kappa void = kappa (eqW a a) := by
+        simp [kappa, hk0]
+      have hmu : mu void < mu (eqW a a) := by
+        -- goal is: 0 < 4 + mu a + mu a
+        have h4 : 0 < (4 : Nat) := by decide
+        have hle : (4 : Nat) ≤ 4 + mu a + mu a := by
+          -- 4 ≤ 4 + (mu a + mu a)
+          simpa [Nat.add_assoc] using (Nat.le_add_right 4 (mu a + mu a))
+        exact lt_of_lt_of_le h4 hle
+      exact drop_right hmu hk
+    · have hkpos : 0 < kappa a := Nat.pos_of_ne_zero hk0
+      have hk : kappa void < kappa (eqW a a) := by
+        simpa [kappa] using hkpos
+      exact drop_left hk
+```
+
+---
+
+### 5) `eqW a b --> integrate (merge a b)` (`R_eq_diff`)
+
+Key point: $\\kappa$ ties *definitionally* (both are `max (kappa a) (kappa b)`), and $\\mu$ drops by exactly 1 (`3+…` vs `4+…`), so `drop_right`.
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by
+      simp [kappa]
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by
+      -- simp gives: 3 + mu a + mu b < 4 + mu a + mu b
+      have : 3 + mu a + mu b < (3 + mu a + mu b) + 1 :=
+        Nat.lt_succ_self (3 + mu a + mu b)
+      simpa [mu, Nat.add_assoc, Nat.add_left_comm, Nat.add_comm] using this
+    exact drop_right hmu hk
+```
+
+---
+
+## Notes that make the remaining work mechanical
+
+- The only “non-uniform” rules (needing splits) are exactly the ones where the reduct is `void` or “forgets” a subterm:
+  - `R_int_delta` and `R_eq_refl`: split on whether the original $\\kappa$ is 0.
+  - `R_rec_zero`: split on whether the “forgotten” branch `s` controls the max of $\\kappa$.
+- For the arithmetic bits, if you prefer to avoid any heavyweight tactics, the pattern
+  - show a positive constant (`by decide`),
+  - then use `Nat.le_add_right` and `lt_of_lt_of_le`,
+  is usually enough to prove strict positivity / strict inequality of a larger expression.
+
+---
+
+## ✅ Todo list (final)
+
+1. Read the target Lean file — completed  
+2. Locate the 8 rule cases — completed  
+3. Extract patterns from proved cases — completed  
+4. Draft skeleton for 5 sorry cases — completed  
+5. Provide completion notes and invariants — completed

@@ -1,0 +1,70 @@
+Here is a proof skeleton for the five remaining cases in
+, without modifying the file.
+
+Use the same case split structure and fill each `sorry` like this:
+
+```lean
+-- integrate (delta t) --> void
+| _, _, Step.R_int_delta t => by
+    have hk : kappa void = kappa (integrate (delta t)) := by
+      simp [kappa]
+    have hmu : mu void < mu (integrate (delta t)) := by
+      simp [mu]
+    exact drop_right hmu hk
+
+-- recDelta b s void --> b
+| _, _, Step.R_rec_zero b s => by
+    have hk : kappa b = kappa (recDelta b s void) := by
+      simp [kappa]
+      apply Nat.max_eq_left
+      exact le_max_left _ _
+    have hmu : mu b < mu (recDelta b s void) := by
+      simp [mu]
+      omega
+    exact drop_right hmu hk
+
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+      simp [kappa]
+      let m := Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)
+      have hs : kappa s ≤ m := by
+        dsimp [m]
+        exact le_trans (le_max_right _ _) (le_max_left _ _)
+      have hr : m ≤ Nat.max (kappa s) m := by
+        exact le_max_right _ _
+      have hle : Nat.max (kappa s) m ≤ m := by
+        exact Nat.max_le hs (le_rfl)
+      have heq : Nat.max (kappa s) m = m := Nat.le_antisymm hle hr
+      rw [heq]
+      exact Nat.lt_succ_self m
+    exact drop_left hk
+
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    have hk : kappa void = kappa (eqW a a) := by
+      simp [kappa]
+    have hmu : mu void < mu (eqW a a) := by
+      simp [mu]
+    exact drop_right hmu hk
+
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by
+      simp [kappa]
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by
+      simp [mu]
+      omega
+    exact drop_right hmu hk
+```
+
+Notes:
+- Four cases are naturally handled by `drop_right`: `kappa` ties and `mu` decreases.
+- The `R_rec_succ` case is the only one where `kappa` strictly drops, so `drop_left` is the right tool.
+- If Lean resists the `R_rec_zero` `hk` proof via `simp`, an equivalent explicit route is to show:
+  $$
+  \max(\max(\kappa b,\kappa s),0)=\max(\kappa b,\kappa s)
+  $$
+  and then discharge the final equality with `Nat.max_eq_left (le_max_left _ _)`.
+
+If you want, I can also rewrite this into a slightly more compact Lean style while still keeping it as a skeleton.

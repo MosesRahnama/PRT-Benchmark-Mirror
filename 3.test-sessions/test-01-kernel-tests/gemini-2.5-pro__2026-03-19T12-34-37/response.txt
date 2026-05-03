@@ -1,0 +1,16 @@
+Based on the provided calculus, strong normalization cannot be established from
+the presented rules alone.
+
+The system contains the rewrite rule `R_eq_diff`:
+`eqW a b → integrate (merge a b)`
+
+This rule can lead to non-terminating rewrite sequences. If we define a standard size function for terms (e.g., where the size of a term is 1 plus the sum of the sizes of its subterms), the right-hand side of this rule is not strictly smaller than the left-hand side.
+
+Let `size(t)` be the structural size of a term `t`.
+*   `size(eqW a b) = 1 + size(a) + size(b)`
+*   `size(integrate (merge a b)) = 1 + size(merge a b) = 1 + (1 + size(a) + size(b)) = 2 + size(a) + size(b)`
+
+For any terms `a` and `b`, the size of the term increases after applying the `R_eq_diff` rule:
+`size(integrate (merge a b)) > size(eqW a b)`
+
+Because at least one rule allows a term to be rewritten into a larger term, a simple size-based termination argument fails. This opens the possibility of infinite rewrite chains, meaning strong normalization is not guaranteed without additional constraints or a more sophisticated, non-structural well-founded ordering that can account for this rule's behavior.

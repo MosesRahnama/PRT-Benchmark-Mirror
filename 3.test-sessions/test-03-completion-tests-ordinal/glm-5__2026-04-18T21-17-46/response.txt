@@ -1,0 +1,139 @@
+Based on the file content, I can see the three remaining cases that need proof skeletons:
+
+1. **`R_rec_succ`**: `recDelta b s (delta n) → app s (recDelta b s n)`
+2. **`R_eq_refl`**: `eqW a a → void`
+3. **`R_eq_diff`**: `eqW a b → integrate (merge a b)`
+
+Here are the proof skeletons for completing these cases:
+
+---
+
+## Proof Skeleton for `R_rec_succ`
+
+```lean
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- LHS measure: omega^(omega^5 * (mu(n) + 1) + 1 + mu(s) + 6) + omega * (mu(b) + 1) + 1
+    -- RHS measure: omega^3 * (mu(s) + 1) + omega^2 * (omega^(mu(n) + mu(s) + 6) + omega * (mu(b) + 1) + 2) + 1
+    --
+    -- Key insight: The LHS exponent contains omega^5 * (mu(n) + 1) which is
+    -- astronomically larger than mu(n) + mu(s) + 6 appearing in the RHS.
+    -- Thus omega^(omega^5 * (mu(n) + 1) + ...) >> omega^2 * omega^(mu(n) + mu(s) + 6)
+    
+    -- Step 1: Establish that omega^5 * (mu(n) + 1) > mu(n) + mu(s) + 6
+    have h_exp_dom : mu n + mu s + 6 < omega0 ^ (5 : Ordinal) * (mu n + 1) := by
+      calc mu n + mu s + 6
+        _ ≤ mu n + mu n + 6 := by gcongr; exact le_max_left _ _
+        _ < mu n + 1 + mu n + 6 := by omega
+        _ ≤ omega0 ^ (5 : Ordinal) * (mu n + 1) := by
+          -- omega^5 * (mu n + 1) dominates mu n terms
+          have := opow_pos 5 omega0_pos
+          exact le_mul_right _ this
+    
+    -- Step 2: The LHS omega-power tower dominates all RHS terms
+    have h_lhs_large : omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6)
+                      > omega0 ^ (3 : Ordinal) * (mu s + 1)
+                      + omega0 ^ (2 : Ordinal) * (omega0 ^ (mu n + mu s + 6) + omega0 * (mu b + 1) + 2) := by
+      -- The LHS exponent omega^5 * (mu n + 1) + 1 + mu s + 6 is much larger than
+      -- any finite sum of omega^k terms on the RHS
+      sorry  -- Requires: opow_lt_opow_of_lt h_exp_dom
+    
+    -- Step 3: Assemble the inequality
+    calc omega0 ^ (3 : Ordinal) * (mu s + 1)
+       + omega0 ^ (2 : Ordinal) * (omega0 ^ (mu n + mu s + 6) + omega0 * (mu b + 1) + 1 + 1) + 1
+      _ < omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6) + omega0 * (mu b + 1) + 1 := by
+      sorry  -- Combine h_lhs_large with ordinal addition properties
+```
+
+---
+
+## Proof Skeleton for `R_eq_refl`
+
+```lean
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- LHS measure: omega^(mu(a) + mu(a) + 9) + 1 = omega^(2 * mu(a) + 9) + 1
+    -- RHS measure: 0
+    -- Need: 0 < omega^(2 * mu(a) + 9) + 1
+    
+    -- This is a straightforward positivity argument
+    have h_pos : 0 < omega0 ^ (mu a + mu a + 9) + 1 := by
+      have h_opow_pos : 0 < omega0 ^ (mu a + mu a + 9) := opow_pos _ omega0_pos
+      exact add_pos h_opow_pos one_pos
+    
+    exact h_pos
+```
+
+---
+
+## Proof Skeleton for `R_eq_diff`
+
+```lean
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- LHS measure: omega^(mu(a) + mu(b) + 9) + 1
+    -- RHS measure: omega^4 * (omega^3 * (mu(a) + 1) + omega^2 * (mu(b) + 1) + 2) + 1
+    --
+    -- Need: omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 2) + 1
+    --       < omega^(mu a + mu b + 9) + 1
+    
+    -- Step 1: Bound the RHS inner term
+    have h_merge_bound : mu (merge a b) + 1 ≤ omega0 ^ (3 : Ordinal) * (mu a + 1)
+                                        + omega0 ^ (2 : Ordinal) * (mu b + 1) + 2 := by
+      simp [mu]
+      -- Direct from definition
+      sorry
+    
+    -- Step 2: Show omega^4 * omega^3 * (mu a + 1) < omega^(mu a + mu b + 9)
+    -- This holds when mu a + mu b + 9 > 7, which is true since mu a, mu b ≥ 0
+    have h_exp_ineq : omega0 ^ (7 : Ordinal) * (mu a + 1) < omega0 ^ (mu a + mu b + 9) := by
+      have h_base : (7 : Ordinal) < mu a + mu b + 9 := by
+        have h1 : 0 ≤ mu a := Ordinal.zero_le _
+        have h2 : 0 ≤ mu b := Ordinal.zero_le _
+        omega
+      exact opow_lt_opow_of_lt omega0_pos h_base
+    
+    -- Step 3: The omega^(mu a + mu b + 9) term dominates all polynomial terms
+    have h_dom : omega0 ^ (4 : Ordinal) * (omega0 ^ (3 : Ordinal) * (mu a + 1)
+                + omega0 ^ (2 : Ordinal) * (mu b + 1) + 2) < omega0 ^ (mu a + mu b + 9) := by
+      -- omega^4 * omega^3 * (mu a + 1) = omega^7 * (mu a + 1) < omega^(mu a + mu b + 9)
+      -- Similarly for the omega^6 * (mu b + 1) term
+      calc omega0 ^ (4 : Ordinal) * (omega0 ^ (3 : Ordinal) * (mu a + 1)
+          + omega0 ^ (2 : Ordinal) * (mu b + 1) + 2)
+        _ ≤ omega0 ^ (4 : Ordinal) * (omega0 ^ (3 : Ordinal) * (mu a + 1)
+          + omega0 ^ (3 : Ordinal) * (mu b + 1) + omega0 ^ (3 : Ordinal)) := by
+          -- Coarse upper bound
+          sorry
+        _ = omega0 ^ (7 : Ordinal) * (mu a + mu b + 2) := by
+          -- Ordinal arithmetic simplification
+          sorry
+        _ < omega0 ^ (mu a + mu b + 9) := by
+          -- Since 7 < mu a + mu b + 9
+          sorry
+    
+    -- Step 4: Final assembly
+    calc omega0 ^ (4 : Ordinal) * (omega0 ^ (3 : Ordinal) * (mu a + 1)
+        + omega0 ^ (2 : Ordinal) * (mu b + 1) + 2) + 1
+      _ < omega0 ^ (mu a + mu b + 9) := by
+        exact lt_of_add_one_lt (by
+          have := add_lt_add_right h_dom 1
+          sorry)
+      _ ≤ omega0 ^ (mu a + mu b + 9) + 1 := le_add_right _ _
+```
+
+---
+
+## Summary of Key Lemmas Needed
+
+To complete these proofs, you'll need to invoke or establish:
+
+1. **`opow_pos`**: `omega^k > 0` for any `k > 0`
+2. **`opow_lt_opow_of_lt`**: `omega^a < omega^b` when `a < b`
+3. **`opow_mul_assoc`**: `omega^a * omega^b = omega^(a + b)` (for principal ordinals)
+4. **Ordinal addition is strictly monotone in the right argument**
+5. **`omega^k` is principal for finite `k`, meaning `omega^k * n < omega^(k+1)` for finite `n`
+
+The design of the measure ensures each case works because the exponents were carefully chosen to dominate the expanded RHS terms.

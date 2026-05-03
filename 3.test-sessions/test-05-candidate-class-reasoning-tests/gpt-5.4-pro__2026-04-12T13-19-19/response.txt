@@ -1,0 +1,96 @@
+Using the standard criterion
+
+$$
+\forall\, l\, r,\; Step\; l\; r \Rightarrow \mu(l) > \mu(r),
+$$
+
+**none of the three candidates works as a global termination measure**.
+
+### Key point
+All three fail on the same rewrite rule:
+
+`R_rec_succ`  
+`recDelta b s (delta n) -> app s (recDelta b s n)`
+
+The issue is that the RHS contains `s` **again**, so a simple additive size measure must pay for `s` twice.
+
+---
+
+### `mu1`
+For the critical rule,
+
+$$
+\mu_1(\text{lhs}) = 2 + \mu_1(b) + \mu_1(s) + \mu_1(n)
+$$
+
+$$
+\mu_1(\text{rhs}) = 2 + \mu_1(b) + 2\mu_1(s) + \mu_1(n)
+$$
+
+So
+
+$$
+\mu_1(\text{lhs}) - \mu_1(\text{rhs}) = -\mu_1(s).
+$$
+
+- If `s = void`, this is `0` (not strict).
+- If `s ≠ void`, it is negative.
+
+**Verdict:** invalid.
+
+---
+
+### `mu2`
+For the same rule,
+
+$$
+\mu_2(\text{lhs}) = 6 + \mu_2(b) + \mu_2(s) + \mu_2(n)
+$$
+
+$$
+\mu_2(\text{rhs}) = 6 + \mu_2(b) + 2\mu_2(s) + \mu_2(n)
+$$
+
+Hence
+
+$$
+\mu_2(\text{lhs}) - \mu_2(\text{rhs}) = -\mu_2(s).
+$$
+
+Same failure as `mu1`. The larger constants do not help; they cancel.
+
+**Verdict:** invalid.
+
+---
+
+### `mu3`
+For the critical rule,
+
+$$
+\mu_3(\text{lhs}) = 2 + \mu_3(b) + \mu_3(s) + \mu_3(n)
+$$
+
+$$
+\mu_3(\text{rhs}) = 3 + \mu_3(b) + 2\mu_3(s) + \mu_3(n)
+$$
+
+So
+
+$$
+\mu_3(\text{lhs}) - \mu_3(\text{rhs}) = -1 - \mu_3(s) < 0.
+$$
+
+This one is worse: it **always increases** on `R_rec_succ`.
+
+**Verdict:** invalid.
+
+---
+
+### Overall assessment
+- `mu1`: fails only because of `R_rec_succ`
+- `mu2`: same failure, same reason
+- `mu3`: definitely fails, and more strongly
+
+All other rewrite rules appear to decrease under these measures; the obstruction is exactly the unfolding rule for `recDelta`.
+
+A more plausible proof would use a **lexicographic** or **recursive-argument-based** measure, with the third argument of `recDelta` as the primary descent parameter, rather than a single additive size function.

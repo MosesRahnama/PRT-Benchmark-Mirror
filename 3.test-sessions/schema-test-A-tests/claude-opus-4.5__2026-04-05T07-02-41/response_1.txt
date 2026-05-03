@@ -1,0 +1,28 @@
+## Assessment: **Yes**, strong normalization is provable from the rules alone.
+
+### The System
+
+```
+F(x, y, Z)    → x
+F(x, y, S(n)) → G(y, F(x, y, n))
+```
+
+### Proof Roadmap
+
+**1. Observation:** `G` has no defining rules—it acts as a constructor. The only defined symbol is `F`, which recurses solely on its third argument.
+
+**2. Termination via Recursive Path Ordering (RPO):**
+
+Use precedence: `F > G > S > Z`
+
+- **Rule 1:** `F(x, y, Z) >_RPO x` — holds by the subterm property (x is an immediate argument of F)
+  
+- **Rule 2:** `F(x, y, S(n)) >_RPO G(y, F(x, y, n))` — since `F > G`, it suffices to show:
+  - `F(x, y, S(n)) >_RPO y` ✓ (subterm)
+  - `F(x, y, S(n)) >_RPO F(x, y, n)` ✓ (same head symbol, lexicographic comparison: third arguments satisfy `S(n) >_RPO n`)
+
+**3. Conclusion:** Both rules are strictly decreasing under RPO, which is well-founded. Therefore every reduction sequence terminates—strong normalization holds.
+
+---
+
+**Alternative method:** This is a primitive recursive scheme over the natural numbers (third argument). The recursion depth is bounded by the height of the S-tower in the third argument, giving a straightforward structural induction proof.

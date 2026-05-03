@@ -1,0 +1,26 @@
+I’ll read only the specified Test-12 input file, then evaluate methods A–E exactly as written against the two criteria and report which satisfy both.
+Assessment of the five methods as stated:
+
+- **A (LPO/RPO with \(F > G > S > Z\))**: **Succeeds**.  
+  - \(F(x,y,Z) \to x\) is oriented by subterm/property of simplification orders.  
+  - \(F(x,y,S(n)) \to G(y,F(x,y,n))\) is oriented since \(F>G\) and \(F(x,y,S(n)) > F(x,y,n)\) (third argument drops from \(S(n)\) to \(n\)).  
+  - **Boundary:** **Yes** (standard termination order, no extra object-level axioms).
+
+- **B (Polynomial interpretation over \(\mathbb{N}\))**: **Succeeds**.  
+  - Rule 1: \(x+1 > x\).  
+  - Rule 2: \(x+n+2 > x+n+1\).  
+  - **Boundary:** **Yes** (standard algebraic interpretation method, no imported structural axioms).
+
+- **C (KBO, all symbol weights \(=1\))**: **Fails**.  
+  - For rule 2, RHS has greater KBO weight than LHS, so it cannot be oriented as required.  
+  - **Boundary:** **Yes** (method itself is in-boundary, but it does not prove termination here).
+
+- **D (Dependency pairs + subterm criterion, project \(F\)’s 3rd arg)**: **Succeeds**.  
+  - DP is \(F^\#(x,y,S(n)) \to F^\#(x,y,n)\), and projection gives \(S(n) \triangleright n\), satisfying strict subterm decrease.  
+  - **Boundary:** **Yes** (purely from the rewrite system and standard DP machinery).
+
+- **E (Direct \(\mu\)-descent as written)**: **Fails as stated**.  
+  - \(\mu(G(a,b))=\mu(b)\) ignores the first argument, so a rewrite inside \(a\) does not strictly decrease \(\mu\). Thus “each rewrite step strictly decreases \(\mu\)” is false in general.  
+  - **Boundary:** **No**, as stated argument effectively relies on an implicit restriction on where rewriting happens (not derivable from the rules alone).
+
+**Methods satisfying both conditions:** **A, B, and D.**

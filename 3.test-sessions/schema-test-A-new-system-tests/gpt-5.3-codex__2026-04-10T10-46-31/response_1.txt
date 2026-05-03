@@ -1,0 +1,8 @@
+Yes — based on the rules in KO7-LLM-Benchmark/test-files/Schema-Test-A-New-System.trs, strong normalization is establishable from this system alone.
+
+Reasoning (brief): each rewrite on an outer F strictly decreases a well-founded measure.
+- F(x, y, Z) -> x removes that F redex entirely.
+- F(x, y, S(n)) -> G(F(x, y, n)) keeps one F but strictly decreases the third argument from S(n) to n.
+- No rule introduces new S constructors in that decreasing position, and there is no rule for G, S, or Z that can regenerate the prior form.
+
+So there is no cycle-generating mechanism in the given TRS; infinite rewrite chains are not derivable from these rules alone.

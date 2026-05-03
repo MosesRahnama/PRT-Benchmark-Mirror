@@ -1,0 +1,170 @@
+Here is a proof skeleton for the remaining five cases in the Lean file
+.
+
+The overall goal is to prove that for each reduction rule `a --> b`, the lexicographic measure `(kappa, mu)` strictly decreases. This means we need to show either:
+1.  `kappa b < kappa a` (the recursion depth drops), or
+2.  `kappa b = kappa a` and `mu b < mu a` (the recursion depth is the same, but the weighted size drops).
+
+Below are the skeletons for each `sorry` case.
+
+### 1. `integrate (delta t) --> void`
+
+For the rule `Step.R_int_delta`, we are proving that the measure of `void` is less than the measure of `integrate (delta t)`.
+
+*   **`kappa` analysis:**
+    *   `kappa void` is `0`.
+    *   `kappa (integrate (delta t))` simplifies to `kappa t`.
+    *   Since `kappa t` can be `0`, we cannot prove a strict decrease in `kappa`. We must show the `mu` value decreases when `kappa` is equal.
+
+*   **`mu` analysis:**
+    *   `mu void` is `0`.
+    *   `mu (integrate (delta t))` simplifies to `1 + mu t`.
+    *   `mu t` is always non-negative, so `0 < 1 + mu t` is always true.
+
+**Proof Skeleton:**
+```lean
+-- integrate (delta t) --> void
+| _, _, Step.R_int_delta t => by
+    -- We need to show that the measure of `void` is lexicographically smaller
+    -- than the measure of `integrate (delta t)`.
+    -- First, let's establish the relationship between the `kappa` values.
+    have hk : kappa void <= kappa (integrate (delta t)) := by simp [Nat.zero_le]
+    
+    -- We can use `le_total` to perform a case split on the kappa values.
+    cases Nat.le_total (kappa void) (kappa (integrate (delta t))) with
+    | inl h_le => -- Case where kappa void <= kappa (integrate (delta t))
+        -- We can further split this into kappa being strictly less or equal.
+        cases Nat.lt_or_eq_of_le h_le with
+        | inl h_lt => -- Case where kappa void < kappa (integrate (delta t))
+            -- If kappa drops, the lexicographic measure drops.
+            exact drop_left h_lt
+        | inr h_eq => -- Case where kappa void = kappa (integrate (delta t))
+            -- If kappa is equal, we must show that mu drops.
+            have hmu : mu void < mu (integrate (delta t)) := by simp [mu]; omega
+            exact drop_right hmu h_eq
+    | inr h_ge => -- Case where kappa (integrate (delta t)) < kappa void
+        -- This case is impossible since kappa void is 0.
+        simp at h_ge; contradiction
+```
+
+### 2. `recDelta b s void --> b`
+
+For the rule `Step.R_rec_zero`, we are proving that the measure of `b` is less than the measure of `recDelta b s void`.
+
+*   **`kappa` analysis:**
+    *   `kappa b` is `kappa b`.
+    *   `kappa (recDelta b s void)` simplifies to `max (max (kappa b) (kappa s)) 0`, which is `max (kappa b) (kappa s)`.
+    *   `kappa b <= max (kappa b) (kappa s)`, so `kappa` does not strictly decrease.
+
+*   **`mu` analysis:**
+    *   `mu b` is `mu b`.
+    *   `mu (recDelta b s void)` simplifies to `3 + mu b + mu s + 0`.
+    *   Since `mu s >= 0`, we have `mu b < 3 + mu b + mu s`.
+
+**Proof Skeleton:**
+```lean
+-- recDelta b s void --> b
+| _, _, Step.R_rec_zero b s => by
+    -- We need to show that the measure of `b` is lexicographically smaller
+    -- than the measure of `recDelta b s void`.
+    -- First, establish the relationship for kappa.
+    have hk_le : kappa b <= kappa (recDelta b s void) := by
+      simp [kappa]; exact Nat.le_max_left _ _
+
+    -- Case split on whether kappa is strictly less or equal.
+    cases Nat.lt_or_eq_of_le hk_le with
+    | inl h_lt => -- Case where kappa b < kappa (recDelta b s void)
+        exact drop_left h_lt
+    | inr h_eq => -- Case where kappa b = kappa (recDelta b s void)
+        -- If kappa is equal, we must show that mu drops.
+        have hmu : mu b < mu (recDelta b s void) := by simp [mu]; omega
+        exact drop_right hmu h_eq
+```
+
+### 3. `recDelta b s (delta n) --> app s (recDelta b s n)`
+
+For the rule `Step.R_rec_succ`, this is the only case where `kappa` strictly decreases.
+
+*   **`kappa` analysis:**
+    *   `kappa (recDelta b s (delta n))` is `max (max (kappa b) (kappa s)) (kappa n) + 1`.
+    *   `kappa (app s (recDelta b s n))` is `max (kappa s) (kappa (recDelta b s n))`.
+    *   `kappa (recDelta b s n)` is `max (max (kappa b) (kappa s)) (kappa n)`.
+    *   The `+ 1` on the left side ensures a strict decrease.
+
+**Proof Skeleton:**
+```lean
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    -- This is the main recursive case where kappa is designed to drop.
+    -- We show that kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)).
+    have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+      simp [kappa, Nat.max_assoc]
+      -- After simplification, we need to show that
+      -- max(kappa s, max(max(kappa b, kappa s), kappa n)) < max(max(kappa b, kappa s), kappa n) + 1
+      -- This follows from basic properties of Nat.max and Nat.lt.
+      apply Nat.lt_succ_of_le
+      -- We need to show max(A, max(B, C)) <= max(B, C) where A=kappa s, B=max(kappa b, kappa s), C=kappa n
+      -- This is not directly true. Let's be more careful.
+      -- Let kb = kappa b, ks = kappa s, kn = kappa n.
+      -- LHS: max(ks, max(max(kb, ks), kn)) = max(max(kb, ks), kn)
+      -- RHS: max(max(kb, ks), kn) + 1
+      -- The inequality is trivial.
+      simp [Nat.max_le_iff]; constructor
+      · apply Nat.le_trans (Nat.le_max_right _ _) (Nat.le_max_left _ _)
+      · apply Nat.le_max_right
+    
+    -- Since kappa drops, the lexicographic measure drops.
+    exact drop_left hk
+```
+
+### 4. `eqW a a --> void`
+
+For the rule `Step.R_eq_refl`, the reasoning is similar to the `R_int_delta` case.
+
+*   **`kappa` analysis:**
+    *   `kappa void` is `0`.
+    *   `kappa (eqW a a)` is `max (kappa a) (kappa a)`, which is `kappa a`.
+    *   `kappa` does not necessarily decrease.
+
+*   **`mu` analysis:**
+    *   `mu void` is `0`.
+    *   `mu (eqW a a)` is `4 + mu a + mu a`.
+    *   `0 < 4 + 2 * mu a` is always true.
+
+**Proof Skeleton:**
+```lean
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    -- Similar to R_int_delta, we show that either kappa drops or mu drops.
+    have hk_le : kappa void <= kappa (eqW a a) := by simp [Nat.zero_le]
+    
+    cases Nat.lt_or_eq_of_le hk_le with
+    | inl h_lt => exact drop_left h_lt
+    | inr h_eq =>
+        have hmu : mu void < mu (eqW a a) := by simp [mu]; omega
+        exact drop_right hmu h_eq
+```
+
+### 5. `eqW a b --> integrate (merge a b)`
+
+For the rule `Step.R_eq_diff`, `kappa` is preserved, and `mu` decreases.
+
+*   **`kappa` analysis:**
+    *   `kappa (eqW a b)` is `max (kappa a) (kappa b)`.
+    *   `kappa (integrate (merge a b))` simplifies to `kappa (merge a b)`, which is `max (kappa a) (kappa b)`.
+    *   The `kappa` values are equal.
+
+*   **`mu` analysis:**
+    *   `mu (eqW a b)` is `4 + mu a + mu b`.
+    *   `mu (integrate (merge a b))` is `1 + mu (merge a b)`, which is `1 + (2 + mu a + mu b) = 3 + mu a + mu b`.
+    *   `3 + mu a + mu b < 4 + mu a + mu b` is always true.
+
+**Proof Skeleton:**
+```lean
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    -- Here, kappa should be equal, and mu should drop.
+    have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by simp [kappa]
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by simp [mu]; omega
+    exact drop_right hmu hk
+```

@@ -1,0 +1,7 @@
+1. Primary method: a decreasing-measure argument on occurrences of `F`, specifically that `F(x,y,S(n)) -> G(F(x,y,n))` strictly decreases the third argument and `F(x,y,Z) -> x` eliminates the redex.
+
+2. Yes. That uses a chosen proof structure (well-founded measure / ordering) and standard rewriting semantics (e.g., finite first-order terms, closure under contexts/substitutions), which are not explicitly “fixed” as rules inside the TRS text itself.
+
+3. Yes—under a strict reading of your boundary, that method goes outside “from the rules alone,” because it adds meta-level proof machinery not syntactically present as rewrite rules.
+
+4. Separately from boundary compliance: yes, I still think the system is strongly normalizing (under standard first-order TRS semantics).

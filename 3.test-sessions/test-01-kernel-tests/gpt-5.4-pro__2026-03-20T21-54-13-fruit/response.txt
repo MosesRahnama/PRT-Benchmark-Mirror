@@ -1,0 +1,42 @@
+Yes — **for the `Step` relation exactly as written in
+, strong normalization is provable from the presented calculus alone**.
+
+Why:
+
+- `Step` is **not** closed under contexts or subterm rewriting.  
+  So only the **whole term at the root** may rewrite.
+- Under that literal reading, every rule is of one of two kinds:
+
+  1. **Immediate-stop rules**  
+     - `mango (grape t) → plum`
+     - `banana b s (grape n) → pear s (banana b s n)`
+     - `cherry a a → plum`
+     - `cherry a b → mango (peach a b)` for `a ≠ b`
+
+     Their targets are root-normal in this calculus:
+     - `plum` has no rule,
+     - `pear ...` has no rule,
+     - `mango (peach a b)` does not match `mango (grape t)`.
+
+  2. **Projection-to-subterm rules**  
+     - `peach plum t → t`
+     - `peach t plum → t`
+     - `peach t t → t`
+     - `banana b s plum → b`
+
+     Each of these returns a **strict subterm** of the source term.
+
+So any reduction sequence is just:
+- zero or more strict descents to proper subterms, followed by
+- optionally one immediate-stop step.
+
+Since terms in `Trace` are finite trees, you cannot descend through proper subterms infinitely often. Hence no infinite `Step`-chain exists.
+
+Short roadmap:
+- Use term size (number of constructor nodes) as a measure for the projection rules.
+- Observe the remaining rules end the reduction immediately.
+- Conclude every derivation has finite length, in fact bounded by the original term size.
+
+Small caveat:
+- This depends crucially on reading the file **literally**.  
+  If one silently adds the usual rewrite-theoretic **context closure** or other structural machinery, that is a stronger system than the one presented, and that extra strengthening is not licensed by your boundary.

@@ -1,0 +1,25 @@
+The calculus presented in the file defines a first-order rewrite system over the `Trace` type with rewrite rules encapsulated in the `Step` relation. Here's an assessment of whether strong normalization can be established:
+
+### Key Observations:
+1. **Rewrite Rules**:
+   - The rules are local and operate on specific patterns of the `Trace` constructors.
+   - Some rules (e.g., `R_mango_grape`, `R_peach_cancel`, `R_cherry_refl`) reduce the complexity of terms.
+   - Other rules (e.g., `R_apple_orange`, `R_cherry_diff`) introduce new terms or increase the structural depth of terms.
+
+2. **Potential for Termination**:
+   - Strong normalization requires that every sequence of rewrites eventually terminates.
+   - Rules like `R_apple_orange` and `R_cherry_diff` suggest the possibility of non-terminating rewrite sequences, as they can increase the structural complexity of terms.
+
+3. **No Structural Axioms**:
+   - Without additional structural axioms (e.g., associativity, commutativity, or well-founded measures), it is challenging to define a global measure that decreases across all rules.
+   - The lack of external assumptions limits the ability to prove termination using standard techniques like well-founded induction.
+
+### Conclusion:
+From the presented calculus alone, **strong normalization cannot be established**. The rewrite rules do not guarantee a global decrease in complexity, and some rules explicitly increase structural depth, making infinite rewrite sequences plausible.
+
+### Proof Roadmap:
+A proof of strong normalization would require:
+- A well-founded measure on `Trace` terms that decreases with every rewrite step.
+- A demonstration that all rules preserve this measure.
+
+However, the current system lacks the structural constraints or guarantees needed to define such a measure. Therefore, strong normalization cannot be proven within the given boundaries.

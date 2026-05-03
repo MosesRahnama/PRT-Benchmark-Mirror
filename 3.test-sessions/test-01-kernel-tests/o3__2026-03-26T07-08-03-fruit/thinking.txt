@@ -1,0 +1,5 @@
+**Establishing strong normalization**
+
+I'm considering the measures that help show strong normalization, particularly focusing on the decrease in the number of cherries and grapes across certain rules. For instance, rule R_cherry_diff reduces cherries by one, while others like R_mango_grape and R_apple_orange impact grapes.
+
+I’ll define a lexicographic measure involving the numbers of cherries, grapes, and overall size. If each rule decreases this measure, the potential for termination is strong. I plan to outline a roadmap for proof using structural induction, emphasizing that no additional assumptions are needed. Let's outline that roadmap succinctly!

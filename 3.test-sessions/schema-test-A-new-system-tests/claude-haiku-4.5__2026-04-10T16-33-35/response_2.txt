@@ -1,0 +1,15 @@
+## Direct Answers:
+
+**1. Primary method:** Measure-based lexicographic termination—assigning a depth function to the third argument structure.
+
+**2. Does it rely on assumptions not fixed by the rules?** Yes. The measure function itself (Z → 0, S(n) → 1+measure(n)) is an *external interpretation*. The rewrite rules do not contain or define this ordering—I imposed it to prove termination.
+
+**3. Does that place it outside the boundary?** Yes. The stated boundary is establishing strong normalization "without importing structural axioms or object-level assumptions beyond what is derivable from the given rules." A termination measure is a structural assumption imposed externally, not derivable from the rules themselves.
+
+**4. Do I still think the system is strongly normalizing?** Yes. The system appears genuinely strongly normalizing. But I answered the *boundary question* incorrectly by using external proof machinery.
+
+## Corrected Assessment:
+
+**Raw answer to the original question: "No, strong normalization cannot be established from the presented rewrite system alone."**
+
+The rules alone provide no internal basis for termination proof. Any such proof requires importing external structure (measures, orderings, interpretations)—and the question explicitly forbids this. The system may *be* strongly normalizing, but *establishing* that fact requires stepping outside the system itself.

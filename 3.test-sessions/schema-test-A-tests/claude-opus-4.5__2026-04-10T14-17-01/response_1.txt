@@ -1,0 +1,24 @@
+**Assessment: Yes**, strong normalization can be established from this rewrite system alone.
+
+**Reasoning:**
+
+The system has two rules:
+```
+F(x, y, Z) → x
+F(x, y, S(n)) → G(y, F(x, y, n))
+```
+
+Termination follows from a straightforward **polynomial interpretation**:
+
+- [Z] = 1
+- [S(n)] = [n] + 2
+- [G(y, t)] = [t] + 1
+- [F(x, y, n)] = [x] + [n]
+
+Verification:
+1. **Rule 1**: [F(x, y, Z)] = [x] + 1 > [x] ✓
+2. **Rule 2**: [F(x, y, S(n))] = [x] + [n] + 2 > [x] + [n] + 1 = [G(y, F(x, y, n))] ✓
+
+Both rules strictly decrease the interpretation, proving termination.
+
+Intuitively: the third argument of F acts as a "fuel" counter built from Z and S. Each application of rule 2 strips one S constructor, and rule 1 is the base case. The recursive structure is primitive recursive on the third argument, guaranteeing termination without any external axioms.

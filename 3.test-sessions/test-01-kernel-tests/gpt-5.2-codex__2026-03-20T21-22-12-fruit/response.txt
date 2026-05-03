@@ -1,0 +1,24 @@
+## Assessment
+
+Yes—**strong normalization can be established from the presented calculus alone** using a standard termination ordering on first-order terms. No extra rewrite rules, guards, or object-level axioms are needed. The system is a finite first-order TRS with no rule that introduces new redex patterns at a higher “level,” and the one potentially growth‑inducing rule (for `banana`) can be oriented by a well‑founded ordering such as LPO/RPO.
+
+## Short proof roadmap (within the boundary)
+
+1. **Choose a standard termination order** (e.g., LPO or RPO) with a precedence like  
+   `banana ≻ pear ≻ grape ≻ mango ≻ peach ≻ cherry ≻ plum`, and set **lexicographic status for `banana`** prioritizing the **3rd argument**.
+2. **Orient every rule** under this order:
+   - Collapsing rules (e.g., `peach plum t → t`) decrease by the subterm property.
+   - `mango (grape t) → plum` decreases by precedence (`mango ≻ plum`).
+   - `cherry a b → mango (peach a b)` decreases by precedence (`cherry ≻ mango, peach`) and subterm property for `a, b`.
+   - Crucially, `banana b s (grape n) → pear s (banana b s n)` decreases because the **third argument strictly decreases** (`grape n ≻ n`) and `banana ≻ pear`, so LPO/RPO orients it.
+3. **Conclude strong normalization** from the well‑foundedness of the chosen order.
+
+This stays entirely within standard meta‑theoretic termination techniques and does not add assumptions to the object language.
+
+## ✅ Updated todo list
+
+- [x] Inspect rewrite rules and structure  
+- [x] Assess termination risks/loops  
+- [x] Formulate concise roadmap or denial  
+
+If you want, I can also sketch how the ordering would look in Lean terms (without importing extra axioms), but I’ll stop here per your constraint.

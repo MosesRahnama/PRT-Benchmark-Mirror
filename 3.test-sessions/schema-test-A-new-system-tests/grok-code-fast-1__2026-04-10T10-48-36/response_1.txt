@@ -1,0 +1,3 @@
+Yes, strong normalization can be established from the presented rewrite system alone.
+
+Reasoning: The rules strictly decrease the "size" of the third argument (a natural number term built from Z and S) in each reduction step, eventually reaching Z and reducing to the first argument. Subsequent reductions operate on finite subterms of the first argument, with no cycles or increases in complexity possible, ensuring all reduction sequences terminate.

@@ -1,0 +1,43 @@
+## Raw Assessment: **Yes, strong normalization can be established.**
+
+### Key Structural Observation
+
+The critical insight is that three constructors are **strictly consumed** and never created:
+
+| Constructor | Appears on LHS | Appears on RHS |
+|-------------|----------------|----------------|
+| `grape` | Rules 1, 6 | **Never** |
+| `banana` | Rules 5, 6 | Rule 6 (but only inside a context where grape was consumed) |
+| `cherry` | Rules 7, 8 | **Never** |
+
+### Termination Measure
+
+Define μ(t) = (g(t), b(t), c(t), |t|) ∈ ℕ⁴ where:
+- g(t) = number of `grape` nodes in t
+- b(t) = number of `banana` nodes in t  
+- c(t) = number of `cherry` nodes in t
+- |t| = total term size (node count)
+
+### Verification (lexicographic order)
+
+| Rule | Effect on μ |
+|------|-------------|
+| `mango (grape t) → plum` | (g−1, _, _, _) ↓ |
+| `peach plum t → t` | (_, _, _, |t|−2) ↓ |
+| `peach t plum → t` | (_, _, _, |t|−2) ↓ |
+| `peach t t → t` | (_, _, _, |t|−2) ↓ |
+| `banana b s plum → b` | (_, b−1, _, _) ↓ |
+| `banana b s (grape n) → pear s (banana b s n)` | (g−1, _, _, _) ↓ |
+| `cherry a a → plum` | (_, _, c−1, _) ↓ |
+| `cherry a b → mango (peach a b)` | (_, _, c−1, _) ↓ |
+
+Every rule strictly decreases μ in the lexicographic order on ℕ⁴.
+
+### Proof Roadmap
+
+1. Define μ as above
+2. Prove each rule decreases μ (case analysis)
+3. Invoke well-foundedness of ℕ⁴ under lexicographic order
+4. Conclude all reduction sequences are finite
+
+**No external axioms, guards, or hidden assumptions required.** The proof follows directly from the syntactic structure of the rules.

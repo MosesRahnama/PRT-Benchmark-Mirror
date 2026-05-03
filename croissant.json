@@ -1,0 +1,3885 @@
+{
+  "@context": {
+    "@language": "en",
+    "@vocab": "https://schema.org/",
+    "citeAs": "cr:citeAs",
+    "column": "cr:column",
+    "conformsTo": "dct:conformsTo",
+    "cr": "http://mlcommons.org/croissant/",
+    "rai": "http://mlcommons.org/croissant/RAI/",
+    "data": {
+      "@id": "cr:data",
+      "@type": "@json"
+    },
+    "dataType": {
+      "@id": "cr:dataType",
+      "@type": "@vocab"
+    },
+    "dct": "http://purl.org/dc/terms/",
+    "examples": {
+      "@id": "cr:examples",
+      "@type": "@json"
+    },
+    "extract": "cr:extract",
+    "field": "cr:field",
+    "fileProperty": "cr:fileProperty",
+    "fileObject": "cr:fileObject",
+    "fileSet": "cr:fileSet",
+    "format": "cr:format",
+    "includes": "cr:includes",
+    "isLiveDataset": "cr:isLiveDataset",
+    "jsonPath": "cr:jsonPath",
+    "key": "cr:key",
+    "md5": "cr:md5",
+    "parentField": "cr:parentField",
+    "path": "cr:path",
+    "recordSet": "cr:recordSet",
+    "references": "cr:references",
+    "regex": "cr:regex",
+    "repeated": "cr:repeated",
+    "replace": "cr:replace",
+    "sc": "https://schema.org/",
+    "separator": "cr:separator",
+    "source": "cr:source",
+    "subField": "cr:subField",
+    "transform": "cr:transform",
+    "wd": "https://www.wikidata.org/wiki/",
+    "prov": "http://www.w3.org/ns/prov#"
+  },
+  "@type": "sc:Dataset",
+  "name": "PRT-Benchmark",
+  "description": "Primitive Recursor Test (PRT) Benchmark: a benchmark of large language model behavior on nine formal-methods termination-reasoning task families. PRT is set at the minimal first-order primitive recursor F(x,y,Z) -> x, F(x,y,S(n)) -> G(y,F(x,y,n)), evaluated at two tiers (the schema kernel and KO7, an eight-rule first-order calculus) across 27 frontier models and 1,188 sessions on nine tasks. Each session is graded on three axes: termination, witness adequacy, and rule-extracted boundary admissibility, with an externally-checkable answer key fixed by archived TTT2/CeTA certifications and a companion mechanized Lean 4 theorem stack.",
+  "conformsTo": [
+    "http://mlcommons.org/croissant/1.0",
+    "http://mlcommons.org/croissant/RAI/1.0"
+  ],
+  "license": {
+    "@type": "sc:CreativeWork",
+    "name": "Polyform Noncommercial 1.0.0 with Commercial License Available",
+    "url": "<DATASET_FILE_URL_PLACEHOLDER>/LICENSE",
+    "description": "Dual license. Non-commercial use governed by PolyForm Noncommercial 1.0.0 (SPDX: PolyForm-Noncommercial-1.0.0, https://polyformproject.org/licenses/noncommercial/1.0.0/). Commercial use requires a separate paid agreement obtained by contacting anonymized@neurips.invalid. Full terms in LICENSE."
+  },
+  "url": "<DATASET_PAGES_URL_PLACEHOLDER>",
+  "sameAs": [
+    "<DATASET_URL_PLACEHOLDER>"
+  ],
+  "creator": [
+    {
+      "@type": "sc:Person",
+      "name": "Anonymous Authors",
+      "affiliation": "Anonymous Authors",
+      "email": "anonymized@neurips.invalid"
+    }
+  ],
+  "publisher": [
+    {
+      "@type": "sc:Organization",
+      "name": "Anonymous Authors",
+      "url": "<ANONYMIZED_ORG_URL>"
+    }
+  ],
+  "datePublished": "2026-04-25",
+  "version": "1.0.0",
+  "keywords": [
+    "benchmark",
+    "termination",
+    "primitive recursion",
+    "first-order rewriting",
+    "Lean 4",
+    "TTT2",
+    "CeTA",
+    "dependency pairs",
+    "formal methods",
+    "LLM evaluation",
+    "frontier models",
+    "PRT",
+    "KO7"
+  ],
+  "citeAs": "Anonymous Authors (2026). The Primitive Recursor and the Representation-Shift Bottleneck in Frontier LLM Termination Reasoning. PRT-Benchmark v1.0.0.",
+  "rai:dataCollection": "PRT-Benchmark is a benchmark of large language model behavior on nine formal-methods and termination-reasoning task families. Public records were collected as benchmark sessions pairing prompt templates and formal test artifacts with model responses. The public release includes structured extracted CSVs, raw session provenance folders, prompt and test files, formal reproducibility artifacts (Lean 4 proofs and TTT2 termination certificates), and per-test analytics summaries.",
+  "rai:dataCollectionType": [
+    "Experiments",
+    "Software Collection",
+    "Web API"
+  ],
+  "rai:dataCollectionRawData": "The raw public provenance layer is stored under 3.test-sessions/, where each session folder contains prompt text, model response text, an exported session JSON, and an extracted thinking transcript where available. The primary structured public dataset surface is the extracted CSV layer under 4.extracted-data/, derived from the raw session JSONs by an in-repository extraction and adjudication pipeline.",
+  "rai:dataPreprocessingProtocol": "Raw benchmark sessions were mechanically exported into public-safe per-session folders, then processed into structured extracted CSVs and normalized public schema guides. Derived correctness and adjudication-style fields appear in the released CSV layer alongside raw extracted answer-bearing fields. Normalization rules mapping free-text method labels to canonical method-class taxonomies are documented in 4.extracted-data/normalization/.",
+  "rai:dataAnnotationProtocol": "Structured benchmark fields were produced through an extraction and adjudication workflow over the raw public session materials. The release distinguishes answer-bearing extracted columns from derived correctness or answer-key comparison fields, as documented in ALL_TESTS_schema.md and the per-test schema files in 4.extracted-data/. Answer-key targets are fixed by externally-checkable artifacts (TTT2 certifications and the companion Lean 4 theorem stack at <COMPANION_LEAN_URL_PLACEHOLDER>), not by author judgment over model prose.",
+  "rai:dataAnnotationPlatform": [
+    "In-repository Python extraction and normalization pipeline.",
+    "Manual-review layer for the small subset of ambiguous extractions, with adjudication notes recorded inline in the released CSVs."
+  ],
+  "rai:dataAnnotationAnalysis": [
+    "The release contains both extracted answer-bearing columns and derived correctness columns. Public schema documentation in 4.extracted-data/ specifies which fields are raw controlled-vocabulary extractions and which are answer-key-derived scoring fields."
+  ],
+  "rai:machineAnnotationTools": [
+    "In-repository Python extraction tooling (per-test build_*_consolidation.py scripts and shared adjudication helpers).",
+    "Adjudicator runs and consistency checks recorded in the per-test build_*_correctness.md output files."
+  ],
+  "rai:dataUseCases": [
+    "Benchmarking formal-methods reasoning in large language models.",
+    "Studying model behavior on termination-reasoning tasks under explicit boundary discipline.",
+    "Auditing model outputs against externally-checkable answer-key constraints.",
+    "Analyzing structured extraction and adjudication over benchmark sessions."
+  ],
+  "rai:dataBiases": "The dataset is intentionally domain-specific and emphasizes formal termination reasoning, Lean / first-order rewriting artifacts, and benchmark-structured prompts. It is not representative of general natural-language interaction. Model coverage reflects the frontier-model and platform choices used in the benchmark rather than a random or demographically representative sample of all LLM systems. Provider coverage is unbalanced (OpenAI 8 models, Anthropic 6, xAI 6, Google 3, DeepSeek 2, Zhipu AI 1, Alibaba 1) by design, to maximize provider-comparison statistical power rather than to balance the panel.",
+  "rai:dataLimitations": "The dataset is a narrow benchmark artifact rather than a general reasoning corpus. Some fields are benchmark-specific and may not transfer outside the formal-methods domain. Structured extracted values may depend on release-documented normalization and adjudication choices. Public transcript provenance is richer than the tabular CSV layer and should be consulted for fine-grained audit questions. Provider-default sampling parameters (temperature, system prompts, reasoning-effort labels) may change without a model-version bump; the recorded session timestamps pin the date window in which the rates were produced.",
+  "rai:personalSensitiveInformation": "No human-subject personal data is intentionally collected as a target of this benchmark release. Public records are benchmark-session artifacts over model interactions and formal task materials. No personally-identifying information about the benchmark author is included beyond the public author/contact metadata in the citation and license.",
+  "rai:dataReleaseMaintenancePlan": "- The release is versioned semantically. Patch releases correct packaging, metadata, or documentation without changing benchmark meaning.\n- Minor releases may add new public metadata, additional sessions, or non-breaking documentation layers.\n- Major releases indicate benchmark-breaking structural or content changes.\n- Release changes are tracked in CHANGELOG.md.\n- Public mirror is hosted on GitHub at anonymous-eandd/PRT-Benchmark; canonical archival mirror is intended for Harvard Dataverse once the dataset DOI is obtained.",
+  "rai:hasSyntheticData": false,
+  "rai:dataSocialImpact": "The release is intended to support transparency and reproducibility in the evaluation of model behavior on formal reasoning tasks. Positive impact comes from clear public benchmark documentation, externally-checkable answer keys, and reproducible artifact packaging. Risks include overgeneralizing from a narrow benchmark domain and reusing benchmark outputs without respecting the documented boundary discipline (rule-extracted vs. boundary-external method status).",
+  "prov:wasGeneratedBy": "Sessions were collected by interactive prompting of 27 frontier large language models against the nine PRT task families under a documented session-isolation protocol (no workspace access, no web, no retrieval, no instruction files, contextual memory disabled, provider-default sampling). Raw exported chat logs were processed by an in-repository Python extraction pipeline into per-session JSON files and per-test CSV exports; an answer-verdict-derivation pipeline mapped free-text model output to canonical method-class taxonomies and computed the answer-key correctness columns. Where row-level adjudication was needed (the 16-row Schema A method-review override layer), reviewer rationale is preserved inline in the released CSVs and in 4.extracted-data/normalization/overrides/schema_a_method_review_overrides.csv. Externally-checkable answer keys: TTT2/CeTA termination certifications and a companion mechanized Lean 4 theorem stack.",
+  "distribution": [
+    {
+      "@type": "cr:FileObject",
+      "@id": "schema_a_sessions_csv",
+      "name": "schema-test-A-tests.csv",
+      "contentUrl": "<DATASET_FILE_URL_PLACEHOLDER>/4.extracted-data/csv/schema-test-A-tests.csv",
+      "encodingFormat": "text/csv",
+      "contentSize": "133738",
+      "sha256": "86da5666158e07ce8811327a71b263f6d2e36179e09299b9edc1c28dbd838c7d",
+      "description": "Adjudicated extracted CSV for Schema A sessions."
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "schema_a_new_system_sessions_csv",
+      "name": "schema-test-A-new-system-tests.csv",
+      "contentUrl": "<DATASET_FILE_URL_PLACEHOLDER>/4.extracted-data/csv/schema-test-A-new-system-tests.csv",
+      "encodingFormat": "text/csv",
+      "contentSize": "116788",
+      "sha256": "08f418c01e658cdbf74afdf6ace8886296cf6887b9ee7fbe218143a9e86f8f35",
+      "description": "Adjudicated extracted CSV for Schema A New System sessions."
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "schema_b_sessions_csv",
+      "name": "schema-test-B-tests.csv",
+      "contentUrl": "<DATASET_FILE_URL_PLACEHOLDER>/4.extracted-data/csv/schema-test-B-tests.csv",
+      "encodingFormat": "text/csv",
+      "contentSize": "15600",
+      "sha256": "8be2b78910598ceb5cd39dd9f8064ea537c9357968f9e57e2d44ba360771ac76",
+      "description": "Adjudicated extracted CSV for Schema B sessions."
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "test01_sessions_csv",
+      "name": "test-01-kernel-tests.csv",
+      "contentUrl": "<DATASET_FILE_URL_PLACEHOLDER>/4.extracted-data/csv/test-01-kernel-tests.csv",
+      "encodingFormat": "text/csv",
+      "contentSize": "189271",
+      "sha256": "145b5bd80826fd0d38c3e20062ef72fbb58dfb117e63a93781377eca2d516cfc",
+      "description": "Adjudicated extracted CSV for Test 01 kernel sessions."
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "test02_sessions_csv",
+      "name": "test-02-completion-tests-nat-lex.csv",
+      "contentUrl": "<DATASET_FILE_URL_PLACEHOLDER>/4.extracted-data/csv/test-02-completion-tests-nat-lex.csv",
+      "encodingFormat": "text/csv",
+      "contentSize": "26527",
+      "sha256": "382c1d2ed923c6784c9e533531b08449913a460aab36aaa86877e2e3e9799e5f",
+      "description": "Adjudicated extracted CSV for Test 02 nat-lex scaffold completion sessions."
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "test03_sessions_csv",
+      "name": "test-03-completion-tests-ordinal.csv",
+      "contentUrl": "<DATASET_FILE_URL_PLACEHOLDER>/4.extracted-data/csv/test-03-completion-tests-ordinal.csv",
+      "encodingFormat": "text/csv",
+      "contentSize": "15122",
+      "sha256": "fd53cc3c53eaddd5a21f67d61caff49baa8f533e044c4d28c6f69ba4a2374229",
+      "description": "Adjudicated extracted CSV for Test 03 ordinal scaffold completion sessions."
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "test04_sessions_csv",
+      "name": "test-04-measure-verification-tests.csv",
+      "contentUrl": "<DATASET_FILE_URL_PLACEHOLDER>/4.extracted-data/csv/test-04-measure-verification-tests.csv",
+      "encodingFormat": "text/csv",
+      "contentSize": "28047",
+      "sha256": "ea87a9dc18595b94634ac0c59493e581fa64f90b60f736f6344567e079babcb2",
+      "description": "Adjudicated extracted CSV for Test 04 measure verification sessions."
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "test05_sessions_csv",
+      "name": "test-05-candidate-class-reasoning-tests.csv",
+      "contentUrl": "<DATASET_FILE_URL_PLACEHOLDER>/4.extracted-data/csv/test-05-candidate-class-reasoning-tests.csv",
+      "encodingFormat": "text/csv",
+      "contentSize": "17828",
+      "sha256": "89909d6fb5a8fa2e2e82f4e69de177f7c3b2abf8363abf8b3d6edb7ca9200f2f",
+      "description": "Adjudicated extracted CSV for Test 05 candidate class reasoning sessions."
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "test06_sessions_csv",
+      "name": "test-06-branch-realism-tests.csv",
+      "contentUrl": "<DATASET_FILE_URL_PLACEHOLDER>/4.extracted-data/csv/test-06-branch-realism-tests.csv",
+      "encodingFormat": "text/csv",
+      "contentSize": "30204",
+      "sha256": "918f916cc653b6e641e231520868dd5d00cd92d64bbd196811b1b87a362d0664",
+      "description": "Adjudicated extracted CSV for Test 06 branch realism sessions."
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "all_tests_schema",
+      "name": "ALL_TESTS_schema.md",
+      "contentUrl": "<DATASET_FILE_URL_PLACEHOLDER>/4.extracted-data/schemas/ALL_TESTS_schema.md",
+      "encodingFormat": "text/markdown",
+      "contentSize": "37041",
+      "sha256": "c537c060368e16fec3f40572ff41614cde0479e0a390a4ae0d9377994d347bd5",
+      "description": "Combined master schema for every per-test CSV."
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "answer_key_audit_notes",
+      "name": "answer_key_audit_notes.md",
+      "contentUrl": "<DATASET_FILE_URL_PLACEHOLDER>/7.scoring/answer-key/answer_key_audit_notes.md",
+      "encodingFormat": "text/markdown",
+      "contentSize": "19068",
+      "sha256": "e2df7f2917c3d19250e8c74296661e5f36920725c44eaa62fc5edd8a156686e5",
+      "description": "Per-surface audit log for Lean/TTT2 coverage and verdict-column cross-checks."
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "answer_key_json",
+      "name": "answer_key.json",
+      "contentUrl": "<DATASET_FILE_URL_PLACEHOLDER>/7.scoring/answer-key/answer_key.json",
+      "encodingFormat": "application/json",
+      "contentSize": "10470",
+      "sha256": "cc3dcf86e9b71cf3d70fa1c80adbe6047a429d65dc00f4db7e811492edf9f529",
+      "description": "Machine-readable gold answer key consumed by the public scoring scripts."
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "answer_keys",
+      "name": "answer_keys.md",
+      "contentUrl": "<DATASET_FILE_URL_PLACEHOLDER>/7.scoring/answer-key/answer_keys.md",
+      "encodingFormat": "text/markdown",
+      "contentSize": "47448",
+      "sha256": "d91aef85a94bfa637f993d038fe1c21f7fdb82f03dd83fa3bbd4a434598bf29c",
+      "description": "Internal answer-key reference with sources for every gold target."
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "answer_keys_simplified",
+      "name": "answer_keys_simplified.md",
+      "contentUrl": "<DATASET_FILE_URL_PLACEHOLDER>/7.scoring/answer-key/answer_keys_simplified.md",
+      "encodingFormat": "text/markdown",
+      "contentSize": "3518",
+      "sha256": "0305fe612abca0d1608e657c610e73905d3579cc58a5fc019821c26f5f59c33d",
+      "description": "Public-facing simplified answer-key summary."
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "changelog",
+      "name": "CHANGELOG.md",
+      "contentUrl": "<DATASET_FILE_URL_PLACEHOLDER>/CHANGELOG.md",
+      "encodingFormat": "text/markdown",
+      "contentSize": "1147",
+      "sha256": "98b7139ef53bd4fd164c50ec99ee369e1a329416d35b2589e175659283d3f2d8",
+      "description": "Versioned changelog."
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "citation_cff",
+      "name": "CITATION.cff",
+      "contentUrl": "<DATASET_FILE_URL_PLACEHOLDER>/CITATION.cff",
+      "encodingFormat": "application/yaml",
+      "contentSize": "1577",
+      "sha256": "8c3cab9c3d299d06e30b5a6c07805e1a1f504d52188f4e526542dc8d6d7484c7",
+      "description": "Citation File Format record."
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "data_dictionary",
+      "name": "DATA_DICTIONARY.md",
+      "contentUrl": "<DATASET_FILE_URL_PLACEHOLDER>/4.extracted-data/DATA_DICTIONARY.md",
+      "encodingFormat": "text/markdown",
+      "contentSize": "2585",
+      "sha256": "3de2d0c309f04f0ff66389daed254a026bd3a0b636eb5d0313e96bdbc461c117",
+      "description": "Public data dictionary defining shared field semantics."
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "data_statement",
+      "name": "DATA_STATEMENT.md",
+      "contentUrl": "<DATASET_FILE_URL_PLACEHOLDER>/DATA_STATEMENT.md",
+      "encodingFormat": "text/markdown",
+      "contentSize": "3170",
+      "sha256": "e075fbccff386ac943976e5d49a8d9313af7bde1d13e8d4ef28e5b2350860bbe",
+      "description": "Short data statement."
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "datasheet",
+      "name": "DATASHEET.md",
+      "contentUrl": "<DATASET_FILE_URL_PLACEHOLDER>/DATASHEET.md",
+      "encodingFormat": "text/markdown",
+      "contentSize": "8168",
+      "sha256": "e5324547e6ae6d87b96c2e9692e893a5569145b1698162e68dd7125a0b02cb63",
+      "description": "Datasheet for the dataset (Gebru et al. style)."
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "license_file",
+      "name": "LICENSE",
+      "contentUrl": "<DATASET_FILE_URL_PLACEHOLDER>/LICENSE",
+      "encodingFormat": "text/plain",
+      "contentSize": "6480",
+      "sha256": "cba2aa6cf9cefc211dfc251611a3fa3d9f9d6e6b1f39d7add9cd527317a5ca8e",
+      "description": "Dual-license: PolyForm Noncommercial 1.0.0 plus commercial-by-contact."
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "models_list",
+      "name": "models-list.md",
+      "contentUrl": "<DATASET_FILE_URL_PLACEHOLDER>/models-list.md",
+      "encodingFormat": "text/markdown",
+      "contentSize": "5998",
+      "sha256": "16f3c07808e1c36df8e5a9339365182e1c839da58135979e40fcdbb286eadfa3",
+      "description": "Model-test session count ledger."
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "schema_a_method_review_overrides",
+      "name": "schema_a_method_review_overrides.csv",
+      "contentUrl": "<DATASET_FILE_URL_PLACEHOLDER>/4.extracted-data/normalization/overrides/schema_a_method_review_overrides.csv",
+      "encodingFormat": "text/csv",
+      "contentSize": "4815",
+      "sha256": "7c7d3de369037e53dbb7272e449c6b810c417e7b17d472e720f99c99410c45b8",
+      "description": "Active Schema A manual method-review override ledger. Each row records a session whose `turn1_method_mathematical_validity` was set by manual review rather than by the mechanical method-class rule, with a `turn1_method_review_note` citing the rationale (typically a Lean theorem reference). The decisions are already applied in the released `4.extracted-data/csv/schema-test-A-tests.csv`; this file is the public provenance trail for those decisions."
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "analytics_scripts",
+      "name": "analytics scripts",
+      "encodingFormat": "text/x-python",
+      "includes": [
+        "5.analytics/*.py"
+      ],
+      "description": "Standard-library scripts that regenerate manuscript numbers from the released CSVs."
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "analytics_summaries",
+      "name": "analytics summaries",
+      "encodingFormat": "text/markdown",
+      "includes": [
+        "5.analytics/**/*.md"
+      ],
+      "description": "Paper-number regeneration markdown outputs."
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "lean_project",
+      "name": "lean project",
+      "encodingFormat": "text/x-lean",
+      "includes": [
+        "lean/**/*"
+      ],
+      "description": "Public Lean 4 verification project carrying benchmark-local mechanized answer keys."
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "normalization_docs",
+      "name": "normalization docs",
+      "encodingFormat": "text/markdown",
+      "includes": [
+        "4.extracted-data/normalization/**/*"
+      ],
+      "description": "Per-test normalization guides documenting the extraction mapping rules."
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "per_test_schema_docs",
+      "name": "per test schema docs",
+      "encodingFormat": "text/markdown",
+      "includes": [
+        "4.extracted-data/schemas/*_schema.md"
+      ],
+      "description": "Per-test field schema markdown files."
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "scoring_scripts",
+      "name": "scoring scripts",
+      "encodingFormat": "text/x-python",
+      "includes": [
+        "7.scoring/*.py"
+      ],
+      "description": "Deterministic verdict-derivation scripts that consume the answer key."
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "test_files",
+      "name": "test files",
+      "encodingFormat": "text/plain",
+      "includes": [
+        "2.test-files/**/*"
+      ],
+      "description": "Benchmark test files referenced by the prompt templates (Lean, TRS, text)."
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "test_prompts",
+      "name": "test prompts",
+      "encodingFormat": "text/plain",
+      "includes": [
+        "1.test-prompts/**/*"
+      ],
+      "description": "Prompt templates for all task families."
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "ttt2_artifacts",
+      "name": "ttt2 artifacts",
+      "encodingFormat": "text/plain",
+      "includes": [
+        "6.TTT2-Artifacts/**/*"
+      ],
+      "description": "TTT2 / CeTA termination certificates and reproducibility notes."
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "schema_a_new_system_sessions_sessions_files",
+      "name": "Schema A New System sessions session.json files",
+      "encodingFormat": "application/json",
+      "includes": [
+        "3.test-sessions/schema-test-A-new-system-tests/*/session.json"
+      ],
+      "description": "Per-session JSON metadata + full transcript records for Schema A New System sessions."
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "schema_a_sessions_sessions_files",
+      "name": "Schema A sessions session.json files",
+      "encodingFormat": "application/json",
+      "includes": [
+        "3.test-sessions/schema-test-A-tests/*/session.json"
+      ],
+      "description": "Per-session JSON metadata + full transcript records for Schema A sessions."
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "schema_b_sessions_sessions_files",
+      "name": "Schema B sessions session.json files",
+      "encodingFormat": "application/json",
+      "includes": [
+        "3.test-sessions/schema-test-B-tests/*/session.json"
+      ],
+      "description": "Per-session JSON metadata + full transcript records for Schema B sessions."
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "test01_sessions_sessions_files",
+      "name": "Test 01 kernel sessions session.json files",
+      "encodingFormat": "application/json",
+      "includes": [
+        "3.test-sessions/test-01-kernel-tests/*/session.json"
+      ],
+      "description": "Per-session JSON metadata + full transcript records for Test 01 kernel sessions."
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "test02_sessions_sessions_files",
+      "name": "Test 02 nat-lex scaffold completion sessions session.json files",
+      "encodingFormat": "application/json",
+      "includes": [
+        "3.test-sessions/test-02-completion-tests-nat-lex/*/session.json"
+      ],
+      "description": "Per-session JSON metadata + full transcript records for Test 02 nat-lex scaffold completion sessions."
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "test03_sessions_sessions_files",
+      "name": "Test 03 ordinal scaffold completion sessions session.json files",
+      "encodingFormat": "application/json",
+      "includes": [
+        "3.test-sessions/test-03-completion-tests-ordinal/*/session.json"
+      ],
+      "description": "Per-session JSON metadata + full transcript records for Test 03 ordinal scaffold completion sessions."
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "test04_sessions_sessions_files",
+      "name": "Test 04 measure verification sessions session.json files",
+      "encodingFormat": "application/json",
+      "includes": [
+        "3.test-sessions/test-04-measure-verification-tests/*/session.json"
+      ],
+      "description": "Per-session JSON metadata + full transcript records for Test 04 measure verification sessions."
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "test05_sessions_sessions_files",
+      "name": "Test 05 candidate class reasoning sessions session.json files",
+      "encodingFormat": "application/json",
+      "includes": [
+        "3.test-sessions/test-05-candidate-class-reasoning-tests/*/session.json"
+      ],
+      "description": "Per-session JSON metadata + full transcript records for Test 05 candidate class reasoning sessions."
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "test06_sessions_sessions_files",
+      "name": "Test 06 branch realism sessions session.json files",
+      "encodingFormat": "application/json",
+      "includes": [
+        "3.test-sessions/test-06-branch-realism-tests/*/session.json"
+      ],
+      "description": "Per-session JSON metadata + full transcript records for Test 06 branch realism sessions."
+    }
+  ],
+  "recordSet": [
+    {
+      "@type": "cr:RecordSet",
+      "@id": "schema_a_sessions",
+      "name": "Schema A sessions",
+      "description": "108 paired Schema A sessions on the duplicating primitive-recursor schema F(x,y,S(n)) -> G(y,F(x,y,n)). Two-turn sessions: first-turn proof-method proposal plus a follow-up self-audit turn.",
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/session_slug",
+          "name": "session_slug",
+          "description": "Session identifier, `<model>__<timestamp>`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "session_slug"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/model",
+          "name": "model",
+          "description": "Canonical model display name added in the public copy.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "model"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/provider",
+          "name": "provider",
+          "description": "Canonical provider name added in the public copy.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "provider"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn1_sn_verdict",
+          "name": "turn1_sn_verdict",
+          "description": "Turn 1 verdict on whether SN holds from the rules alone — `yes`, `no`, `unclear`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_sn_verdict"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn1_termination_correctness",
+          "name": "turn1_termination_correctness",
+          "description": "Derived answer-key verdict for `turn1_sn_verdict`. Mechanical rule: `Correct` when `turn1_sn_verdict` is `yes`, otherwise `Incorrect`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_termination_correctness"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn1_sn_verdict_quote",
+          "name": "turn1_sn_verdict_quote",
+          "description": "Verbatim quote (≤300 chars) stating the verdict.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_sn_verdict_quote"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn1_primary_method_answer_span",
+          "name": "turn1_primary_method_answer_span",
+          "description": "Verbatim span where the model commits to its proof method, or the primary objection text when the verdict is negative.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_primary_method_answer_span"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn1_primary_method",
+          "name": "turn1_primary_method",
+          "description": "Free-text Turn 1 method label (e.g. `polynomial interpretation`, `LPO`, `structural descent`, `dependency pairs`). Blank when objection-based or no recoverable method name.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_primary_method"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn1_norm_primary_method_standardized_method_name",
+          "name": "turn1_norm_primary_method_standardized_method_name",
+          "description": "Canonical Turn 1 method name collapsing surface variants to one label (e.g. `lpo`, `polynomial_interpretation`, `dependency_pairs`, `direct_measure`, `structural_descent`). Negative objection rows with no recoverable method label are normalized to `objection_or_non_method`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_norm_primary_method_standardized_method_name"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn1_norm_primary_method_method_class",
+          "name": "turn1_norm_primary_method_method_class",
+          "description": "Broad Turn 1 method family (`path_order`, `polynomial`, `direct_measure`, `structural_descent`, `transformed_calls`, `multiset_measure`, `lexicographic_measure`). Negative objection rows with no recoverable method label are classified as `objection`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_norm_primary_method_method_class"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn1_method_mathematical_validity",
+          "name": "turn1_method_mathematical_validity",
+          "description": "Derived answer-key verdict for the Turn 1 method family. Current live rule: `Correct` only for `path_order` or `transformed_calls`; otherwise `Incorrect`. Schema A polynomial rows are scored `Incorrect` in the live public file because `answer_keys.md` classifies Schema A `polynomial` as `truthOnly`, not mathematically adequate.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_method_mathematical_validity"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn1_method_correct_and_admissible",
+          "name": "turn1_method_correct_and_admissible",
+          "description": "Derived answer-key verdict for the Turn 1 method family under both truth and boundary constraints. Mechanical rule: `Correct` only for `transformed_calls`; otherwise `Incorrect`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_method_correct_and_admissible"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn1_method_review_note",
+          "name": "turn1_method_review_note",
+          "description": "Blank by default. Nonblank on reviewed Schema A gray-zone rows. Records either a theorem-backed downgrade rationale or a note explaining why a reviewed row remains scored as stored.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_method_review_note"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn1_more_than_one_method_proposed",
+          "name": "turn1_more_than_one_method_proposed",
+          "description": "`yes` when the model proposes two or more co-equal methods, otherwise `no`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_more_than_one_method_proposed"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn2_q1_method_answer_span",
+          "name": "turn2_q1_method_answer_span",
+          "description": "Verbatim span answering Q1 (\"what method did your previous answer use\"), or objection text.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_q1_method_answer_span"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn2_primary_method",
+          "name": "turn2_primary_method",
+          "description": "Free-text Turn 2 Q1 method label (same conventions as Turn 1).",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_primary_method"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn2_norm_primary_method_standardized_method_name",
+          "name": "turn2_norm_primary_method_standardized_method_name",
+          "description": "Canonical Turn 2 Q1 method name (same conventions as Turn 1). When Turn 2's effective answer is negative and no recoverable method label exists, the normalized value is `objection_or_non_method`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_norm_primary_method_standardized_method_name"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn2_norm_primary_method_method_class",
+          "name": "turn2_norm_primary_method_method_class",
+          "description": "Broad Turn 2 Q1 method family (same conventions as Turn 1). Negative objection rows with no recoverable method label are classified as `objection`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_norm_primary_method_method_class"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn2_q2_answer_span",
+          "name": "turn2_q2_answer_span",
+          "description": "Verbatim answer to Q2 (\"does that method rely on imported structure\").",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_q2_answer_span"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn2_q2_imports_external",
+          "name": "turn2_q2_imports_external",
+          "description": "`yes` when the model admits the method relies on proof structure, ordering, interpretation, or other assumption not fixed by the rules; `no` otherwise.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_q2_imports_external"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn2_q3_answer_span",
+          "name": "turn2_q3_answer_span",
+          "description": "Verbatim answer to Q3 (\"does that place it outside the boundary\").",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_q3_answer_span"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn2_q3_outside_boundary",
+          "name": "turn2_q3_outside_boundary",
+          "description": "`yes` when the model admits the method is outside the stated boundary; `no` otherwise.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_q3_outside_boundary"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn2_q4_still_sn",
+          "name": "turn2_q4_still_sn",
+          "description": "Q4 verdict on whether the system is still SN — `yes`, `no`, `unclear`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_q4_still_sn"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn2_q4_quote",
+          "name": "turn2_q4_quote",
+          "description": "Verbatim quote (≤300 chars) supporting `turn2_q4_still_sn`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_q4_quote"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn1_flag_w2_method_named",
+          "name": "turn1_flag_w2_method_named",
+          "description": "`yes` when a W2-family method is explicitly named (dependency pairs, subterm criterion, argument filtering, size-change, counter-projection, transformed calls, DP method); otherwise `no`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_flag_w2_method_named"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn1_flag_duplication_noted",
+          "name": "turn1_flag_duplication_noted",
+          "description": "`yes` when the response explicitly notes that the step payload is duplicated, copied, or appears on both sides of the recursive step; otherwise `no`. This is the Schema A structural tell.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_flag_duplication_noted"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn1_flag_subterm_descent_noted",
+          "name": "turn1_flag_subterm_descent_noted",
+          "description": "`yes` when the response explicitly states that the third argument strictly decreases; otherwise `no`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_flag_subterm_descent_noted"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn1_negative_verdict_subtype",
+          "name": "turn1_negative_verdict_subtype",
+          "description": "Subtype when verdict is negative — `cannot_establish`, `claims_nontermination`, `none` (positive/unclear verdict), or `unclear`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_negative_verdict_subtype"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn1_peripheral_quote",
+          "name": "turn1_peripheral_quote",
+          "description": "Verbatim quote (≤300 chars) supporting the highest-priority Turn 1 signal. Priority: duplication > W2 method > negative verdict subtype > subterm descent.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_peripheral_quote"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn2_explicit_retraction_marker",
+          "name": "turn2_explicit_retraction_marker",
+          "description": "`yes` when Turn 2 uses explicit retraction language (`corrected`, `revised`, `retract`, `previous answer was wrong`); otherwise `no`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_explicit_retraction_marker"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn2_q4_hedged",
+          "name": "turn2_q4_hedged",
+          "description": "`yes` when Q4 is answered positively but hedged (`intuitively`, `informally`, `likely`, `but only`, `not within the boundary`); otherwise `no`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_q4_hedged"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn2_meta_boundary_argument",
+          "name": "turn2_meta_boundary_argument",
+          "description": "`yes` when the response argues the stated boundary is unachievable, vacuous, or that every termination proof must import meta-theory; otherwise `no`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_meta_boundary_argument"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn2_original_question_restated_verdict",
+          "name": "turn2_original_question_restated_verdict",
+          "description": "Restated answer to the original bounded question — `yes`, `no`, `unclear`, or `none`. Fires only when the response uses a meta-marker (`the original question`, `within the stated boundary`, `from the rules alone`, `under a strict reading`, `corrected assessment`).",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_original_question_restated_verdict"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/turn2_peripheral_quote",
+          "name": "turn2_peripheral_quote",
+          "description": "Verbatim quote (≤300 chars) supporting the highest-priority Turn 2 signal. Priority: restated verdict > retraction marker > meta-boundary argument > Q4 hedged.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_peripheral_quote"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_sessions/quote_spawn_versus_answer_mismatch",
+          "name": "quote_spawn_versus_answer_mismatch",
+          "description": "Public QC helper column at the end of the CSV. Live vocabulary is `yes` / `no`. `yes` marks rows where the stored quote/span layer does not align with the coded answer field it is meant to support.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_sessions_csv"
+            },
+            "extract": {
+              "column": "quote_spawn_versus_answer_mismatch"
+            }
+          }
+        }
+      ],
+      "key": {
+        "@id": "schema_a_sessions/session_slug"
+      }
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "schema_a_new_system_sessions",
+      "name": "Schema A New System sessions",
+      "description": "108 paired Schema A New System sessions on the matched non-duplicating control F(x,y,S(n)) -> G(F(x,y,n)). Two-turn.",
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/session_slug",
+          "name": "session_slug",
+          "description": "Session identifier, `<model>__<timestamp>`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "session_slug"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/model",
+          "name": "model",
+          "description": "Canonical model display name added in the public copy.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "model"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/provider",
+          "name": "provider",
+          "description": "Canonical provider name added in the public copy.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "provider"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn1_sn_verdict",
+          "name": "turn1_sn_verdict",
+          "description": "Turn 1 verdict on whether SN holds from the rules alone — `yes`, `no`, `unclear`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_sn_verdict"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn1_termination_correctness",
+          "name": "turn1_termination_correctness",
+          "description": "Derived answer-key verdict for `turn1_sn_verdict`. Mechanical rule: `Correct` when `turn1_sn_verdict` is `yes`, otherwise `Incorrect`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_termination_correctness"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn1_sn_verdict_quote",
+          "name": "turn1_sn_verdict_quote",
+          "description": "Verbatim quote (≤300 chars) stating the verdict.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_sn_verdict_quote"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn1_primary_method_answer_span",
+          "name": "turn1_primary_method_answer_span",
+          "description": "Verbatim span where the model commits to its proof method, or the primary objection text when the verdict is negative.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_primary_method_answer_span"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn1_primary_method",
+          "name": "turn1_primary_method",
+          "description": "Free-text Turn 1 method label (e.g. `polynomial interpretation`, `LPO`, `structural descent`). Blank when objection-based or no recoverable method name.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_primary_method"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn1_norm_primary_method_standardized_method_name",
+          "name": "turn1_norm_primary_method_standardized_method_name",
+          "description": "Canonical Turn 1 method name collapsing surface variants to one label (e.g. `lpo`, `polynomial_interpretation`, `dependency_pairs`, `direct_measure`, `structural_descent`). Negative objection rows with no recoverable method label are normalized to `objection_or_non_method`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_norm_primary_method_standardized_method_name"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn1_norm_primary_method_method_class",
+          "name": "turn1_norm_primary_method_method_class",
+          "description": "Broad Turn 1 method family (`path_order`, `polynomial`, `direct_measure`, `structural_descent`, `transformed_calls`, `multiset_measure`, `lexicographic_measure`). Negative objection rows with no recoverable method label are classified as `objection`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_norm_primary_method_method_class"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn1_method_mathematical_validity",
+          "name": "turn1_method_mathematical_validity",
+          "description": "Derived answer-key verdict for the Turn 1 method family. Mechanical rule (v2): `Correct` iff `turn1_sn_verdict = yes` AND the method class is either one of `direct_measure`, `polynomial`, `path_order`, `transformed_calls`, OR the class is `structural_descent` with `turn1_flag_subterm_descent_noted = yes`. Otherwise `Incorrect`. The `sn=yes` gate blocks negative-verdict rows whose method span is a discussion of why methods would fail (rather than a commitment). The `structural_descent + subterm_descent_noted` branch promotes first-order subterm-descent arguments once the extraction flag confirms the model explicitly named third-argument strict descent; this is \"extra evidence\" in the sense the answer-key ledger permits.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_method_mathematical_validity"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn1_method_correct_and_admissible",
+          "name": "turn1_method_correct_and_admissible",
+          "description": "Derived answer-key verdict for the Turn 1 method family under the current SANS answer key. Mechanical rule (v2): `Correct` iff `turn1_sn_verdict = yes` AND the method class is either one of `direct_measure`, `transformed_calls`, OR the class is `structural_descent` with BOTH `turn1_flag_subterm_descent_noted = yes` AND `turn1_flag_g_inert_noted = yes`. Otherwise `Incorrect`. The two-flag branch requires the model to have articulated the full first-order argument used by the Lean linear-witness proof: third-argument strict descent plus `G` having no rules.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_method_correct_and_admissible"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn1_more_than_one_method_proposed",
+          "name": "turn1_more_than_one_method_proposed",
+          "description": "`yes` when the model proposes two or more co-equal methods, otherwise `no`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_more_than_one_method_proposed"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn2_q1_method_answer_span",
+          "name": "turn2_q1_method_answer_span",
+          "description": "Verbatim span answering Q1 (\"what method did your previous answer use\"), or objection text.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_q1_method_answer_span"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn2_primary_method",
+          "name": "turn2_primary_method",
+          "description": "Free-text Turn 2 Q1 method label (same conventions as Turn 1).",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_primary_method"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn2_norm_primary_method_standardized_method_name",
+          "name": "turn2_norm_primary_method_standardized_method_name",
+          "description": "Canonical Turn 2 Q1 method name (same conventions as Turn 1). When Turn 2's effective answer is negative and no recoverable method label exists, the normalized value is `objection_or_non_method`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_norm_primary_method_standardized_method_name"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn2_norm_primary_method_method_class",
+          "name": "turn2_norm_primary_method_method_class",
+          "description": "Broad Turn 2 Q1 method family (same conventions as Turn 1). Negative objection rows with no recoverable method label are classified as `objection`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_norm_primary_method_method_class"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn2_q2_answer_span",
+          "name": "turn2_q2_answer_span",
+          "description": "Verbatim answer to Q2 (\"does that method rely on imported structure\").",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_q2_answer_span"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn2_q2_imports_external",
+          "name": "turn2_q2_imports_external",
+          "description": "`yes` when the model admits the method relies on proof structure, ordering, interpretation, or other assumption not fixed by the rules; `no` otherwise.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_q2_imports_external"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn2_q3_answer_span",
+          "name": "turn2_q3_answer_span",
+          "description": "Verbatim answer to Q3 (\"does that place it outside the boundary\").",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_q3_answer_span"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn2_q3_outside_boundary",
+          "name": "turn2_q3_outside_boundary",
+          "description": "`yes` when the model admits the method is outside the stated boundary; `no` otherwise.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_q3_outside_boundary"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn2_q4_still_sn",
+          "name": "turn2_q4_still_sn",
+          "description": "Q4 verdict on whether the system is still SN — `yes`, `no`, `unclear`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_q4_still_sn"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn2_q4_quote",
+          "name": "turn2_q4_quote",
+          "description": "Verbatim quote (≤300 chars) supporting `turn2_q4_still_sn`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_q4_quote"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn1_flag_w2_method_named",
+          "name": "turn1_flag_w2_method_named",
+          "description": "`yes` when a W2-family method is explicitly named (dependency pairs, subterm criterion, argument filtering, size-change, counter-projection, transformed calls, DP method); otherwise `no`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_flag_w2_method_named"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn1_flag_subterm_descent_noted",
+          "name": "turn1_flag_subterm_descent_noted",
+          "description": "`yes` when the response explicitly states that the third argument strictly decreases; otherwise `no`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_flag_subterm_descent_noted"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn1_flag_g_inert_noted",
+          "name": "turn1_flag_g_inert_noted",
+          "description": "`yes` when the response explicitly states that `G` has no rules, is inert, is a constructor, or is already in normal form; otherwise `no`. Replaces Schema A's duplication flag, which is vacuous on this non-duplicating control.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_flag_g_inert_noted"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn1_negative_verdict_subtype",
+          "name": "turn1_negative_verdict_subtype",
+          "description": "Subtype when verdict is negative — `cannot_establish`, `claims_nontermination`, `none` (positive/unclear verdict), or `unclear`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_negative_verdict_subtype"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn1_peripheral_quote",
+          "name": "turn1_peripheral_quote",
+          "description": "Verbatim quote (≤300 chars) supporting the highest-priority Turn 1 signal. Priority: W2 method > negative verdict subtype > G inert > subterm descent.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn1_peripheral_quote"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn2_explicit_retraction_marker",
+          "name": "turn2_explicit_retraction_marker",
+          "description": "`yes` when Turn 2 uses explicit retraction language (`corrected`, `revised`, `retract`, `previous answer was wrong`); otherwise `no`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_explicit_retraction_marker"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn2_q4_hedged",
+          "name": "turn2_q4_hedged",
+          "description": "`yes` when Q4 is answered positively but hedged (`intuitively`, `informally`, `likely`, `but only`, `not within the boundary`); otherwise `no`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_q4_hedged"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn2_meta_boundary_argument",
+          "name": "turn2_meta_boundary_argument",
+          "description": "`yes` when the response argues the stated boundary is unachievable, vacuous, or that every termination proof must import meta-theory; otherwise `no`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_meta_boundary_argument"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn2_original_question_restated_verdict",
+          "name": "turn2_original_question_restated_verdict",
+          "description": "Restated answer to the original bounded question — `yes`, `no`, `unclear`, or `none`. Fires only when the response uses a meta-marker (`the original question`, `within the stated boundary`, `from the rules alone`, `under a strict reading`, `corrected assessment`).",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_original_question_restated_verdict"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_a_new_system_sessions/turn2_peripheral_quote",
+          "name": "turn2_peripheral_quote",
+          "description": "Verbatim quote (≤300 chars) supporting the highest-priority Turn 2 signal. Priority: restated verdict > retraction marker > meta-boundary argument > Q4 hedged.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_a_new_system_sessions_csv"
+            },
+            "extract": {
+              "column": "turn2_peripheral_quote"
+            }
+          }
+        }
+      ],
+      "key": {
+        "@id": "schema_a_new_system_sessions/session_slug"
+      }
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "schema_b_sessions",
+      "name": "Schema B sessions",
+      "description": "108 single-response Schema B sessions: explicit five-method menu evaluation against a fixed answer key.",
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "schema_b_sessions/session_slug",
+          "name": "session_slug",
+          "description": "session identifier, `<model>__<timestamp>`, with `-control`",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_b_sessions_csv"
+            },
+            "extract": {
+              "column": "session_slug"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_b_sessions/model",
+          "name": "model",
+          "description": "canonical model display name added in the public copy.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_b_sessions_csv"
+            },
+            "extract": {
+              "column": "model"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_b_sessions/provider",
+          "name": "provider",
+          "description": "canonical provider name added in the public copy.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_b_sessions_csv"
+            },
+            "extract": {
+              "column": "provider"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_b_sessions/prompt_variant",
+          "name": "prompt_variant",
+          "description": "prompt condition, `regular` or `control`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_b_sessions_csv"
+            },
+            "extract": {
+              "column": "prompt_variant"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_b_sessions/method_A_terminates",
+          "name": "method_A_terminates",
+          "description": "extracted verdict for method A. Live vocabulary:",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_b_sessions_csv"
+            },
+            "extract": {
+              "column": "method_A_terminates"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_b_sessions/method_A_in_boundary",
+          "name": "method_A_in_boundary",
+          "description": "extracted boundary verdict for method A. Live",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_b_sessions_csv"
+            },
+            "extract": {
+              "column": "method_A_in_boundary"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_b_sessions/method_B_terminates",
+          "name": "method_B_terminates",
+          "description": "extracted verdict for method B. Live vocabulary:",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_b_sessions_csv"
+            },
+            "extract": {
+              "column": "method_B_terminates"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_b_sessions/method_B_in_boundary",
+          "name": "method_B_in_boundary",
+          "description": "extracted boundary verdict for method B. Live",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_b_sessions_csv"
+            },
+            "extract": {
+              "column": "method_B_in_boundary"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_b_sessions/method_C_terminates",
+          "name": "method_C_terminates",
+          "description": "extracted verdict for method C. Live vocabulary:",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_b_sessions_csv"
+            },
+            "extract": {
+              "column": "method_C_terminates"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_b_sessions/method_C_in_boundary",
+          "name": "method_C_in_boundary",
+          "description": "extracted boundary verdict for method C. Live",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_b_sessions_csv"
+            },
+            "extract": {
+              "column": "method_C_in_boundary"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_b_sessions/method_D_terminates",
+          "name": "method_D_terminates",
+          "description": "extracted verdict for method D. Live vocabulary:",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_b_sessions_csv"
+            },
+            "extract": {
+              "column": "method_D_terminates"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_b_sessions/method_D_in_boundary",
+          "name": "method_D_in_boundary",
+          "description": "extracted boundary verdict for method D. Live",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_b_sessions_csv"
+            },
+            "extract": {
+              "column": "method_D_in_boundary"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_b_sessions/method_E_terminates",
+          "name": "method_E_terminates",
+          "description": "extracted verdict for method E. Live vocabulary:",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_b_sessions_csv"
+            },
+            "extract": {
+              "column": "method_E_terminates"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_b_sessions/method_E_in_boundary",
+          "name": "method_E_in_boundary",
+          "description": "extracted boundary verdict for method E. Live",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_b_sessions_csv"
+            },
+            "extract": {
+              "column": "method_E_in_boundary"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_b_sessions/norm_method_D_terminates_rationale_family",
+          "name": "norm_method_D_terminates_rationale_family",
+          "description": "normalized family for the richer",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_b_sessions_csv"
+            },
+            "extract": {
+              "column": "norm_method_D_terminates_rationale_family"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_b_sessions/norm_both_methods_count",
+          "name": "norm_both_methods_count",
+          "description": "number of methods included in the model's final",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_b_sessions_csv"
+            },
+            "extract": {
+              "column": "norm_both_methods_count"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_b_sessions/norm_both_methods_has_A",
+          "name": "norm_both_methods_has_A",
+          "description": "`1` when A is in the final both-methods answer,",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_b_sessions_csv"
+            },
+            "extract": {
+              "column": "norm_both_methods_has_A"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_b_sessions/norm_both_methods_has_B",
+          "name": "norm_both_methods_has_B",
+          "description": "`1` when B is in the final both-methods answer,",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_b_sessions_csv"
+            },
+            "extract": {
+              "column": "norm_both_methods_has_B"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_b_sessions/norm_both_methods_has_C",
+          "name": "norm_both_methods_has_C",
+          "description": "`1` when C is in the final both-methods answer,",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_b_sessions_csv"
+            },
+            "extract": {
+              "column": "norm_both_methods_has_C"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_b_sessions/norm_both_methods_has_D",
+          "name": "norm_both_methods_has_D",
+          "description": "`1` when D is in the final both-methods answer,",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_b_sessions_csv"
+            },
+            "extract": {
+              "column": "norm_both_methods_has_D"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "schema_b_sessions/norm_both_methods_has_E",
+          "name": "norm_both_methods_has_E",
+          "description": "`1` when E is in the final both-methods answer,",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "schema_b_sessions_csv"
+            },
+            "extract": {
+              "column": "norm_both_methods_has_E"
+            }
+          }
+        }
+      ],
+      "key": {
+        "@id": "schema_b_sessions/session_slug"
+      }
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "test01_sessions",
+      "name": "Test 01 kernel sessions",
+      "description": "324 single-response sessions on the unscaffolded KO7 8-rule kernel, split 162 KO7 + 162 fruit-renamed control.",
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/session_slug",
+          "name": "session_slug",
+          "description": "Session identifier, `<model>__<timestamp>` (KO7) or `<model>__<timestamp>-fruit` (Fruit).",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "session_slug"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/model",
+          "name": "model",
+          "description": "Display model name.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "model"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/provider",
+          "name": "provider",
+          "description": "Model provider.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "provider"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/prompt_variant",
+          "name": "prompt_variant",
+          "description": "Condition label derived from `session_slug` — `regular` for KO7 rows and `control` for Fruit rows.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "prompt_variant"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/sn_verdict",
+          "name": "sn_verdict",
+          "description": "Committed verdict on whether SN holds within the stated boundary — `yes`, `no`, `unclear`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "sn_verdict"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/termination_correctness",
+          "name": "termination_correctness",
+          "description": "Derived answer-key verdict for `sn_verdict`. Mechanical rule: `Correct` when `sn_verdict` is `yes`, otherwise `Incorrect`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "termination_correctness"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/sn_verdict_quote",
+          "name": "sn_verdict_quote",
+          "description": "Verbatim quote (≤300 chars) stating the verdict.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "sn_verdict_quote"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/primary_approach_answer_span",
+          "name": "primary_approach_answer_span",
+          "description": "Verbatim span where the model commits to its primary approach, or the refusal / local-shortcut sentence(s) when the answer is objection-based or informal.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "primary_approach_answer_span"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/primary_method",
+          "name": "primary_method",
+          "description": "Free-text method label (e.g. `Lexicographic Path Ordering (LPO)`, `polynomial interpretation`, `dependency pair method`). Blank when objection-based or no recoverable method name.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "primary_method"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/norm_primary_method_standardized_method_name",
+          "name": "norm_primary_method_standardized_method_name",
+          "description": "Canonical method name collapsing surface variants to one label (e.g. `lpo`, `polynomial_interpretation`, `dependency_pairs`, `direct_measure`, `structural_descent`). Negative objection rows with no recoverable method label are normalized to `objection_or_non_method`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "norm_primary_method_standardized_method_name"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/norm_primary_method_method_class",
+          "name": "norm_primary_method_method_class",
+          "description": "Broad method family (`path_order`, `polynomial`, `direct_measure`, `structural_descent`, `transformed_calls`, `multiset_measure`, `lexicographic_measure`). Negative objection rows with no recoverable method label are classified as `objection`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "norm_primary_method_method_class"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/method_mathematical_validity",
+          "name": "method_mathematical_validity",
+          "description": "Derived answer-key verdict for the primary method family. Mechanical rule: `Correct` for `path_order` or `transformed_calls`; otherwise `Incorrect`. Generic `polynomial` is `truthOnly` on the KO7 / Fruit kernel and is stored as mathematically invalid in the public CSV.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "method_mathematical_validity"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/method_correct_and_admissible",
+          "name": "method_correct_and_admissible",
+          "description": "Derived answer-key verdict for the primary method family under the Test 01 / Schema A boundary rule. Mechanical rule: `Correct` only for `transformed_calls`; otherwise `Incorrect`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "method_correct_and_admissible"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/more_than_one_approach_proposed",
+          "name": "more_than_one_approach_proposed",
+          "description": "`yes` when the model proposes two or more co-equal proof routes or objections, otherwise `no`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "more_than_one_approach_proposed"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/primary_answer_mode",
+          "name": "primary_answer_mode",
+          "description": "Shape of the answer — `method` (supports the answer with a recoverable proof device), `objection` (main basis is that SN cannot be established within the boundary), `shortcut_or_local` (purely informal local argument), or `unclear`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "primary_answer_mode"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/answer_mode_primary_method",
+          "name": "answer_mode_primary_method",
+          "description": "Method label recovered specifically for the answer-mode / boundary-claim layer. This may differ from the initial `primary_method` extraction if the model reframes its basis in the later adjudication round.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "answer_mode_primary_method"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/claims_method_in_boundary",
+          "name": "claims_method_in_boundary",
+          "description": "Model's own claim about whether its method stays within the boundary — `yes`, `no`, `unclear`, or `na` (set to `na` when `primary_answer_mode != method`).",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "claims_method_in_boundary"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/transformed_call_signal",
+          "name": "transformed_call_signal",
+          "description": "W2 retrieval indicator — `explicit_w2_method` (explicitly names a W2-family method), `subterm_containment_only` (appeals to subterm containment without naming the framework), or `none`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "transformed_call_signal"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/boundary_or_w2_quote",
+          "name": "boundary_or_w2_quote",
+          "description": "Verbatim quote (≤300 chars) supporting the highest-priority signal. Priority: explicit W2 method > subterm containment > boundary claim.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "boundary_or_w2_quote"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/flag_w2_method_named",
+          "name": "flag_w2_method_named",
+          "description": "`yes` when a W2-family method is explicitly named (dependency pairs, subterm criterion, argument filtering, size-change, counter-projection, transformed calls, DP method); otherwise `no`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "flag_w2_method_named"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/flag_mentions_root_only",
+          "name": "flag_mentions_root_only",
+          "description": "`yes` when the response explicitly treats the rewrite relation as root-only or claims no congruence; otherwise `no`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "flag_mentions_root_only"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/flag_mentions_external_framework",
+          "name": "flag_mentions_external_framework",
+          "description": "`yes` when the response cites an external termination tool or framework (`TTT2`, `AProVE`, `CeTA`, Kruskal's tree theorem, ordinal analysis, dependency-pair framework, Lean-level imported proof machinery); otherwise `no`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "flag_mentions_external_framework"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/flag_size_growing_rule_noted",
+          "name": "flag_size_growing_rule_noted",
+          "description": "`yes` when the response explicitly notes that one of the rules grows the term or is non-size-decreasing; otherwise `no`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "flag_size_growing_rule_noted"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/peripheral_quote",
+          "name": "peripheral_quote",
+          "description": "Verbatim quote (≤300 chars) supporting the highest-priority active flag. Priority: W2 named > root-only > external framework > size-growing rule.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "peripheral_quote"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/negative_verdict_subtype",
+          "name": "negative_verdict_subtype",
+          "description": "Subtype when verdict is negative — `cannot_establish`, `claims_nontermination`, `none` (positive/unclear verdict), or `unclear`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "negative_verdict_subtype"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/primary_objection_type",
+          "name": "primary_objection_type",
+          "description": "Taxonomic label when the main basis is an objection — `congruence_missing`, `meta_framework_needed`, `inert_constructor_objection`, `size_growth_rule`, `decidability_of_equality`, `type_theoretic`, `other`, or `none`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "primary_objection_type"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/flag_boundary_self_acknowledgment",
+          "name": "flag_boundary_self_acknowledgment",
+          "description": "`yes` when the model acknowledges unprompted that its own method imports external structure or crosses the boundary; otherwise `no`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "flag_boundary_self_acknowledgment"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test01_sessions/peripheral_quote_b",
+          "name": "peripheral_quote_b",
+          "description": "Verbatim quote (≤300 chars) supporting the highest-priority active field. Priority: negative verdict subtype > primary objection type > boundary self-acknowledgment.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test01_sessions_csv"
+            },
+            "extract": {
+              "column": "peripheral_quote_b"
+            }
+          }
+        }
+      ],
+      "key": {
+        "@id": "test01_sessions/session_slug"
+      }
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "test02_sessions",
+      "name": "Test 02 nat-lex scaffold completion sessions",
+      "description": "108 sessions auditing a Nat-pair lexicographic measure scaffold for KO7. Gold answer: scaffold is broken at R_rec_succ.",
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "test02_sessions/session_slug",
+          "name": "session_slug",
+          "description": "Session identifier, `<model>__<timestamp>`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test02_sessions_csv"
+            },
+            "extract": {
+              "column": "session_slug"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test02_sessions/model",
+          "name": "model",
+          "description": "Display model name.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test02_sessions_csv"
+            },
+            "extract": {
+              "column": "model"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test02_sessions/provider",
+          "name": "provider",
+          "description": "Model provider.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test02_sessions_csv"
+            },
+            "extract": {
+              "column": "provider"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test02_sessions/completion_claim",
+          "name": "completion_claim",
+          "description": "Whether the response claims the supplied proof can be completed as written. Current values in the finalized CSV are `yes`, `no`, and `partial`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test02_sessions_csv"
+            },
+            "extract": {
+              "column": "completion_claim"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test02_sessions/rec_succ_obstruction_identified",
+          "name": "rec_succ_obstruction_identified",
+          "description": "`yes` when the response explicitly identifies an obstruction at `R_rec_succ`; `no` otherwise.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test02_sessions_csv"
+            },
+            "extract": {
+              "column": "rec_succ_obstruction_identified"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test02_sessions/completion_claim_quote",
+          "name": "completion_claim_quote",
+          "description": "Verbatim quote supporting `completion_claim`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test02_sessions_csv"
+            },
+            "extract": {
+              "column": "completion_claim_quote"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test02_sessions/rec_succ_obstruction_quote",
+          "name": "rec_succ_obstruction_quote",
+          "description": "Verbatim quote supporting `rec_succ_obstruction_identified`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test02_sessions_csv"
+            },
+            "extract": {
+              "column": "rec_succ_obstruction_quote"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test02_sessions/completion_claim_correctness",
+          "name": "completion_claim_correctness",
+          "description": "Answer-key-derived verdict for `completion_claim`. Mechanical rule: `Correct` when `completion_claim = no`, `Unresolved` when `completion_claim = partial`, and `Incorrect` when `completion_claim = yes`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test02_sessions_csv"
+            },
+            "extract": {
+              "column": "completion_claim_correctness"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test02_sessions/rec_succ_obstruction_diagnosis_correctness",
+          "name": "rec_succ_obstruction_diagnosis_correctness",
+          "description": "Answer-key-derived verdict for the barrier diagnosis. Mechanical rule: `Correct` when `rec_succ_obstruction_identified = yes`, otherwise `Incorrect`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test02_sessions_csv"
+            },
+            "extract": {
+              "column": "rec_succ_obstruction_diagnosis_correctness"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test02_sessions/overall_test02_correctness",
+          "name": "overall_test02_correctness",
+          "description": "Combined answer-key verdict. Mechanical rule: `Correct` when `completion_claim = no` and `rec_succ_obstruction_identified = yes`; `Unresolved` when `completion_claim = partial` or when `completion_claim = no` but the obstruction is not identified; `Incorrect` when `completion_claim = yes`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test02_sessions_csv"
+            },
+            "extract": {
+              "column": "overall_test02_correctness"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test02_sessions/quote_spawn_versus_answer_mismatch",
+          "name": "quote_spawn_versus_answer_mismatch",
+          "description": "QC flag column. Populated when a quote/spawn field does not match its corresponding coded answer field. Current populated value is `completion_claim` when `completion_claim_quote` conflicts with `completion_claim`; otherwise the field is left blank.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test02_sessions_csv"
+            },
+            "extract": {
+              "column": "quote_spawn_versus_answer_mismatch"
+            }
+          }
+        }
+      ],
+      "key": {
+        "@id": "test02_sessions/session_slug"
+      }
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "test03_sessions",
+      "name": "Test 03 ordinal scaffold completion sessions",
+      "description": "108 sessions completing a viable ordinal-valued measure scaffold for the remaining sorry cases in mu_decreases.",
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "test03_sessions/session_slug",
+          "name": "session_slug",
+          "description": "Session identifier, `<model>__<timestamp>`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test03_sessions_csv"
+            },
+            "extract": {
+              "column": "session_slug"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test03_sessions/model",
+          "name": "model",
+          "description": "Display model name.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test03_sessions_csv"
+            },
+            "extract": {
+              "column": "model"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test03_sessions/provider",
+          "name": "provider",
+          "description": "Model provider.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test03_sessions_csv"
+            },
+            "extract": {
+              "column": "provider"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test03_sessions/r_rec_succ_delivery",
+          "name": "r_rec_succ_delivery",
+          "description": "What the model literally delivered for the `R_rec_succ` branch. Current values in the finalized CSV are `closed_code`, `open_code`, `prose_only`, and `missing`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test03_sessions_csv"
+            },
+            "extract": {
+              "column": "r_rec_succ_delivery"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test03_sessions/r_eq_refl_delivery",
+          "name": "r_eq_refl_delivery",
+          "description": "What the model literally delivered for the `R_eq_refl` branch. Current values in the finalized CSV are `closed_code`, `open_code`, `prose_only`, and `missing`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test03_sessions_csv"
+            },
+            "extract": {
+              "column": "r_eq_refl_delivery"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test03_sessions/eq_refl_support_correctness",
+          "name": "eq_refl_support_correctness",
+          "description": "Derived answer-key verdict for the easy supportive branch. Mechanical rule: `Correct` when `r_eq_refl_delivery` is any non-`missing` value; otherwise `Incorrect`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test03_sessions_csv"
+            },
+            "extract": {
+              "column": "eq_refl_support_correctness"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test03_sessions/r_eq_diff_delivery",
+          "name": "r_eq_diff_delivery",
+          "description": "What the model literally delivered for the `R_eq_diff` branch. Current values in the finalized CSV are `closed_code`, `open_code`, `prose_only`, and `missing`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test03_sessions_csv"
+            },
+            "extract": {
+              "column": "r_eq_diff_delivery"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test03_sessions/hard_case_delivery_correctness",
+          "name": "hard_case_delivery_correctness",
+          "description": "Derived answer-key verdict for the two theorem-backed hard obligations (`R_rec_succ`, `R_eq_diff`). Mechanical rule: `Correct` when both hard-case deliveries are `closed_code` or `open_code`; `Unresolved` when neither is `missing` but at least one is `prose_only`; `Incorrect` when either hard-case delivery is `missing`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test03_sessions_csv"
+            },
+            "extract": {
+              "column": "hard_case_delivery_correctness"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test03_sessions/remaining_case_labels_correct",
+          "name": "remaining_case_labels_correct",
+          "description": "`yes` when the response correctly identifies the actual remaining target cases; `no` otherwise.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test03_sessions_csv"
+            },
+            "extract": {
+              "column": "remaining_case_labels_correct"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test03_sessions/remaining_case_targeting_correctness",
+          "name": "remaining_case_targeting_correctness",
+          "description": "Derived answer-key verdict for the target-set identification. Mechanical rule: `Correct` when `remaining_case_labels_correct` is `yes`, otherwise `Incorrect`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test03_sessions_csv"
+            },
+            "extract": {
+              "column": "remaining_case_targeting_correctness"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test03_sessions/non_remaining_case_material_present",
+          "name": "non_remaining_case_material_present",
+          "description": "`yes` when the response spends substantive material on already-completed branches or unrelated case labels; `no` otherwise.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test03_sessions_csv"
+            },
+            "extract": {
+              "column": "non_remaining_case_material_present"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test03_sessions/response_scope_correctness",
+          "name": "response_scope_correctness",
+          "description": "Derived answer-key verdict for response focus. Mechanical rule: `Correct` when `non_remaining_case_material_present` is `no`, otherwise `Incorrect`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test03_sessions_csv"
+            },
+            "extract": {
+              "column": "response_scope_correctness"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test03_sessions/overall_test03_correctness",
+          "name": "overall_test03_correctness",
+          "description": "Combined answer-key verdict for the response as a whole. Mechanical rule: `Correct` when hard-case delivery, easy-case support, targeting, and scope are all `Correct`; `Unresolved` when targeting and scope are `Correct`, the hard-case field is not `Incorrect`, but at least one required supportive condition still falls short; `Incorrect` otherwise.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test03_sessions_csv"
+            },
+            "extract": {
+              "column": "overall_test03_correctness"
+            }
+          }
+        }
+      ],
+      "key": {
+        "@id": "test03_sessions/session_slug"
+      }
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "test04_sessions",
+      "name": "Test 04 measure verification sessions",
+      "description": "108 sessions auditing a supplied (phase, cost) measure for KO7. Gold answer: unsound, with phase-exposure failure on R_merge_void_left.",
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "test04_sessions/session_slug",
+          "name": "session_slug",
+          "description": "Session identifier, `<model>__<timestamp>`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test04_sessions_csv"
+            },
+            "extract": {
+              "column": "session_slug"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test04_sessions/model",
+          "name": "model",
+          "description": "Display model name.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test04_sessions_csv"
+            },
+            "extract": {
+              "column": "model"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test04_sessions/provider",
+          "name": "provider",
+          "description": "Model provider.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test04_sessions_csv"
+            },
+            "extract": {
+              "column": "provider"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test04_sessions/measure_sound_yes_no",
+          "name": "measure_sound_yes_no",
+          "description": "Final yes/no verdict on whether the proposed measure is sound.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test04_sessions_csv"
+            },
+            "extract": {
+              "column": "measure_sound_yes_no"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test04_sessions/measure_sound_quote",
+          "name": "measure_sound_quote",
+          "description": "Verbatim quote supporting `measure_sound_yes_no`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test04_sessions_csv"
+            },
+            "extract": {
+              "column": "measure_sound_quote"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test04_sessions/r_rec_succ_cited",
+          "name": "r_rec_succ_cited",
+          "description": "`yes` when the response explicitly cites or analyzes `R_rec_succ`; `no` otherwise.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test04_sessions_csv"
+            },
+            "extract": {
+              "column": "r_rec_succ_cited"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test04_sessions/phase_exposure_cited",
+          "name": "phase_exposure_cited",
+          "description": "`yes` when the response explicitly identifies the wrapper-removal / exposure problem that can raise phase at the root; `no` otherwise.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test04_sessions_csv"
+            },
+            "extract": {
+              "column": "phase_exposure_cited"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test04_sessions/self_correction_flag",
+          "name": "self_correction_flag",
+          "description": "`yes` when the response visibly revises or retracts an earlier claim; `no` otherwise.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test04_sessions_csv"
+            },
+            "extract": {
+              "column": "self_correction_flag"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test04_sessions/self_contradiction_flag",
+          "name": "self_contradiction_flag",
+          "description": "`yes` when incompatible claims remain in the delivered response without a clean resolved reading; `no` otherwise.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test04_sessions_csv"
+            },
+            "extract": {
+              "column": "self_contradiction_flag"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test04_sessions/review_notes",
+          "name": "review_notes",
+          "description": "Free-text notes for follow-up, ambiguity, or short adjudication comments.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test04_sessions_csv"
+            },
+            "extract": {
+              "column": "review_notes"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test04_sessions/measure_sound_correctness",
+          "name": "measure_sound_correctness",
+          "description": "Derived verdict column. `Correct` when `measure_sound_yes_no = no`; `Incorrect` when `measure_sound_yes_no = yes`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test04_sessions_csv"
+            },
+            "extract": {
+              "column": "measure_sound_correctness"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test04_sessions/phase_exposure_localization_correctness",
+          "name": "phase_exposure_localization_correctness",
+          "description": "Derived verdict column. `Correct` when `phase_exposure_cited = yes`; `Incorrect` when `phase_exposure_cited = no`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test04_sessions_csv"
+            },
+            "extract": {
+              "column": "phase_exposure_localization_correctness"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test04_sessions/overall_test04_correctness",
+          "name": "overall_test04_correctness",
+          "description": "Derived verdict column. `Correct` when the response both rejects the measure and cites the wrapper-exposure failure, `Unresolved` when it rejects the measure without the decisive localization, and `Incorrect` when it says the measure is sound.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test04_sessions_csv"
+            },
+            "extract": {
+              "column": "overall_test04_correctness"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test04_sessions/quote_spawn_versus_answer_mismatch",
+          "name": "quote_spawn_versus_answer_mismatch",
+          "description": "Helper QC column. Current live values are `yes` or `no`. It records whether a post-extraction quote/span review found the stored support text mismatched against the finalized answer field. It is not itself an answer-key verdict column.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test04_sessions_csv"
+            },
+            "extract": {
+              "column": "quote_spawn_versus_answer_mismatch"
+            }
+          }
+        }
+      ],
+      "key": {
+        "@id": "test04_sessions/session_slug"
+      }
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "test05_sessions",
+      "name": "Test 05 candidate class reasoning sessions",
+      "description": "108 sessions evaluating three additive measures mu1, mu2, mu3 for KO7. All three fail at R_rec_succ.",
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "test05_sessions/session_slug",
+          "name": "session_slug",
+          "description": "Session identifier, `<model>__<timestamp>`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test05_sessions_csv"
+            },
+            "extract": {
+              "column": "session_slug"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test05_sessions/model",
+          "name": "model",
+          "description": "Display model name.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test05_sessions_csv"
+            },
+            "extract": {
+              "column": "model"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test05_sessions/provider",
+          "name": "provider",
+          "description": "Model provider.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test05_sessions_csv"
+            },
+            "extract": {
+              "column": "provider"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test05_sessions/response_truncated_flag",
+          "name": "response_truncated_flag",
+          "description": "`1` when the response is visibly truncated or materially incomplete; `0` otherwise.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test05_sessions_csv"
+            },
+            "extract": {
+              "column": "response_truncated_flag"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test05_sessions/tool_spill_flag",
+          "name": "tool_spill_flag",
+          "description": "`1` when the response includes tool/process chatter rather than staying on the task; `0` otherwise.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test05_sessions_csv"
+            },
+            "extract": {
+              "column": "tool_spill_flag"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test05_sessions/mu1_yes_no",
+          "name": "mu1_yes_no",
+          "description": "Final yes/no verdict for candidate `mu1`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test05_sessions_csv"
+            },
+            "extract": {
+              "column": "mu1_yes_no"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test05_sessions/mu2_yes_no",
+          "name": "mu2_yes_no",
+          "description": "Final yes/no verdict for candidate `mu2`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test05_sessions_csv"
+            },
+            "extract": {
+              "column": "mu2_yes_no"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test05_sessions/mu3_yes_no",
+          "name": "mu3_yes_no",
+          "description": "Final yes/no verdict for candidate `mu3`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test05_sessions_csv"
+            },
+            "extract": {
+              "column": "mu3_yes_no"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test05_sessions/r_rec_succ_cited",
+          "name": "r_rec_succ_cited",
+          "description": "`yes` when the response explicitly cites `R_rec_succ` or directly analyzes that rule; `no` otherwise.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test05_sessions_csv"
+            },
+            "extract": {
+              "column": "r_rec_succ_cited"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test05_sessions/self_correction_flag",
+          "name": "self_correction_flag",
+          "description": "`yes` when the response visibly revises or retracts an earlier claim; `no` otherwise.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test05_sessions_csv"
+            },
+            "extract": {
+              "column": "self_correction_flag"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test05_sessions/self_contradiction_flag",
+          "name": "self_contradiction_flag",
+          "description": "`yes` when incompatible claims remain in the delivered response without a clean resolved reading; `no` otherwise.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test05_sessions_csv"
+            },
+            "extract": {
+              "column": "self_contradiction_flag"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test05_sessions/adjudicator_notes",
+          "name": "adjudicator_notes",
+          "description": "Free-text notes for ambiguity, follow-up, or short adjudication comments.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test05_sessions_csv"
+            },
+            "extract": {
+              "column": "adjudicator_notes"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test05_sessions/mu1_correctness",
+          "name": "mu1_correctness",
+          "description": "Derived verdict column. `Correct` when `mu1_yes_no = no`; `Incorrect` when `mu1_yes_no = yes`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test05_sessions_csv"
+            },
+            "extract": {
+              "column": "mu1_correctness"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test05_sessions/mu2_correctness",
+          "name": "mu2_correctness",
+          "description": "Derived verdict column. `Correct` when `mu2_yes_no = no`; `Incorrect` when `mu2_yes_no = yes`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test05_sessions_csv"
+            },
+            "extract": {
+              "column": "mu2_correctness"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test05_sessions/mu3_correctness",
+          "name": "mu3_correctness",
+          "description": "Derived verdict column. `Correct` when `mu3_yes_no = no`; `Incorrect` when `mu3_yes_no = yes`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test05_sessions_csv"
+            },
+            "extract": {
+              "column": "mu3_correctness"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test05_sessions/r_rec_succ_localization_correctness",
+          "name": "r_rec_succ_localization_correctness",
+          "description": "Derived verdict column. `Correct` when `r_rec_succ_cited = yes`; `Incorrect` when `r_rec_succ_cited = no`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test05_sessions_csv"
+            },
+            "extract": {
+              "column": "r_rec_succ_localization_correctness"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test05_sessions/overall_test05_correctness",
+          "name": "overall_test05_correctness",
+          "description": "Derived verdict column. `Correct` when all three candidate verdicts are `no` and the shared `R_rec_succ` obstruction is cited, `Unresolved` when all three candidate verdicts are `no` but the shared obstruction is not cited, and `Incorrect` otherwise.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test05_sessions_csv"
+            },
+            "extract": {
+              "column": "overall_test05_correctness"
+            }
+          }
+        }
+      ],
+      "key": {
+        "@id": "test05_sessions/session_slug"
+      }
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "test06_sessions",
+      "name": "Test 06 branch realism sessions",
+      "description": "108 sessions auditing a branch-realism helper strategy for KO7. Gold answer: unsound on the nested-delta branch.",
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "test06_sessions/session_slug",
+          "name": "session_slug",
+          "description": "Session identifier, `<model>__<timestamp>`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test06_sessions_csv"
+            },
+            "extract": {
+              "column": "session_slug"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test06_sessions/model",
+          "name": "model",
+          "description": "Display model name.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test06_sessions_csv"
+            },
+            "extract": {
+              "column": "model"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test06_sessions/provider",
+          "name": "provider",
+          "description": "Model provider.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test06_sessions_csv"
+            },
+            "extract": {
+              "column": "provider"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test06_sessions/condition",
+          "name": "condition",
+          "description": "Prompt/run condition label. Current values in the finalized CSV are `run1`, `run2`, `run3`, `run4`, and `run5`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test06_sessions_csv"
+            },
+            "extract": {
+              "column": "condition"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test06_sessions/strategy_sound_verdict",
+          "name": "strategy_sound_verdict",
+          "description": "Overall verdict on whether the helper strategy is sound as written.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test06_sessions_csv"
+            },
+            "extract": {
+              "column": "strategy_sound_verdict"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test06_sessions/strategy_sound_correctness",
+          "name": "strategy_sound_correctness",
+          "description": "Derived answer-key verdict for the overall strategy claim. Mechanical rule: `Correct` when `strategy_sound_verdict` is `unsound`, otherwise `Incorrect`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test06_sessions_csv"
+            },
+            "extract": {
+              "column": "strategy_sound_correctness"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test06_sessions/strategy_sound_quote",
+          "name": "strategy_sound_quote",
+          "description": "Verbatim quote supporting `strategy_sound_verdict`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test06_sessions_csv"
+            },
+            "extract": {
+              "column": "strategy_sound_quote"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test06_sessions/kappa_rec_delta_step_verdict",
+          "name": "kappa_rec_delta_step_verdict",
+          "description": "What the response says about `kappa_rec_delta_step`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test06_sessions_csv"
+            },
+            "extract": {
+              "column": "kappa_rec_delta_step_verdict"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test06_sessions/kappa_rec_delta_step_correctness",
+          "name": "kappa_rec_delta_step_correctness",
+          "description": "Derived answer-key verdict for `kappa_rec_delta_step`. Mechanical rule: `Correct` when `kappa_rec_delta_step_verdict` is `fails`, otherwise `Incorrect`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test06_sessions_csv"
+            },
+            "extract": {
+              "column": "kappa_rec_delta_step_correctness"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test06_sessions/kappa_rec_succ_drop_verdict",
+          "name": "kappa_rec_succ_drop_verdict",
+          "description": "What the response says about `kappa_rec_succ_drop`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test06_sessions_csv"
+            },
+            "extract": {
+              "column": "kappa_rec_succ_drop_verdict"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test06_sessions/kappa_rec_succ_drop_correctness",
+          "name": "kappa_rec_succ_drop_correctness",
+          "description": "Derived answer-key verdict for `kappa_rec_succ_drop`. Mechanical rule: `Correct` when `kappa_rec_succ_drop_verdict` is `fails`, otherwise `Incorrect`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test06_sessions_csv"
+            },
+            "extract": {
+              "column": "kappa_rec_succ_drop_correctness"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test06_sessions/n_equals_delta_m_cited",
+          "name": "n_equals_delta_m_cited",
+          "description": "`yes` when the response explicitly raises the critical branch case where `n` itself can be another `delta` term; `no` otherwise.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test06_sessions_csv"
+            },
+            "extract": {
+              "column": "n_equals_delta_m_cited"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test06_sessions/nested_delta_branch_diagnosis_correctness",
+          "name": "nested_delta_branch_diagnosis_correctness",
+          "description": "Derived answer-key verdict for the critical-branch diagnosis. Mechanical rule: `Correct` when `n_equals_delta_m_cited` is `yes`, otherwise `Incorrect`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test06_sessions_csv"
+            },
+            "extract": {
+              "column": "nested_delta_branch_diagnosis_correctness"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test06_sessions/first_named_failure_point",
+          "name": "first_named_failure_point",
+          "description": "The first explicit failure point named by the response.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test06_sessions_csv"
+            },
+            "extract": {
+              "column": "first_named_failure_point"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test06_sessions/failure_localization_quality",
+          "name": "failure_localization_quality",
+          "description": "Derived answer-key quality label for `first_named_failure_point`. Mechanical rule: `Correct` when the first named failure point is `kappa_rec_delta_step`, `Unresolved` when it is `kappa_rec_succ_drop`, and `Incorrect` otherwise.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test06_sessions_csv"
+            },
+            "extract": {
+              "column": "failure_localization_quality"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test06_sessions/concrete_counterexample_provided",
+          "name": "concrete_counterexample_provided",
+          "description": "`yes` when the response provides a concrete instantiation or worked counterexample; `no` otherwise.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test06_sessions_csv"
+            },
+            "extract": {
+              "column": "concrete_counterexample_provided"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test06_sessions/counterexample_support_correctness",
+          "name": "counterexample_support_correctness",
+          "description": "Derived answer-key verdict for counterexample support. Mechanical rule: `Correct` when `concrete_counterexample_provided` is `yes`, otherwise `Incorrect`.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test06_sessions_csv"
+            },
+            "extract": {
+              "column": "counterexample_support_correctness"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test06_sessions/overall_test06_correctness",
+          "name": "overall_test06_correctness",
+          "description": "Combined answer-key verdict for Test 06. Mechanical rule: `Correct` when the strategy is judged `unsound`, both helper verdicts are `fails`, and the nested-`delta` branch is cited; `Unresolved` when the overall strategy and both helper-failure verdicts are correct but the nested-`delta` branch is not cited; `Incorrect` otherwise.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test06_sessions_csv"
+            },
+            "extract": {
+              "column": "overall_test06_correctness"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "test06_sessions/quote_spawn_versus_answer_mismatch",
+          "name": "quote_spawn_versus_answer_mismatch",
+          "description": "Helper QC column. Current live values are `yes` or `no`. It records whether a post-extraction quote/span review found the stored support text mismatched against the finalized answer field. It is not itself an answer-key verdict column.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "test06_sessions_csv"
+            },
+            "extract": {
+              "column": "quote_spawn_versus_answer_mismatch"
+            }
+          }
+        }
+      ],
+      "key": {
+        "@id": "test06_sessions/session_slug"
+      }
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "sessions_single_turn_transcripts",
+      "name": "Single-turn session transcripts",
+      "description": "Field-level access to session.json files for the seven single-turn benchmarks (Schema B and Test 01 through Test 06). Covers 972 sessions. References the corresponding per-test CSV RecordSets via session_id <-> session_slug.",
+      "key": {
+        "@id": "sessions_single_turn_transcripts/session_id"
+      },
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "sessions_single_turn_transcripts/session_id",
+          "name": "session_id",
+          "description": "UUID-style internal session identifier from the chat exporter.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileSet": {
+              "@id": "schema_b_sessions_sessions_files"
+            },
+            "extract": {
+              "jsonPath": "$.session_id"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "sessions_single_turn_transcripts/model",
+          "name": "model",
+          "description": "Provider-qualified model name (e.g. 'copilot/claude-opus-4.6').",
+          "dataType": "sc:Text",
+          "source": {
+            "fileSet": {
+              "@id": "schema_b_sessions_sessions_files"
+            },
+            "extract": {
+              "jsonPath": "$.model"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "sessions_single_turn_transcripts/source",
+          "name": "source",
+          "description": "Export source ('copilot', 'openrouter', 'provider-api').",
+          "dataType": "sc:Text",
+          "source": {
+            "fileSet": {
+              "@id": "schema_b_sessions_sessions_files"
+            },
+            "extract": {
+              "jsonPath": "$.source"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "sessions_single_turn_transcripts/extraction_date",
+          "name": "extraction_date",
+          "description": "ISO 8601 UTC timestamp of when the session was exported.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileSet": {
+              "@id": "schema_b_sessions_sessions_files"
+            },
+            "extract": {
+              "jsonPath": "$.extraction_date"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "sessions_single_turn_transcripts/benchmark_type",
+          "name": "benchmark_type",
+          "description": "Test family identifier (e.g. 'ordinal-completion', 'kernel-test-01').",
+          "dataType": "sc:Text",
+          "source": {
+            "fileSet": {
+              "@id": "schema_b_sessions_sessions_files"
+            },
+            "extract": {
+              "jsonPath": "$.benchmark_type"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "sessions_single_turn_transcripts/matched_prompt_file",
+          "name": "matched_prompt_file",
+          "description": "Filename of the prompt template under 1.test-prompts/ that produced this session.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileSet": {
+              "@id": "schema_b_sessions_sessions_files"
+            },
+            "extract": {
+              "jsonPath": "$.matched_prompt_file"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "sessions_single_turn_transcripts/prompt",
+          "name": "prompt",
+          "description": "Verbatim prompt text delivered to the model.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileSet": {
+              "@id": "schema_b_sessions_sessions_files"
+            },
+            "extract": {
+              "jsonPath": "$.prompt"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "sessions_single_turn_transcripts/response",
+          "name": "response",
+          "description": "Verbatim final model response text.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileSet": {
+              "@id": "schema_b_sessions_sessions_files"
+            },
+            "extract": {
+              "jsonPath": "$.response"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "sessions_single_turn_transcripts/thinking",
+          "name": "thinking",
+          "description": "Captured reasoning / hidden-thinking transcript when the model exposes it; empty string otherwise.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileSet": {
+              "@id": "schema_b_sessions_sessions_files"
+            },
+            "extract": {
+              "jsonPath": "$.thinking"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "sessions_single_turn_transcripts/message_count",
+          "name": "message_count",
+          "description": "Total messages in all_messages.",
+          "dataType": "sc:Integer",
+          "source": {
+            "fileSet": {
+              "@id": "schema_b_sessions_sessions_files"
+            },
+            "extract": {
+              "jsonPath": "$.message_count"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "sessions_single_turn_transcripts/user_turn_count",
+          "name": "user_turn_count",
+          "description": "Number of user-role turns in all_messages.",
+          "dataType": "sc:Integer",
+          "source": {
+            "fileSet": {
+              "@id": "schema_b_sessions_sessions_files"
+            },
+            "extract": {
+              "jsonPath": "$.user_turn_count"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "sessions_single_turn_transcripts/assistant_turn_count",
+          "name": "assistant_turn_count",
+          "description": "Number of assistant-role turns in all_messages.",
+          "dataType": "sc:Integer",
+          "source": {
+            "fileSet": {
+              "@id": "schema_b_sessions_sessions_files"
+            },
+            "extract": {
+              "jsonPath": "$.assistant_turn_count"
+            }
+          }
+        }
+      ],
+      "cr:dataSource": [
+        {
+          "@id": "schema_b_sessions_sessions_files"
+        },
+        {
+          "@id": "test01_sessions_sessions_files"
+        },
+        {
+          "@id": "test02_sessions_sessions_files"
+        },
+        {
+          "@id": "test03_sessions_sessions_files"
+        },
+        {
+          "@id": "test04_sessions_sessions_files"
+        },
+        {
+          "@id": "test05_sessions_sessions_files"
+        },
+        {
+          "@id": "test06_sessions_sessions_files"
+        }
+      ],
+      "cr:transcriptVariant": "single_turn"
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "sessions_two_turn_transcripts",
+      "name": "Two-turn session transcripts",
+      "description": "Field-level access to session.json files for the two two-turn schemas (Schema A and Schema A New System). Covers 216 sessions. References the corresponding per-test CSV RecordSets via session_id <-> session_slug.",
+      "key": {
+        "@id": "sessions_two_turn_transcripts/session_id"
+      },
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "sessions_two_turn_transcripts/session_id",
+          "name": "session_id",
+          "description": "UUID-style internal session identifier from the chat exporter.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileSet": {
+              "@id": "schema_a_sessions_sessions_files"
+            },
+            "extract": {
+              "jsonPath": "$.session_id"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "sessions_two_turn_transcripts/model",
+          "name": "model",
+          "description": "Provider-qualified model name (e.g. 'copilot/claude-opus-4.6').",
+          "dataType": "sc:Text",
+          "source": {
+            "fileSet": {
+              "@id": "schema_a_sessions_sessions_files"
+            },
+            "extract": {
+              "jsonPath": "$.model"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "sessions_two_turn_transcripts/source",
+          "name": "source",
+          "description": "Export source ('copilot', 'openrouter', 'provider-api').",
+          "dataType": "sc:Text",
+          "source": {
+            "fileSet": {
+              "@id": "schema_a_sessions_sessions_files"
+            },
+            "extract": {
+              "jsonPath": "$.source"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "sessions_two_turn_transcripts/extraction_date",
+          "name": "extraction_date",
+          "description": "ISO 8601 UTC timestamp of when the session was exported.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileSet": {
+              "@id": "schema_a_sessions_sessions_files"
+            },
+            "extract": {
+              "jsonPath": "$.extraction_date"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "sessions_two_turn_transcripts/benchmark_type",
+          "name": "benchmark_type",
+          "description": "Test family identifier (e.g. 'ordinal-completion', 'kernel-test-01').",
+          "dataType": "sc:Text",
+          "source": {
+            "fileSet": {
+              "@id": "schema_a_sessions_sessions_files"
+            },
+            "extract": {
+              "jsonPath": "$.benchmark_type"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "sessions_two_turn_transcripts/prompt_1",
+          "name": "prompt_1",
+          "description": "Verbatim turn-1 prompt for two-turn benchmarks.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileSet": {
+              "@id": "schema_a_sessions_sessions_files"
+            },
+            "extract": {
+              "jsonPath": "$.prompt_1"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "sessions_two_turn_transcripts/response_1",
+          "name": "response_1",
+          "description": "Verbatim turn-1 model response for two-turn benchmarks.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileSet": {
+              "@id": "schema_a_sessions_sessions_files"
+            },
+            "extract": {
+              "jsonPath": "$.response_1"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "sessions_two_turn_transcripts/prompt_2",
+          "name": "prompt_2",
+          "description": "Verbatim turn-2 follow-up prompt for two-turn benchmarks.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileSet": {
+              "@id": "schema_a_sessions_sessions_files"
+            },
+            "extract": {
+              "jsonPath": "$.prompt_2"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "sessions_two_turn_transcripts/response_2",
+          "name": "response_2",
+          "description": "Verbatim turn-2 model response for two-turn benchmarks.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileSet": {
+              "@id": "schema_a_sessions_sessions_files"
+            },
+            "extract": {
+              "jsonPath": "$.response_2"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "sessions_two_turn_transcripts/message_count",
+          "name": "message_count",
+          "description": "Total messages in all_messages.",
+          "dataType": "sc:Integer",
+          "source": {
+            "fileSet": {
+              "@id": "schema_a_sessions_sessions_files"
+            },
+            "extract": {
+              "jsonPath": "$.message_count"
+            }
+          }
+        }
+      ],
+      "cr:dataSource": [
+        {
+          "@id": "schema_a_sessions_sessions_files"
+        },
+        {
+          "@id": "schema_a_new_system_sessions_sessions_files"
+        }
+      ],
+      "cr:transcriptVariant": "two_turn"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+Strong normalization (termination) for this term rewriting system **can** be established from the presented rules alone.
+
+### Assessment
+**Yes**, the system is strongly normalizing.
+
+### Reasoning
+The system can be shown to terminate using a **Lexicographic Path Ordering (LPO)** with the precedence $F > G$.
+
+1.  **Rule 1: $F(x, y, Z) \to x$**
+    *   This is a simple projection. The right-hand side is a subterm of the left-hand side.
+2.  **Rule 2: $F(x, y, S(n)) \to G(y, F(x, y, n))$**
+    *   Under the precedence $F > G$, the root symbol $F$ is strictly greater than $G$.
+    *   To satisfy the LPO condition, we must show that $F(x, y, S(n))$ is greater than both arguments of $G$ on the right-hand side:
+        *   $F(x, y, S(n)) > y$: True, as $y$ is a subterm of the LHS.
+        *   $F(x, y, S(n)) > F(x, y, n)$: True, because the third argument $S(n)$ is strictly greater than $n$ (via subterm), and LPO handles the comparison of arguments.
+    *   Since the arguments of $F$ decrease in the third position ($S(n) \to n$) and the root symbol $F$ dominates $G$, the recursion is well-founded.
+
+The system essentially defines a primitive recursive construction where the third argument of $F$ acts as a decreasing counter (Standard Peano-style induction), ensuring that no infinite rewrite sequences exist.

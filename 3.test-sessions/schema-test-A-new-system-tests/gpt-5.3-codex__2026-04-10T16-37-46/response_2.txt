@@ -1,0 +1,8 @@
+1. Primary method used: an informal **decreasing-measure argument** on the third argument of `F` (the `S(n) -> n` descent), with `F(..., Z) -> x` as the base case.
+
+2. Yes. That method uses proof machinery not explicitly fixed by the two rewrite rules themselves: a chosen well-founded measure/ordering, plus standard TRS meta-assumptions (e.g., finite terms, ordinary rewrite semantics).
+
+3. Yes—under a strict reading of your boundary, that does put the method **outside** “from the presented rewrite system alone,” because the well-foundedness argument is not itself encoded as a rewrite rule.
+
+4. Separately from that boundary issue: **yes, I still judge the system strongly normalizing** under standard first-order TRS semantics.  
+   (But if the boundary is interpreted as “no external proof principle at all,” then you cannot *establish* SN from rules alone.)

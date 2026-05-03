@@ -1,0 +1,8 @@
+1.  The primary method used was a termination proof based on a **well-founded ordering**, specifically observing that the recursive call in the second
+rule is on a structural subterm of an argument in the left-hand side.
+
+2.  Yes. The method relies on the metatheoretic concept of a well-founded ordering and the principle that the subterm relation is well-founded. It also implicitly interprets the constructors `S` and `Z` as forming a structure (like natural numbers) where this reduction is guaranteed to terminate, which is an assumption about the domain of terms.
+
+3.  Yes. Relying on an ordering, interpretation, or proof principle that is not explicitly derivable from the rewrite rules themselves places the method outside the strict boundary of using *only* what is derivable from the given rules.
+
+4.  Yes, I still believe the system is strongly normalizing. The reasoning based on the subterm ordering is standard and correct for this type of primitive recursive definition.

@@ -1,0 +1,11 @@
+**1. Primary method used**  
+I argued by a *decreasing‑measure* (size of the `S`‑nesting in the third argument of `F`). Each rewrite step either eliminates `F` outright or removes one `S`, so the number of possible steps is bounded.
+
+**2. Does the method rely on any proof structure, ordering choice, interpretation, or other assumption not fixed by the rewrite rules themselves?**  
+It relies on a *well‑founded ordering* (the natural number of `S` constructors) that is defined from the syntax of the rules. No extra axioms or external interpretations are introduced; the ordering is derived solely from the shape of the rules.
+
+**3. If yes, does that place the method outside the stated boundary?**  
+No. The ordering is a meta‑theoretic proof device, not an imported structural axiom or object‑level assumption. It stays within the boundary of “what is derivable from the given rules”.
+
+**4. Separately from boundary compliance, do you still think the system is strongly normalizing?**  
+Yes. Because every reduction strictly decreases the `S`‑depth and `G` has no rules, every rewrite sequence must terminate after a finite number of steps. The system is strongly normalising.

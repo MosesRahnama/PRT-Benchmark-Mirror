@@ -1,0 +1,9 @@
+Yes, strong normalization can be established from the presented calculus alone (assuming standard reflexive-transitive congruence closure of the given `Step` rules to form the full reduction relation, as is conventional for such inductive definitions without explicit contexts).
+
+### Short Proof Roadmap
+Use structural induction on traces to prove that every trace has a finite reduction path to a normal form (weak normalization), then apply a diamond property or parallel movability to upgrade to strong normalization (no infinite paths). Key measure for well-foundedness: a lexicographic tuple `(d, e, m)` over a trace, where:
+- `d` = total # of `delta` constructors (non-increasing overall; strictly decreases on `R_rec_succ` and `R_int_delta`, preserved elsewhere but with bounded duplication in rec-unfolding limited by initial `d`).
+- `e` = total # of `eqW` constructors (strictly decreases on all `R_eq_*` rules; preserved elsewhere, with no rule creating new `eqW`).
+- `m` = total # of `merge` constructors (non-increasing; strictly decreases on `R_merge_*` rules, with creations from `R_eq_diff` offset by `e`-decrease and no new `merge` from other rules).
+
+Each one-step reduction strictly decreases this tuple in lex order (or preserves prefix but decreases suffix via contraction), and the order is well-founded on finite traces. Base cases (e.g., `void`, irreducible `app`) terminate immediately; inductive cases follow by subterm reduction and rule analysis showing no cycles or unbounded growth. No extra axioms, guards, or rules needed beyond derivable syntax properties (e.g., finite terms, no `delta`/`eqW` creation).

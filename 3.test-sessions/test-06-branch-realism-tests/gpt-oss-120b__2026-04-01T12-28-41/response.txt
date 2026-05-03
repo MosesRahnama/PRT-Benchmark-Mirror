@@ -1,0 +1,119 @@
+**Assessment of the helper strategy**
+
+The file defines a structural measure `kappa : Trace → Nat` and two lemmas that are meant to be used in a termination argument for the rewrite calculus.  
+Both lemmas are *purely arithmetic* consequences of the definition of `kappa`; no additional properties of the `Trace` constructors are needed.  
+
+Below we unfold the definitions and verify the two statements.
+
+---
+
+### 1. Lemma `kappa_rec_delta_step`
+
+```lean
+theorem kappa_rec_delta_step (b s n : Trace) :
+  kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1
+```
+
+**Definition of `kappa` for `recDelta`**
+
+* When the third argument is of the form `delta n`  
+
+```lean
+kappa (recDelta b s (delta n)) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1
+```
+
+* When the third argument is *any* other term `n`  
+
+```lean
+kappa (recDelta b s n) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)
+```
+
+Hence
+
+```
+kappa (recDelta b s (delta n))
+  = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1
+  = kappa (recDelta b s n) + 1                -- by the second clause
+```
+
+The equality follows directly from the two clauses of `kappa`.  
+Therefore the lemma is **sound**; it can be proved by a single `rfl` after rewriting `kappa (recDelta b s n)` with its definition (or by using the already‑proved `kappa_rec_delta` lemma).
+
+---
+
+### 2. Lemma `kappa_rec_succ_drop`
+
+```lean
+theorem kappa_rec_succ_drop (b s n : Trace) :
+  kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))
+```
+
+**Unfolding the definitions**
+
+* `kappa (app s (recDelta b s n))`  
+
+  By the clause for `app`:
+
+  ```
+  = Nat.max (kappa s) (kappa (recDelta b s n))
+  ```
+
+* `kappa (recDelta b s n)` (non‑delta case)  
+
+  ```
+  = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)
+  ```
+
+  Substituting:
+
+  ```
+  kappa (app s (recDelta b s n))
+    = Nat.max (kappa s)
+               (Nat.max (Nat.max (kappa b) (kappa s)) (kappa n))
+  ```
+
+  The outer `Nat.max` collapses because `Nat.max (kappa s) X` where `X` already contains `kappa s` as a sub‑maximum yields simply the overall maximum of the three values:
+
+  ```
+  = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)
+  ```
+
+* `kappa (recDelta b s (delta n))` (delta case)  
+
+  ```
+  = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1
+  ```
+
+Putting the two results together we obtain
+
+```
+kappa (app s (recDelta b s n))
+  = M
+kappa (recDelta b s (delta n))
+  = M + 1
+```
+
+where  
+
+```
+M := Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)
+```
+
+Since `Nat.max …` always yields a natural number, we have the obvious arithmetic fact
+
+```
+M < M + 1
+```
+
+Thus the desired strict inequality holds.
+
+---
+
+### 3. Overall soundness of the helper strategy
+
+* The first lemma (`kappa_rec_delta_step`) is a direct consequence of the definition of `kappa` on `recDelta`.  
+* The second lemma (`kappa_rec_succ_drop`) reduces to the elementary inequality `M < M + 1` after unfolding `kappa` on both sides.
+
+Both lemmas are therefore **correct** and can be proved without any additional hypotheses. The strategy—first establishing the exact relationship between the `delta` and non‑`delta` cases of `recDelta`, then using that relationship to show a strict decrease when a `recDelta` step is “unfolded” into an `app`—is sound for the termination argument.
+
+No hidden dependencies or circular reasoning appear in the proofs; the calculations are purely syntactic rewrites of the `kappa` definition. Consequently, the helper theorems as written (once the `sorry`s are replaced by the straightforward proofs sketched above) constitute a valid and sound component of the termination proof.

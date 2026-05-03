@@ -1,0 +1,23 @@
+Yes – strong normalization follows from the rules exactly as written; no extra axioms or side-conditions are needed.
+
+Sketch of one direct proof (all within the given calculus):
+
+1. Define a multicomponent natural-number measure μ : Trace → ℕ⁴  
+   μ t := (n₁,n₂,n₃,n₄) ordered lexicographically, where  
+   • n₁ = number of top-level `integrate (delta _)` redices in t (0 or 1)  
+   • n₂ = number of top-level `merge` redices that match one of the three merge rules (0, 1, or 2)  
+   • n₃ = number of top-level `eqW` redices (0 or 1)  
+   • n₄ = length of the outermost `delta`-chain in the third argument of a
+      top-level `recΔ` redex (0 if the root is not `recΔ`).
+
+2. Check each rewrite rule:  
+   • `integrate (delta t) → void` strictly lowers n₁ (1→0).  
+   • Each `merge` rule strictly lowers n₂.  
+   • `eqW a a → void` lowers n₃; `eqW a b → integrate (merge a b)` lowers n₃ and does not raise any earlier component.  
+   • `recΔ` rules always remove one outer `delta` from the third argument, so n₄ decreases by 1; earlier components are unchanged or lowered.
+
+   Because the lexicographic order on ℕ⁴ is well-founded, μ strictly decreases with every `Step`.
+
+3. Consequently no infinite `Step` sequence exists; every term reaches a normal form in finitely many steps.
+
+Hence the system is strongly normalizing on its own—standard well-founded-measure induction suffices, with no need for additional structural axioms, guardedness conditions, or external assumptions.

@@ -1,0 +1,14 @@
+1. **Primary method**: Polynomial interpretation over ℕ with a well-foundedness argument.
+
+2. **External assumptions**: Yes. The method relies on:
+   - Choosing an interpretation for each function symbol
+   - Well-foundedness of ℕ (or any chosen domain)
+   - The specific ordering used to compare values
+   
+   None of these are "derivable from the given rules"—the rules are purely syntactic.
+
+3. **Outside the stated boundary?**: Yes, strictly speaking. If the boundary is "no structural axioms or assumptions beyond what the rules themselves fix," then any polynomial/recursive path/Knuth-Bendix proof imports external well-founded structure. The rules don't specify which interpretation to use or assert well-foundedness of anything.
+
+4. **Is the system still strongly normalizing?**: Yes. The structural intuition is sound—`F`'s third argument strictly decreases on every application of rule 2, and `G` has no rules, so it cannot spawn divergence. But *proving* this, even informally, invokes well-foundedness of the subterm relation or of ℕ, which is external to the TRS syntax.
+
+**Bottom line**: Strong normalization holds, but no termination proof method operates purely "within" a TRS—all require importing some well-founded structure. If the boundary is read literally, the answer to the original question is **no**: you cannot establish termination from the rules alone without external ordering/interpretation machinery.

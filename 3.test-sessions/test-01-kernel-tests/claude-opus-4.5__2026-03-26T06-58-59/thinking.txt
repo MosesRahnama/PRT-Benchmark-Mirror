@@ -1,0 +1,53 @@
+This is a small first-order rewrite calculus in Lean 4. Let me analyze it:
+
+**Syntax (`Trace` type):**
+- `void` — a constant (base case / zero)
+- `delta : Trace → Trace` — a unary constructor (like successor)
+- `integrate : Trace → Trace` — a unary constructor
+- `merge : Trace → Trace → Trace` — a binary constructor
+- `app : Trace → Trace → Trace` — a binary constructor (application)
+- `recΔ : Trace → Trace → Trace → Trace` — a ternary constructor (recursion)
+- `eqW : Trace → Trace → Trace` — a binary constructor (equality witness)
+
+**Rewrite rules (`Step` relation):**
+1. `R_int_delta`: `integrate (delta t) → void`
+2. `R_merge_void_left`: `merge void t → t`
+3. `R_merge_void_right`: `merge t void → t`
+4. `R_merge_cancel`: `merge t t → t`
+5. `R_rec_zero`: `recΔ b s void → b`
+6. `R_rec_succ`: `recΔ b s (delta n) → app s (recΔ b s n)`
+7. `R_eq_refl`: `eqW a a → void`
+8. `R_eq_diff`: `eqW a b → integrate (merge a b)`
+
+Now, can strong normalization be established for this system?
+
+**Analysis:**
+
+1. **R_int_delta** reduces `integrate (delta t)` to `void`. This strictly decreases term size.
+
+2. **R_merge_void_left/right** reduce `merge void t` or `merge t void` to `t`. These strictly decrease term size.
+
+3. **R_merge_cancel** reduces `merge t t` to `t`. This strictly decreases term size.
+
+
+4. **R_rec_zero** reduces `recΔ b s void` to `b`. This decreases term size.
+
+5. **R_rec_succ** is where things get tricky. It transforms `recΔ b s (delta n)` into `app s (recΔ b s n)`. While the third argument shrinks from `delta n` to `n`, the function `s` gets duplicated in the result, which can actually grow the overall term. The key observation is that the recursion bottoms out at `void`, so the third argument is strictly decreasing along a well-founded order, even though the term structure itself might expand.
+
+6. **R_eq_refl** reduces `eqW a a` to `void`. This decreases term size.
+
+7. **R_eq_diff** is problematic because it applies to any pair `(a, b)`, including identical ones. When `a = b`, both `R_eq_refl` and `R_eq_diff` can fire, creating an overlap. Following the second path gives `eqW a a → integrate (merge a a) → integrate a`, which doesn't loop immediately but suggests the system might not be strongly normalizing. The real question is whether every possible reduction sequence eventually terminates.
+
+For the remaining rules, I need to establish a well-founded measure. `R_rec_succ` shrinks the recursion depth even though the term grows with the `app` constructor. `R_eq_diff` itself doesn't create cycles since the result contains no `eqW`. The key is finding a lexicographic ordering—perhaps counting `recΔ` and `eqW` constructors weighted by nesting depth, or using a multiset argument with recursive path ordering.
+
+Let me construct a measure `μ` where `void` has measure 0, and compound terms accumulate based on their structure: `delta`, `integrate`, `merge`, `app`, and `eqW` each contribute 1 plus the measures of their arguments. For `recΔ b s n`, the measure needs to grow exponentially in `μ(n)` to account for the recursion depth. The challenge is verifying that `μ(recΔ b s (delta n)) > μ(app s (recΔ b s n))` holds—this resembles Ackermann function termination, requiring a more refined measure that prioritizes recursion depth over term size.
+
+When `s` is a compound application like `app s' s''`, the reduction `recΔ b s (delta void) → app s b` shows only linear growth through nesting. Even with deeper recursion like `recΔ b s (delta (delta void))`, we get `app s (app s b)`, which remains linear. The critical observation is that `s` itself doesn't undergo modification or self-application in ways that trigger exponential blowup.
+
+However, if `s` itself contains `recΔ`, say `s = recΔ b' s' n'`, then evaluating `recΔ b s (delta m)` produces `app (recΔ b' s' n') (recΔ b s m)`, creating nested recursive calls that need careful analysis to ensure termination.
+
+The key insight is that the third argument of the original `recΔ` strictly decreases with each reduction step, and any nested `recΔ` terms within `s` will eventually have their third arguments reduce to `void`, preventing infinite reduction sequences. A rigorous proof would employ strong computability predicates or Tait's method, though the untyped nature requires adapting standard approaches. One promising direction is recursive path ordering, which establishes a precedence among operators like `recΔ`, `app`, and `eqW` to ensure well-founded reduction.
+
+For the `recΔ` successor rule, the third argument `n` is structurally smaller than `delta n`, making the right-hand side smaller under RPO. For the equality rule, the precedence ordering `eqW > integrate > merge` ensures the reduction is valid. Since all reduction rules either decrease term size or replace constructors with lower-precedence ones, strong normalization follows directly from the ordering without requiring additional guards or assumptions.
+
+One detail worth noting: `R_eq_diff` can overlap with `R_eq_refl` when the arguments are identical, introducing some non-determinism in which rule applies. This doesn't prevent termination though—strong normalization guarantees all reduction sequences eventually halt regardless of which rule fires at each step.

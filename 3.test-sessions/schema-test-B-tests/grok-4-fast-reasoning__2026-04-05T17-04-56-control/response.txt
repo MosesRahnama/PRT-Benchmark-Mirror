@@ -1,0 +1,29 @@
+### Analysis of Proposed Proof Methods
+
+The rewrite system is terminating, as reductions unwind the third argument (treating it structurally as a successor chain to the base case), leading to variables without further reductions. However, each method must be evaluated strictly as stated for success in proving termination (i.e., orienting all rules under a compatible well-founded order or equivalent framework) and adherence to the boundary (proving from the rules alone, without arbitrary global structural assumptions like presupposing argument forms beyond rule matches).
+
+#### (A) Lexicographic Path Order (LPO) with precedence F > G > S > Z
+1. **Succeeds in proving termination?** No. The precedence orients the first rule (F(x, y, Z) > x, as root F exceeds variables). However, for the second rule, F(x, y, S(n)) ≯_LPO G(y, F(x, y, n)). Although roots satisfy F > G, LPO requires that G(y, F(x, y, n)) ≤_LPO some subterm t_i of the left (with prior subterms >_LPO the right). Subterms are x, y, S(n)—all have roots (variables or S) < G, so none satisfy ≥_LPO the right. Thus, the rule is not oriented.
+2. **Stays within boundary?** Yes (syntactic order based on signature and rules; no extra assumptions).
+
+#### (B) Polynomial interpretation over ℕ: [F(x,y,n)] = x + n + 1, [S(n)] = n + 1, [G(a,b)] = b, [Z] = 0
+1. **Succeeds in proving termination?** Yes. The interpretation is monotonic (polynomials preserve contexts) and strictly decreasing on rules:  
+   - First: [F(x, y, Z)] = [x] + 0 + 1 > [x].  
+   - Second: [F(x, y, S(n))] = [x] + ([n] + 1) + 1 = [x] + [n] + 2 > [F(x, y, n)] = [x] + [n] + 1 = [G(y, F(x, y, n))].  
+   ℕ is well-founded, proving no infinite reductions.
+2. **Stays within boundary?** Yes (algebraic mapping derived directly from rule structure; no global assumptions).
+
+#### (C) Knuth-Bendix Order (KBO) with uniform symbol weights w(F) = w(G) = w(S) = w(Z) = 1
+1. **Succeeds in proving termination?** No. Weights yield wt(F(x, y, Z)) = 2 > 0 = wt(x) for the first rule. For the second, wt(F(x, y, S(n))) = 2 = wt(G(y, F(x, y, n))). KBO then requires root F > G (or equal roots and subterm lex), but no precedence is stated. Without F > G, the rule may not orient (e.g., if G ≥ F). As stated, incomplete.
+2. **Stays within boundary?** Yes (would be syntactic if complete; no extra assumptions).
+
+#### (D) Dependency pairs with subterm criterion, projecting to the third argument of F
+1. **Succeeds in proving termination?** Yes. The only dependency pair (from the second rule, as the first has no defined rhs symbols) is ⟨F(x, y, S(n)), F(x, y, n)⟩ → ⟨G(y, F(x, y, n)), F(x, y, n)⟩. Projecting F to its third argument (argument filtering π(F) = [3], π(G) = [2], π(S) = [1]) yields ⟨S(n), n⟩ → ⟨n, n⟩. This filtered DP has no cycles (chains end at variables with no outgoing pairs). The subterm criterion applies post-filtering: lhs first component S(n) properly decreases to n (subterm relation), and constructors like S introduce no infinite chains. No cycles imply TRS termination.
+2. **Stays within boundary?** Yes (framework analyzes rule dependencies syntactically; projection targets the recursive call position from rules).
+
+#### (E) Direct descent measure on the third argument: μ(F(x,y,n)) = depth_S(n) + 1, μ(G(a,b)) = μ(b), μ(x) = 0 for variables, with argument that each rewrite step strictly decreases μ
+1. **Succeeds in proving termination?** No. The measure is partial/incomplete (depth_S undefined for non-S-chains, e.g., depth_S(G(a, b)) unspecified; assume 0 for non-matches). For the first rule: μ(F(x, y, Z)) = 1 > 0 = μ(x) (assuming depth_S(Z) = 0). For the second: if n is S-chain, decreases (depth_S(S(n)) + 1 > depth_S(n) + 1). But if n = G(a, b) (arbitrary term), μ(F(x, y, S(G(a, b)))) = 1 + depth_S(G(a, b)) = 1 + 0 = 1, right μ(G(y, F(x, y, G(a, b)))) = μ(F(x, y, G(a, b))) = 0 + 1 = 1 (equal, not strict). The rule applies (no pattern restriction on n), so not all steps decrease. Not well-founded/total.
+2. **Stays within boundary?** No (assumes third argument globally follows S/Z structure for depth_S to apply meaningfully; rules allow arbitrary terms, requiring imported structural choice beyond derivable matches).
+
+### Methods Satisfying Both Conditions
+B and D.

@@ -1,0 +1,8 @@
+Yes, strong normalization can be established from the presented calculus alone.
+
+**Proof roadmap:**
+- Define term size as the number of constructors (well-founded under <).
+- Classify each Step rule as either (a) leading to an irreducible term (rules 1,6,7,8; irreducible if root does not match any LHS pattern) or (b) leading to a proper subterm (rules 2,3,4,5).
+- Type (a) may increase size but terminates the chain immediately (reduct irreducible).
+- Type (b) strictly decreases size.
+- Any infinite chain requires infinitely many type (b) steps (since (a) terminates), impossible by well-foundedness of size.

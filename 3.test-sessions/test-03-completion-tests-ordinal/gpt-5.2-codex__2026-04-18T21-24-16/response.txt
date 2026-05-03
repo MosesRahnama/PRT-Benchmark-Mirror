@@ -1,0 +1,91 @@
+Here’s a clean proof **skeleton** for the three remaining cases, keeping your current structure and style. I’ve only sketched the Lean structure and the key lemmas you’ll likely want, without changing the file or running anything.
+
+## Proof skeletons (drop‑in structure)
+
+### 1) `R_rec_succ` case
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- Goal is:
+    --   omega0 ^ (mu s + 6 + mu n)  ...  (after simp)  < 
+    --   omega0 ^ (omega0^5 * (mu n + 1) + 1 + mu s + 6) + omega0 * (mu b + 1) + 1
+    -- Outline:
+    --   (a) Show the big exponent on RHS strictly dominates any term of the LHS,
+    --       especially omega0 ^ (mu n + mu s + 6).
+    --   (b) Use monotonicity of opow, and additivity of < under +1.
+
+    -- Step 1: isolate the dominant LHS term
+    have hL : omega0 ^ (mu n + mu s + (6 : Ordinal))
+              < omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6) := by
+      -- use strict monotonicity of opow on exponents
+      -- show: mu n + mu s + 6 < omega0^5 * (mu n + 1) + 1 + mu s + 6
+      -- reduce to: mu n < omega0^5 * (mu n + 1) + 1
+      -- then use opow_pos and add_pos_right
+      admit
+
+    -- Step 2: push into the full RHS (which has extra + omega0 * (mu b + 1) + 1)
+    have hR :
+      omega0 ^ (mu n + mu s + (6 : Ordinal))
+        < omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6)
+            + omega0 * (mu b + 1) + 1 := by
+      exact lt_of_lt_of_le hL (le_add_right _ _)
+
+    -- Step 3: compare full LHS to the dominant term
+    -- LHS is an ordinal sum with a smaller leading exponent,
+    -- so it is < RHS by standard ordinal comparison.
+    -- You can use `lt_of_lt_of_le` + `le_add_left`/`le_add_right` to pack terms.
+    -- Finish with a `calc` chain.
+    admit
+```
+
+### 2) `R_eq_refl` case
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- Goal: 0 < omega0 ^ (mu a + mu a + 9) + 1
+    -- This is a pure positivity argument.
+    have hpos : 0 < omega0 ^ (mu a + mu a + (9 : Ordinal)) := by
+      -- use opow_pos and omega0_pos
+      exact opow_pos _ omega0_pos
+    -- then add_pos_right gives positivity of (+1)
+    exact add_pos_right _ hpos
+```
+
+### 3) `R_eq_diff` case
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- Goal: omega0^4 * (omega0^3 * (mu a + 1) + omega0^2 * (mu b + 1) + 2) + 1
+    --       < omega0 ^ (mu a + mu b + 9) + 1
+
+    -- Step 1: show the inside is < omega0 ^ (mu a + mu b + 9)
+    have h1 :
+      omega0 ^ (4 : Ordinal) *
+          (omega0 ^ (3 : Ordinal) * (mu a + 1)
+            + omega0 ^ (2 : Ordinal) * (mu b + 1) + 2)
+        < omega0 ^ (mu a + mu b + (9 : Ordinal)) := by
+      -- Standard approach: show exponent mu a + mu b + 9 dominates fixed finite towers,
+      -- then use `lt_of_lt_of_le` with opow monotonicity and multiplication bounds.
+      -- You can reduce to: 
+      --   omega0^4 * ( ... ) < omega0^(mu a + mu b + 9)
+      -- by showing: 4 + (something) < mu a + mu b + 9
+      admit
+
+    -- Step 2: add +1 on both sides
+    exact lt_of_lt_of_le h1 (le_add_right _ _)
+```
+
+## Notes & hints
+- For the two “big exponent dominates” steps, the standard lemmas you’ll likely use are:
+  - `opow_pos` and `opow_strict_mono` (or `opow_lt_opow` depending on available names),
+  - `lt_add_right`, `le_add_right`, `le_add_left`,
+  - `lt_of_lt_of_le`,
+  - and simple facts like `lt_add_one` and `add_pos_right`.
+- If `opow_strict_mono` is not directly available, you can often use `opow_lt_opow` with a proof of exponent inequality.
+
+## ✅ Progress checklist
+- Remaining cases identified
+- Skeletons drafted
+- Notes included for key lemmas and structure
+
+If you want, tell me which lemma names are available in your Mathlib version, and I can refine these into fully compilable proofs.

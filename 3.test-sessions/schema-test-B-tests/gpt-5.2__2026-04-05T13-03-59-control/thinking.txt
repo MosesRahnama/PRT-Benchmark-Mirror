@@ -1,0 +1,10 @@
+**Analyzing rules and boundaries**
+
+The right-hand side has y appearing twice, while the left only once, violating the variable count condition necessary for KBO orientation. This means I can't use KBO for Rule 2 at all since it requires the left side to contain all variables at least as often as the right. Additionally, standard KBO cannot prove termination with duplicating rules, so this method fails. Now, looking at dependency pairs, I find that each rewrite step decreases the measure effectively. 
+
+When checking boundaries, methods A and B depend on arbitrary structures, which suggests they operate outside the boundary. However, methods D and E involve local measures that don’t import additional axioms, so they might be within the boundary. The distinction between global and local choices is crucial here, and the more I analyze, the clearer the classifications become.
+**Discussing boundaries and choices**
+
+I’m considering if methods E and others fall within bounds. While E defines mu globally, I wonder if that makes it outside. The interpretation of "imported global structural choices" suggests that while these choices are part of the proof, they shouldn’t count as assumptions. But, since precedence is a significant choice, I’m starting to see that methods A and B might be outside the boundary due to requiring arbitrary structures.
+
+In contrast, methods D and E seem to sit within boundaries since they adhere to syntactic structures. Ultimately, I need to finalize the classifications, indicating which methods succeed and fall within the defined boundaries.

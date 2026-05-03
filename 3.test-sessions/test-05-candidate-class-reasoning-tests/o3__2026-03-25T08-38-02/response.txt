@@ -1,0 +1,35 @@
+Summary of the check (all calculations use μ = constant + Σ sub-measures).
+
+1. Rules that every μ₁, μ₂, μ₃ handle correctly  
+   • integrate (delta t) → void  
+   • merge void t → t, merge t void → t, merge t t → t  
+   • recDelta b s void → b  
+   • eqW a a → void and eqW a b → integrate (merge a b)  
+   In each case the left-hand measure is larger by a fixed positive amount.
+
+2. The problematic rule (common to all three)  
+   recDelta b s (delta n) → app s (recDelta b s n)
+
+   For a generic additive measure with weights  
+     wδ = cost of delta, wapp = cost of app  
+
+   μ(left) = wᵣ + wδ + μ(b) + μ(s) + μ(n) + 1  
+   μ(right)= wapp + wᵣ + μ(b) + 2 μ(s) + μ(n) + 1  
+   Difference = (wδ – wapp) – μ(s).
+
+   Because μ(s) is unbounded, we need wδ > wapp and the gap must exceed μ(s), which no constant choice can guarantee.  
+   For the three candidates:
+
+   • μ₁ wδ = 1, wapp = 1 ⇒ Δ = 0 – μ(s) ≤ 0  
+   • μ₂ wδ = 1, wapp = 1 ⇒ same failure  
+   • μ₃ wδ = 1, wapp = 2 ⇒ Δ = –1 – μ(s) < 0  
+
+   Thus the measure increases (or stays equal) instead of strictly decreasing.
+
+3. Verdict on each candidate  
+   • μ₁ Simple node count with small constants; fails on R_rec_succ.  
+   • μ₂ Larger constants do not help because the bad term is unbounded; still fails.  
+   • μ₃ Tries to penalise app more heavily but makes the gap even worse; also fails.
+
+None of the three is a valid global termination measure.  
+To handle the recursive rule you need something non-additive, e.g. a multivariate or lexicographic measure that decreases on the number of pending δ’s and, secondarily, on size, or a weight that depends on the position of s so that the duplication in the right-hand side is accounted for.

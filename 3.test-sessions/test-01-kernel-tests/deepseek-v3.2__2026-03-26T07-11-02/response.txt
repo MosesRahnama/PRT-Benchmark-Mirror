@@ -1,0 +1,83 @@
+Now I have the complete calculus. Let me analyze it systematically.
+
+## Analysis of the Calculus
+
+The system consists of:
+
+1. **Syntax** (`Trace` type):
+   - `void` : base constant
+   - `delta t` : unary constructor
+   - `integrate t` : unary constructor  
+   - `merge t1 t2` : binary constructor
+   - `app t1 t2` : binary constructor (application)
+   - `recΔ b s n` : ternary constructor (recursor)
+   - `eqW a b` : binary constructor (equality witness)
+
+2. **Rewrite rules** (`Step` relation):
+   - `integrate (delta t) → void`
+   - `merge void t → t`
+   - `merge t void → t`
+   - `merge t t → t`
+   - `recΔ b s void → b`
+   - `recΔ b s (delta n) → app s (recΔ b s n)`
+   - `eqW a a → void`
+   - `eqW a b → integrate (merge a b)` (when a ≠ b)
+
+## Assessment of Strong Normalization
+
+**No, strong normalization cannot be established from this calculus alone without additional assumptions.**
+
+### Critical Issues:
+
+1. **Non-terminating recursion**: The `recΔ` rule creates potential infinite reduction sequences:
+   ```
+   recΔ b s (delta (delta n)) → app s (recΔ b s (delta n)) → app s (app s (recΔ b s n)) → ...
+   ```
+   There's no guard to ensure termination of recursion.
+
+2. **Circularity in `eqW` rules**: The `R_eq_diff` rule transforms `eqW a b` into `integrate (merge a b)`, but `merge` can create new terms that might be compared again via `eqW`, potentially leading to cycles.
+
+3. **Lack of size/measure restrictions**: The system has no:
+   - Structural decreasing measures
+   - Type/kind system with positivity restrictions
+   - Well-founded ordering on terms
+   - Guard conditions on recursion
+
+4. **The `app` constructor is unconstrained**: Application can be applied to any terms, including results of recursion, allowing arbitrary computation.
+
+### Why Standard Methods Fail Within These Boundaries:
+
+1. **Reducibility candidates/Logical relations**: Require typing judgments or semantic interpretations not present.
+
+2. **Well-founded ordering proofs**: Require establishing a measure function that decreases, which would need additional assumptions about term structure.
+
+3. **Semantic termination proofs**: Require interpreting terms in a well-founded domain, which goes beyond the given syntax.
+
+4. **Size-change termination**: Would require analyzing potential infinite sequences, but the system lacks the necessary structural restrictions to bound them.
+
+### Minimal Counterexample:
+
+Consider:
+```
+t = recΔ void (delta void) (delta void)
+```
+This can reduce as:
+```
+recΔ void (delta void) (delta void) 
+→ app (delta void) (recΔ void (delta void) void)
+→ app (delta void) void
+```
+But more importantly, with nested `delta`:
+```
+recΔ void (delta void) (delta (delta void))
+→ app (delta void) (recΔ void (delta void) (delta void))
+→ app (delta void) (app (delta void) (recΔ void (delta void) void))
+→ ...
+```
+The system has no mechanism to prevent arbitrarily deep recursion.
+
+## Conclusion
+
+The calculus as presented lacks the necessary structural constraints to guarantee strong normalization. Any proof attempt would require importing additional axioms about term structure, adding termination guards, or imposing typing disciplines—all of which go beyond the given boundary of "no extra rewrite rules, guards, side conditions, or hidden assumptions."
+
+The fundamental issue is that first-order rewrite systems with unconstrained recursion (via `recΔ`) and application (`app`) are Turing-complete in general, and proving termination requires restrictions not present in this minimal calculus.

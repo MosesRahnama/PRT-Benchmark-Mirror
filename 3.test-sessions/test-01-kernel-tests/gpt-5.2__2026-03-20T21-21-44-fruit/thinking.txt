@@ -1,0 +1,10 @@
+**Assessing rewrite order**
+
+It seems that using RPO works well and is closed under contexts, which might be the simplest solution. I'll analyze how the rules orient based on precedence. For example, the mango to plum rule holds since mango is greater than plum. Each peach rule maintains precedence as well. 
+
+With banana, the rules align because the order dictates banana is prioritized. It’s important to ensure rewrites strictly decrease, and I believe the lexicographic ordering confirms that. I can outline a roadmap highlighting that we utilize RPO, confirming everything clearly leads to termination, thus showing that strong normalization is achievable!
+**Clarifying termination and rewrite rules**
+
+I need to mention that if I interpret Step literally, without closure, termination is immediate. However, with usual rewrite closure, strong normalization (SN) still holds. The system’s rewrite rules include a conditional one (with a ≠ b), which behaves like a parameterized rule in calculus. Even though it adds complexity, we can assert that if the condition is satisfied, rewriting occurs.
+
+I can establish that SN can be reached using RPO or polynomial interpretation without needing additional axioms. I'll provide a concise roadmap to summarize this!

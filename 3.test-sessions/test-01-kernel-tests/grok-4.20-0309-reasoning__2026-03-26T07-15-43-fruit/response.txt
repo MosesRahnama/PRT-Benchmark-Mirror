@@ -1,0 +1,20 @@
+**Yes, strong normalization can be established from the presented calculus alone.**
+
+The `Trace` inductive and the `Step` relation in
+define a first-order rewrite system whose one-step reductions are confined to exact top-level matches on the eight listed constructors. No congruence, substitution, or contextual closure is present.
+
+**Why it works within the boundary:**
+- Reductions are of two kinds only:
+  - *Size-decreasing*: `peach` rules (including the three variants) and the `banana _ _ plum` rule replace the term by a proper subterm. The `cherry _ _` (equal case) and `mango (grape _)` rules collapse to `plum`.
+  - *Size-increasing but terminal*: `banana _ _ (grape _)` produces a `pear` (irreducible); `cherry a b` (distinct) produces `mango (peach a b)`, which never matches any left-hand side because `peach` and `grape` are distinct constructors.
+- `plum`, `grape`, `pear`, and any `mango` whose argument is not `grape` are irreducible.
+- Because every term is a finite tree (directly from the inductive syntax of `Trace`), there cannot be an infinite descending chain of proper subterms. The size-increasing steps land in normal forms, so they cannot be repeated.
+
+**Short proof roadmap (no extra rules, guards, or axioms):**
+1. Define a recursive size (or height) function on `Trace` using only the inductive constructors (standard recursion principle for the inductive type).
+2. Prove by induction on this size that every term admits only finite `Step`-chains:
+   - Case on the top constructor.
+   - For each possible `Step` rule that applies, the reduct is either a strictly smaller subterm (induction hypothesis applies) or an irreducible form (chain length 1).
+3. The `a ≠ b` premise in the last rule is decidable from constructor disjointness, which follows directly from the inductive definition of `Trace`.
+
+No structural axioms beyond the induction principle of `Trace`, no object-level assumptions beyond the eight `Step` constructors, and no strengthening of the relation are required. The system is strongly normalizing.

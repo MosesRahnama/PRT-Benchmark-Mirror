@@ -1,0 +1,50 @@
+## Raw Assessment
+
+**Yes — strong normalization is directly provable from these two rules alone.** No imported axioms are needed.
+
+---
+
+## The System
+
+```
+(VAR x y n)
+(RULES
+  F(x, y, Z)    -> x
+  F(x, y, S(n)) -> G(y, F(x, y, n))
+)
+```
+
+- F is the only defined symbol. G, S, Z have no rules — they are constructors/irreducible.
+- Every rewrite step fires exactly one F-redex.
+
+---
+
+## Proof Roadmap
+
+**Method 1 — Polynomial Interpretation (simplest)**
+
+Define the weight of a term as the sum, over all F-subterms F(a, b, c), of `(|c| + 1)` where `|c|` is the size of the third argument.
+
+| Rule | LHS weight contribution | RHS weight contribution | Change |
+|------|------------------------|------------------------|--------|
+| F(x, y, Z) → x | `|Z| + 1 = 2` | 0 (F disappears) | −2 |
+| F(x, y, S(n)) → G(y, F(x, y, n)) | `|S(n)| + 1 = |n| + 2` | `|n| + 1` | −1 |
+
+The variables x, y, n may carry their own F-subterms, but those are **shared** between LHS and RHS and cancel. The weight is a non-negative integer that drops by at least 1 on every step; termination follows from well-foundedness of $\mathbb{N}$.
+
+**Method 2 — Recursive Path Ordering (clean alternative)**
+
+Set precedence `F > G > S > Z` with lexicographic argument comparison for F.
+
+- **Rule 1:** `x` is a proper subterm of the LHS, so `x <_{\text{rpo}} F(x,y,Z)`. ✓  
+- **Rule 2:** `G < F`, so `G(y, F(x,y,n)) <_{\text{rpo}} F(x,y,S(n))` provided both arguments of G are smaller:
+  - `y` is a subterm of the LHS. ✓  
+  - `F(x,y,n) <_{\text{rpo}} F(x,y,S(n))`: same head, lex comparison reaches the third position where `n` is a proper subterm of `S(n)`. ✓
+
+Both methods are self-contained. No structural axioms, no object-level assumptions, no auxiliary lemmas beyond the definitions of `|·|` or the standard RPO ordering.
+
+---
+
+## Why There Is No Obstacle
+
+The third argument of every F-redex is a natural number term (built from Z and S), and it decreases by exactly one constructor per call. G is strictly irreducible, so it cannot create new redexes. The system has no critical pairs and no overlap. SN is unconditional.

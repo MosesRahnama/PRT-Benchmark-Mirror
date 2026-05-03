@@ -1,0 +1,13 @@
+**Examining Soundness of Rewrite**
+
+I'm now focusing on the soundness of the `measure` function. I'm looking at how the `Step` inductive proposition interacts with the termination measure, `(phase t, cost t)`. The core goal is to verify if the measure strictly decreases with each rewrite step. This involves exploring the properties of `phase` and `cost` in the context of `Step`.
+
+
+**Evaluating Step Rule 2**
+
+I've examined the `R_int_delta` rule in `Step` and confirmed its soundness. Moving on to `R_merge_void_left`, I'm dissecting the measure's behavior. I'm focusing on the cost components, specifically, how `cost (merge void t)` relates to `cost t` and `cost void`. The goal is to determine if the measure strictly decreases after this rewrite. I'll need to figure out what `cost void` is.
+
+
+**Dissecting R_merge_void_left**
+
+Having analyzed `R_int_delta`, I'm deep diving into `R_merge_void_left`. My focus has shifted to the cost calculation. Specifically, I am evaluating `cost (merge void t)`. I've determined that this expands to `1 + cost void + cost t`. The next logical step is to understand and verify the impact of this expansion on the overall measure comparison, particularly how it interacts with `cost t`.

@@ -1,0 +1,8 @@
+1.  The primary method used was a termination
+proof using a lexicographic path ordering (LPO).
+
+2.  Yes. The method relies on choosing a specific well-founded ordering (LPO) and, within that framework, choosing a specific precedence of function symbols (`F > G`). These choices are not fixed by the rewrite rules themselves but are part of the proof technique applied to them.
+
+3.  Yes. Since the choice of the ordering and precedence is an external construct applied to the system rather than being derived from the rules alone, the method falls outside the strict boundary of using only what is derivable from the given rules.
+
+4.  Yes, I still believe the system is strongly normalizing.

@@ -1,0 +1,30 @@
+The helper theorems are not sound as written, as they do not hold for all possible inputs `n : Trace`. The issue stems from the recursive definition of `kappa` for `recDelta b s n`, which distinguishes between cases where `n` is a `delta` term versus other terms. This creates inconsistencies when `n` itself is a `delta` term, breaking the intended equality and inequality.
+
+### Analysis of `kappa_rec_delta_step`
+This theorem claims: `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1` for all `b, s, n : Trace`.
+
+- By definition, `kappa (recDelta b s (delta n)) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1`.
+- `kappa (recDelta b s n)` depends on the structure of `n`:
+  - If `n` is not a `delta` term (e.g., `void`, `integrate t`, etc.), then `kappa (recDelta b s n) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)`.
+  - If `n` is a `delta` term (e.g., `delta m`), then `kappa (recDelta b s n) = kappa (recDelta b s (delta m)) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1`.
+
+The theorem holds only when `n` is not a `delta` term. When `n = delta m`:
+- Left side: `Nat.max (Nat.max (kappa b) (kappa s)) (kappa (delta m)) + 1 = Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1`.
+- Right side: `kappa (recDelta b s (delta m)) + 1 = [Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1] + 1 = Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 2`.
+
+These are not equal unless `Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) = 0` (i.e., all subterms have measure 0), which is not general.
+
+### Analysis of `kappa_rec_succ_drop`
+This theorem claims: `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))` for all `b, s, n : Trace`, and relies on rewriting with `kappa_rec_delta_step`.
+
+Assuming `kappa_rec_delta_step` holds (which it does not, as above), the proof would attempt: `kappa (app s (recDelta b s n)) < kappa (recDelta b s n) + 1`.
+
+- `kappa (app s (recDelta b s n)) = Nat.max (kappa s) (kappa (recDelta b s n))`.
+- Thus: `Nat.max (kappa s) (kappa (recDelta b s n)) < kappa (recDelta b s n) + 1`.
+
+This requires `kappa s ≤ kappa (recDelta b s n)` and `kappa (recDelta b s n) < kappa (recDelta b s n) + 1` (the latter is trivially true). However, `kappa s` could exceed `kappa (recDelta b s n)`, making the inequality false. For example, if `kappa s > kappa (recDelta b s n)`, then `Nat.max (kappa s) (kappa (recDelta b s n)) = kappa s ≥ kappa (recDelta b s n) + 1`, violating the strict inequality.
+
+Since `kappa_rec_delta_step` is unsound, the rewrite step fails, and the inequality does not hold generally.
+
+### Conclusion
+The helper strategy is unsound because the theorems are overgeneralized. They would need preconditions (e.g., `n` is not a `delta` term) to hold, but as written, they fail for certain inputs. For termination of the rewrite system, a valid measure must strictly decrease on all rules, but these theorems do not ensure that for `R_rec_succ`. A corrected approach might involve case analysis on `n` or a refined measure.

@@ -1,0 +1,22 @@
+Yes ― strong normalization follows directly from the rules already present.
+
+Why it terminates  
+1. The rewrite relation is *root-only*: every rule pattern-matches only on the outermost constructor, and no closure under arbitrary contexts is declared.  
+2. Let 𝑅 = {mango, peach, banana, cherry}.  Define the rank  
+
+  rank : Trace → ℕ  
+  rank t = 1 if the root of t is in 𝑅, 0 otherwise.
+
+3. Inspect every rule.  
+ • R₁,R₂,R₃,R₄,R₇,R₈ replace the root with plum or a proper sub-term, so rank drops from 1 to 0.  
+ • R₅ replaces the root *banana* with its first argument *b*, a strict sub-term ⇒ rank strictly decreases or stays 0.  
+ • R₆ replaces the root *banana* with *pear*, which is not in 𝑅 ⇒ rank drops from 1 to 0.
+
+4. Thus any rewrite step strictly lowers the lexicographic measure (rank, size).  Because (ℕ × ℕ, <ₗₑₓ) is well-founded, there can be no infinite sequence of steps.
+
+Road-map for a formal Lean proof  
+• Define the measure m t := (rank t, size t) with the lexicographic order.  
+• Prove, case by case, ∀ t u, Step t u → m u < m t.  
+• Apply `WellFounded.fix` (or `termination_by`) to obtain strong normalization.
+
+No extra axioms, side conditions, or new rules are required.

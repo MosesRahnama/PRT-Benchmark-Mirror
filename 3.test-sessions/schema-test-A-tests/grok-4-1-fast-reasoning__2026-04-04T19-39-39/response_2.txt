@@ -1,0 +1,7 @@
+1. Multiset extension of term sizes on third arguments of all $F$-subterms.
+
+2. No: measure directly induced by rule structure (rule 1 removes a third-arg size; rule 2 replaces $\mathrm{sz}(S(n))$ with $\mathrm{sz}(n)$); uses canonical term size and standard well-founded multiset order on $\mathbb{N}$.
+
+3. N/A.
+
+4. Yes.

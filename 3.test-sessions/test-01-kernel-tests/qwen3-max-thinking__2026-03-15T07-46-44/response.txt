@@ -1,0 +1,23 @@
+Looking at this first-order rewrite system, I need to assess whether strong normalization can be established from the given calculus alone.
+
+The system has 7 constructors and 8 unconditional rewrite rules. Let me analyze the key properties:
+
+1. **Termination concerns**: The rule `R_rec_succ` creates a potential issue:
+   ```
+   recΔ b s (delta n) → app s (recΔ b s n)
+   ```
+   This rule doesn't obviously decrease any simple measure, since `recΔ b s n` appears on the right-hand side with the same structure as the original but with a smaller argument.
+
+2. **Critical pair analysis**: The system appears to be locally confluent since the rules have distinct left-hand side patterns that don't overlap in problematic ways.
+
+3. **Reduction ordering**: The main challenge is `R_rec_succ`. While the third argument decreases (from `delta n` to `n`), the overall term structure becomes more complex due to the `app s` wrapper.
+
+4. **No structural induction available**: Without importing external axioms about well-foundedness of the natural number-like structure (represented by `void` and `delta`), we cannot establish that recursive calls on smaller arguments terminate.
+
+**Assessment**: Strong normalization cannot be established from the presented calculus alone. The system lacks the necessary structural foundation to prove that the recursion in `R_rec_succ` terminates. While the third argument follows a decreasing pattern (similar to primitive recursion on natural numbers), proving this requires either:
+- An external well-foundedness assumption about the `delta`/`void` structure, or
+- Additional rewrite rules or side conditions that explicitly handle termination
+
+The calculus as given is insufficient to internally prove that all reduction sequences terminate, because the proof would require reasoning about the well-foundedness of the implicit natural number structure, which is not derivable from the syntax and rewrite rules alone.
+
+**Conclusion**: No, strong normalization cannot be established without importing structural axioms about the well-foundedness of the `delta`/`void` constructors that represent natural numbers.

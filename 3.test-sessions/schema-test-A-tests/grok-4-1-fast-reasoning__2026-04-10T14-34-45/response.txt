@@ -1,0 +1,7 @@
+1. Informal structural induction on the depth/size of the third argument under the recursive rule.
+
+2. Yes: relies on well-founded induction (proof structure), structural subterm ordering (ordering choice), and Peano-like interpretation of `S`/`Z` (object-level assumption).
+
+3. Yes: these exceed what is derivable from rules alone (rules define only reduction steps, not orders, induction, or interpretations).
+
+4. Yes.

@@ -1,0 +1,37 @@
+I’ve finished the file inspection. The core issue is already visible from the definitions: the first helper theorem is false for some inputs, and the second one fails on the same family of cases because the rewrite step can preserve `kappa` rather than decrease it.The helper strategy is not sound as written.
+
+The decisive problem is the first helper theorem in KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean. From the definition of kappa in KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean, if I write
+$M = \max(\kappa b,\kappa s)$,
+then
+$\kappa(\mathrm{recDelta}\ b\ s\ (\delta n)) = \max(M,\kappa n)+1$.
+
+The theorem claims
+$\kappa(\mathrm{recDelta}\ b\ s\ (\delta n)) = \kappa(\mathrm{recDelta}\ b\ s\ n)+1$
+for every $n$. That only holds when $n$ is not itself delta-headed. If $n = \delta m$, then
+$\kappa(\mathrm{recDelta}\ b\ s\ (\delta(\delta m))) = \max(M,\kappa m)+1$
+but
+$\kappa(\mathrm{recDelta}\ b\ s\ (\delta m))+1 = (\max(M,\kappa m)+1)+1 = \max(M,\kappa m)+2$.
+So the theorem would force
+$\max(M,\kappa m)+1 = \max(M,\kappa m)+2$,
+which is impossible.
+
+A concrete counterexample is $b = s = m = \mathrm{void}$. Then
+$\kappa(\mathrm{recDelta}\ \mathrm{void}\ \mathrm{void}\ (\delta(\delta\ \mathrm{void}))) = 1$,
+while
+$\kappa(\mathrm{recDelta}\ \mathrm{void}\ \mathrm{void}\ (\delta\ \mathrm{void})) + 1 = 2$.
+So the theorem at KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean is false.
+
+That also breaks the second helper theorem at KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean. Using the same counterexample,
+$\kappa(\mathrm{app}\ \mathrm{void}\ (\mathrm{recDelta}\ \mathrm{void}\ \mathrm{void}\ (\delta\ \mathrm{void}))) = \max(0,1)=1$
+and
+$\kappa(\mathrm{recDelta}\ \mathrm{void}\ \mathrm{void}\ (\delta(\delta\ \mathrm{void}))) = 1$,
+so the claimed strict inequality becomes $1 < 1$, which is false. In other words, the rec-succ rewrite rule from KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean can preserve kappa exactly when the recursive argument already has the form $\delta m$.
+
+There is a broader issue too: even aside from those two helper theorems, kappa is not a strict global descent measure for the whole rewrite system in KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean. Several rules preserve kappa:
+1. merge void t → t gives $\max(0,\kappa t)=\kappa t$.
+2. merge t void → t gives $\max(\kappa t,0)=\kappa t$.
+3. merge t t → t gives $\max(\kappa t,\kappa t)=\kappa t$.
+4. eqW a b → integrate (merge a b) gives $\max(\kappa a,\kappa b)$ on both sides.
+5. recDelta b s void → b can also be equality when $\kappa b \ge \kappa s$.
+
+So the intended helper path to a termination proof does not work as stated. At minimum, the two helper theorems need extra side conditions, and kappa by itself is only nonincreasing on several rules rather than strictly decreasing.

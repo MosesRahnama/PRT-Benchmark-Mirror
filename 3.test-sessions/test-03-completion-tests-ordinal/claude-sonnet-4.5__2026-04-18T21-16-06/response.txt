@@ -1,0 +1,110 @@
+Now I'll provide a proof skeleton for completing the three remaining sorry cases.
+
+## Proof Skeleton for Remaining Cases
+
+Based on the file structure and the completed proofs, here's how to approach the three remaining cases:
+
+### 1. **R_rec_succ** (line 141-161)
+
+**Goal:** Prove `mu (app s (recDelta b s n)) < mu (recDelta b s (delta n))`
+
+**Strategy:**
+- The LHS has ordinal measure: `omega^3 * (mu s + 1) + omega^2 * (mu (recDelta b s n) + 1) + 1`
+- The RHS has ordinal measure: `omega^(mu (delta n) + mu s + 6) + omega * (mu b + 1) + 1`
+- Since `mu (delta n) = omega^5 * (mu n + 1) + 1`, the RHS exponent becomes `omega^5 * (mu n + 1) + 1 + mu s + 6`
+
+**Proof structure:**
+```lean
+-- Expand the definitions
+have mu_delta_n : mu (delta n) = omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 := rfl
+have mu_rec : mu (recDelta b s n) = omega0 ^ (mu n + mu s + 6) + omega0 * (mu b + 1) + 1 := rfl
+
+-- Key lemma: omega^5 * (mu n + 1) + (constants) > mu n + mu s + 6 + (constants)
+have exp_dominates : mu n + mu s + (6 : Ordinal) < 
+    omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal) := by
+  -- Use: omega^5 * (mu n + 1) dominates mu n for any ordinal n
+  -- Apply mul_opow_le or similar lemmas showing tower growth
+
+-- Main calculation using exponential monotonicity
+calc mu (app s (recDelta b s n))
+  _ = omega0 ^ (3 : Ordinal) * (mu s + 1) 
+      + omega0 ^ (2 : Ordinal) * (mu (recDelta b s n) + 1) + 1 := rfl
+  _ < omega0 ^ (mu n + mu s + 6 : Ordinal) + ... := by
+      -- The recDelta term is dominated by omega^(mu n + mu s + 6)
+      -- Use opow_lt_opow_left with exp_dominates
+  _ < omega0 ^ (omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6) + ... := by
+      apply opow_lt_opow_left omega0_gt_one exp_dominates
+```
+
+### 2. **R_eq_refl** (line 163-169)
+
+**Goal:** Prove `0 < omega^(mu a + mu a + 9) + 1`
+
+**Strategy:**
+- This is a straightforward positivity proof
+- Any omega-power tower plus 1 is strictly positive
+
+**Proof structure:**
+```lean
+apply add_pos_right
+apply Ordinal.opow_pos
+-- omega0 ^ (any positive exponent) is positive
+have : (mu a + mu a + 9 : Ordinal) = (0 : Ordinal) ∨ 
+       0 < (mu a + mu a + 9 : Ordinal) := eq_zero_or_pos _
+cases this with
+| inl h => 
+    -- If exponent is 0, omega^0 = 1 > 0
+    rw [h]; exact one_pos
+| inr h => 
+    -- If exponent > 0, omega^exp > 1 > 0
+    exact opow_pos _ omega0_pos
+```
+
+### 3. **R_eq_diff** (line 171-184)
+
+**Goal:** Prove `mu (integrate (merge a b)) < mu (eqW a b)`
+
+**Strategy:**
+- LHS = `omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 2) + 1`
+- RHS = `omega^(mu a + mu b + 9) + 1`
+- Need to show the exponent 9 in RHS is large enough to dominate the omega^4 * (omega^3 + omega^2 + ...) structure
+
+**Proof structure:**
+```lean
+have mu_merge : mu (merge a b) = 
+  omega0 ^ (3 : Ordinal) * (mu a + 1) + omega0 ^ (2 : Ordinal) * (mu b + 1) + 1 := rfl
+
+-- The merge measure is bounded by omega^4 when both mu a and mu b are finite
+have merge_bound : mu (merge a b) < omega0 ^ (4 : Ordinal) * omega0 ^ (4 : Ordinal) := by
+  -- omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 1 < omega^4 * omega^4
+  -- This uses that omega^3 * (finite) < omega^4
+
+-- The integrate adds another omega^4 factor
+have integrate_bound : mu (integrate (merge a b)) < 
+  omega0 ^ (4 : Ordinal) * (omega0 ^ (4 : Ordinal) * omega0 ^ (4 : Ordinal) + 1) + 1 := by
+  simp [mu]
+  -- Apply merge_bound
+
+-- Show that omega^(mu a + mu b + 9) dominates the above
+-- Key: 9 is chosen so that omega^9 > omega^4 * omega^4 * omega^4
+have exp_sufficient : omega0 ^ (4 : Ordinal) * omega0 ^ (4 : Ordinal) * omega0 ^ (4 : Ordinal)
+    < omega0 ^ (mu a + mu b + 9 : Ordinal) := by
+  -- omega^4 * omega^4 * omega^4 = omega^12, but we also have mu a + mu b
+  -- For any ordinals, mu a + mu b + 9 >= 9, so omega^(mu a + mu b + 9) >= omega^9
+  -- Need: omega^12 ≤ omega^(mu a + mu b + 9)
+  
+calc mu (integrate (merge a b))
+  _ < omega0 ^ (4 : Ordinal) * ... := integrate_bound
+  _ < omega0 ^ (mu a + mu b + 9) := exp_sufficient
+  _ < omega0 ^ (mu a + mu b + 9) + 1 := lt_add_one _
+```
+
+### Key Mathlib lemmas needed:
+- `Ordinal.opow_lt_opow_left`: exponential monotonicity for omega
+- `Ordinal.opow_pos`: positivity of ordinal exponentials
+- `Ordinal.add_lt_opow`: addition grows slower than exponentiation
+- `Ordinal.mul_lt_opow`: multiplication grows slower than exponentiation
+- `Ordinal.principal_add_omega0`: omega is additively principal
+- `Ordinal.principal_mul_omega0`: omega is multiplicatively principal
+
+The core challenge in all three cases is manipulating ordinal arithmetic inequalities, specifically showing that the tower-structured exponents dominate polynomial-like terms in lower bases.

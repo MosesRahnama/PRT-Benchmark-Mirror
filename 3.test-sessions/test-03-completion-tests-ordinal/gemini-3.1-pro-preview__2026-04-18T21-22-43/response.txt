@@ -1,0 +1,48 @@
+Here is a proof skeleton for the three remaining cases to replace the `sorry` statements. You can use this outline to structure the ordinal arithmetic steps needed for the strict decrease properties.
+
+```lean
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- Goal: mu(app s (recDelta b s n)) < mu(recDelta b s (delta n))
+    -- 1. Bound the RHS by showing mu(RHS) < omega^(omega^5 * (mu n + 1))
+    --    - You will need to show that the degree of the polynomial inside the app 
+    --      is strictly less than the exponential base of delta.
+    have h_bound_rhs : omega0 ^ (3 : Ordinal) * (mu s + 1) + 
+                       omega0 ^ (2 : Ordinal) * (omega0 ^ (mu n + mu s + 6) + omega0 * (mu b + 1) + 1 + 1) + 1 
+                       < omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1)) := by
+      sorry
+    
+    -- 2. Bound the LHS below by the same term
+    have h_bound_lhs : omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1)) 
+                       ≤ omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6) + omega0 * (mu b + 1) + 1 := by
+      sorry
+
+    -- 3. Conclude by transitivity
+    exact lt_of_lt_of_le h_bound_rhs h_bound_lhs
+
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- This case is just showing 0 < Ordinal + 1, which reduces to 1 being positive.
+    exact Ordinal.pos_iff_ne_zero.mpr (by
+      apply ne_of_gt
+      exact add_pos_right _ one_pos)
+
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- Goal: mu(integrate (merge a b)) < mu(eqW a b)
+    -- 1. Approximate the inner merge expression degree
+    have h_merge_bound : omega0 ^ (3 : Ordinal) * (mu a + 1) + omega0 ^ (2 : Ordinal) * (mu b + 1) + 1 + 1 
+                         < omega0 ^ (mu a + mu b + 5) := by
+      sorry
+      
+    -- 2. Show the integration multiplication omega^4 * (...) preserves the strict bound
+    have h_integrate_bound : omega0 ^ (4 : Ordinal) * (omega0 ^ (3 : Ordinal) * (mu a + 1) + omega0 ^ (2 : Ordinal) * (mu b + 1) + 1 + 1) + 1 
+                             < omega0 ^ (mu a + mu b + 9) + 1 := by
+      sorry
+      
+    -- 3. The result directly follows from h_integrate_bound
+    exact h_integrate_bound
+```

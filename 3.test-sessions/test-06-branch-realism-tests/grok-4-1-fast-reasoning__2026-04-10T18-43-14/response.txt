@@ -1,0 +1,22 @@
+**No, the helper strategy is not sound as written.**
+
+The two theorems claim properties of `kappa` to support termination for the `R_rec_succ` rule: `Step (recDelta b s (delta n)) (app s (recDelta b s n))`.
+
+Let $M = \max(\max(\kappa b, \kappa s), \kappa n)$.
+
+By definition:
+- $\kappa(\texttt{recDelta } b\ s\ (\texttt{delta } n)) = M + 1$
+- $\kappa(\texttt{recDelta } b\ s\ n)$ is $M$ if $n \neq \texttt{delta}_{~}$, else $M + 1$ (if $n = \texttt{delta } k$).
+
+**Theorem 1** ($\kappa(\texttt{recDelta } b\ s\ (\texttt{delta } n)) = \kappa(\texttt{recDelta } b\ s\ n) + 1$) fails when $n = \texttt{delta}_{~}$: LHS $= M + 1$, RHS $= (M + 1) + 1 = M + 2$.
+
+**Theorem 2** ($\kappa(\texttt{app } s\ (\texttt{recDelta } b\ s\ n)) < \kappa(\texttt{recDelta } b\ s\ (\texttt{delta } n))$) also fails then: RHS of step $= \max(\kappa s, \kappa(\texttt{recDelta } b\ s\ n)) = \max(\kappa s, M + 1) = M + 1$ (since $\kappa(\texttt{recDelta } b\ s\ n) \ge \kappa s$), LHS $= M + 1$, so equal (not strict).
+
+**Counterexample** ($b = s = n = \texttt{void}$, $\kappa(\texttt{void}) = 0$, so $M = 0$):
+- But take $n = \texttt{delta void}$ ($\kappa n = 0$).
+- $\kappa(\texttt{recDelta void void (delta void)}) = 1$.
+- $\kappa(\texttt{recDelta void void (delta (delta void))}) = 1$.
+- Step RHS: $\kappa(\texttt{app void (recDelta void void (delta void))}) = \max(0, 1) = 1$.
+- $\kappa$ unchanged, so no strict decrease.
+
+Holds only if $n \not= \texttt{delta}_{~}$, but theorems claim $\forall n$, hence unsound for termination.

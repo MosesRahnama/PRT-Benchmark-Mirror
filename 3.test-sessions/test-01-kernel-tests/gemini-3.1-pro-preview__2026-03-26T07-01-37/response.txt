@@ -1,0 +1,28 @@
+Based on the rules provided in the Lean 4 file, **yes, strong normalization of this system can be established** purely from the presented calculus without needing external axioms or side conditions. 
+
+### Raw Assessment & Proof Roadmap
+
+The given system is a first-order Term Rewrite System (TRS) with no variable binding. Strong normalization (termination) can be proven using a standard syntactic path ordering, such as the **Lexicographic Path Ordering (LPO)** or a simple **Polynomial Interpretation**, because all rewrite rules are structurally decreasing with respect to a well-founded measure.
+
+Here is a short proof roadmap:
+
+1. **Establish a Precedence on the Signature:**
+   Define a strict precedence relation $\succ$ on the constructors: 
+   `recΔ` $\succ$ `app` $\succ$ `eqW` $\succ$ `integrate` $\succ$ `merge` $\succ$ `delta` $\succ$ `void`.
+
+2. **Verify Rule Compatibilities (using LPO):**
+   Apply the LPO induced by $\succ$ to check that $L \succ_{lpo} R$ for every rule $L \to R$:
+   * `integrate (delta t) -> void`: Trivial by subterm property and precedence.
+   * `merge void t -> t` & `merge t void -> t`: Trivial by the subterm property.
+   * `merge t t -> t`: Trivial by the subterm property.
+   * `recΔ b s void -> b`: Trivial by the subterm property. 
+   * `recΔ b s (delta n) -> app s (recΔ b s n)`: 
+     Valid because `recΔ` $\succ$ `app`, and when we compare the arguments of the recursive call, the subterm `n` is strictly smaller than `delta n`.
+   * `eqW a a -> void`: Trivial by subterm property.
+   * `eqW a b -> integrate (merge a b)`: 
+     Valid because `eqW` $\succ$ `integrate` and `eqW` $\succ$ `merge`. By LPO definition, a function symbol of higher precedence dominates any structure of lower precedence symbols, provided the variables in the right-hand side (`a`, `b`) are subsets of the variables in the left-hand side (which they are).
+
+3. **Context Closure:**
+   Because LPO is a simplification ordering (it is monotonic and possesses the subterm property), establishing $L \succ_{lpo} R$ for all rules guarantees that the rewrite relation is well-founded under any context.
+
+Because all 8 rules strictly decrease under this LPO, the system is strongly normalizing over all finite terms. No hidden structural assumptions, type guards, or side conditions are necessary to constrain the reductions.

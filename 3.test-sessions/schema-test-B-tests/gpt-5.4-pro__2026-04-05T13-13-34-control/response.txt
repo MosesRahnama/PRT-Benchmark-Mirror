@@ -1,0 +1,9 @@
+| Method | Succeeds? | Within boundary? | Brief reason |
+|---|---|---:|---|
+| **A** | **Yes** | **No** | A standard LPO-style path order with precedence `F > G > S > Z` can orient both rules: `F(x,y,Z) -> x` by subterm/property, and `F(x,y,S(n)) -> G(y,F(x,y,n))` because `F > G` and `S(n) > n`. But the precedence is an imported global symbol ordering, so under the stated control it is outside the boundary. |
+| **B** | **No** | **No** | At the rule root, the numbers go down, but as stated this interpretation ignores rewrite-active positions (`F` ignores its second argument, `G` ignores its first). So it does **not** give a global monotone reduction order for the whole TRS. Example: `G(F(u,v,Z), Z) -> G(u, Z)` is a rewrite step, but both sides interpret to `0`. The interpretation is also an imported global algebraic choice. |
+| **C** | **No** | **No** | KBO with all symbol weights `1` cannot orient the second rule: the RHS is heavier, and `y` occurs more often on the RHS than on the LHS, violating the KBO variable condition. The weight assignment is also an imported global structural choice. |
+| **D** | **Yes** | **Yes** | The only dependency pair is `F#(x,y,S(n)) -> F#(x,y,n)`. Projecting to the third argument gives `S(n) ▷ n`, a strict subterm decrease, so the DP problem is finite. Under the narrow control, this stays within boundary: it uses standard metatheory, and the descent is read directly from the rule’s own recursive argument. |
+| **E** | **No** | **Yes** | The stated measure is **not** strictly decreasing for all rewrite steps. Counterexample: substitute `x := F(u,v,S(Z))` in `F(x,y,Z) -> x`. Then `\mu(F(x,y,Z)) = 1`, but `\mu(x) = 2`. So the argument fails as a full termination proof. Still, it is a direct rule-based measure rather than an imported global precedence/algebra, so under the narrow control it remains within boundary. |
+
+**Methods satisfying both conditions:** **D only**.

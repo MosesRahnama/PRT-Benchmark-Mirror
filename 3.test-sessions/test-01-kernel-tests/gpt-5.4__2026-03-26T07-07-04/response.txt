@@ -1,0 +1,75 @@
+I only inspected
+, and on that file alone my raw assessment is:
+
+## Assessment
+
+**Yes — strong normalization can be established from the presented calculus alone.**  
+You do **not** need to import extra structural axioms, guards, side conditions, or object-level assumptions.
+
+A small caveat, just to keep the math police calm: the system is **not confluent** as written, because `eqW a a` matches both
+
+- `eqW a a → void`
+- `eqW a a → integrate (merge a a)`
+
+But non-confluence does **not** block strong normalization.
+
+## Why this is enough
+
+A standard **recursive path ordering / lexicographic path ordering** argument is available directly on the given signature and rules.
+
+One workable precedence is for example
+
+$$
+\mathrm{recΔ} \succ \mathrm{eqW} \succ \mathrm{integrate} \succ \mathrm{app} \succ \mathrm{merge} \succ \mathrm{delta} \succ \mathrm{void}.
+$$
+
+With standard subterm property and lexicographic status for `recΔ`, each rewrite rule decreases:
+
+- `integrate (delta t) → void`
+- `merge void t → t`
+- `merge t void → t`
+- `merge t t → t`
+- `recΔ b s void → b`
+- `recΔ b s (delta n) → app s (recΔ b s n)`
+- `eqW a a → void`
+- `eqW a b → integrate (merge a b)`
+
+The only potentially nontrivial ones are:
+
+- `recΔ b s (delta n) → app s (recΔ b s n)`  
+  This decreases because `delta n > n`, so
+  `recΔ b s (delta n) > recΔ b s n`, and the top symbol also drops from `recΔ` to `app`.
+
+- `eqW a b → integrate (merge a b)`  
+  This decreases because `eqW ≻ integrate`, and `eqW a b` is greater than both `a` and `b`, hence also greater than `merge a b`.
+
+Since recursive path orderings are well-founded, **no infinite rewrite sequence exists**.
+
+## Short roadmap
+
+If you want the proof in the shortest clean form:
+
+- Treat the file as a first-order term rewriting system on the signature  
+  `void, delta, integrate, merge, app, recΔ, eqW`.
+- Fix a standard simplification order such as RPO/LPO with precedence  
+  `recΔ ≻ eqW ≻ integrate ≻ app ≻ merge ≻ delta ≻ void`.
+- Check each rule decreases under that order.
+- Conclude termination, hence strong normalization, by well-foundedness of the order.
+
+## One small nuance
+
+If you interpret the Lean `Step` relation **literally as written**, with **no contextual closure rule added**, then strong normalization is actually even more immediate: reductions only happen at the root, so the relation is plainly terminating by a very simple direct measure.
+
+So under either reading:
+
+- **literal `Step` relation:** yes, trivially SN;
+- **standard TRS closure under contexts/substitutions:** yes, still SN via a standard path-ordering proof.
+
+## Checklist
+
+- [x] Read only
+- [x] Avoided other workspace files and the web
+- [x] Assessed strong normalization from the displayed calculus alone
+- [x] Kept the roadmap within the “no extra assumptions/rules” boundary
+
+In one line: **yes, strong normalization is provable from the given calculus alone; the cleanest proof is a standard recursive-path-ordering termination argument.**

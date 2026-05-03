@@ -1,0 +1,7 @@
+Based on the calculus presented, strong normalization cannot be established.
+
+The reduction rule `R_eq_diff: ∀ a b, Step (eqW a b) (integrate (merge a b))` is the primary obstacle. In a term rewriting system, a common strategy to prove strong normalization is to show that every reduction step decreases the term according to some well-founded ordering (e.g., based on term size or structure).
+
+The `R_eq_diff` rule violates this principle. The resulting term, `integrate (merge a b)`, contains the original subterms `a` and `b` and is strictly larger than the original term `eqW a b`. This allows for the construction of reduction sequences where the terms grow in size and complexity without bound, which prevents standard termination proofs from applying.
+
+A proof roadmap within the specified boundaries cannot be provided because the system lacks a decreasing measure, a fundamental requirement for most strong normalization proofs. Establishing termination would likely require adding external constraints, such as a typing system or side conditions on the `R_eq_diff` rule, which are explicitly disallowed by the prompt.

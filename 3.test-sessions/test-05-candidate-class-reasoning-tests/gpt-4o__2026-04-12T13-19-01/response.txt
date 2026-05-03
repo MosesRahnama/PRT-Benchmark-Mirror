@@ -1,0 +1,30 @@
+The Lean 4 file defines a first-order rewrite calculus with the following components:
+
+### Rewrite Rules
+The `Step` inductive type specifies the rewrite rules for the `Trace` type. These rules include:
+1. **Integration and Delta**: `integrate (delta t)` reduces to `void`.
+2. **Merge Rules**: Merging with `void` simplifies to the other operand, and merging identical traces reduces to one.
+3. **Recursive Delta**: Handles recursion with `delta` traces.
+4. **Equality**: Reflexivity reduces to `void`, and equality of different traces integrates their merge.
+
+### Termination Measures
+Three termination measures (`mu1`, `mu2`, `mu3`) are defined as functions mapping `Trace` to `Nat`. These measures assign weights to `Trace` constructors to ensure termination of the rewrite rules.
+
+#### Candidate 1: `mu1`
+- Assigns a base weight of `1` to most constructors, with additional weights for nested traces.
+- `eqW` has a higher weight (`3`) to prioritize equality resolution.
+
+#### Candidate 2: `mu2`
+- Increases weights for `integrate` and `merge` to `2`, and `recDelta` and `eqW` to `5`.
+- This measure emphasizes the cost of integration and recursion.
+
+#### Candidate 3: `mu3`
+- Balances weights differently, assigning `2` to `integrate` and `app`, and `4` to `eqW`.
+- `merge` and `recDelta` have lower weights, suggesting a focus on reducing merges.
+
+### Assessment
+1. **`mu1`**: Simple and uniform, but may struggle with complex recursion due to lower weights for `recDelta` and `eqW`.
+2. **`mu2`**: Prioritizes recursion and equality, making it robust for deeply nested traces but potentially slower for simpler cases.
+3. **`mu3`**: Balances recursion and merging, potentially offering a middle ground between `mu1` and `mu2`.
+
+Each measure has strengths depending on the rewrite system's complexity and the expected trace structures.

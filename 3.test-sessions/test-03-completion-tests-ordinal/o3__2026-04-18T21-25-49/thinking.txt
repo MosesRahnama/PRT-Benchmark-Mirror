@@ -1,0 +1,10 @@
+**Outlining proof skeleton**
+
+The user is asking for a proof skeleton for the remaining "sorry" cases without modifying any files or running a compiler. I’ll focus on providing a high-level strategy in prose and a Lean code snippet with placeholders to guide them.
+
+I can outline an approach using bullet points, detailing tactics like “have” and “calc,” while emphasizing ordinal arithmetic and monotonic properties. This way, I’m delivering the structure they need without directly inserting any code.
+**Creating proof placeholders**
+
+I need to provide "by" blocks that include placeholders for tactics like 'have', 'calc', and 'simp'. It's important to remember that I can't run the compiler or refer to other files, so my answer will remain focused strictly on outlining these blocks for the user.
+
+I'll make sure to keep everything clear and straightforward, providing only the necessary framework without modifying any code. This way, the user gets a useful structure to complete their proofs effectively.

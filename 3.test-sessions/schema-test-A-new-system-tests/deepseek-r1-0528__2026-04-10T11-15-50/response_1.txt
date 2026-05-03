@@ -1,0 +1,25 @@
+Based on the rewrite system in the file
+:
+
+### Assessment:
+**Yes, strong normalization can be established from this rewrite system alone.**
+
+### Reasoning:
+1. **Structural recursion on the third argument**:  
+   The rewrite rules are defined with a base case (`F(x, y, Z) → x`) and a recursive case that reduces the third argument (`F(x, y, S(n)) → G(F(x, y, n))`). The recursion is structurally decreasing because `S(n)` is reduced to `n` in each step.
+
+2. **No variable binding or complex axioms**:  
+   The system has no variable binding mechanisms (e.g., lambda abstraction) or imported object-level axioms that could introduce non-termination. The rules are self-contained and operate solely on the given term structure.
+
+3. **Termination guarantee**:  
+   For any term `F(x, y, t)` where `t` is built from `Z` and `S`:
+   - If `t = Z`, it reduces to `x` in one step (base case).
+   - If `t = S(n)`, it reduces to `G(F(x, y, n))`, where `n` is structurally smaller than `t`. This recursion must terminate when `n` reduces to `Z`.
+
+4. **No cycles or expansion**:  
+   The rules do not:
+   - Create larger terms (e.g., `G(F(x, y, n))` is not larger than `F(x, y, S(n))` in a way that could diverge).
+   - Permit recursive calls that increase term size.
+   - Include rules for `G`, making `G(...)` a normal form that halts reduction.
+
+Thus, all reduction sequences terminate, proving strong normalization. No external axioms or assumptions are needed.

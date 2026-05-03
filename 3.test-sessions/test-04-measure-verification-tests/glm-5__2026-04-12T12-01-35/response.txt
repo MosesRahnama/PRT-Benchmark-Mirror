@@ -1,0 +1,73 @@
+## Assessment: The Measure is **Not Sound**
+
+After analyzing the rewrite rules and the proposed lexicographic measure `(phase t, cost t)`, I've identified several counterexamples where the measure **increases** rather than decreases.
+
+### The Problem
+
+The `phase` function returns:
+- `1` for terms of the form `recDelta _ _ (delta _)`
+- `0` for all other terms
+
+This creates issues with the following rewrite rules:
+
+---
+
+### Counterexample 1: `R_merge_void_left` and `R_merge_void_right`
+
+```
+Step (merge void t) t
+Step (merge t void) t
+```
+
+If `t = recDelta b s (delta n)` (so `phase t = 1`):
+- **Before**: `phase (merge void t) = 0`, `cost (merge void t) = 1 + cost t`
+- **After**: `phase t = 1`, `cost t = cost t`
+- **Measure change**: `(0, 1 + cost t) → (1, cost t)`
+
+In lexicographic order, `(1, cost t) > (0, 1 + cost t)` because the first component increases from 0 to 1.
+
+---
+
+### Counterexample 2: `R_merge_cancel`
+
+```
+Step (merge t t) t
+```
+
+Same issue: if `t` has `phase t = 1`, the measure goes from `(0, 1 + 2·cost t)` to `(1, cost t)`.
+
+---
+
+### Counterexample 3: `R_rec_zero`
+
+```
+Step (recDelta b s void) b
+```
+
+If `b = recDelta b' s' (delta n')` (so `phase b = 1`):
+- **Before**: `phase (recDelta b s void) = 0`
+- **After**: `phase b = 1`
+- **Measure change**: `(0, 1 + cost b + cost s) → (1, cost b)`
+
+Again, the phase increases from 0 to 1.
+
+---
+
+### Rules That Do Work
+
+The measure correctly decreases for:
+- `R_int_delta`: `(0, 2 + cost t) → (0, 0)` ✓
+- `R_rec_succ`: `(1, ...) → (0, ...)` ✓ (phase decreases)
+- `R_eq_refl`: `(0, 3 + 2·cost a) → (0, 0)` ✓
+- `R_eq_diff`: `(0, 3 + cost a + cost b) → (0, 2 + cost a + cost b)` ✓
+
+---
+
+### Conclusion
+
+The measure is **unsound** because the `phase` function is not monotonic with respect to the rewrite relation. The phase component can increase when rules like `R_merge_void_left`, `R_merge_void_right`, `R_merge_cancel`, or `R_rec_zero` produce a `recDelta _ _ (delta _)` term as their result.
+
+A sound measure would need either:
+1. A different phase definition that accounts for all possible reduction outcomes, or
+2. A purely cost-based measure (but this would require proving that `cost` always decreases, which may not hold for `R_rec_succ`), or
+3. A more sophisticated measure (e.g., using a different well-founded ordering).

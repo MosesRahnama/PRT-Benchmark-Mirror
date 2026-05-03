@@ -1,0 +1,34 @@
+I'll analyze the specified Lean 4 file to assess the strong normalization property of the rewrite calculus presented there.
+Based on my analysis of the Test-01-Kernel-Fruit.lean file, here is my assessment:
+
+## Raw Assessment: **No, strong normalization cannot be established from this calculus alone.**
+
+## Primary Obstacle
+
+The critical issue is **Rule R_cherry_diff**:
+```lean
+R_cherry_diff : ∀ {a b}, a ≠ b → Step (cherry a b) (mango (peach a b))
+```
+
+This rule contains a **semantic side condition** (`a ≠ b`) that requires deciding equality of `Trace` terms. This goes beyond what is derivable from pure syntax and structural rewrite rules alone. To establish strong normalization, you would need:
+
+1. An external decision procedure for `≠` on `Trace` terms
+2. Proof that this procedure terminates  
+3. Analysis of how semantic inspection interacts with the rewrite dynamics
+
+These requirements import assumptions beyond the presented calculus.
+
+## Secondary Concerns
+
+Even without the semantic condition, rule **R_apple_orange** (which should be named R_banana_grape):
+```lean
+R_apple_orange : ∀ b s n, Step (banana b s (grape n)) (pear s (banana b s n))
+```
+
+Creates potential issues where:
+- The rule generates nested `pear` terms while preserving reducible `banana` subterms
+- Analysis would require careful measure construction to ensure termination across rule interactions
+
+## Conclusion
+
+The system cannot be proven strongly normalizing from the presented calculus alone due to the semantic side condition in R_cherry_diff. This condition requires external decidability assumptions that strengthen the system beyond its stated syntactic boundaries.

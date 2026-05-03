@@ -1,0 +1,37 @@
+**Assessment**
+
+Yes – strong normalization can be proved for the presented rewrite calculus using only the syntax and the eight rewrite rules that are given. No extra structural axioms, guards, side‑conditions, or hidden assumptions are needed.
+
+**Proof roadmap (within the allowed boundary)**  
+
+1. **Define a well‑founded measure** on traces.  
+   *Let* `|t|` *be the total number of constructors occurring in a trace* (`void`, `delta`, `integrate`, `merge`, `app`, `recΔ`, `eqW`).  
+   *Let* `δ(t)` *be the number of `delta` constructors that appear as the outermost argument of a `recΔ`* (i.e. the “recursion depth”).  
+   Use the lexicographic order  
+   \[
+   m(t) = (\delta(t),|t|)
+   \]
+   with the usual product order on ℕ×ℕ. This order is well‑founded.
+
+2. **Show that every rewrite step strictly decreases the measure**.
+
+   | Rule | Effect on `δ(t)` | Effect on `|t|` | Decrease argument |
+   |------|------------------|----------------|-------------------|
+   | `R_int_delta` `integrate (delta t) → void` | `δ` unchanged (no `recΔ`) | `|integrate (delta t)| > |void|` | size drops |
+   | `R_merge_void_left/right` `merge void t → t` / `merge t void → t` | `δ` unchanged | `|merge …| > |t|` | size drops |
+   | `R_merge_cancel` `merge t t → t` | `δ` unchanged | `|merge t t| > |t|` | size drops |
+   | `R_rec_zero` `recΔ b s void → b` | `δ` unchanged (argument is `void`) | `|recΔ b s void| > |b|` | size drops |
+   | `R_rec_succ` `recΔ b s (delta n) → app s (recΔ b s n)` | `δ` decreases by 1 (the outer `delta` is removed) | size may stay the same or increase, but the first component strictly drops | lexicographic decrease |
+   | `R_eq_refl` `eqW a a → void` | `δ` unchanged | `|eqW a a| > |void|` | size drops |
+   | `R_eq_diff` `eqW a b → integrate (merge a b)` | `δ` unchanged | `|eqW a b| > |integrate (merge a b)|` (the RHS has strictly fewer constructors) | size drops |
+
+   In every case the pair `(δ,|·|)` strictly decreases, so no infinite descending chain exists.
+
+3. **Conclude strong normalization**.  
+   Since every rewrite step reduces the well‑founded measure, any reduction sequence must terminate after finitely many steps. Hence every term in the calculus is strongly normalising.
+
+---
+
+**Why no extra assumptions are needed**
+
+The proof uses only the syntactic shape of the constructors and the eight rewrite rules themselves. No external axioms about associativity, commutativity, or other algebraic properties are invoked, and no additional rewrite rules are introduced. Therefore strong normalization follows solely from the given calculus.

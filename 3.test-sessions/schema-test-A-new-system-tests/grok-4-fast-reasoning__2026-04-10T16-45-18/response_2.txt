@@ -1,0 +1,7 @@
+1. Multiset measure on the number of `S` constructors in the third argument, combined with term size decreases in recursive calls.
+
+2. Yes, it relies on an interpretation of `Z` and `S(n)` as Peano natural numbers (inductive structure with decreasing size), which is an external ordering/interpretation not explicitly fixed by the rules alone.
+
+3. Yes, as this interpretation imports an object-level assumption about the signature's semantics (natural number encoding) beyond what the rules directly derive.
+
+4. Yes, under the standard interpretation of the constructors, the system is strongly normalizing.

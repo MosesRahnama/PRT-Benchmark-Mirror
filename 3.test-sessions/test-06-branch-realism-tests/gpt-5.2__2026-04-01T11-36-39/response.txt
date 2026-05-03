@@ -1,0 +1,47 @@
+The helper strategy is not sound as written: the two helper theorems are false in general, because `kappa` treats nested `delta` in a way that breaks the intended “+1 per `delta` peel” reasoning.
+
+File analyzed: KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean
+
+**Key calculation (why `kappa_rec_delta_step` fails)**
+`kappa` is defined with two `recDelta` equations:
+
+- `kappa (recDelta b s (delta n)) = max (max (kappa b) (kappa s)) (kappa n) + 1`
+- `kappa (recDelta b s n) = max (max (kappa b) (kappa s)) (kappa n)` *only when* `n` is **not** of the form `delta _` (because the previous equation matches first)
+
+So if `n = delta m`, then `kappa (recDelta b s n)` uses the *delta* equation again, not the catch-all.
+
+Let `M := Nat.max (Nat.max (kappa b) (kappa s)) (kappa m)`. Using `kappa (delta m) = kappa m`:
+
+- LHS of `kappa_rec_delta_step` with `n = delta m`:
+  - `kappa (recDelta b s (delta (delta m))) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa (delta m)) + 1`
+  - `= Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1 = M + 1`
+- RHS:
+  - `kappa (recDelta b s (delta m)) + 1`
+  - but `kappa (recDelta b s (delta m)) = M + 1`
+  - so RHS `= (M + 1) + 1 = M + 2`
+
+Thus the claimed equality becomes `M + 1 = M + 2`, impossible.
+
+Concrete counterexample: take `b = void`, `s = void`, `n = delta void`.
+- `kappa (recDelta void void (delta (delta void))) = 1`
+- `kappa (recDelta void void (delta void)) + 1 = 2`
+
+**Why `kappa_rec_succ_drop` also fails (and depends on the false lemma)**
+For the same `b, s, n = delta void`:
+
+- `kappa (recDelta void void (delta (delta void))) = 1`
+- `kappa (app void (recDelta void void (delta void)))`
+  - `= Nat.max (kappa void) (kappa (recDelta void void (delta void)))`
+  - `= Nat.max 0 1 = 1`
+
+So the desired strict inequality
+`kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`
+becomes `1 < 1`, false.
+
+Intuitively: because `kappa (delta t) = kappa t`, a chain `delta (delta (...))` has the same `kappa` as a single `delta ...`, and your `recDelta` case adds `+1` whenever the argument *begins* with `delta`—not per nested layer. So “peeling one `delta`” in `R_rec_succ` does not reliably drop `kappa`.
+
+**Extra note (even beyond the helpers)**
+Even if the helper lemmas were repaired, `kappa` as defined is not a strictly-decreasing measure for several other `Step` rules:
+- `R_merge_void_left/right`, `R_merge_cancel`, and `R_eq_diff` preserve `kappa` (they rewrite to terms with the same `Nat.max`), so `kappa` alone cannot prove termination via a strict descent argument.
+
+If you want, paste the intended termination ordering (e.g., lexicographic pair, multiset measure, or a different `kappa`) and I can sanity-check whether it actually decreases for *all* `Step` constructors—still without compiling or touching the repo.

@@ -1,0 +1,870 @@
+{
+  "extraction_date": "2026-04-05T17:21:55.586180+00:00",
+  "total_sessions": 108,
+  "sessions": [
+    {
+      "slug": "claude-haiku-4.5__2026-04-05T12-19-57",
+      "source": "copilot",
+      "model": "copilot/claude-haiku-4.5",
+      "session_id": "3b7abac9-1a14-4a36-8d6a-bbb0f035947e",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "claude-haiku-4.5__2026-04-05T12-28-06",
+      "source": "copilot",
+      "model": "copilot/claude-haiku-4.5",
+      "session_id": "5d05134f-6cf0-4764-aaa9-4b4a82107458",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "claude-haiku-4.5__2026-04-05T12-28-14-control",
+      "source": "copilot",
+      "model": "copilot/claude-haiku-4.5",
+      "session_id": "6cb4e673-743c-48bd-ac05-7c454aba5ecf",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "claude-haiku-4.5__2026-04-05T12-28-24-control",
+      "source": "copilot",
+      "model": "copilot/claude-haiku-4.5",
+      "session_id": "41e471f5-a2fb-42af-99c6-8a3465b9cc51",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "claude-opus-4.5__2026-04-05T12-28-31",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.5",
+      "session_id": "ebe381a8-ad29-4294-a14f-e9835fcfb883",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "claude-opus-4.5__2026-04-05T12-29-01",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.5",
+      "session_id": "e69e69ce-18b3-4cdd-b490-f6ccf8e1ec1c",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "claude-opus-4.5__2026-04-05T12-29-07-control",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.5",
+      "session_id": "b0eb8dbc-000f-4d72-ae66-3527c29d9b87",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "claude-opus-4.5__2026-04-05T12-29-16-control",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.5",
+      "session_id": "33ef8b65-d89d-4060-a454-80636c27cd8e",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "claude-opus-4.6__2026-04-05T11-59-38",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.6",
+      "session_id": "cecb2f50-06c2-4429-8f7d-408daf5d24d0",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "claude-opus-4.6__2026-04-05T11-59-53",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.6",
+      "session_id": "f30a6107-1206-4c2c-a4b5-5e1da3381c60",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "claude-opus-4.6__2026-04-05T11-59-57-control",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.6",
+      "session_id": "89609468-ffb6-4b49-a9f8-8ab46c2e5e5f",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "claude-opus-4.6__2026-04-05T12-00-08-control",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.6",
+      "session_id": "b21895c0-9c8e-4a36-b77d-f4d095cc35be",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4.5__2026-04-05T12-00-13",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.5",
+      "session_id": "55776c6d-1a32-4f12-ad8d-786f139ce9e1",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4.5__2026-04-05T12-00-31",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.5",
+      "session_id": "669b2245-40c0-4362-9d81-b00f2b0df1cd",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4.5__2026-04-05T12-00-38-control",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.5",
+      "session_id": "18d9c631-0ed0-4e1a-8d1e-641560495e23",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4.5__2026-04-05T12-00-52-control",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.5",
+      "session_id": "459f205b-bf56-4786-ad47-9f8c748c0537",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4.6__2026-04-05T12-30-34",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.6",
+      "session_id": "00b1a6c7-012b-4bd7-9b13-ce0787246fb0",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4.6__2026-04-05T12-30-57",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.6",
+      "session_id": "a164a444-e518-4d79-91b2-9c3ba0b0de7f",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4.6__2026-04-05T12-31-02-control",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.6",
+      "session_id": "1d5f76b6-9c8d-47dc-bb37-a8226bcda7a6",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4.6__2026-04-05T12-31-12-control",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.6",
+      "session_id": "cc91e528-7c7a-4b44-a297-b2d283ea562e",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4__2026-04-05T12-29-39",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4",
+      "session_id": "4c5cfb8f-07a5-4e54-ad7f-b79b4ddacd95",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4__2026-04-05T12-30-05",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4",
+      "session_id": "40c35dff-b5f2-44fc-9908-1be28ab8bfd3",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4__2026-04-05T12-30-10-control",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4",
+      "session_id": "0784c24b-105c-4e0f-a1df-0d16231cfb3a",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4__2026-04-05T12-30-22-control",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4",
+      "session_id": "8ad75ada-5d12-4ae1-ab3b-adc32cbd7cb6",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "deepseek-r1-0528__2026-04-05T13-07-49",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-r1-0528",
+      "session_id": "4bf3e1dd-b786-4b21-a658-2a078b5618f7",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "deepseek-r1-0528__2026-04-05T13-10-48",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-r1-0528",
+      "session_id": "9a285f4a-cb28-42da-86d4-53171b75dc5c",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "deepseek-r1-0528__2026-04-05T13-10-53-control",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-r1-0528",
+      "session_id": "ca9db25a-188e-4103-8c35-d9b2e44e36a3",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "deepseek-r1-0528__2026-04-05T13-11-02-control",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-r1-0528",
+      "session_id": "41fff2de-b34f-43ea-b687-ca57328bc1f2",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "deepseek-v3.2__2026-04-05T16-59-52",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-v3.2",
+      "session_id": "7f9bc5e1-594e-4609-8b6a-552e572ecaeb",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "deepseek-v3.2__2026-04-05T17-00-06",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-v3.2",
+      "session_id": "26edb560-313d-48d4-ab7a-0f29f91dc819",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "deepseek-v3.2__2026-04-05T17-00-37-control",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-v3.2",
+      "session_id": "86fca295-5ad9-4613-ab1f-b1f3d2e34730",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "deepseek-v3.2__2026-04-05T17-00-50-control",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-v3.2",
+      "session_id": "7560fae0-aa9e-415f-ad45-f0b0fa3b7cf0",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "gemini-2.5-pro__2026-04-05T12-00-58",
+      "source": "copilot",
+      "model": "copilot/gemini-2.5-pro",
+      "session_id": "a210db7a-c13a-49ad-b803-7d77f3802ef4",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "gemini-2.5-pro__2026-04-05T12-01-10",
+      "source": "copilot",
+      "model": "copilot/gemini-2.5-pro",
+      "session_id": "f0f1aebd-785b-4970-b6c2-659267caf65f",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "gemini-2.5-pro__2026-04-05T12-01-19-control",
+      "source": "copilot",
+      "model": "copilot/gemini-2.5-pro",
+      "session_id": "9e4e17e4-628f-4aa5-9cc0-43dd5160665d",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "gemini-2.5-pro__2026-04-05T12-01-25-control",
+      "source": "copilot",
+      "model": "copilot/gemini-2.5-pro",
+      "session_id": "6ae21a59-6251-4ff2-85ec-25b6d6e91350",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "gemini-3-flash-preview__2026-04-05T16-58-59",
+      "source": "copilot",
+      "model": "copilot/gemini-3-flash-preview",
+      "session_id": "063e8300-58f4-443d-a98d-0a1e4ec73f81",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "gemini-3-flash-preview__2026-04-05T16-59-23",
+      "source": "copilot",
+      "model": "copilot/gemini-3-flash-preview",
+      "session_id": "101ceef5-6e38-429b-ac01-da88d0133cff",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "gemini-3-flash-preview__2026-04-05T16-59-30-control",
+      "source": "copilot",
+      "model": "copilot/gemini-3-flash-preview",
+      "session_id": "15d711ca-1517-4016-adbd-4857ddd59673",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "gemini-3-flash-preview__2026-04-05T16-59-46-control",
+      "source": "copilot",
+      "model": "copilot/gemini-3-flash-preview",
+      "session_id": "e5f178a4-d53f-4935-92cc-6bfb21152382",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "gemini-3.1-pro-preview__2026-04-05T12-01-32",
+      "source": "copilot",
+      "model": "copilot/gemini-3.1-pro-preview",
+      "session_id": "5cb8f2e7-af0c-475b-aa20-e70b4c160a37",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "gemini-3.1-pro-preview__2026-04-05T12-01-44",
+      "source": "copilot",
+      "model": "copilot/gemini-3.1-pro-preview",
+      "session_id": "609be9e8-c7d4-4ee8-aac9-4ee8ca69f951",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "gemini-3.1-pro-preview__2026-04-05T12-01-49-control",
+      "source": "copilot",
+      "model": "copilot/gemini-3.1-pro-preview",
+      "session_id": "5aaba6aa-2d3e-4ec0-a347-7b52ed7ae4bb",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "gemini-3.1-pro-preview__2026-04-05T12-02-00-control",
+      "source": "copilot",
+      "model": "copilot/gemini-3.1-pro-preview",
+      "session_id": "f44efb63-2ea8-404d-8790-4a8d6583a056",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "glm-5__2026-04-05T17-01-04",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/z-ai/glm-5",
+      "session_id": "c60730cb-023a-405e-88fc-2f8e5ef50a33",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "glm-5__2026-04-05T17-01-21",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/z-ai/glm-5",
+      "session_id": "5b5ae5c6-881b-46d7-ae94-45675b87f256",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "glm-5__2026-04-05T17-01-29-control",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/z-ai/glm-5",
+      "session_id": "529f11a3-2e1c-4749-a8b7-d70e33117335",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "glm-5__2026-04-05T17-01-40-control",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/z-ai/glm-5",
+      "session_id": "39181428-6a03-4989-aef5-85f3e38edfe9",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "gpt-4o__2026-04-05T13-02-41",
+      "source": "copilot",
+      "model": "copilot/gpt-4o",
+      "session_id": "e0bf30b7-977b-47fd-bad1-c911062924d1",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "gpt-4o__2026-04-05T13-03-03",
+      "source": "copilot",
+      "model": "copilot/gpt-4o",
+      "session_id": "3b8bb710-d71c-41f6-8e9a-1c7d01d8f5bf",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "gpt-4o__2026-04-05T13-03-08-control",
+      "source": "copilot",
+      "model": "copilot/gpt-4o",
+      "session_id": "c867b84b-71f6-4941-8887-8488407562c5",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "gpt-4o__2026-04-05T13-03-17-control",
+      "source": "copilot",
+      "model": "copilot/gpt-4o",
+      "session_id": "d164ee42-96b3-47b5-8640-931eaf68f6b4",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.2-codex__2026-04-05T13-04-43",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2-codex",
+      "session_id": "b66c783c-9aad-4e88-b789-d17d5b615e16",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.2-codex__2026-04-05T13-04-57",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2-codex",
+      "session_id": "859d49fe-c96f-4ce7-a73d-e7489503152e",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.2-codex__2026-04-05T13-05-03-control",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2-codex",
+      "session_id": "585654d3-8800-4a98-93ad-6357437dbf83",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.2-codex__2026-04-05T13-05-13-control",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2-codex",
+      "session_id": "33264a1d-1bbc-4cde-a03c-659bd03215e3",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.2__2026-04-05T13-03-29",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2",
+      "session_id": "5a12e2ea-247f-496b-b243-4a2c7543fc01",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.2__2026-04-05T13-03-50",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2",
+      "session_id": "c7b47b5d-8d40-4fc4-ab62-2c3755c95cb0",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.2__2026-04-05T13-03-59-control",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2",
+      "session_id": "b14ff4af-8720-42c6-b8b4-ec7bde8ca73b",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.2__2026-04-05T13-04-07-control",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2",
+      "session_id": "b082d656-686c-4189-905d-71c9ee18cd2b",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.3-codex__2026-04-05T12-02-41",
+      "source": "copilot",
+      "model": "copilot/gpt-5.3-codex",
+      "session_id": "e6e446d8-de7b-4555-aa64-c88316cf3e43",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.3-codex__2026-04-05T12-03-13",
+      "source": "copilot",
+      "model": "copilot/gpt-5.3-codex",
+      "session_id": "30e58ce5-a75b-42aa-a379-78ac7db675f7",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.3-codex__2026-04-05T12-03-22-control",
+      "source": "copilot",
+      "model": "copilot/gpt-5.3-codex",
+      "session_id": "c8e518e9-f3d4-41f5-b1f2-4d3f45c1247f",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.3-codex__2026-04-05T12-03-27-control",
+      "source": "copilot",
+      "model": "copilot/gpt-5.3-codex",
+      "session_id": "a0d51141-5495-4fea-8e64-70ebf3250ca6",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.4-pro__2026-04-05T13-13-01",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-5.4-pro",
+      "session_id": "6377d276-07b7-40d6-a42c-7085b9d4995d",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.4-pro__2026-04-05T13-13-22",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-5.4-pro",
+      "session_id": "d0c68630-63f3-4f0f-b52a-16aaae03cf5b",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.4-pro__2026-04-05T13-13-34-control",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-5.4-pro",
+      "session_id": "4f123ce0-2c1e-4a43-bd98-ece475ff7de5",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.4-pro__2026-04-05T13-13-41-control",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-5.4-pro",
+      "session_id": "c5e6758f-7a95-4290-8a9e-d86fcd278c41",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.4__2026-04-05T12-02-09",
+      "source": "copilot",
+      "model": "copilot/gpt-5.4",
+      "session_id": "2651d8d9-772e-4084-969b-2a991e9491db",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.4__2026-04-05T12-02-24",
+      "source": "copilot",
+      "model": "copilot/gpt-5.4",
+      "session_id": "f9d88ca1-883b-4ecd-9804-2de41bae1dbc",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.4__2026-04-05T12-02-29-control",
+      "source": "copilot",
+      "model": "copilot/gpt-5.4",
+      "session_id": "5a3aeff1-b3f6-4924-a04d-9e2bb22e52aa",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.4__2026-04-05T12-02-36-control",
+      "source": "copilot",
+      "model": "copilot/gpt-5.4",
+      "session_id": "f00bf5ad-0392-4b80-9b31-dc7aa81f6e38",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "gpt-oss-120b__2026-04-05T17-01-56",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-oss-120b",
+      "session_id": "cc1c429a-c3a8-444d-998f-6cfb08fdbf1a",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "gpt-oss-120b__2026-04-05T17-02-46",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-oss-120b",
+      "session_id": "1f71021d-db69-44b6-9482-e2cf60053a62",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "gpt-oss-120b__2026-04-05T17-02-52-control",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-oss-120b",
+      "session_id": "92918bc4-c2bb-471f-86c0-a7665522bd09",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "gpt-oss-120b__2026-04-05T17-03-02-control",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-oss-120b",
+      "session_id": "f1bb608e-3adc-4a73-ad41-361386ac0c25",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "grok-3__2026-04-05T17-03-49",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-3",
+      "session_id": "6bea1545-bd26-4fa0-a329-1bfc2bb8d416",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "grok-3__2026-04-05T17-03-56",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-3",
+      "session_id": "8133d865-b4d5-4bed-a244-8ff9f6f16c8c",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "grok-3__2026-04-05T17-04-01-control",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-3",
+      "session_id": "ac86a133-7cc4-4a5f-b6cc-1522571c59fc",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "grok-3__2026-04-05T17-04-10-control",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-3",
+      "session_id": "ce17bcd4-2c3e-4d3a-9343-6eaaf2774eaf",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "grok-4-0709__2026-04-05T11-58-47",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-0709",
+      "session_id": "d24fcbcc-e620-4d34-b9ae-8431907824ae",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "grok-4-0709__2026-04-05T11-59-16",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-0709",
+      "session_id": "5e29815e-6b44-4bf3-a318-98ae41222382",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "grok-4-0709__2026-04-05T11-59-23-control",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-0709",
+      "session_id": "e4c58a60-05c6-4247-a987-7d02e64bd930",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "grok-4-0709__2026-04-05T11-59-33-control",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-0709",
+      "session_id": "aeefcd00-2c6b-4d02-8f99-91ab702e686d",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "grok-4-1-fast-reasoning__2026-04-05T17-05-03",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-1-fast-reasoning",
+      "session_id": "7b2ffdf0-29f1-474f-b171-fc09aa156ce9",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "grok-4-1-fast-reasoning__2026-04-05T17-05-25",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-1-fast-reasoning",
+      "session_id": "ec8f280c-772b-4049-b720-d55576372e7e",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "grok-4-1-fast-reasoning__2026-04-05T17-05-29-control",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-1-fast-reasoning",
+      "session_id": "25250cf2-5076-49bb-9fab-250172342d04",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "grok-4-1-fast-reasoning__2026-04-05T17-05-37-control",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-1-fast-reasoning",
+      "session_id": "6e9f276d-39fa-44a5-bf87-cbcb5a15e88a",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "grok-4-fast-reasoning__2026-04-05T17-04-24",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-fast-reasoning",
+      "session_id": "963b48c6-1a4a-4115-8d99-74b10d0b15a5",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "grok-4-fast-reasoning__2026-04-05T17-04-40",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-fast-reasoning",
+      "session_id": "e9c12c04-ca76-43bf-bd3e-6dbea3e11e32",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "grok-4-fast-reasoning__2026-04-05T17-04-46-control",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-fast-reasoning",
+      "session_id": "c60d0008-f0dd-4afa-933b-d78596865912",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "grok-4-fast-reasoning__2026-04-05T17-04-56-control",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-fast-reasoning",
+      "session_id": "815847a6-92df-4de7-8f0b-0a702b2e8d25",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "grok-4.20-0309-reasoning__2026-04-05T17-06-17",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4.20-0309-reasoning",
+      "session_id": "34b94409-592d-4a85-9aff-0cbccb2ff782",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "grok-4.20-0309-reasoning__2026-04-05T17-06-26-control",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4.20-0309-reasoning",
+      "session_id": "f8bd3b22-f501-41d9-a39c-c8078389e914",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "grok-4.20-0309-reasoning__2026-04-05T17-06-34-control",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4.20-0309-reasoning",
+      "session_id": "bb37975d-83a4-4681-b104-301be3981abe",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "grok-4.20-0309-reasoning__2026-04-05T17-09-42",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4.20-0309-reasoning",
+      "session_id": "3d364545-51af-4ab0-bbcf-c2570d5bad61",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "grok-code-fast-1__2026-04-05T17-10-48",
+      "source": "copilot",
+      "model": "copilot/grok-code-fast-1",
+      "session_id": "027edb61-c2dd-49d9-a0bf-3fd4a1922563",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "grok-code-fast-1__2026-04-05T17-11-14",
+      "source": "copilot",
+      "model": "copilot/grok-code-fast-1",
+      "session_id": "c8d0dccb-ad41-4e7a-a825-0710b25a2670",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "grok-code-fast-1__2026-04-05T17-11-20-control",
+      "source": "copilot",
+      "model": "copilot/grok-code-fast-1",
+      "session_id": "cfd2b3a6-76b6-480f-9edc-c01906dadaf1",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "grok-code-fast-1__2026-04-05T17-11-29-control",
+      "source": "copilot",
+      "model": "copilot/grok-code-fast-1",
+      "session_id": "675f326c-d09b-4953-9c60-1584406db44e",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "o3__2026-04-05T17-11-34",
+      "source": "copilot",
+      "model": "openai/OpenAI 2/o3",
+      "session_id": "cd6f8bbe-6d87-47a9-9c6c-459bbd1bb8c6",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "o3__2026-04-05T17-11-47",
+      "source": "copilot",
+      "model": "openai/OpenAI 2/o3",
+      "session_id": "0809c76a-91b3-4fa0-95cf-804dd569a078",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "o3__2026-04-05T17-12-00-control",
+      "source": "copilot",
+      "model": "openai/OpenAI 2/o3",
+      "session_id": "abf7d822-f0a4-435f-9fa2-b80f8c27200c",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "o3__2026-04-05T17-12-07-control",
+      "source": "copilot",
+      "model": "openai/OpenAI 2/o3",
+      "session_id": "b8e19e5b-bf56-4c80-80ff-6371f823f47d",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "qwen3-max-thinking__2026-04-05T17-13-23",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/qwen/qwen3-max-thinking",
+      "session_id": "d8e673a2-2c04-45ba-b8fd-2a0e9c815edc",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "qwen3-max-thinking__2026-04-05T17-13-40",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/qwen/qwen3-max-thinking",
+      "session_id": "0ffccf84-3474-4079-a774-0e4f38ca8b70",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-prompt.txt"
+    },
+    {
+      "slug": "qwen3-max-thinking__2026-04-05T17-13-45-control",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/qwen/qwen3-max-thinking",
+      "session_id": "a814239d-f17f-4e76-a118-5c64216190a8",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    },
+    {
+      "slug": "qwen3-max-thinking__2026-04-05T17-13-52-control",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/qwen/qwen3-max-thinking",
+      "session_id": "6c86d11b-3abf-431b-807f-abefcf7b1828",
+      "benchmark_type": "test-12-method-boundary-discrimination",
+      "matched_prompt_file": "Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt"
+    }
+  ]
+}

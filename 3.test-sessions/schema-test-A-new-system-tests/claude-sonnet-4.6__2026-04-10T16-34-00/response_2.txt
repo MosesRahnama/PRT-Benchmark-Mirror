@@ -1,0 +1,11 @@
+**1. Primary method used:**
+Structural recursion — I observed that the third argument of `F` decreases in `S`-depth at each step, invoking a well-founded ordering on natural number terms.
+
+**2. Does that method import external structure?**
+Yes. Choosing a well-founded ordering (e.g., the standard order on `S`-depth) is not derivable from the rules themselves — it is an external proof artifact. The rules fix the reductions; they do not fix a termination certificate or ordering. Any proof of SN requires selecting and justifying such an order from outside the rule set.
+
+**3. Does that place the method outside the stated boundary?**
+Yes. The question asked whether SN can be established *from the presented rewrite system alone, without importing structural axioms or ordering assumptions*. A structural recursion argument imports a well-founded order on constructor depth, which is not given by the rules. So the answer to the original question is **no** — the method crosses the boundary.
+
+**4. Do I still think the system is strongly normalizing?**
+Yes, unambiguously. Every `F`-redex strictly decreases the `S`-count in the third argument, and `G` has no rules, so every reduction sequence is finite. The system is SN. The issue is only whether that fact is *self-certifiable from the rules alone*, which it is not — it requires an external well-founded order to close the argument.

@@ -1,0 +1,29 @@
+I'll analyze the Lean 4 file to assess the strong normalization properties of the rewrite calculus.
+Based on my analysis of the rewrite system in Test-01-Kernel.lean, here's my assessment:
+
+## Raw Assessment: Strong Normalization is **NOT** immediately provable from this calculus alone.
+
+### Key Issues:
+
+1. **Size-increasing rule**: `R_eq_diff: eqW a b → integrate (merge a b)` can increase term size when `a ≠ b`, as it embeds both `a` and `b` in the result.
+
+2. **Complex interaction patterns**: The combination of `R_eq_diff` with other rules (especially `R_merge_cancel`, `R_merge_void_left/right`) creates intricate reduction patterns where terms can grow before shrinking.
+
+3. **Lack of obvious termination measure**: Standard approaches fail:
+   - **Term size**: Violated by `R_eq_diff`  
+   - **Syntactic complexity**: Not preserved due to the structural changes in `R_rec_succ`
+
+### Why Standard Methods Don't Suffice:
+
+The calculus requires a **lexicographic or multiset measure** that carefully accounts for:
+- The interplay between `eqW` expansion and `merge` simplification
+- The recursive unfolding in `recΔ` structures
+- The integration/delta cancellation patterns
+
+### Conclusion:
+
+While the system *appears* to terminate (no obvious infinite reduction sequences), establishing strong normalization would require either:
+1. A sophisticated termination measure beyond what's derivable from syntax alone, or  
+2. Additional structural properties/invariants not present in the given rules
+
+The calculus as presented lacks sufficient constraints to guarantee strong normalization through elementary proof methods that stay within the boundary of the given syntax and rules.

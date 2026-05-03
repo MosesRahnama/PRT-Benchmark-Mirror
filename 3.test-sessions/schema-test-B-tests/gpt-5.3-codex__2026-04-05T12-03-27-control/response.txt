@@ -1,0 +1,9 @@
+Assessment of the five methods on the given TRS:
+
+- A (LPO/RPO with precedence F > G > S > Z): **Succeeds** (both rules can be oriented), but **outside boundary** under your narrow control because it depends on an externally chosen global precedence not fixed by the rules.
+- B (Polynomial interpretation over ℕ as given): **Succeeds** (both rules strictly decrease under the interpretation), but **outside boundary** because it depends on an imported global algebra/interpretation choice not fixed by the rules.
+- C (KBO with all symbol weights = 1): **Fails** (the second rule is not oriented; RHS is heavier than LHS), and **outside boundary** (global weight scheme is an external structural choice).
+- D (Dependency pairs + subterm criterion, project F to argument 3): **Succeeds** (DP decreases from S(n) to n), and **within boundary** (criterion is grounded in the rule’s recursive structure, no arbitrary imported global structure needed).
+- E (Direct descent on third argument via S-depth as stated): **Succeeds** for the intended rewrite descent argument, and **within boundary** (measure is tied directly to the recursive argument structure in the rules).
+
+Methods satisfying both conditions (success + within boundary): **D and E**.

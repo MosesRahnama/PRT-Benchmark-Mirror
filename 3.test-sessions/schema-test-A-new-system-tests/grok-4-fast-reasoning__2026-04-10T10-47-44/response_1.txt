@@ -1,0 +1,3 @@
+Yes, strong normalization can be established from the presented rewrite system alone.
+
+The system defines a simple, terminating recursion on the third argument of `F`, treating it as a Church numeral-like structure (base `Z`, successor `S`). The first rule handles the base case, directly yielding `x`. The second rule recursively unwraps `S` while introducing `G` (which has no further rules, making it a normal form constructor). Reductions strictly decrease the "depth" of the third argument, with no cycles, overlaps, or non-terminating patterns possible—any ground term reduces in finitely many steps to a normal form (either a ground instance of `x` or nested `G`s applied to it). No additional axioms are needed, as the rules are orthogonal and measure-decreasing.

@@ -1,0 +1,54 @@
+**Assessment**
+
+Yes – strong‑normalisation (termination of every rewrite sequence) can be proved **using only the syntax and the eight rewrite rules that appear in the file**. No extra structural axioms, side‑conditions or hidden assumptions are needed.
+
+---
+
+### Why the system terminates
+
+| Constructor / rule | Effect on a well‑founded measure |
+|--------------------|----------------------------------|
+| `integrate (delta t) → void` | Removes a `delta` and an `integrate` – strictly decreases the total number of nodes. |
+| `merge void t → t` / `merge t void → t` | Deletes a `merge` node. |
+| `merge t t → t` | Deletes a `merge` node (and one duplicate sub‑term). |
+| `recΔ b s void → b` | Deletes a `recΔ` node. |
+| `recΔ b s (delta n) → app s (recΔ b s n)` | Replaces a `recΔ` whose argument is a `delta` by a term that contains the same `recΔ` but **with a strictly smaller `delta`‑depth** (the outer `delta` is removed). The surrounding `app` adds at most one node, so a lexicographic measure \((\text{# δ‑layers in recΔ arguments},\; \text{term size})\) strictly decreases. |
+| `eqW a a → void` | Deletes the `eqW` node. |
+| `eqW a b → integrate (merge a b)` (with \(a\neq b\)) | Replaces an `eqW` node by an `integrate∘merge` pair. This **adds** two nodes, but it also **removes the `eqW` node**, and the newly created term can only be reduced by the `merge` and `integrate` rules above. No new `eqW` is introduced, so the number of `eqW` nodes strictly decreases. |
+
+Define a **lexicographic termination measure**  
+
+\[
+M(t)=\bigl(\#\text{eqW nodes in }t,\;
+      \#\text{δ‑layers inside recΔ arguments in }t,\;
+      \text{total node count of }t\bigr)
+\]
+
+ordered lexicographically with the usual \(<\) on natural numbers.  
+Every rewrite rule strictly decreases \(M\):
+
+* Rules that delete an `eqW` lower the first component.
+* The `eqW → integrate (merge …)` rule lowers the first component (by removing the `eqW`) while possibly increasing the third component, but the first component dominates.
+* The `recΔ` rules lower the second component (the δ‑depth) and never increase the first component.
+* All other rules strictly reduce the third component.
+
+Since the natural numbers are well‑founded, there can be no infinite descending chain of \(M\) values; consequently **every reduction sequence terminates**. This yields strong normalisation for the whole rewrite calculus.
+
+---
+
+### Proof roadmap (if one wishes to write it formally)
+
+1. **Define the size function** `size(t)` = total number of constructor occurrences in `t`.  
+2. **Define auxiliary counts**  
+   * `eqW(t)` = number of `eqW` nodes in `t`.  
+   * `δrec(t)` = total number of `delta` wrappers that appear as the third argument of a `recΔ` node.
+3. **Introduce the lexicographic measure** `M(t) = (eqW(t), δrec(t), size(t))`.
+4. **Show for each rule** that the tuple strictly decreases:
+   * `R_eq_refl` and `R_eq_diff` lower `eqW(t)`.
+   * `R_int_delta`, `R_merge_*`, `R_merge_cancel`, `R_rec_zero` lower `size(t)`.
+   * `R_rec_succ` lowers `δrec(t)` (the outer `delta` is removed) while `size` may increase by at most a constant, which is irrelevant because the second component dominates.
+5. **Conclude** that no infinite rewrite chain exists because a strictly decreasing sequence in a well‑founded lexicographic order of naturals cannot be infinite.
+6. **Hence** the system is strongly normalising.
+
+No additional axioms, guards, or side‑conditions are required; the proof uses only the syntax and the eight rewrite rules present in
+.

@@ -1,0 +1,89 @@
+I'll help you analyze the partial strong normalization proof and provide a skeleton for completing the remaining cases. Let me first read the Lean 4 file you mentioned.
+Looking at this Lean 4 file, I can see a strong normalization proof for a first-order rewrite calculus using lexicographic ordering on two measures: `kappa` (recursion depth) and `mu` (weighted structural size). Three cases are already proved, and five need completion.
+
+Here's a proof skeleton for the remaining five cases:
+
+## Analysis of Remaining Cases
+
+### Case 1: `R_int_delta` - integrate (delta t) → void
+```lean
+| _, _, Step.R_int_delta t => by
+    -- LHS: kappa = kappa(t), mu = 1 + mu(t)
+    -- RHS: kappa = 0, mu = 0
+    by_cases h : kappa t = 0
+    · -- Case: kappa(t) = 0, so kappa ties at 0
+      have hmu : mu void < mu (integrate (delta t)) := by simp [mu]; omega
+      have hk : kappa void = kappa (integrate (delta t)) := by simp [kappa, h]
+      exact drop_right hmu hk
+    · -- Case: kappa(t) > 0, so kappa drops strictly
+      have hk : kappa void < kappa (integrate (delta t)) := by 
+        simp [kappa]; exact Nat.pos_iff_ne_zero.mpr h
+      exact drop_left hk
+```
+
+### Case 2: `R_rec_zero` - recDelta b s void → b
+```lean
+| _, _, Step.R_rec_zero b s => by
+    -- LHS: kappa = max(kappa(b), kappa(s)), mu = 3 + mu(b) + mu(s)
+    -- RHS: kappa = kappa(b), mu = mu(b)
+    have hmu : mu b < mu (recDelta b s void) := by simp [mu]; omega
+    have hk : kappa b = kappa (recDelta b s void) := by 
+      simp [kappa]; exact Nat.le_max_left (kappa b) (kappa s)
+    exact drop_right hmu hk
+```
+
+### Case 3: `R_rec_succ` - recDelta b s (delta n) → app s (recDelta b s n)
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    -- LHS kappa = max(max(kappa(b), kappa(s)), kappa(n)) + 1
+    -- RHS kappa = max(kappa(s), max(max(kappa(b), kappa(s)), kappa(n)))
+    --           = max(kappa(b), kappa(s), kappa(n))
+    -- Kappa drops by exactly 1
+    have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+      simp [kappa]
+      have : Nat.max (kappa s) (Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)) = 
+             Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) := by
+        rw [Nat.max_comm (kappa s), Nat.max_assoc]
+        congr
+        rw [Nat.max_comm (kappa s), Nat.max_assoc, Nat.max_self]
+      rw [this]
+      exact Nat.lt_add_one _
+    exact drop_left hk
+```
+
+### Case 4: `R_eq_refl` - eqW a a → void  
+```lean
+| _, _, Step.R_eq_refl a => by
+    -- LHS: kappa = kappa(a), mu = 4 + 2*mu(a)
+    -- RHS: kappa = 0, mu = 0
+    by_cases h : kappa a = 0
+    · -- Case: kappa(a) = 0, so kappa ties at 0
+      have hmu : mu void < mu (eqW a a) := by simp [mu]; omega
+      have hk : kappa void = kappa (eqW a a) := by simp [kappa, h]
+      exact drop_right hmu hk
+    · -- Case: kappa(a) > 0, so kappa drops strictly
+      have hk : kappa void < kappa (eqW a a) := by
+        simp [kappa]; exact Nat.pos_iff_ne_zero.mpr h
+      exact drop_left hk
+```
+
+### Case 5: `R_eq_diff` - eqW a b → integrate (merge a b)
+```lean
+| _, _, Step.R_eq_diff a b => by
+    -- LHS: kappa = max(kappa(a), kappa(b)), mu = 4 + mu(a) + mu(b)  
+    -- RHS: kappa = max(kappa(a), kappa(b)), mu = 1 + 2 + mu(a) + mu(b) = 3 + mu(a) + mu(b)
+    -- Kappa ties, mu drops by 1
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by simp [mu]; omega
+    have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by simp [kappa]
+    exact drop_right hmu hk
+```
+
+## Key Proof Strategies
+
+1. **Cases where kappa can be 0**: Use `by_cases` to split on whether `kappa = 0`
+2. **Kappa drops**: Use `drop_left` lemma  
+3. **Kappa ties, mu drops**: Use `drop_right` lemma
+4. **Arithmetic reasoning**: Use `simp [kappa/mu]` followed by `omega` for arithmetic goals
+5. **Max properties**: Use library lemmas like `Nat.le_max_left`, `Nat.max_assoc`, etc.
+
+The proof technique consistently shows that either the recursion depth (`kappa`) decreases strictly, or it stays the same while the structural measure (`mu`) decreases strictly, establishing the required lexicographic decrease for strong normalization.

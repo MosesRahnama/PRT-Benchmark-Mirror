@@ -1,0 +1,21 @@
+**Examining Strategy Soundness**
+
+I'm currently focused on analyzing the Lean 4 file provided, specifically the helper strategy used in the termination argument. My initial step involves reading and understanding the code within `Test-06-Branch-Real`. I'm paying close attention to the strategy's mechanics. The goal is to evaluate if the helper strategy is sound.
+
+
+**Understanding the Definitions**
+
+I've successfully identified the key components of the file. I have a solid understanding of the `Term` inductive type, `subst`, and `kappa` function definitions. I've pinpointed the relevant constructors and analyzed how these functions are defined. Now, I'm ready to delve into the proofs of the two crucial theorems: `kappa_of_subst` and `kappa_sub_kappa_of_subst_lt_of_lt`.
+**Evaluating Termination Arguments**
+
+I'm currently focused on the `Test-06-Branch-Realism.lean` file and its termination arguments. I'm starting to dissect how the `Trace` inductive type and its constructors interact with the termination strategy. The goal is to fully understand how the file's authors have attempted to prove termination within the Lean 4 environment.
+
+
+**Assessing `kappa` Properties**
+
+I'm now carefully examining the `kappa` function's behavior. Specifically, I'm verifying whether the definition is consistent with the intended termination argument. The goal is to ensure `kappa` genuinely decreases under the `R_rec_succ` rule. I'm focusing on the `app` and `recDelta` constructors to see if the measure is suitable.
+
+
+**Verifying Measure Decrement**
+
+I'm now carefully examining the `kappa` function's behavior regarding the `R_rec_succ` rule. The goal is to prove `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`. The LHS simplifies to `Nat.max (kappa s) (Nat.max (Nat.max (kappa b) (kappa s)) (kappa n))`. Now I'll start working through the RHS, using the `delta` constructor.

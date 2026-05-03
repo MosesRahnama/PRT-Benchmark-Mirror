@@ -1,0 +1,3 @@
+**Assessing rules and patterns**
+
+I'm planning to analyze the rules and check for any infinite descent patterns. My goal is to produce a solid assessment. I think I might want to phrase it as, "If you mean Step literally as defined, SN is even more immediate." I could mention the root-only relation as a useful nuance, but I need to be careful not to include too much detail. Keeping it concise will be key here.

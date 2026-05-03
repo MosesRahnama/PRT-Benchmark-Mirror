@@ -1,0 +1,5 @@
+Yes, strong normalization can be established from the presented calculus alone.
+
+**Short proof roadmap:**
+- Define a measure on terms as the maximum nesting depth of banana constructors with plum in the third argument, plus the number of grape constructors in third arguments of bananas.
+- By structural induction on terms, show that each Step reduces this measure (banana-plum peels nesting; banana-grape wraps in irreducible pear; other rules simplify without increasing measure) and the relation is finitely branching with no cycles, hence no infinite sequences.

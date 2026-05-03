@@ -1,0 +1,50 @@
+**Raw assessment:** **Yes** — under the standard finitary first-order TRS semantics, strong normalization can be proved from these rules alone.
+
+### Short proof roadmap
+Use a standard polynomial interpretation into $\mathbb{N}$:
+
+$$
+\llbracket Z \rrbracket = 0,\qquad
+\llbracket S(t) \rrbracket = \llbracket t \rrbracket + 1,\qquad
+\llbracket G(a,b) \rrbracket = a+b,
+$$
+
+and define
+
+$$
+\llbracket F(x,y,z) \rrbracket = x + (z+1)(y+1).
+$$
+
+Then each rule strictly decreases:
+
+1. For  
+   $$
+   F(x,y,Z) \to x
+   $$
+   we get
+   $$
+   \llbracket F(x,y,Z)\rrbracket = x + (0+1)(y+1)=x+y+1 > x = \llbracket x\rrbracket.
+   $$
+
+2. For  
+   $$
+   F(x,y,S(n)) \to G(y,F(x,y,n))
+   $$
+   we get
+   $$
+   \llbracket F(x,y,S(n))\rrbracket = x + (n+2)(y+1),
+   $$
+   while
+   $$
+   \llbracket G(y,F(x,y,n))\rrbracket
+   = y + \bigl(x+(n+1)(y+1)\bigr)
+   = x + (n+2)y + n + 1.
+   $$
+   The left side exceeds the right side by exactly $1$.
+
+Since the interpretation is monotone and $>$ on $\mathbb{N}$ is well-founded, every rewrite step strictly decreases a well-founded measure. Therefore **no infinite rewrite sequence exists**.
+
+### Intuition
+Only `F` rewrites, and the recursive rule peels one outer `S` off the third argument. `G`, `S`, and `Z` have no rewrite rules, so nothing can recreate a larger `F`-chain.
+
+So: **strong normalization is establishable from the given rewrite system alone, with no extra structural/object-level axioms.**

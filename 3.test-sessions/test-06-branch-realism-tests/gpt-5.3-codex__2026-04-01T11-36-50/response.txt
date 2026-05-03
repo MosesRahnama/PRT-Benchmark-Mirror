@@ -1,0 +1,57 @@
+I found a likely mismatch in the first helper theorem’s quantification, so I’ll now extract line numbers to cite the exact definitions and show a concrete counterexample calculation.
+Conclusion: the helper strategy is not sound as written.
+
+Key issue 1 (critical): first helper theorem is false for general n  
+See
+,
+,
+, and theorem statement at
+.
+
+The definition has a special branch:
+- $ \kappa(\mathrm{recDelta}\ b\ s\ (\delta n)) = \max(\max(\kappa b,\kappa s),\kappa n)+1$
+- $ \kappa(\mathrm{recDelta}\ b\ s\ n) = \max(\max(\kappa b,\kappa s),\kappa n)$ only when n is not of the form $\delta(\cdot)$ (because pattern matching chooses the earlier special clause otherwise).
+
+Counterexample to theorem at line 46: take $n = \delta m$.
+Then
+- LHS:
+  $$
+  \kappa(\mathrm{recDelta}\ b\ s\ (\delta(\delta m)))
+  = \max(\max(\kappa b,\kappa s),\kappa(\delta m)) + 1
+  = \max(\max(\kappa b,\kappa s),\kappa m) + 1
+  $$
+- RHS:
+  $$
+  \kappa(\mathrm{recDelta}\ b\ s\ (\delta m)) + 1
+  = \big(\max(\max(\kappa b,\kappa s),\kappa m)+1\big)+1
+  = \max(\max(\kappa b,\kappa s),\kappa m)+2
+  $$
+So LHS $\neq$ RHS.
+
+Key issue 2 (critical): second helper theorem is also false in general  
+See [test-files/Test-06-Branch-Realism.lean](test-files/Test-06-Branch-Realism.lean#L50) and rewrite rule [test-files/Test-06-Branch-Realism.lean](test-files/Test-06-Branch-Realism.lean#L22).
+
+For the same choice $n=\delta m$, let
+$$
+M := \max(\max(\kappa b,\kappa s),\kappa m).
+$$
+Then
+- target side:
+  $$
+  \kappa(\mathrm{recDelta}\ b\ s\ (\delta(\delta m))) = M+1
+  $$
+- step result side:
+  $$
+  \kappa(\mathrm{app}\ s\ (\mathrm{recDelta}\ b\ s\ (\delta m)))
+  = \max(\kappa s,\kappa(\mathrm{recDelta}\ b\ s\ (\delta m)))
+  = \max(\kappa s,M+1)=M+1
+  $$
+Hence
+$$
+\kappa(\mathrm{app}\ s\ (\mathrm{recDelta}\ b\ s\ n))
+< \kappa(\mathrm{recDelta}\ b\ s\ (\delta n))
+$$
+fails (it is equality in this case).
+
+Assessment  
+The intended termination-helper pattern only works when n is restricted so that recDelta b s n uses the non-special branch (for example n not headed by delta). As stated with n : Trace unconstrained, both helper theorems are invalid, so the strategy is unsound for a global termination argument.

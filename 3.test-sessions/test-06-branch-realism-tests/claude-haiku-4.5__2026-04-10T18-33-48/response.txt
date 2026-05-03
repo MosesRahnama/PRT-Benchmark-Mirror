@@ -1,0 +1,51 @@
+I'll analyze the soundness of the helper strategy by examining the measure definition and the two theorems.
+
+## Analysis
+
+The code defines a **structural measure `kappa`** for termination, with two key cases for `recDelta`:
+- `recDelta b s (delta n)` → measures as `max(max(κ(b), κ(s)), κ(n)) + 1`
+- `recDelta b s n` (general) → measures as `max(max(κ(b), κ(s)), κ(n))`
+
+The reduction rule of interest is `R_rec_succ`, which rewrites `recDelta b s (delta n)` to `app s (recDelta b s n)`.
+
+### Theorem 1: `kappa_rec_delta_step`
+
+**Claimed:** `κ(recDelta b s (delta n)) = κ(recDelta b s n) + 1`
+
+**Verification:**
+- By definition: `κ(recDelta b s (delta n)) = max(max(κ(b), κ(s)), κ(n)) + 1`
+- By definition: `κ(recDelta b s n) = max(max(κ(b), κ(s)), κ(n))`
+- Therefore: `κ(recDelta b s (delta n)) = κ(recDelta b s n) + 1` ✓
+
+This is a **definitional equality** and holds by `rfl`.
+
+### Theorem 2: `kappa_rec_succ_drop`
+
+**Claimed:** `κ(app s (recDelta b s n)) < κ(recDelta b s (delta n))`
+
+**Verification:**
+
+Let `M = max(max(κ(b), κ(s)), κ(n))`:
+
+- `κ(app s (recDelta b s n)) = max(κ(s), κ(recDelta b s n))`
+  - `= max(κ(s), M)`
+  
+- By associativity/commutativity of max, `max(κ(s), M) = M` (since `κ(s) ≤ max(κ(b), κ(s)) ≤ M`)
+
+- Therefore: `κ(app s (recDelta b s n)) = M`
+
+- `κ(recDelta b s (delta n)) = M + 1`
+
+- The inequality becomes: `M < M + 1` ✓
+
+This is **true by Peano arithmetic**.
+
+## Conclusion
+
+**The helper strategy is sound.** Both theorems are valid:
+
+1. The first theorem establishes a definitional relationship between the two `recDelta` measure cases
+2. The second theorem confirms strict decrease (by exactly 1) under the `R_rec_succ` reduction
+3. Together, they provide a **well-founded decreasing measure** for the rewrite sequence, establishing termination
+
+The reduction `recDelta b s (delta n)` → `app s (recDelta b s n)` strictly decreases the measure in natural numbers, guaranteeing that repeated applications must terminate.

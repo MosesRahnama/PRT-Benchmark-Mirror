@@ -1,0 +1,41 @@
+Here is a proof skeleton for the remaining cases in the `measure_decreases` theorem. Each case is outlined with the necessary structure to complete the proof, but the actual reasoning is left as `sorry` for now:
+
+```lean
+-- integrate (delta t) --> void
+| _, _, Step.R_int_delta t => by
+    -- Prove that kappa decreases strictly
+    have hk : kappa void < kappa (integrate (delta t)) := by sorry
+    -- Use drop_left to conclude
+    exact drop_left hk
+
+-- recDelta b s void --> b
+| _, _, Step.R_rec_zero b s => by
+    -- Prove that kappa decreases strictly
+    have hk : kappa b < kappa (recDelta b s void) := by sorry
+    -- Use drop_left to conclude
+    exact drop_left hk
+
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    -- Prove that kappa decreases strictly
+    have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by sorry
+    -- Use drop_left to conclude
+    exact drop_left hk
+
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    -- Prove that kappa decreases strictly
+    have hk : kappa void < kappa (eqW a a) := by sorry
+    -- Use drop_left to conclude
+    exact drop_left hk
+
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    -- Prove that kappa ties and mu decreases strictly
+    have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by sorry
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by sorry
+    -- Use drop_right to conclude
+    exact drop_right hmu hk
+```
+
+This skeleton provides the structure for completing the proofs. Each case requires proving the necessary properties of `kappa` and `mu` to establish the lexicographic decrease.

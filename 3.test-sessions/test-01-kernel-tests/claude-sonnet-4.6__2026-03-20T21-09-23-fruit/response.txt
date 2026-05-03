@@ -1,0 +1,63 @@
+## Raw Assessment
+
+**Yes, strong normalization is provable from this calculus alone.** In fact, the proof is nearly trivial — and the reason is the single most important structural fact about the system: **there are no congruence/context rules in `Step`**.
+
+---
+
+## Why the Absence of Congruence Rules Is Decisive
+
+Every rule in `Step` fires only at the **root** of a term. There is no rule of the form "if `Step t t'` then `Step (f t) (f t')`". This means:
+
+- `grape(mango(grape plum))` is a **normal form** under `Step`, even though `mango(grape plum)` is a redex — it cannot be reached because no rule allows reduction inside `grape`.
+- Only the outermost constructor is ever matched.
+
+This collapses the calculus from a rewriting system on open contexts to a flat, root-only transition relation on a well-founded inductive type.
+
+---
+
+## Rule-by-Rule Analysis
+
+After one root step, the result is always one of two things:
+
+| Rule | RHS head | Status after one step |
+|---|---|---|
+| `R_mango_grape` | `plum` | Normal form |
+| `R_peach_plum_left` | (subterm `t`) | Strict subterm of LHS |
+| `R_peach_plum_right` | (subterm `t`) | Strict subterm of LHS |
+| `R_peach_cancel` | (subterm `t`) | Strict subterm of LHS |
+| `R_banana_zero` | (subterm `b`) | Strict subterm of LHS |
+| `R_apple_orange` | `pear` | Normal form — `pear` heads no LHS |
+| `R_cherry_refl` | `plum` | Normal form |
+| `R_cherry_diff` | `mango(peach …)` | Normal form — `mango` requires `grape`-headed argument |
+
+No rule produces a result that is simultaneously larger than the original *and* reducible at the root. The `R_apple_orange` case (`banana(b,s,grape n) → pear(s,banana(b,s,n))`) potentially inflates size (doubling `s`), but the result immediately lands in normal form since `pear` is not the head of any LHS. Without congruence rules, the buried `banana(b,s,n)` subterm inside `pear(…)` is unreachable.
+
+---
+
+## Proof Roadmap (self-contained)
+
+**Structural induction on `Trace`**, without any imports.
+
+Define $f(t)$ = length of the longest `Step`-reduction sequence from $t$.
+
+**Base case**: `t = plum`. No rule matches; $f(\text{plum}) = 0$.
+
+**Inductive step**: Assume $f(u) < \omega$ for all proper subterms $u$ of $t$. Then:
+
+- If no rule applies at the root of $t$: $f(t) = 0$.
+- If $t \to_{\text{R\_peach/R\_banana\_zero}}$ to a strict subterm $u$: $f(t) = 1 + f(u) < \omega$ by IH.
+- If $t \to$ a normal form (all remaining cases): $f(t) = 1 < \omega$.
+
+Since `Trace` is a finitely-branching, parameter-free inductive type, all terms are finite and the structural order is well-founded. The induction closes without any external premise.
+
+**No cycle is possible**: a cycle $t \to^+ t$ would require the root step to return to a term with the same or larger structural measure, but every root step either terminates immediately or strictly descends in `Trace`'s structural order.
+
+---
+
+## Boundary Conditions
+
+The `a ≠ b` guard in `R_cherry_diff` is not a hidden assumption — decidable equality is a theorem of the `Trace` inductive type, not an import. The rule simply does not fire when `a = b` (where `R_cherry_refl` applies instead). No extra rewrite rules, guards, or object-level axioms are needed.
+
+---
+
+**Verdict**: SN is an immediate consequence of the absence of congruence rules combined with well-founded structural induction over `Trace`. The calculus as written is strongly normalizing, and the proof is entirely internal to the given definitions.

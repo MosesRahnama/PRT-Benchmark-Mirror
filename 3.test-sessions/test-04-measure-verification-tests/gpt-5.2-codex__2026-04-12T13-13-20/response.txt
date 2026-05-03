@@ -1,0 +1,11 @@
+The proposed lexicographic measure is not sound: several rewrite rules can increase `phase`, so the measure is not guaranteed to decrease on every `Step`.
+
+-
+and
+: `R_merge_void_left` / `R_merge_cancel` can increase `phase`. Counterexample: let `t = recDelta b s (delta n)`. Then `phase (merge void t) = 0` but `phase t = 1`, so `(phase, cost)` increases lexicographically.
+-
+: `R_rec_zero` can also increase `phase` if `b` is of the `recDelta _ _ (delta _)` form, for the same reason.
+-
+: since `phase` is only `1` for `recDelta _ _ (delta _)`, any rule that rewrites to such a term from a term with `phase = 0` breaks the lexicographic decrease requirement.
+
+If you want, I can suggest a revised measure that is actually decreasing on all rules without changing the

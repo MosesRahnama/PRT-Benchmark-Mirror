@@ -1,0 +1,26 @@
+**Assessment: Yes, strong normalization can be established from the presented rules alone.**
+
+**Reasoning:**
+
+The system has two rules:
+1. `F(x, y, Z) → x`
+2. `F(x, y, S(n)) → G(F(x, y, n))`
+
+This is strongly normalizing for the following reasons:
+
+1. **G is undefined**: There are no rules with `G` on the left-hand side, so `G` simply accumulates and never triggers further reductions.
+
+2. **F's third argument strictly decreases**: Rule 2 replaces `S(n)` with `n` in the recursive call, reducing the "height" of the third argument by one. Rule 1 terminates when the third argument reaches `Z`.
+
+3. **Simple polynomial interpretation suffices**: Define:
+   - `[Z] = 0`, `[S(n)] = [n] + 1`
+   - `[G(t)] = [t]`
+   - `[F(x, y, n)] = [x] + [n] + 1`
+   
+   Then:
+   - Rule 1: `[x] + 1 > [x]` ✓
+   - Rule 2: `[x] + [n] + 2 > [x] + [n] + 1` ✓
+
+Both rules strictly decrease this interpretation, establishing termination via a well-founded order.
+
+This is essentially primitive recursion on the third argument with an inert wrapper `G`—no additional axioms or external structure are required.

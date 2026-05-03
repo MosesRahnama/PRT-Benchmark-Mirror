@@ -1,0 +1,17 @@
+Yes — strong normalization follows directly from the two rules themselves.
+
+Reasoning (sketch):
+
+1. Assign a well-founded measure μ to every term:
+   • μ(Z) = 0, μ(S(t)) = μ(t)+1.  
+   • μ(G(t)) = μ(t).  
+   • μ(F(a,b,c)) = μ(c)+1.  
+   • Extend μ additively to all sub-terms (multiset extension).
+
+2. Evaluate the rules under this measure.
+   • F(x,y,Z) → x reduces μ because the redex had value ≥ 1 while the contractum x contributes ≤ μ(Z)=0.
+   • F(x,y,S(n)) → G(F(x,y,n)) strictly decreases μ: the S-depth of the third argument drops by 1 and no other component increases the measure (G is transparent).
+
+3. Thus every rewrite step strictly lowers μ, so no infinite reduction is possible; all terms have only finite reduction sequences.
+
+Since termination is obtained without further assumptions and orthogonality (no overlaps, left-linear) rules out critical-pair looping, the system is strongly normalizing solely on the basis of the given rules.

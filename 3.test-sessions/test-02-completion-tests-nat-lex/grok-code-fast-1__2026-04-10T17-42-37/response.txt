@@ -1,0 +1,79 @@
+For each of the five remaining `sorry` cases in the `measure_decreases` theorem, the proof skeleton below shows how to establish the lexicographic decrease using the `drop_left` or `drop_right` lemmas. The analysis considers how `kappa` and `mu` change under each reduction rule, ensuring strict decrease in the measure `(kappa, mu)`.
+
+### Case: `R_int_delta` (integrate (delta t) --> void)
+- **kappa analysis**: `kappa (integrate (delta t)) = kappa t`; `kappa void = 0`. If `kappa t > 0`, then `kappa` decreases strictly. If `kappa t = 0`, then `kappa` remains the same.
+- **mu analysis**: `mu (integrate (delta t)) = 1 + mu t`; `mu void = 0`. `mu` decreases strictly by `1 + mu t > 0`.
+- **Proof approach**: Case-split on whether `kappa t = 0`. If `kappa t > 0`, use `drop_left`. Otherwise, use `drop_right`.
+
+```lean
+| _, _, Step.R_int_delta t => by
+    cases hk : kappa t with
+    | zero =>
+      have hmu : mu void < mu (integrate (delta t)) := by simp [mu]; omega
+      have hk_eq : kappa void = kappa (integrate (delta t)) := by simp [kappa, hk]
+      exact drop_right hmu hk_eq
+    | succ k =>
+      have hk_dec : kappa void < kappa (integrate (delta t)) := by simp [kappa, hk]; omega
+      exact drop_left hk_dec
+```
+
+### Case: `R_rec_zero` (recDelta b s void --> b)
+- **kappa analysis**: `kappa (recDelta b s void) = max (kappa b) (kappa s)`; `kappa b`. If `kappa b < kappa s`, then `kappa` decreases strictly. Otherwise, `kappa` remains the same.
+- **mu analysis**: `mu (recDelta b s void) = 3 + mu b + mu s`; `mu b`. `mu` decreases strictly by `3 + mu s > 0`.
+- **Proof approach**: Case-split on whether `kappa b < max (kappa b) (kappa s)` (i.e., `kappa b < kappa s`). If true, use `drop_left`. Otherwise, use `drop_right`.
+
+```lean
+| _, _, Step.R_rec_zero b s => by
+    have hk_before : kappa (recDelta b s void) = max (kappa b) (kappa s) := by simp [kappa]
+    have hk_after : kappa b := rfl
+    cases Nat.lt_or_ge (kappa b) (kappa s) with
+    | inl h_lt =>
+      have hk_dec : kappa b < kappa (recDelta b s void) := by rw [hk_before]; exact Nat.lt_of_lt_of_le h_lt (Nat.le_max_left _ _)
+      exact drop_left hk_dec
+    | inr h_ge =>
+      have hk_eq : kappa b = kappa (recDelta b s void) := by rw [hk_before]; exact Nat.max_eq_left h_ge
+      have hmu : mu b < mu (recDelta b s void) := by simp [mu]; omega
+      exact drop_right hmu hk_eq
+```
+
+### Case: `R_rec_succ` (recDelta b s (delta n) --> app s (recDelta b s n))
+- **kappa analysis**: `kappa (recDelta b s (delta n)) = max (kappa b) (kappa s) (kappa n) + 1`; `kappa (app s (recDelta b s n)) = max (kappa s) (kappa (recDelta b s n)) = max (kappa s) (max (kappa b) (kappa s) (kappa n)) = max (kappa b) (kappa s) (kappa n)`. Thus, `kappa` decreases strictly by 1.
+- **mu analysis**: Not needed since `kappa` decreases.
+- **Proof approach**: Directly use `drop_left` with the strict `kappa` decrease.
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    have hk_before : kappa (recDelta b s (delta n)) = max (kappa b) (kappa s) (kappa n) + 1 := by simp [kappa]
+    have hk_after : kappa (app s (recDelta b s n)) = max (kappa b) (kappa s) (kappa n) := by simp [kappa]
+    have hk_dec : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by rw [hk_before, hk_after]; omega
+    exact drop_left hk_dec
+```
+
+### Case: `R_eq_refl` (eqW a a --> void)
+- **kappa analysis**: `kappa (eqW a a) = kappa a`; `kappa void = 0`. If `kappa a > 0`, then `kappa` decreases strictly. If `kappa a = 0`, then `kappa` remains the same.
+- **mu analysis**: `mu (eqW a a) = 4 + 2 * mu a`; `mu void = 0`. `mu` decreases strictly by `4 + 2 * mu a > 0`.
+- **Proof approach**: Case-split on whether `kappa a = 0`. If `kappa a > 0`, use `drop_left`. Otherwise, use `drop_right`.
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    cases hk : kappa a with
+    | zero =>
+      have hmu : mu void < mu (eqW a a) := by simp [mu]; omega
+      have hk_eq : kappa void = kappa (eqW a a) := by simp [kappa, hk]
+      exact drop_right hmu hk_eq
+    | succ k =>
+      have hk_dec : kappa void < kappa (eqW a a) := by simp [kappa, hk]; omega
+      exact drop_left hk_dec
+```
+
+### Case: `R_eq_diff` (eqW a b --> integrate (merge a b))
+- **kappa analysis**: `kappa (eqW a b) = max (kappa a) (kappa b)`; `kappa (integrate (merge a b)) = max (kappa a) (kappa b)`. `kappa` remains the same.
+- **mu analysis**: `mu (eqW a b) = 4 + mu a + mu b`; `mu (integrate (merge a b)) = 1 + 2 + mu a + mu b = 3 + mu a + mu b`. `mu` decreases strictly by 1.
+- **Proof approach**: Use `drop_right` with the `kappa` equality and `mu` decrease.
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by simp [mu]; omega
+    have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by simp [kappa]
+    exact drop_right hmu hk
+```

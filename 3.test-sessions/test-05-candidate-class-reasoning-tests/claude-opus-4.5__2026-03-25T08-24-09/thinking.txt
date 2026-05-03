@@ -1,0 +1,79 @@
+Now let me analyze the three termination measure candidates. I need to check if each measure strictly decreases under each rewrite rule.
+
+The trace type has these constructors:
+- void
+- delta t
+- integrate t
+- merge a b
+- app a b
+- recDelta b s n
+- eqW a b
+
+The rewrite rules are:
+1. R_int_delta: integrate (delta t) → void
+2. R_merge_void_left: merge void t → t
+3. R_merge_void_right: merge t void → t
+4. R_merge_cancel: merge t t → t
+5. R_rec_zero: recDelta b s void → b
+6. R_rec_succ: recDelta b s (delta n) → app s (recDelta b s n)
+7. R_eq_refl: eqW a a → void
+8. R_eq_diff: eqW a b → integrate (merge a b)
+
+Let me check each measure for each rule:
+
+**mu1:**
+- void = 0
+- delta t = 1 + mu1 t
+- integrate t = 1 + mu1 t
+- merge a b = 1 + mu1 a + mu1 b
+- app a b = 1 + mu1 a + mu1 b
+- recDelta b s n = 1 + mu1 b + mu1 s + mu1 n
+- eqW a b = 3 + mu1 a + mu1 b
+
+Rule 1: integrate (delta t) → void
+LHS: mu1(integrate (delta t)) = 1 + mu1(delta t) = 1 + 1 + mu1 t = 2 + mu1 t
+RHS: mu1(void) = 0
+OK: 2 + mu1 t > 0
+
+Rule 2: merge void t → t
+
+
+LHS: mu1(merge void t) = 1 + 0 + mu1 t = 1 + mu1 t
+RHS: mu1(t) = mu1 t
+Decreases since 1 + mu1 t > mu1 t
+
+Rule 3: merge t void → t
+LHS: mu1(merge t void) = 1 + mu1 t + 0 = 1 + mu1 t
+RHS: mu1(t) = mu1 t
+Also decreases by the same reasoning
+
+.
+
+Rule 4: merge t t → t
+LHS: mu1(merge t t) = 1 + 2*(mu1 t)
+RHS: mu1(t) = mu1 t
+Decreases since 1 + 2*(mu1 t) > mu1 t
+
+Rule 5: recDelta b s void → b
+LHS: mu1(recDelta b s void) = 1 + mu1 b + mu1 s + 0 = 1 + mu1 b + mu1 s
+RHS: mu1(b) = mu1 b
+Decreases since 1 + mu1 b + mu1 s > mu1 b
+
+Rule 6: recDelta b s (delta n) → app s (recDelta b s n)
+LHS: mu1(recDelta b s (delta n)) = 1 + mu1 b + mu1 s + 1 + mu1 n = 2 + mu1 b + mu1 s + mu1 n
+RHS: mu1(app s (recDelta b s n)) = 1 + mu1 s + 1 + mu1 b + mu1 s + mu1 n = 2 + mu1 b + 2*(mu1 s) + mu1 n
+LHS - RHS = -mu1 s ≤ 0, so the measure doesn't decrease. This rule fails for mu1.
+
+Rule 7: eqW a a → void
+LHS: mu1(eqW a a) = 3 + 2*(mu1 a)
+RHS: mu1(void) = 0
+Decreases.
+
+Rule 8: eqW a b → integrate (merge a b)
+LHS: mu1(eqW a b) = 3 + mu1 a + mu1 b
+RHS: mu1(integrate (merge a b)) = 1 + 1 + mu1 a + mu1 b = 2 + mu1 a + mu1 b
+Decreases.
+
+So mu1 fails on R_rec_succ. Testing mu2 with the same structure shows it also fails on rule 6 since the difference is again -mu2 s. For mu3, the LHS becomes 2 + mu3 b + mu3 s + mu3 n while the RHS is 3 + mu3 b + 2*(mu3 s) + mu3 n, giving LHS - RHS = -1 - mu3 s, which is also negative.
+
+The core problem is that the recursion rule duplicates the step function s in the reduct—it appears both in the outer app and nested inside recDelta. The delta wrapper is consumed (contributing 1), but this gain is insufficient to offset s being counted twice. For any measure to work, we'd need 1 - A - mu(s) > 0, where A is the app constant. Since A ≥ 1 and mu(s) ≥ 0, this inequality cannot hold. All three measures fail on R_rec_succ.

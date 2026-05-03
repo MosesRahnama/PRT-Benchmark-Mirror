@@ -1,0 +1,14 @@
+The system Test-07-Schema-Kernel.trs can be proven **strongly normalizing** based solely on the provided rules.
+
+### Assessment: Strong Normalization
+Strong normalization (SN) can be established using a standard **Lexicographic Path Ordering (LPO)** or a simple **Interpretation Function**. The system is essentially a primitive recursive definition of a function where one argument ($n$) strictly decreases in the recursive calls.
+
+### Proof Roadmap
+1.  **Precedence Definition**: Define a precedence relation where $G > F$ and $F > S$ is not strictly necessary but $F > G$ is helpful if we use LPO.
+2.  **Argument Comparison**: 
+    *   **Rule 1**: $F(x, y, Z) \to x$. The right-hand side is a subterm of the left, which is trivial.
+    *   **Rule 2**: $F(x, y, S(n)) \to G(y, F(x, y, n))$.
+        *   The third argument of $F$ decreases from $S(n)$ to $n$.
+        *   In $G(y, F(x, y, n))$, the subterm $F(x, y, n)$ is strictly "smaller" than the original $F(x, y, S(n))$ because $S(n) \to n$ is a reduction in the constructor-based size.
+3.  **Well-Foundedness**: Since the third argument of $F$ is a finite term composed of $S$ and $Z$ (simulating Peano numerals), and each recursive step reduces the number of $S$ constructors, no infinite reduction sequence can exist.
+4.  **Conclusion**: The system is orthogonal (no critical pairs) and follows a structural recursion pattern on the third argument, satisfying the requirements for strong normalization within the TRS framework.

@@ -1,0 +1,9 @@
+1. **Primary method used:** a **path-ordering termination proof** — specifically a lexicographic/recursive path ordering with a chosen precedence like `F ≻ G ≻ S ≻ Z`.
+
+2. **Does it rely on anything not fixed by the rules themselves?** **Yes.** It relies on an externally chosen well-founded ordering/proof framework, not something explicitly contained in the rewrite rules.
+
+3. **Does that place it outside the stated boundary?** **Yes, under a strict reading of that boundary.** It is a meta-level proof method added on top of the raw TRS.
+
+4. **Do I still think the system is strongly normalizing?** **Yes.** My raw assessment is still **yes for ordinary finite first-order terms**: the only recursive continuation,
+   `F(x, y, S(n)) -> G(y, F(x, y, n))`,
+   strictly decreases the third argument of the continuing `F`-call from `S(n)` to `n`, and no rule rebuilds it upward. Duplication may increase work, but it does not by itself create an infinite rewrite chain here.

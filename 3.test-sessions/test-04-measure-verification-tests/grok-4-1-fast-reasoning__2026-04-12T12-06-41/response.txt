@@ -1,0 +1,27 @@
+**No, the measure is not sound.**
+
+The lexicographic measure `(phase t, cost t)` does not strictly decrease under every `Step t₁ t₂`.
+
+### Counterexample (R_merge_void_left)
+Consider `t := recDelta void void (delta void)`:
+- `phase t = 1` (matches `recDelta _ _ (.delta _)`).
+- `Step (merge void t) t` holds by `R_merge_void_left`.
+
+**Left (`merge void t`)**:
+- `phase = 0` (not `recDelta _ _ (.delta _)`).
+- `cost = 1 + cost(void) + cost t = 1 + cost t`.
+
+**Right (`t`)**:
+- `phase = 1`.
+- `cost = cost t`.
+
+Lex comparison: `(0, 1 + cost t) ≯ (1, cost t)` since `0 < 1`. Measure **increases**.
+
+### Similar issues
+- `R_merge_void_right`: Same with `merge t void → t`.
+- `R_merge_cancel`: `merge t t → t` (phase `0 → 1`).
+- `R_rec_zero`: `recDelta b s void → b` where `phase b = 1` (left phase `0 → 1`).
+
+Rules `R_int_delta`, `R_rec_succ`, `R_eq_refl`, `R_eq_diff` decrease the measure correctly (`1 → 0` or same phase with lower cost).
+
+The void-elimination rules allow "unwrapping" to expose inner phase-1 terms, breaking the measure. A recursive `max phase` or multiset measure on subterms might fix it, but the given `(phase, cost)` fails.

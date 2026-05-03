@@ -1,0 +1,49 @@
+The proposed lexicographic termination measure is not sound.
+
+A termination measure is sound if, for every rewrite rule `a → b`, the measure of `a` is strictly greater than the measure of `b`. In this case, for `Step a b` to hold, we must have `measure a > measure b` in the lexicographic order on `Nat × Nat`.
+
+Let's analyze the rule `R_merge_void_left`:
+`Step (merge void t) t`
+
+Here, the term `a` is `merge void t` and the term `b` is `t`.
+The measure is defined as `measure t = (phase t, cost t)`.
+
+Let's compute the measure for `a` and `b`:
+*   `measure(a) = measure(merge void t)`
+    *   `phase(merge void t)` is `0`, according to the definition of `phase`.
+    *   `cost(merge void t)` is `1 + cost(void) + cost(t) = 1 + 0 + cost(t) = 1 + cost(t)`.
+    *   So, `measure(a) = (0, 1 + cost(t))`.
+
+*   `measure(b) = measure(t) = (phase(t), cost(t))`.
+
+For the measure to be sound for this rule, we need `(0, 1 + cost(t)) > (phase(t), cost(t))`.
+
+This requires one of two conditions to be true for lexicographic order:
+1.  `0 > phase(t)`
+2.  `0 = phase(t)` AND `1 + cost(t) > cost(t)`
+
+The first condition, `0 > phase(t)`, can never be true since `phase` returns a `Nat` (natural number), which is always non-negative.
+
+The second condition holds if and only if `phase(t)` is `0`.
+
+**Counterexample:**
+Consider a case where `phase(t)` is not `0`. According to the definition of `phase`, if we choose `t` to be of the form `recDelta b s (delta n)`, then `phase(t)` will be `1`.
+
+Let `t := recDelta void void (delta void)`.
+*   `phase(t) = 1`.
+*   `cost(t) = 1 + cost(void) + cost(void) + cost(delta void) = 1 + 0 + 0 + (1 + cost(void)) = 2`.
+*   So, `measure(t) = (1, 2)`.
+
+Now let's look at the rewrite rule with this specific `t`:
+`a = merge void t`
+`b = t`
+
+*   `measure(a) = (0, 1 + cost(t)) = (0, 1 + 2) = (0, 3)`.
+*   `measure(b) = (1, 2)`.
+
+Is `(0, 3) > (1, 2)`?
+In lexicographic order, we first compare the first components. Here, `0 < 1`. Therefore, `(0, 3)` is strictly **less than** `(1, 2)`.
+
+The measure decreases from `b` to `a`, meaning it increases for the rewrite step `a → b`. This violates the condition for a termination measure.
+
+Because we have found a rewrite rule and a term for which the measure increases, the proposed lexicographic termination measure is unsound. The same issue exists for rules `R_merge_void_right`, `R_merge_cancel`, and `R_rec_zero`.

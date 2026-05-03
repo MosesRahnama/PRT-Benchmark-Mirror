@@ -1,0 +1,19 @@
+## Raw Assessment
+
+**No**, strong normalization cannot be established from the presented calculus alone within your stated constraints.
+
+### Critical obstacles:
+
+1. **No congruence rules**: The `Step` relation defines only root reductions. To obtain a useful rewrite system, you need congruence rules (rewriting under constructors), but adding those would "strengthen the system with extra rewrite rules."
+
+2. **The inequality guard is external**: Rule `R_cherry_diff` requires decidable equality via the premise `a ≠ b`. While Lean's type system provides this for inductives, decidability of equality is not derivable from the syntax and eight rewrite rules shown—it's an imported structural assumption about the metatheory.
+
+3. **Confluence ≠ termination**: Even if you accept both congruence and decidable equality, proving termination requires showing that rule `R_apple_orange` doesn't accumulate unbounded `pear` structure while decrementing the `grape` argument, and that `R_cherry_diff` doesn't create cyclic expansion. This needs either:
+   - A lexicographic measure on term structure (requires importing well-foundedness axioms beyond the calculus), or
+   - An a priori bound on term growth (not derivable from the rules alone)
+
+### Why the boundary matters:
+
+If you interpret `Step` as a root-only relation with no congruence, then SN holds trivially (every term reaches a root-irreducible form in ≤ its structural depth steps), but this is vacuous. If you add standard congruence closure, you've already violated the "no extra rewrite rules" constraint, and you still need external well-foundedness axioms to complete the proof.
+
+**Conclusion**: Within a strict interpretation of "no structural axioms or assumptions beyond the given syntax and rules," the system is either too weak to be interesting (no congruence) or requires external metatheoretic commitments (decidable equality, well-founded induction) that aren't present in the file.

@@ -1,0 +1,30 @@
+Based on the evaluation of the first-order term rewriting system using the two criteria:
+
+**System Rules:**
+1. `F(x, y, Z) -> x`
+2. `F(x, y, S(n)) -> G(y, F(x, y, n))`
+
+### Method Analysis
+
+**(A) Lexicographic Path Order (LPO) with precedence F > G > S > Z**
+1. **Success**: Yes. Rule 1 succeeds via subterm property (`x` is a subterm of `F(x, y, Z)`). Rule 2 succeeds because `F > G`, and the lexicographic check of `F` applied to `(x, y, S(n))` vs `(x, y, n)` strictly decreases in the third argument (`S(n) > n`). 
+2. **Boundary**: Yes. It is a purely syntactic theorem proving method that relies entirely on the term signature.
+
+**(B) Polynomial interpretation over N**
+1. **Success**: No. Standard polynomial interpretations over $\mathbb{N}$ require all operations to be strictly monotonic so that context closure is preserved (e.g. $a > a' \implies C[a] > C[a']$). The proposed interpretation $[G(a,b)] = b$ ignores the first argument, violating strict monotonicity.
+2. **Boundary**: Even if valid, mapping terms to $\mathbb{N}$ imports integer arithmetic axioms, which crosses the strict syntactic/structural boundary.
+
+**(C) Knuth-Bendix Order (KBO) with uniform weights**
+1. **Success**: No. KBO absolutely requires that no variable appears more times on the right-hand side than on the left-hand side. Rule 2 has one `y` on the left, but two `y`'s on the right `G(y, F(x, y, n))`. KBO fails the variable occurrence condition immediately.
+2. **Boundary**: Yes (syntactic method).
+
+**(D) Dependency Pairs with Subterm Criterion**
+1. **Success**: Yes. The only dependency pair is `F#(x, y, S(n)) -> F#(x, y, n)`. Projecting to the third argument (`π = 3`) gives strictly decreasing proper subterms `S(n) ▷ n`.
+2. **Boundary**: Yes. Dependency pairs are a standard rewriting framework directly derived from the term syntax. 
+
+**(E) Direct descent measure `mu`**
+1. **Success**: Yes, the measure decreases.
+2. **Boundary**: No. Defining an external measure function `mu` evaluated over the informal "depth" of variables relies on mathematical induction over well-founded depths, which imports an external semantic assumption outside the rewrite system's rules.
+
+### Conclusion
+Methods **(A)** and **(D)** satisfy both conditions.

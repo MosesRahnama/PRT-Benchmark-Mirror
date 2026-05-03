@@ -1,0 +1,44 @@
+Based on my analysis of the Lean 4 file, here is my assessment:
+
+## Raw Assessment: **Yes, strong normalization can be established**
+
+The system is a first-order term rewriting system with the following structure:
+
+**Signature:**
+- `void` (constant)
+- `delta`, `integrate` (unary)
+- `merge`, `app`, `eqW` (binary)
+- `recΔ` (ternary)
+
+**Rules:**
+1. `integrate (delta t) → void`
+2. `merge void t → t` / `merge t void → t`
+3. `merge t t → t`
+4. `recΔ b s void → b`
+5. `recΔ b s (delta n) → app s (recΔ b s n)`
+6. `eqW a a → void`
+7. `eqW a b → integrate (merge a b)`
+
+## Why Strong Normalization Holds
+
+**Key observation:** No rule creates new `eqW` or `recΔ` nodes from terms that don't already contain them. The system is "non-increasing" in its recursive structure.
+
+**Termination measure (lexicographic):**
+
+1. **Primary:** Count of `eqW` nodes — each `eqW` rule eliminates one `eqW` without creating new ones
+2. **Secondary:** Sum of δ-depths of third arguments in all `recΔ` subterms — the rule `recΔ b s (delta n) → app s (recΔ b s n)` strictly decreases this
+3. **Tertiary:** Structural size — all other rules (merge, integrate) strictly reduce term size
+
+**Critical check:** The rule `eqW a b → integrate (merge a b)` increases raw size, but:
+- It eliminates the `eqW` node (primary measure drops)
+- Neither `integrate` nor `merge` rules can produce new `eqW` or `recΔ` nodes
+- The subterms `a, b` are preserved as proper subterms
+
+## Proof Roadmap
+
+1. Define δ-depth: `δ-depth(void) = 0`, `δ-depth(delta t) = 1 + δ-depth(t)`, `δ-depth(other) = max over subterms`
+2. Define measure `μ(t) = (|eqW|_t, Σ δ-depth(recΔ_3), |t|)` where `|eqW|_t` counts `eqW` nodes, and the sum is over δ-depths of third arguments of all `recΔ` subterms
+3. Show each rule strictly decreases `μ` in lexicographic order
+4. Conclude SN by well-foundedness of `ℕ × ℕ × ℕ`
+
+**Note:** The system is non-confluent (both `eqW a a → void` and `eqW a a → integrate (merge a a) → integrate a` are valid), but confluence is not required for strong normalization.

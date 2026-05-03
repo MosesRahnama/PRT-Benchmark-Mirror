@@ -1,0 +1,55 @@
+Let me analyze the three proposed termination measures `mu1`, `mu2`, and `mu3` by checking if they strictly decrease under each rewrite rule in the system.
+
+For a valid termination measure, we need `μ(lhs) > μ(rhs)` for every rewrite rule.
+
+## Assessment of the Three Measures
+
+### Rules where all measures work correctly:
+
+**R_int_delta: `integrate (delta t) → void`**
+- All measures assign positive weights to constructors, so `μ(integrate (delta t)) > 0 = μ(void)` ✓
+
+**R_merge_void_left/right: `merge void t → t`**
+- All measures add overhead for `merge`, so `μ(merge void t) > μ(t)` ✓
+
+**R_merge_cancel: `merge t t → t`** 
+- All measures count both arguments, so `μ(merge t t) > μ(t)` ✓
+
+**R_rec_zero: `recDelta b s void → b`**
+- All measures add overhead for `recDelta`, so `μ(recDelta b s void) > μ(b)` ✓
+
+**R_eq_refl: `eqW a a → void`**
+- All measures assign significant weight to `eqW`, so the measure decreases ✓
+
+**R_eq_diff: `eqW a b → integrate (merge a b)`**
+- `mu1`: `3 + μ₁(a) + μ₁(b) > 2 + μ₁(a) + μ₁(b)` ✓
+- `mu2`: `5 + μ₂(a) + μ₂(b) > 4 + μ₂(a) + μ₂(b)` ✓ 
+- `mu3`: `4 + μ₃(a) + μ₃(b) > 3 + μ₃(a) + μ₃(b)` ✓
+
+### Critical failure point:
+
+**R_rec_succ: `recDelta b s (delta n) → app s (recDelta b s n)`**
+
+Let me calculate each measure:
+
+**μ₁ analysis:**
+- LHS: `μ₁(recDelta b s (delta n)) = 1 + μ₁(b) + μ₁(s) + (1 + μ₁(n)) = 2 + μ₁(b) + μ₁(s) + μ₁(n)`
+- RHS: `μ₁(app s (recDelta b s n)) = 1 + μ₁(s) + (1 + μ₁(b) + μ₁(s) + μ₁(n)) = 2 + μ₁(b) + 2μ₁(s) + μ₁(n)`
+- Required: `2 + μ₁(b) + μ₁(s) + μ₁(n) > 2 + μ₁(b) + 2μ₁(s) + μ₁(n)`
+- Simplifies to: `μ₁(s) > 2μ₁(s)` — **Never true for μ₁(s) ≥ 0** ✗
+
+**μ₂ analysis:**
+- LHS: `6 + μ₂(b) + μ₂(s) + μ₂(n)`
+- RHS: `6 + μ₂(b) + 2μ₂(s) + μ₂(n)`
+- Simplifies to: `μ₂(s) > 2μ₂(s)` — **Never true** ✗
+
+**μ₃ analysis:**
+- LHS: `2 + μ₃(b) + μ₃(s) + μ₃(n)`
+- RHS: `3 + μ₃(b) + 2μ₃(s) + μ₃(n)`
+- Simplifies to: `2 + μ₃(s) > 3 + 2μ₃(s)` → `-1 > μ₃(s)` — **Never true** ✗
+
+## Conclusion
+
+**All three measures fail** as termination measures for this rewrite system. They all fail on the same rule: `R_rec_succ`. This rule represents the recursive unfolding of `recDelta` when applied to a successor (`delta n`), and the structural issue is that the right-hand side duplicates the `s` argument in two places (`app s (recDelta b s n)`), causing the measure to increase rather than decrease.
+
+The fundamental problem is that none of these simple additive measures can handle the duplication inherent in recursive unfolding. A successful termination measure for this system would need to account for the fact that `R_rec_succ` is meant to make progress by reducing the third argument from `delta n` to `n`, even though it temporarily increases the overall term size.

@@ -1,0 +1,9 @@
+**Defining RPO and roadmap**
+
+I'm looking at establishing RPO orientation as a standard approach. I need to create a high-level roadmap for the proof regarding strong normalization (SN).
+
+Firstly, I'll define full reduction using contextual closure. Then, I’ll choose an ordering with precedence: recΔ > app > eqW > integrate > merge > delta > void. Each rewrite rule needs to show that they decrease in this order, leading to termination and thus SN for all ground terms.
+
+I'll also note that implementing this in Lean requires using `wellFounded` and `Acc` to show SN. I have to clarify that even though eq_diff applies, termination is still valid. 
+
+I’ll create a todo list with steps to track progress, including analyzing rules, deciding on SN, providing the roadmap, and finalizing. I should comply with all tasks without overdoing the tool calls!

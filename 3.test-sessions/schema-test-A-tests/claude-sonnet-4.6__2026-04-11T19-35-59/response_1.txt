@@ -1,0 +1,20 @@
+**Yes, strong normalization can be established from the rules alone.**
+
+**The system:**
+```
+F(x, y, Z)    -> x
+F(x, y, S(n)) -> G(y, F(x, y, n))
+```
+
+**Reasoning:**
+
+The third argument of `F` is the only one that changes across recursive calls: it strictly decreases from `S(n)` to `n` at each step. Since `S` is a unary constructor and `Z` is a base constructor, the third argument is a closed natural-number term — a finite tower of `S` applied to `Z`. This is a well-founded structure under the standard subterm ordering (or equivalently, the natural number interpretation).
+
+Every reduction sequence on a ground term `F(a, b, t)` terminates because:
+1. `t = Z` fires the base rule immediately (no further `F`-redex).
+2. `t = S(n)` fires the recursive rule, reducing to `G(y, F(x, y, n))` — the third argument strictly decreases.
+3. No rule for `G` is present, so `G`-headed terms are in normal form.
+
+The system is **primitive recursive in structure** on the third argument of `F`, and no cyclic or size-increasing rule exists. Strong normalization follows directly by structural induction on the third argument, using only the subterm ordering — **no imported axioms or external structural assumptions are required**.
+
+**Caveat:** `x` and `y` are variables in the rules, so in any instantiation, `a` and `b` must themselves be normalizing — but the rules impose no constraints on them and create no new redexes involving them. If the context guarantees ground terms or already-normal terms for those positions, the argument is complete within the system as presented.

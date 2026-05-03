@@ -1,0 +1,46 @@
+## Assessment
+
+**Yes — strong normalization of the contextual closure of `Step` can be established from the presented calculus alone**, using a standard polynomial interpretation into $\mathbb{N}$. No extra rules, guards, side conditions, or external axioms are needed.
+
+---
+
+### Proof roadmap (polynomial interpretation)
+
+Define $\llbracket \cdot \rrbracket : \texttt{Trace} \to \mathbb{N}$ by:
+
+| Constructor | Interpretation |
+|---|---|
+| $\llbracket \texttt{void} \rrbracket$ | $1$ |
+| $\llbracket \texttt{delta}(t) \rrbracket$ | $\llbracket t \rrbracket + 1$ |
+| $\llbracket \texttt{integrate}(t) \rrbracket$ | $\llbracket t \rrbracket$ |
+| $\llbracket \texttt{merge}(t_1, t_2) \rrbracket$ | $\llbracket t_1 \rrbracket + \llbracket t_2 \rrbracket$ |
+| $\llbracket \texttt{app}(t_1, t_2) \rrbracket$ | $\llbracket t_1 \rrbracket + \llbracket t_2 \rrbracket$ |
+| $\llbracket \texttt{rec\Delta}(b, s, n) \rrbracket$ | $(\llbracket s \rrbracket + 1) \cdot \llbracket n \rrbracket + \llbracket b \rrbracket$ |
+| $\llbracket \texttt{eqW}(t_1, t_2) \rrbracket$ | $\llbracket t_1 \rrbracket + \llbracket t_2 \rrbracket + 1$ |
+
+**Step 1 — Every rule strictly decreases the interpretation:**
+
+| Rule | LHS weight | RHS weight | Decrease |
+|---|---|---|---|
+| `R_int_delta` | $\llbracket t \rrbracket + 1$ | $1$ | $\llbracket t \rrbracket \geq 1$ |
+| `R_merge_void_left` | $1 + \llbracket t \rrbracket$ | $\llbracket t \rrbracket$ | $1$ |
+| `R_merge_void_right` | $\llbracket t \rrbracket + 1$ | $\llbracket t \rrbracket$ | $1$ |
+| `R_merge_cancel` | $2\llbracket t \rrbracket$ | $\llbracket t \rrbracket$ | $\llbracket t \rrbracket \geq 1$ |
+| `R_rec_zero` | $(\llbracket s \rrbracket + 1) \cdot 1 + \llbracket b \rrbracket$ | $\llbracket b \rrbracket$ | $\llbracket s \rrbracket + 1 \geq 2$ |
+| `R_rec_succ` | $(\llbracket s \rrbracket + 1)(\llbracket n \rrbracket + 1) + \llbracket b \rrbracket$ | $\llbracket s \rrbracket + (\llbracket s \rrbracket + 1)\llbracket n \rrbracket + \llbracket b \rrbracket$ | $1$ |
+| `R_eq_refl` | $2\llbracket a \rrbracket + 1$ | $1$ | $2\llbracket a \rrbracket \geq 2$ |
+| `R_eq_diff` | $\llbracket a \rrbracket + \llbracket b \rrbracket + 1$ | $\llbracket a \rrbracket + \llbracket b \rrbracket$ | $1$ |
+
+All decreases are $\geq 1$. (The key insight for `R_rec_succ` is that the multiplicative weight $(\llbracket s \rrbracket + 1) \cdot \llbracket n \rrbracket$ absorbs the duplication of $s$ while the third argument strictly shrinks.)
+
+**Step 2 — Monotonicity:** Every constructor's interpretation is weakly monotone (in fact strictly monotone) in each argument over $\mathbb{N}_{\geq 1}$, which is guaranteed since every ground term interprets to $\geq 1$.
+
+**Step 3 — Conclude:** By the standard polynomial interpretation theorem for first-order term rewriting (e.g., Lankford 1979 / Dershowitz 1982), strict decrease under a weakly monotone $\mathbb{N}$-valued interpretation implies well-foundedness of the compatible (contextual) closure. Hence every reduction sequence under the contextual closure of `Step` terminates, i.e., the system is strongly normalizing.
+
+---
+
+### Remarks
+
+- The overlap between `R_eq_refl` and `R_eq_diff` (both apply when $a = b$) introduces non-determinism but does **not** threaten SN — the interpretation decreases strictly on *every* applicable rule.
+- The non-linear LHS patterns in `R_merge_cancel` and `R_eq_refl` are handled by standard first-order matching; they do not affect the interpretation argument.
+- No rule for `app` exists, so `app` is inert at the root; it serves only as a structural wrapper produced by `R_rec_succ`.

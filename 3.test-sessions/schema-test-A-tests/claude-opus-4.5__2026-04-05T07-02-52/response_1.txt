@@ -1,0 +1,31 @@
+## Assessment: **Yes**, strong normalization can be established from this TRS alone.
+
+### The System
+
+```
+F(x, y, Z)    → x
+F(x, y, S(n)) → G(y, F(x, y, n))
+```
+
+### Proof Roadmap
+
+**Method:** Lexicographic Path Ordering (LPO) with precedence **F > G**.
+
+1. **Rule 1:** `F(x, y, Z) → x`  
+   Terminates by the subterm property (x is a proper subterm of the LHS).
+
+2. **Rule 2:** `F(x, y, S(n)) → G(y, F(x, y, n))`  
+   Under LPO with F > G:
+   - The RHS has root symbol G, which is smaller than F in the precedence.
+   - We must show `F(x, y, S(n)) >_lpo y` — holds since y is a subterm.
+   - We must show `F(x, y, S(n)) >_lpo F(x, y, n)` — same root, so compare arguments lexicographically: `(x, y, S(n))` vs `(x, y, n)`. The third component strictly decreases (n is a subterm of S(n)).
+
+Since LPO is a reduction order compatible with the TRS, all reduction sequences terminate.
+
+### Why This Works Without External Axioms
+
+- G, S, Z have no rewrite rules — they act as constructors.
+- The recursion on F is primitive: the third argument decreases structurally at each step.
+- No variable capture, no binding, no hidden dependencies.
+
+This is a straightforward **primitive recursive scheme** that standard termination provers (AProVE, TTT2) would verify automatically via LPO or polynomial interpretation.

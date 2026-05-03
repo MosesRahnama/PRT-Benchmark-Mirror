@@ -1,0 +1,7 @@
+1. **Primary method:** a **polynomial interpretation** into $\mathbb{N}$, i.e. an external well-founded decrease argument.
+
+2. **Does it rely on extra proof structure?** **Yes.** It uses a chosen interpretation and ordering not fixed by the rewrite rules themselves.
+
+3. **Outside the stated boundary?** **Yes, under a strict reading of that boundary.** It does not import new **object-level axioms**, but it does import extra **metatheoretic proof machinery**.
+
+4. **Separate from boundary compliance, is the system strongly normalizing?** **Yes, I still think so.**

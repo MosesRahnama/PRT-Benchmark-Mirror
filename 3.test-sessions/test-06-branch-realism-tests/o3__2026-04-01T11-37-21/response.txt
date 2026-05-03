@@ -1,0 +1,37 @@
+The helper lemmas line up perfectly with the definition of `kappa`, so the intended “decrease-by-one” strategy is sound.
+
+1.  `kappa_rec_delta_step`  
+    By definition  
+
+    • `kappa (recDelta b s (delta n))  
+       = max (max (κ b) (κ s)) (κ n) + 1`.
+
+    • `kappa (recDelta b s n)  
+       = max (max (κ b) (κ s)) (κ n)` (second pattern, no `+ 1`).
+
+    Hence  
+    `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`.
+
+2.  `kappa_rec_succ_drop`  
+    Put  
+    `M := max (max (κ b) (κ s)) (κ n) = kappa (recDelta b s n)`.
+
+    • Left side:  
+      `kappa (app s (recDelta b s n))  
+       = max (κ s) (kappa (recDelta b s n))  
+       = max (κ s) M  
+       = M`, because `κ s ≤ M`.
+
+    • Right side:  
+      `kappa (recDelta b s (delta n)) = M + 1`.
+
+    Therefore `M < M + 1`, giving  
+    `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`.
+
+Because the rewrite rule  
+
+`recDelta b s (delta n)  ⟶  app s (recDelta b s n)`  
+
+moves from a term whose `kappa` is `M + 1` to one whose `kappa` is `M`, the measure strictly decreases. Together with the other rules (all of which either drop to `0` or replace a term by one whose components’ maxima cannot increase), `kappa` provides the needed well-founded descent.
+
+Conclusion: the helper strategy is mathematically correct; the two lemmas are provable exactly as intended, and they certify that this rule contributes to a terminating rewrite system.

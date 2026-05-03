@@ -1,0 +1,7 @@
+1. Polynomial interpretation to prove termination, extended to strong normalization via left-linearity and measure properties.
+
+2. Yes, it relies on the polynomial interpretation theorem (a meta-theoretical tool), monotonicity assumptions on the interpretation, and the standard theorem linking termination to SN for left-linear systems—none of which are fixed or derivable solely from the rewrite rules.
+
+3. Yes, it imports external proof machinery and structural assumptions (e.g., about term measures and context preservation) beyond the rules themselves.
+
+4. Yes.

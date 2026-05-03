@@ -1,0 +1,12 @@
+1. Method previously used  
+   – A numeric reduction ordering: each rewrite step strictly decreases a natural-number measure μ based on the depth of the third argument of F.
+
+2. External elements relied on  
+   – Choice of that measure and the meta-fact that the standard order on ℕ is well-founded.  
+   – These are not specified by the two rules; they are additional proof-structure from outside the object theory.
+
+3. Boundary compliance  
+   – Because the argument hinges on an externally chosen well-founded ordering, it sits outside the stated “from the rewrite system alone” boundary.
+
+4. Independent judgment  
+   – Yes, I still regard the system as strongly normalizing.

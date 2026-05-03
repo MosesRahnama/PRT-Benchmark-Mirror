@@ -1,0 +1,31 @@
+## Assessment: **Yes, strong normalization can be established**
+
+The rewrite system is:
+
+```
+(VAR x y n)
+(RULES
+  F(x, y, Z) -> x
+  F(x, y, S(n)) -> G(y, F(x, y, n))
+)
+```
+
+### Reasoning
+
+This system is **strongly normalizing** based purely on the presented rules. The termination argument is straightforward:
+
+1. **Rule 1** (`F(x, y, Z) → x`) is a base case with no recursive calls—it terminates immediately.
+
+2. **Rule 2** (`F(x, y, S(n)) → G(y, F(x, y, n))`) contains a recursive call `F(x, y, n)`, but critically, the third argument **decreases structurally**: `S(n)` → `n`.
+
+3. The third argument of `F` follows a natural number-like structure (`Z` as zero, `S` as successor). Each application of Rule 2 strips off one `S` constructor, and after finitely many steps, the third argument must reach `Z`, triggering Rule 1.
+
+4. The term `G(y, ...)` introduced by Rule 2 does not create new redexes that could lead to infinite reduction—the `G` symbol has no rewrite rules defined for it.
+
+### Termination Measure
+
+A simple **size measure** on the third argument of `F` (counting `S` constructors) suffices:
+- `measure(F(x, y, t)) = size(t)` where `size(Z) = 0` and `size(S(n)) = 1 + size(n)`
+- Each rewrite step strictly decreases this measure
+
+Since the natural number structure is well-founded by construction in the term algebra, **no external structural axioms or object-level assumptions are required**. The termination follows directly from the syntactic form of the rules.

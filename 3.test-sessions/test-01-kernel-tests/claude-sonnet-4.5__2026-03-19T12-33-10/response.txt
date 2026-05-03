@@ -1,0 +1,25 @@
+## Raw Assessment: **No**
+
+Strong normalization **cannot** be established from this calculus alone without meta-theoretic machinery that goes beyond what the syntax and rewrite rules themselves provide.
+
+### Why Not
+
+**1. Missing congruence closure**  
+The `Step` relation defines only root rewrites. To have a meaningful first-order rewrite calculus, you need congruence rules (rewriting under constructors), but adding those would count as "strengthening the system with extra rewrite rules."
+
+**2. Termination proof requires meta-level framework**  
+Even assuming congruence is "implicit," proving SN demands:
+- A well-founded measure (e.g., ordinals, multiset orderings, lexicographic combinations)
+- Proof that each rule decreases that measure
+- Invocation of well-foundedness principles
+
+None of these exist "within" the calculus—they're meta-theoretic tools imported from outside (set theory, inductive well-foundedness, etc.). The eight rewrite rules tell you *what* transitions exist, not *why* chains must terminate.
+
+**3. Critical rules create tension**  
+- `R_rec_succ` structurally decreases its third argument (δ-peeling), which is good
+- `R_eq_diff` expands `eqW a b` into `integrate (merge a b)`, preserving size but changing shape  
+- Without a measure assignable *from the calculus syntax alone*, you can't prove the combination terminates
+
+### Verdict
+
+Proving SN here is feasible with standard methods (structural ordinals, interpretation into ℕ-valued measures, dependency pairs), but all such methods require importing mathematical infrastructure—well-founded induction, arithmetic, ordering axioms—that isn't derivable from seven constructors and eight rewrite rules. The calculus is *prima facie* strongly normalizing, but the **proof** necessarily lives outside it.

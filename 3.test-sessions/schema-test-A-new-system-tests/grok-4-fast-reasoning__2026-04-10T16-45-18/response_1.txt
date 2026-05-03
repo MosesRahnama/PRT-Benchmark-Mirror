@@ -1,0 +1,3 @@
+Yes, strong normalization can be established from the presented rewrite system alone.
+
+The rules define a recursive evaluation of `F(x, y, t)` where `t` is a Peano natural number (`Z` base, `S` successor). Reduction either replaces with `x` (base case, irreducible unless `x` contains redexes) or wraps `G` around a strictly smaller subterm (`F(x, y, n)` where `n` has one fewer `S`). `G` is irreducible, and the rules are orthogonal (no critical pairs). For any finite ground term, reductions decrease a multiset measure (e.g., number of `S` constructors plus term size when jumping to subterms), ensuring all sequences terminate in normal form without infinite chains.

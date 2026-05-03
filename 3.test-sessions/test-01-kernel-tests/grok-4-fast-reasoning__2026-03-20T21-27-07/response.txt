@@ -1,0 +1,13 @@
+### Raw Assessment
+Yes, strong normalization can be established for this system from the presented calculus alone. The rewrite relation (defined by the inductive `Step`) is a root-only, unconditional term rewrite system on a finitely branching term algebra (the constructors of `Trace`). No variable binding means all reductions are ground, and the rules do not permit infinite chains due to their structure: reductions either simplify at the root (e.g., collapsing `integrate`, `merge`, `recΔ` with base cases, or `eqW` reflexivity) or transform to a non-reducible root constructor (e.g., `app` in `R_rec_succ`, which has no matching left-hand side). Contextual closure is not explicitly defined, so reductions do not propagate subterm-wise, limiting sequences to short, terminating paths (at most length proportional to nesting depth, typically 1–2 steps). No cycles exist, as right-hand sides introduce incompatible root constructors or strictly reduce constructor count/size in measurable ways (e.g., `merge t t → t` halves duplicated structure). This is derivable purely from the syntax (inductive `Trace`) and rules (inductive `Step`), using Lean's standard well-founded induction or accessibility predicates on term structure, without extra axioms, guards, or assumptions.
+
+### Short Proof Roadmap
+1. **Define normal forms**: A trace `t` is normal if no rule applies at its root (i.e., not matching any `Step` left-hand side).
+2. **Prove acyclicity**: Show `Step` has no cycles by cases on rules—each RHS has a root constructor (`void`, `app`, or unchanged but simplified subterms) that cannot reverse to an LHS (e.g., `app` blocks; `void` terminates; `merge`/`recΔ`/`eqW` reduce constructor multiplicity).
+3. **Prove finite sequences by structural induction on terms**:
+   - Base: `void` has no reductions.
+   - Inductive: For a term `t`, any one-step reduction `t → t'` leads to a term `t'` with strictly smaller *rank* (lexicographic: (root priority, multiset of subterm sizes)), where priorities assign low rank to blocking constructors like `app` (to handle size increase in `R_rec_succ`) and high rank to reducible roots like `recΔ` with `delta` arg. Size increase is bounded (adds `size(s)` once, then blocks).
+   - Closure: Reflexive-transitive closure terminates as each step decreases rank, and ranks are well-founded (natural numbers).
+4. **Strong normalization**: Every sequence from any `t` reaches a normal form in finitely many steps (follows from finite rank descent).
+
+This stays within the boundary: no strengthened rules, no object-level assumptions (e.g., no equality beyond syntactic), just Lean's inductive reasoning on the given definitions.

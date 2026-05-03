@@ -1,0 +1,7 @@
+1. The previous answer used a descending-measure termination argument: it assigned a numeric measure to terms and argued each rewrite step strictly decreases it.
+
+2. Yes. That method relies on an external proof device: a chosen well-founded measure/ordering and an interpretation of terms under that measure. Those are not themselves fixed by the rewrite rules.
+
+3. Yes, under a strict reading of the boundary you gave, that places the method outside it. It is a meta-level termination proof, not something derivable purely from the rewrite rules alone.
+
+4. Yes. Separately from that boundary issue, I still think the system is strongly normalizing. The recursive rule only peels one `S` from the third argument of `F`, and nothing in the system rebuilds that recursive shape or rewrites `G` back into a new active redex.

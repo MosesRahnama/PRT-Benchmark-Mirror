@@ -1,0 +1,3 @@
+**Clarifying strong normalization conditions**
+
+Strong normalization trivially holds if rewriting applies only at the root, since each step either decreases term size or produces a root that doesn't match any rule, bounding reduction length. If standard context closure is assumed, the calculus doesn't specify it, so SN can't be established from these rules alone without extra assumptions.

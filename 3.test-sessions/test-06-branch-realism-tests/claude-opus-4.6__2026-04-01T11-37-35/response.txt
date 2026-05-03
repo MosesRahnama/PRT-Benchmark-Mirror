@@ -1,0 +1,60 @@
+## Assessment: The helper strategy is **unsound**
+
+Both theorems are false. The flaw lies in a mismatch between how `kappa` handles `delta` as a standalone constructor versus inside the `recDelta` pattern match.
+
+---
+
+### Theorem 1: `kappa_rec_delta_step` — **False**
+
+**Claim:** `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`
+
+Let $M = \max(\kappa(b),\, \kappa(s))$ and $K = \kappa(n)$.
+
+- **LHS** always uses the `recDelta b s (.delta n)` clause:
+$$\text{LHS} = \max(M,\, K) + 1$$
+  since `kappa (delta n) = kappa n = K` by the `delta` clause.
+
+- **RHS** depends on whether `n` itself matches `.delta n'`:
+  - If `n` is **not** a `delta`: $\kappa(\texttt{recDelta}\; b\; s\; n) = \max(M, K)$, so $\text{RHS} = \max(M,K) + 1 = \text{LHS}$. OK.
+  - If `n = \texttt{delta}\; n'$: $\kappa(\texttt{recDelta}\; b\; s\; (\texttt{delta}\; n')) = \max(M, \kappa(n')) + 1$, so $\text{RHS} = \max(M, \kappa(n')) + 2$.
+
+Since $\kappa(\texttt{delta}\; n') = \kappa(n')$, we have $K = \kappa(n')$, making LHS $= \max(M,K)+1$ but RHS $= \max(M,K)+2$.
+
+**Counterexample:** `b = s = void`, `n = delta void`.
+
+| Expression | Value |
+|---|---|
+| `kappa (recDelta void void (delta (delta void)))` | $\max(0,0)+1 = 1$ |
+| `kappa (recDelta void void (delta void)) + 1` | $(\max(0,0)+1)+1 = 2$ |
+
+$1 \neq 2$. $\square$
+
+---
+
+### Theorem 2: `kappa_rec_succ_drop` — **False**
+
+**Claim:** `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`
+
+When `n = \texttt{delta}\; n'$:
+
+$$\text{LHS} = \max(\kappa(s),\; \max(M, \kappa(n')) + 1)$$
+$$\text{RHS} = \max(M, \kappa(n')) + 1$$
+
+Since $\kappa(s) \le M \le \max(M,\kappa(n'))+1$, both sides equal $\max(M,\kappa(n'))+1$.
+
+**Counterexample:** same as above — `b = s = void`, `n = delta void`.
+
+| Expression | Value |
+|---|---|
+| `kappa (app void (recDelta void void (delta void)))` | $\max(0, 1) = 1$ |
+| `kappa (recDelta void void (delta (delta void)))` | $1$ |
+
+$1 \not< 1$. $\square$
+
+---
+
+### Root cause
+
+The measure `kappa` defines `kappa (delta t) = kappa t` (the `delta` wrapper is invisible to `kappa`), yet the `recDelta` clause distinguishes `.delta n` syntactically to add `+1`. This means wrapping `n` in one more `delta` increases the `recDelta` measure by 1, but **if `n` already starts with `delta`**, the inner `recDelta` clause *also* fires its `+1`, so unwrapping one `delta` only drops from $+1$ to $+1$—not from $+1$ to $+0$.
+
+A correct fix would need to make `kappa` sensitive to `delta` depth (e.g., `kappa (delta t) = kappa t + 1`), or use a different structural measure (such as raw term size) for the termination argument.

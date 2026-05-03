@@ -1,0 +1,8 @@
+**Evaluating Termination Measures**
+
+I'm currently focused on the `Step` inductive type, as that's the core of the rewrite system. I'm examining how the `measure` function, specifically the pair `(phase t, cost t)`, interacts with the lexicographic ordering. It seems the key will be verifying that each rewrite step strictly decreases this measure.
+
+
+**Refining Rule Evaluations**
+
+I'm presently dissecting the `R_merge_void_left` rule. I've successfully determined the `phase` values for both sides of the rule, and now I'm carefully scrutinizing the `cost` function application to those sides. It seems like the relative magnitudes of phase values are the key. The lexicographic order demands this.

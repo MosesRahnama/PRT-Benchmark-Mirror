@@ -1,0 +1,24 @@
+In KO7-LLM-Benchmark/test-files/Test-05-Candidate-Class-Reasoning.lean, all three candidates `mu1`, `mu2`, `mu3` are “weighted size” measures (each constructor contributes a fixed constant plus the measures of its subterms). That style works for the collapsing/cancellation rules, but it breaks on the primitive-recursion unfolding rule `R_rec_succ`.
+
+**Per-rule check (key point: `R_rec_succ`)**
+- For every rule *except* `R_rec_succ`, each `mu` strictly decreases (easy arithmetic: RHS has strictly smaller constant/structure than LHS).
+- For `R_rec_succ : recDelta b s (delta n) → app s (recDelta b s n)`:
+  - `mu1`:
+    - LHS = `2 + mu1 b + mu1 s + mu1 n`
+    - RHS = `2 + mu1 b + 2*mu1 s + mu1 n`
+    - So RHS = LHS + `mu1 s` (increases if `mu1 s > 0`, and is **equal** if `s = void`).
+  - `mu2`:
+    - LHS = `6 + mu2 b + mu2 s + mu2 n`
+    - RHS = `6 + mu2 b + 2*mu2 s + mu2 n`
+    - So RHS = LHS + `mu2 s` (same failure mode as `mu1`).
+  - `mu3`:
+    - LHS = `2 + mu3 b + mu3 s + mu3 n`
+    - RHS = `3 + mu3 b + 2*mu3 s + mu3 n`
+    - So RHS = LHS + `(1 + mu3 s)` (strictly increases for all `s`).
+
+**Assessment**
+- `mu1`: Not a valid termination measure for `Step` because it can increase on `R_rec_succ` (and is non-decreasing when `s = void`).
+- `mu2`: Same issue as `mu1`; changing weights doesn’t fix the duplication of `s` introduced by `R_rec_succ`.
+- `mu3`: Strictly worse on `R_rec_succ` (always increases), though it still decreases on the other rules.
+
+If your intended termination argument is “recursion terminates because the third argument gets smaller” (the `delta n → n` aspect), you’ll need a measure that prioritizes that third argument (typically lexicographic: first the number of `delta` constructors in `n`, then a secondary size measure). These three `Nat`-valued additive size measures don’t capture that

@@ -1,0 +1,24 @@
+### Assessment
+Yes, strong normalization can be established for this system using only the given syntax and rewrite rules (assuming standard term rewriting semantics, where `Step` is closed under substitution and term contexts to form the one-step relation, and multi-step reduction is its reflexive-transitive closure). The rules define a terminating rewrite system without cycles or infinite descent, as they either simplify structures directly or unfold finite chains in a controlled manner.
+
+### Short Proof Roadmap
+Prove `∀ t : Trace, Acc Step t` (accessibility, implying strong normalization) by structural induction on `t`, leveraging the inductive definition of `Trace` and the form of the rules. The key is to show that reductions preserve accessibility, using the well-foundedness of the natural numbers implicitly via chain lengths in arguments.
+
+1. **Base case (`plum`)**: No rules apply (no matching left-hand side), so `Acc plum` holds vacuously.
+
+2. **Inductive cases**: Assume `Acc` for all proper subterms of `t`. Show that any one-step reduction `t → t'` implies `Acc t'` (by induction hypothesis on subterms), and that there are no infinite reduction paths from `t`.
+   - For constructors without direct rules (`grape u`, `mango u`, `pear u v`): Reductions only occur in subterms `u` or `v`, so `Acc t` follows from `Acc u` and `Acc v` (context closure preserves termination).
+   - For `peach u v`:
+     - If `u = plum` or `v = plum` or `u = v`, the rule reduces to a subterm (`v`, `u`, or `u`), which is accessible by IH.
+     - Otherwise, no reduction; `Acc` holds.
+   - For `banana b s u`:
+     - If `u = plum`, reduces to `b` (accessible by IH).
+     - If `u = grape n`, reduces to `pear s (banana b s n)`. The subterm `banana b s n` has a strictly shorter "grape-chain length" in its third argument (one fewer nested `grape`), so by IH on the chain length (well-founded on ℕ), `Acc (banana b s n)` holds; thus `Acc` for the `pear`. Finite chain ensures no infinite unfolding.
+     - Otherwise, no direct reduction; reductions in subterms preserve `Acc`.
+   - For `cherry a b`:
+     - If `a = b`, reduces to `plum` (accessible).
+     - If `a ≠ b`, reduces to `mango (peach a b)`. The result embeds accessible subterms `a` and `b` (by IH); `peach a b` may further reduce (to a subterm if applicable), but the added `mango` only reduces if `peach a b → grape n` (possible via sub-reductions, but finite as above), leading to `plum`. No cycles, as this introduces no new `cherry` or infinite regress.
+
+3. **No extra assumptions needed**: All cases rely only on the rules' forms (e.g., `R_apple_orange` decreases the third-argument chain depth, a derivable ℕ measure from syntax) and induction on `Trace`, without additional axioms, guards, or object-level interpretations beyond the constructors and `≠` (which is decidable from syntax). Confluence is not required for SN, but the rules' non-overlapping nature (no critical pairs generating non-terminating overlaps) supports termination.
+
+This stays within the boundaries, as the proof uses only derivable properties (e.g., finite nesting from inductive syntax) and standard meta-theory for TRS.

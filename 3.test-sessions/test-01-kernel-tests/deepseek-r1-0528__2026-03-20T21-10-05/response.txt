@@ -1,0 +1,30 @@
+Based on the provided Lean 4 file defining a rewrite calculus for traces, I can assess strong normalization directly from the calculus:
+
+**Assessment:** Strong normalization **can be established** for this system using the given rules alone.
+
+**Proof roadmap:**
+1. Define a well-founded measure on terms:  
+   `μ(t) = (recΔ-delta-count(t), size(t))`  
+   where:
+   - `recΔ-delta-count(t)` = total `delta` constructors in third arguments of all `recΔ` subterms
+   - `size(t)` = number of constructors in `t`
+
+2. Show each reduction decreases `μ` lexicographically:
+   - `R_int_delta`/`R_merge*`/`R_eq*`: Decrease `size` (second component)
+   - `R_rec_zero`: Decreases `size` (no `delta` consumed)
+   - `R_rec_succ`: Decreases `recΔ-delta-count` (first component) by consuming one `delta`
+
+3. Conclude by well-founded induction since `(ℕ, <) × (ℕ, <)` is well-founded.
+
+**Key observations:**
+- Reduction is top-level (no evaluation contexts)
+- `recΔ` is the only rule that increases term size, but strictly decreases `delta` count
+- All other rules strictly decrease term size
+- No infinite reduction sequences possible as measure decreases monotonically
+
+This proof requires no additional axioms, rules, or assumptions beyond the provided calculus. The measure relies solely on:
+1. Syntax tree structure (countable constructors)
+2. Explicit `delta` consumption in `recΔ` reduction
+3. Lexicographic ordering of natural numbers
+
+The system is strongly normalizing.

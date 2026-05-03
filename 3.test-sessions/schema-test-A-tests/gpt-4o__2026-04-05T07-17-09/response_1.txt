@@ -1,0 +1,24 @@
+The rewrite system presented consists of:
+
+1. Variables: `x`, `y`, `n`.
+2. Rules:
+   - `F(x, y, Z) -> x`
+   - `F(x, y, S(n)) -> G(y, F(x, y, n))`
+
+### Assessment:
+Strong normalization cannot be established from the presented rewrite system alone. Here's why:
+
+1. **Recursive Rule**: The second rule, `F(x, y, S(n)) -> G(y, F(x, y, n))`, introduces a recursive call to `F` with the argument `n`. Without additional constraints or structural axioms, this recursion does not guarantee termination, as there is no explicit measure or ordering on `n` to ensure that the recursion decreases and eventually terminates.
+
+2. **No Structural Axioms**: The system does not include structural axioms or assumptions about `S` (e.g., that `S` represents a successor function with a well-founded ordering). Without such assumptions, it is impossible to argue that the recursion in the second rule is strongly normalizing.
+
+3. **No Explicit Termination Measure**: The rewrite rules do not provide an explicit termination measure or ordering that decreases with each application of the rules. For example, if `n` is not well-founded, the recursion could continue indefinitely.
+
+### Proof Roadmap (if structural axioms were allowed):
+If we were allowed to assume that `S` represents a successor function over a well-founded domain (e.g., natural numbers), the proof of strong normalization could proceed as follows:
+1. Define a termination measure based on the structure of `n`, such as its "size" or "depth".
+2. Show that each application of the second rule strictly decreases this measure.
+3. Conclude that the recursion must terminate, as the measure cannot decrease indefinitely in a well-founded domain.
+
+### Conclusion:
+Without importing structural axioms or object-level assumptions about `S` and `n`, strong normalization cannot be established for this rewrite system.

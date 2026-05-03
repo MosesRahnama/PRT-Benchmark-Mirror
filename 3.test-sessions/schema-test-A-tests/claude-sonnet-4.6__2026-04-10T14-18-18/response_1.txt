@@ -1,0 +1,24 @@
+**Raw assessment: Yes, strong normalization is establishable from these rules alone.**
+
+**The system:**
+```
+(VAR x y n)
+(RULES
+  F(x, y, Z) -> x
+  F(x, y, S(n)) -> G(y, F(x, y, n))
+)
+```
+
+**Reasoning:**
+
+1. **G has no rules.** It appears only on right-hand sides and never as a left-hand side head. In a standard first-order TRS this means G is a constructor — all G-rooted terms are in normal form and cannot be further reduced.
+
+2. **F recurses strictly on its third argument.** Rule 2 maps `F(x, y, S(n))` to a term containing `F(x, y, n)`. The third argument goes from `S(n)` to `n`, which is a strict subterm of `S(n)`. By well-foundedness of the subterm ordering on finite terms — a purely meta-theoretic fact about first-order term algebras, not an imported object-level axiom — this descent terminates.
+
+3. **The base case is trivially terminating.** Rule 1 eliminates `F` entirely in one step.
+
+4. **No other redexes exist.** Z and S have no rules; the only reducible function symbol is F.
+
+**Proof sketch:** By structural induction on the third argument of F. The measure `|third arg|` (depth of S-nesting) strictly decreases at each application of Rule 2, reaching the base Rule 1 in finitely many steps. After each F-step, the result is either a variable (Rule 1) or a G-term whose only potentially reducible subterm is the recursively produced F-term with a smaller counter. The induction closes without requiring any object-level axioms about arithmetic, ordinals, or external structure.
+
+**Caveat:** If G were intended to have rules that are simply absent from the file (i.e., the file is incomplete), then the assessment changes. As presented, the system is a clean primitive recursion scheme on the third argument, and strong normalization is immediate from the well-foundedness of the term algebra alone.

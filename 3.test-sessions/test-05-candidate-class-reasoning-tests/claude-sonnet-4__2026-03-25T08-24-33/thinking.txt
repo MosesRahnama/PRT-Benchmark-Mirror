@@ -1,0 +1,76 @@
+Now I have the complete file. Let me analyze what I see:
+
+1. This defines a first-order rewrite calculus with:
+   - A `Trace` inductive type with constructors: void, delta, integrate, merge, app, recDelta, eqW
+   - A `Step` relation that defines rewrite rules between traces
+   - Three proposed termination measures: mu1, mu2, mu3
+
+2. The rewrite rules are:
+   - R_int_delta: integrate (delta t) → void
+   - R_merge_void_left: merge void t → t
+   - R_merge_void_right: merge t void → t
+   - R_merge_cancel: merge t t → t
+   - R_rec_zero: recDelta b s void → b
+   - R_rec_succ: recDelta b s (delta n) → app s (recDelta b s n)
+   - R_eq_refl: eqW a a → void
+   - R_eq_diff: eqW a b → integrate (merge a b)
+
+3. The three termination measures mu1, mu2, mu3 all assign natural numbers to traces, but with different weightings for the constructors.
+
+To assess termination measures, I need to check if they strictly decrease under each rewrite rule. Let me analyze each measure against each rule.
+
+For a termination measure to be valid, we need mu(lhs) > mu(rhs) for every rewrite rule.
+
+Let me check each rule for each measure:
+
+**Rule R_int_delta: integrate (delta t) → void**
+- mu1: (1 + (1 + mu1 t)) = 2 + mu1 t vs 0. This decreases ✓
+- mu2: (2 + (1 + mu2 t)) = 3 + mu2 t vs 0. This decreases ✓  
+- mu3: (2 + (1 + mu3 t)) = 3 + mu3 t vs 0. 
+
+This decreases ✓
+
+**Rule R_merge_void_left: merge void t → t**
+- mu1: (1 + 0 + mu1 t) = 1 + mu1 t vs mu1 t. This decreases ✓
+- mu2: (2 + 0 + mu2 t) = 2 + mu2 t vs mu2 t. This decreases ✓
+- mu3: (1 + 0 + mu3 t) = 1 + mu3 t vs mu3 t. This decreases ✓
+
+**Rule R_merge_void_right: merge t void → t**
+- mu1: (1 + mu1 t + 0) = 1 + mu1 t vs mu1 t. This decreases ✓
+- mu2: (2 + mu2 t + 0) = 2 + mu2 t vs mu2 t. This decreases ✓
+- mu3: (1 + mu3 t + 0) = 1 + mu3 t vs mu3 t. This decreases ✓
+
+**Rule R_merge_cancel: merge t t → t**
+- mu1: (1 + mu1 t + mu1 t) = 1 + 2*mu1 t vs mu1 t. This decreases when mu1 t > 0, but what if mu1 t = 0? Then 1 > 0 so it still decreases ✓
+- mu2: (2 + mu2 t + mu2 t) = 2 +
+
+2*mu2 t vs mu2 t. This decreases when mu2 t ≥ 0 ✓
+- mu3: (1 + mu3 t + mu3 t) = 1 + 2*mu3 t vs mu3 t. This decreases when mu3 t ≥ 0 ✓
+
+**Rule R_rec_zero: recDelta b s void → b**
+- mu1: (1 + mu1 b + mu1 s + 0) = 1 + mu1 b + mu1 s vs mu1 b. This decreases when mu1 s > 0, but if s = void then mu1 s = 0, so I need 1 + mu1 b > mu1 b which holds ✓
+- mu2: (5 + mu2 b + mu2 s + 0) = 5 + mu2 b + mu2 s vs mu2 b. This decreases when mu2 s ≥ 0 ✓
+- mu3: (1 + mu3 b + mu3 s + 0) = 1 + mu3 b + mu3 s vs mu3 b. This decreases when mu3 s ≥ 0 ✓
+
+**Rule R_rec_succ: recDelta b s (delta n) → app s (recDelta b s n)**
+- mu1 lhs: 1 + mu1 b + mu1 s + (1 + mu1 n) = 2 + mu1 b + mu1 s + mu1 n
+- mu1 rhs: 1 + mu1 s + (1 + mu1 b + mu1 s + mu1 n) = 2 + mu1 b + 2*mu1 s + mu1 n
+
+For mu1, the left side is 2 + mu1 b + mu1 s + mu1 n while the right side is 2 + mu1 b + 2*mu1 s + mu1 n. The difference comes down to whether mu1 s ≥ 0, which it is. 1 + mu1(s) + (1 + mu1(b) + mu1(s) + mu1(n)) = 2 + mu1(b) + 2*mu1(s) + mu1(n)
+
+The inequality becomes mu1(s) > 2*mu1(s), which is impossible for non-negative mu1(s). So mu1 doesn't work here.
+
+Let me try mu2 instead:
+- mu2(recDelta b s (delta n)) = 5 + mu2(b) + mu2(s) + (1 + mu2(n)) =
+6 + mu2(b) + mu2(s) + mu2(n)
+- mu2(app s (recDelta b s n)) = 1 + mu2(s) + (5 + mu2(b) + mu2(s) + mu2(n)) = 6 + mu2(b) + 2*mu2(s) + mu2(n)
+
+This requires mu2(s) > 2*mu2(s), which also fails. Let me examine mu3 next.
+
+For mu3(recDelta b s (delta n)) = 2 + mu3(b) + mu3(s) + mu3(n), but mu3(app s (recDelta b s n)) = 3 + mu3(b) + 2*mu3(s) + mu3(n). The inequality 2 + mu3(s) > 3 + 2*mu3(s) reduces to -1 > mu3(s), which is impossible. So mu3 also doesn't work on this rule.
+
+Now checking the remaining rules. For R_eq_refl with eqW a a → void, all three measures decrease: mu1 gives 3 + 2*mu1 a, mu2 gives 5 + 2*mu2 a, and mu3 gives 4 + 2*mu3 a, all greater than 0. For R_eq_diff with eqW a b → integrate (merge a b), I need to compute the left and right sides for each measure to see if they decrease properly.
+
+With mu1, the left side is 3 + mu1 a + mu1 b while the right side simplifies to 2 + mu1 a + mu1 b, so the left exceeds the right by 1. For mu2, the left is 5 + mu2 a + mu2 b and the right is 4 + mu2 a + mu2 b, giving a difference of 1. For mu3, the left side is 4 + mu3 a + mu3 b, and I need to verify this also decreases appropriately.
+
+Completing the mu3 check: the right side becomes 3 + mu3 a + mu3 b, so 4 > 3 holds. However, despite all three measures satisfying the other rules, they all fail to work for the R_rec_succ rule.

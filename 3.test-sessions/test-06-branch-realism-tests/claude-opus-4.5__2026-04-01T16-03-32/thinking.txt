@@ -1,0 +1,44 @@
+Now let me analyze this file carefully.
+
+## The Setup
+
+We have a first-order rewrite calculus with:
+- **Trace** - an inductive type with constructors: `void`, `delta`, `integrate`, `merge`, `app`, `recDelta`, `eqW`
+- **Step** - rewrite rules
+- **kappa** - a structural measure
+
+## The Key Question: Is the helper strategy sound?
+
+The two helper theorems are:
+1. `kappa_rec_delta_step`: Claims `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`
+2. `kappa_rec_succ_drop`: Claims `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`
+
+Let me check if these are actually true given the definition of `kappa`.
+
+### Analysis of `kappa_rec_delta_step`
+
+The theorem claims:
+```
+kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1
+```
+
+From the definition of `kappa`:
+- `kappa (recDelta b s (delta n)) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1`
+
+Now, what is `kappa (recDelta b s n)`?
+
+This depends on whether `n` matches the pattern `delta _`. 
+
+**Case 1:** If `n` is of the form `delta m` for some `m`:
+- `kappa (recDelta b s n) = kappa (recDelta b s (delta m)) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1`
+
+**Case 2:** If `n` is NOT of the form `delta _` (e.g., `n = void`, `n = merge a' b'`, etc.):
+
+
+- `kappa (recDelta b s n) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)`
+
+The theorem applies universally, so I need to verify both cases. On the left side, `kappa (recDelta b s (delta n)) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1` since `kappa (delta n) = kappa n`. On the right side, `kappa (recDelta b s n) + 1` depends on what `n` is—if it's not already a `delta`, then the right side becomes `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1`, which matches. But if `n` is a `delta`, the equation breaks down.
+
+When `n = delta m`, the left side evaluates to `Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1`, while the right side becomes `Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 2`. These don't match, so the theorem fails for `delta` terms. A concrete counterexample with `b = void`, `s = void`, `n = delta void` gives LHS = 1 and RHS = 2.
+
+For the second theorem, when `n` is not a `delta`, the inequality holds since `Nat.max (kappa s) (Nat.max (Nat.max (kappa b) (kappa s)) (kappa n))` simplifies to `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)`, which is strictly less than the right side plus 1. However, when `n = delta m`, both sides equal `M + 1` where `M = Nat.max (Nat.max (kappa b) (kappa s)) (kappa m)`, making the strict inequality false. The same counterexample demonstrates this failure. Both theorems are unsound because they don't account for the special pattern matching behavior when the argument is already a `delta` term.

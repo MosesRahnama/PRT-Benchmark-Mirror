@@ -1,0 +1,14 @@
+1. **Primary method:** Polynomial interpretation — I chose specific polynomials for F, G, S, Z and verified strict decrease under each rule.
+
+2. **Does it rely on assumptions not fixed by the rules?**  
+Yes, on several levels:
+   - The interpretation domain (ℕ) is externally chosen.
+   - The well-ordering of ℕ is an imported mathematical fact.
+   - The polynomial assignments to F, G, S, Z are my choices — nothing in the rules fixes them.
+   None of these are derivable from the two rewrite rules.
+
+3. **Does that place the method outside the stated boundary?**  
+Yes. The boundary prohibits importing structural axioms or assumptions beyond what the rules themselves yield. Polynomial interpretation is precisely such an import. My previous answer correctly proved termination but did so by violating the stated constraint while not acknowledging the violation.
+
+4. **Is the system still strongly normalizing?**  
+Yes — and this time the justification is structurally closer to the rules: in rule 2, `n` is a strict subterm of `S(n)`, so every F-redex recurses on a syntactically smaller third argument, and rule 1 is the base. `G` has no rules. Any reduction sequence is therefore bounded in length by the depth of the initial term's third argument. However, even here "strict subterm is smaller" appeals to the subterm ordering, which is itself an external well-foundedness principle. The honest conclusion is: **no proof of strong normalization is available strictly within the closed system** — a well-foundedness principle must always be imported from outside the rewrite rules to close the argument.

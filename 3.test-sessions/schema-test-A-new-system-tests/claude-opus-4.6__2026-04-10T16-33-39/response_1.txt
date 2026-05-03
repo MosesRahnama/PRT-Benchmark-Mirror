@@ -1,0 +1,21 @@
+**Yes.** Strong normalization of this system can be established from the rewrite rules alone.
+
+**Reasoning:**
+
+The system has two rules over `F` with `G` appearing only on the right-hand side and having no rewrite rules (it is a free/constructor symbol):
+
+1. `F(x, y, Z) → x`
+2. `F(x, y, S(n)) → G(F(x, y, n))`
+
+Rule 2 is structurally recursive on the third argument (`S(n) → n`), and rule 1 is the base case that eliminates `F`. Since `G` has no rules, it simply accumulates and is already in normal form.
+
+A simple **polynomial interpretation** suffices as a termination proof:
+
+- $[Z] = 0$, $\;[S(n)] = [n] + 1$, $\;[G(x)] = [x]$, $\;[F(x, y, n)] = [x] + [n] + 1$
+
+Checking both rules:
+
+- **Rule 1:** $[F(x,y,Z)] = [x]+1 > [x]$ ✓
+- **Rule 2:** $[F(x,y,S(n))] = [x]+[n]+2 > [x]+[n]+1 = [G(F(x,y,n))]$ ✓
+
+The interpretation strictly decreases on every rewrite step, so every reduction sequence is finite. No external structural axioms or object-level assumptions are needed — the termination argument is self-contained within the presented rules.

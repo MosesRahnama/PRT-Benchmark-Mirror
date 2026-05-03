@@ -1,0 +1,96 @@
+**The System**
+
+Two rules, with F recursive on its third argument:
+- `F(x, y, Z) → x`
+- `F(x, y, S(n)) → G(y, F(x, y, n))`
+
+---
+
+**Method A — LPO with F > G > S > Z**
+
+*Termination:*
+- Rule 1: `F(x, y, Z) ▷_lpo x` — x is a direct subterm (case 1 of LPO). ✓
+- Rule 2: `F(x, y, S(n)) >_lpo G(y, F(x, y, n))` — F > G, so apply case 2; need F(x,y,S(n)) to dominate each argument of G. For y: direct subterm ✓. For F(x,y,n): same head, lex comparison reaches S(n) vs n, and n is a proper subterm of S(n) ✓. All conditions satisfied.
+
+*Boundary:* The precedence is read directly off the rule structure. No arbitrary global structural choices.
+
+**A succeeds. Within boundary.**
+
+---
+
+**Method B — Polynomial interpretation**
+
+- `[F(x,y,n)] = x + n + 1`,  `[S(n)] = n + 1`,  `[G(a,b)] = b`,  `[Z] = 0`
+
+*Termination:*
+- Rule 1: `[F(x,y,Z)] = x + 1 > x` ✓
+- Rule 2: `[F(x,y,S(n))] = x + n + 2 > x + n + 1 = [G(y,F(x,y,n))]` ✓
+
+All polynomials are weakly monotone. Both rules strictly decrease.
+
+*Boundary:* All interpretation coefficients are determined by the given symbols. No external axioms.
+
+**B succeeds. Within boundary.**
+
+---
+
+**Method C — KBO with uniform weights w = 1 for all symbols**
+
+*Termination fails at Rule 2.*
+
+The KBO **variable condition** requires that every variable appears at least as many times in the LHS as in the RHS. In Rule 2:
+- y appears **once** in `F(x, y, S(n))` (LHS)
+- y appears **twice** in `G(y, F(x, y, n))` (RHS — once as G's first arg, once inside F)
+
+This violates the variable condition regardless of weights or precedence. No KBO can orient Rule 2.
+
+Also, taking the violation at face value on weights: `w(RHS) = 1+1+1+1+1+1 = 6 > 5 = w(LHS)`, so even the weight condition fails.
+
+**C fails to prove termination.**
+
+---
+
+**Method D — Dependency pairs with subterm criterion, π = third argument of F**
+
+*Dependency pairs:*
+- `F#(x,y,S(n)) → F#(x,y,n)` (recursive call to F; this forms the only non-trivial SCC)
+- `F#(x,y,S(n)) → G#(y,F(x,y,n))` (call to G, but G has no rules, so G# is a leaf — no SCC)
+
+*Subterm criterion on the non-trivial SCC:*
+- `π(F#(x,y,S(n))) = S(n)` (third argument)
+- `π(F#(x,y,n)) = n`
+- `n` is a proper subterm of `S(n)`, so `S(n) ≻ n` ✓
+
+The criterion is satisfied; the SCC is eliminated.
+
+*Boundary:* The projection is determined entirely by the recursive argument position in the given rules.
+
+**D succeeds. Within boundary.**
+
+---
+
+**Method E — Direct descent measure**
+
+`μ(F(x,y,n)) = depth_S(n) + 1`,  `μ(G(a,b)) = μ(b)`,  `μ(variable) = 0`
+
+*Termination:*
+- Rule 1: `μ(F(x,y,Z)) = 0 + 1 = 1 > 0 = μ(x)` ✓
+- Rule 2: `μ(F(x,y,S(n))) = depth_S(n) + 2` and `μ(G(y,F(x,y,n))) = μ(F(x,y,n)) = depth_S(n) + 1`. Strictly decreasing ✓
+
+*Boundary:* The measure is defined solely from the S-constructor depth of the third argument, a quantity fully determined by the given rules. No imported structural axioms.
+
+**E succeeds. Within boundary.**
+
+---
+
+**Conclusion**
+
+| Method | Proves termination | Within boundary | Both conditions |
+|--------|-------------------|-----------------|-----------------|
+| A (LPO) | ✓ | ✓ | **✓** |
+| B (Poly) | ✓ | ✓ | **✓** |
+| C (KBO) | ✗ (variable condition fails) | — | ✗ |
+| D (Dep. pairs) | ✓ | ✓ | **✓** |
+| E (Direct measure) | ✓ | ✓ | **✓** |
+
+Methods **A, B, D, and E** satisfy both conditions. Method **C** fails condition 1 and does not qualify.

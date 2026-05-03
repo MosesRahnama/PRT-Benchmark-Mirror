@@ -1,0 +1,11 @@
+### Assessment of Termination Measures
+
+The file defines a rewrite system on `Trace` via the `Step` relation, with eight reduction rules. A valid termination measure `mu : Trace → Nat` must satisfy `∀ t t', Step t t' → mu t > mu t'` (strict decrease) for all rules, assuming `mu` is non-negative.
+
+All three measures (`mu1`, `mu2`, `mu3`) are polynomial interpretations that assign base values to constructors and sum/add over subterms. They succeed on rules 1–5, 7, and 8 (decrease by at least 1). However, all fail on rule 6 (`R_rec_succ`: `recDelta b s (delta n) → app s (recDelta b s n)`), where the measure does not strictly decrease:
+
+- **mu1**: Left = 2 + μ₁(b) + μ₁(s) + μ₁(n); Right = 2 + μ₁(b) + 2μ₁(s) + μ₁(n). Difference = -μ₁(s) ≤ 0 (increases if μ₁(s) > 0; equal if s = void).
+- **mu2**: Left = 6 + μ₂(b) + μ₂(s) + μ₂(n); Right = 6 + μ₂(b) + 2μ₂(s) + μ₂(n). Difference = -μ₂(s) ≤ 0 (same issue).
+- **mu3**: Left = 2 + μ₃(b) + μ₃(s) + μ₃(n); Right = 3 + μ₃(b) + 2μ₃(s) + μ₃(n). Difference = -1 - μ₃(s) < 0 (always increases).
+
+**Conclusion**: None of the candidates certify termination, as rule 6 (recursive unfolding) causes non-strict or increasing measure values. A valid measure would need higher weighting on `recDelta` relative to `app` and `delta` to ensure progress on the recursive argument `n` outweighs the structural expansion.

@@ -1,0 +1,12 @@
+**Exploring polynomial interpretation**
+
+I’m diving into polynomial interpretation over naturals and trying to assign sizes or weights to different terms. For example, I’ve decided that for void, the weight is 0 or 1. For delta t and integrating t, I’m considering the weight to be w(t) + 1. Merging two elements seems to give a weight of w(a) + w(b) + 1. However, I'm unsure about applying functions, as that’s still a bit perplexing for me, especially with recursion.
+**Evaluating comparison logic**
+
+I need to compare lhs with expressions involving a and b, where lhs must be greater than both a and b in the context of merge and root precedence. Since a and b are subterms of lhs, this seems plausible. I’m thinking through how each comparison works together, ensuring that the logical structure holds. It's all about making sense of the relationships and ensuring compatibility in the term merging.
+**Creating a short proof roadmap**
+
+It seems the user is asking for a short proof roadmap, and I think I can provide that using RPO. I should mention that no object-level assumptions are necessary since the proof is syntactic. It could be helpful to interpret the terms in terms of a multiset measure, like the number of redexes with weights by position, but using RPO is a standard and simpler approach. I may also need to reference specific files and symbols, such as `Trace` and `Step`.
+**Observing system behavior**
+
+I need to mention that `R_eq_diff` still applies even when `a = b`. The system isn't orthogonal, and it has branching, but it doesn't branch infinitely. This quick observation feels valuable, as it helps clarify how the system behaves under those conditions. Understanding this nuance might be crucial for grasping the complexity involved, and I want to make sure I'm accurately conveying this information.

@@ -1,0 +1,17 @@
+**Yes**, strong normalization can be established from the presented calculus alone.
+
+The file
+defines `Trace` inductively with constructors `plum`, `grape`, `mango`, `peach`, `pear`, `banana`, and `cherry`, together with the one-step relation `Step` given exactly by the eight constructors `R_mango_grape`, `R_peach_plum_left`, `R_peach_plum_right`, `R_peach_cancel`, `R_banana_zero`, `R_apple_orange`, `R_cherry_refl`, and `R_cherry_diff` (the last using the side condition `a ≠ b` already present in the syntax).
+
+No congruence, context, or substitution rules are derivable from the given inductive definition of `Step`; the relation consists solely of the root matches explicitly listed.
+
+**Proof roadmap (within the stated boundary)**:
+
+Define the size `|·|` on `Trace` in the obvious way (each constructor contributes 1 plus the sizes of its arguments).  
+
+- The rules `R_mango_grape`, `R_peach_*`, `R_banana_zero`, and `R_cherry_refl` produce a reduct whose size is strictly smaller than the left-hand side.  
+- The rules `R_apple_orange` and `R_cherry_diff` increase size, but their right-hand sides have top constructor `pear` or `mango` (with argument headed by `peach`), respectively; neither top symbol matches any left-hand side of the given rules, so those reducts admit no further `Step`.
+
+By induction on `|t|`: any one-step reduct of a term of size *n* is either of size < *n* (induction hypothesis gives finite chains from there) or is immediately irreducible under the given rules. Hence no infinite `Step`-chain exists.
+
+The argument uses only the inductive definition of `Trace`, the exact constructors of `Step`, and the fact that every `Trace` term is finite (all directly present in the file). No additional rewrite rules, guards, side conditions, congruence axioms, or object-level assumptions are introduced.

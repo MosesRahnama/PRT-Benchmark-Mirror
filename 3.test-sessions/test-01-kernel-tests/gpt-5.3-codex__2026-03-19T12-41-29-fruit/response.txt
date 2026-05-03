@@ -1,0 +1,30 @@
+I’ve extracted the rewrite rules and completed the termination analysis, so I’ll now finalize the checklist and give you the verdict.
+I’m marking the final step complete now that I’m ready to deliver the concise yes/no assessment and rationale.
+## Verdict
+
+Yes — **strong normalization can be established from this calculus alone** (no extra axioms/rules needed).
+
+From
+, the rewrite system is finite and can be oriented by a standard well-founded reduction ordering (e.g., LPO/RPO with a suitable precedence), so every rewrite sequence is finite.
+
+## Short roadmap (within your boundary)
+
+A clean route is:
+
+1. Treat the rules as a first-order TRS (the `a ≠ b` condition in `R_cherry_diff` only restricts firing, so it does not introduce nontermination risk).
+2. Use LPO (or RPO) with a precedence such as  
+   `banana ≻ pear`, `cherry ≻ mango ≻ peach`, and `grape ≻ plum` (with `cherry ≻ peach` as well).
+3. Check each rule decreases:
+   - `mango (grape t) → plum` (strictly smaller),
+   - `peach ... → ...` and `banana ... plum → b` by subterm decrease,
+   - `banana b s (grape n) → pear s (banana b s n)` decreases because `grape n ≻ n` and top symbol drops from `banana` to `pear`,
+   - `cherry a b → mango (peach a b)` decreases by precedence (`cherry` above `mango`/`peach`).
+4. By well-foundedness of LPO/RPO, no infinite reduction chain exists.
+
+So the answer is **yes**, and the proof stays entirely inside the presented syntax/rules.
+
+## Updated checklist
+
+- [x] Read target Lean calculus file  
+- [x] Assess SN from rules alone  
+- [x] Deliver verdict with brief roadmap

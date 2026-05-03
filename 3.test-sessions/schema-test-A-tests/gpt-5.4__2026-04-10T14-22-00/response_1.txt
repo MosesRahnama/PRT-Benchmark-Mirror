@@ -1,0 +1,15 @@
+My assessment is yes: strong normalization can be established from the rewrite system in KO7-LLM-Benchmark/test-files/Schema-Test-A.trs alone, without importing extra structural axioms or object-level assumptions.
+
+Briefly, the system is:
+
+```text
+F(x, y, Z) -> x
+F(x, y, S(n)) -> G(y, F(x, y, n))
+```
+
+A standard termination ordering already orients both rules. For example, with a lexicographic path ordering or recursive path ordering using a precedence such as $F > G > S > Z$:
+
+- $F(x,y,Z) > x$ because the left side strictly contains $x$ as a proper subterm.
+- $F(x,y,S(n)) > G(y,F(x,y,n))$ because the left root symbol $F$ dominates $G$, and also $F(x,y,S(n)) > F(x,y,n)$ since $S(n) > n$.
+
+So the recursive call is strictly smaller in the third argument, and the whole right-hand side is still below the left-hand side in a well-founded simplification order. That is enough to conclude termination, hence strong normalization, for ordinary first-order rewriting on the given rules alone.

@@ -1,0 +1,109 @@
+I'll analyze the remaining three cases that need to be proved in the `mu_decreases` theorem. Let me examine the structure and provide a proof skeleton for each.
+
+Looking at the file, the three remaining cases are:
+1. `Step.R_rec_succ b s n` (line 129-154)
+2. `Step.R_eq_refl a` (line 156-162) 
+3. `Step.R_eq_diff a b` (line 164-178)
+
+Here's a proof skeleton for completing these cases:
+
+## Proof Skeleton for Remaining Cases
+
+### 1. Case `Step.R_rec_succ b s n`
+
+```lean4
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- Key inequality: omega^(omega^5 * (mu n + 1) + 1 + mu s + 6) > omega^3 * (mu s + 1) + omega^2 * (omega^(mu n + mu s + 6) + omega * (mu b + 1) + 2) + 1
+    -- Strategy: Use properties of ordinal exponentiation
+    -- 1. Show omega^5 * (mu n + 1) + 1 + mu s + 6 > mu n + mu s + 6
+    have h1 : omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6 > mu n + mu s + 6 := by
+      omega
+    -- 2. Therefore omega^(omega^5 * (mu n + 1) + 1 + mu s + 6) > omega^(mu n + mu s + 6)
+    have h2 : omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6) > omega0 ^ (mu n + mu s + 6) :=
+      Ordinal.opow_lt_opow_of_exponent_lt omega_pos h1
+    -- 3. Show omega^(mu n + mu s + 6) dominates the RHS terms
+    have h3 : omega0 ^ (mu n + mu s + 6) > omega0 ^ (3 : Ordinal) * (mu s + 1) := by
+      apply lt_of_lt_of_le ?_ (Ordinal.opow_le_opow_right omega_pos (by omega))
+      exact Ordinal.opow_pos _ omega_pos
+    have h4 : omega0 ^ (mu n + mu s + 6) > omega0 ^ (2 : Ordinal) * (omega0 ^ (mu n + mu s + 6) + omega0 * (mu b + 1) + 2) := by
+      -- This requires careful ordinal arithmetic
+      sorry
+    -- Combine inequalities
+    exact lt_of_lt_of_le (lt_of_lt_of_le h2 h4) (by omega)
+```
+
+### 2. Case `Step.R_eq_refl a`
+
+```lean4
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- Need: 0 < omega^(2 * mu a + 9) + 1
+    -- This is trivial since omega^(2 * mu a + 9) ≥ 1
+    have h : 0 < omega0 ^ (2 * mu a + 9) :=
+      Ordinal.opow_pos _ omega_pos
+    exact lt_of_lt_of_le h (by omega)
+```
+
+### 3. Case `Step.R_eq_diff a b`
+
+```lean4
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- Need: omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 2) + 1 < omega^(mu a + mu b + 9) + 1
+    -- Strategy: Compare exponents
+    -- 1. Show mu a + mu b + 9 > 4
+    have h1 : mu a + mu b + 9 > (4 : Ordinal) := by
+      omega
+    -- 2. Therefore omega^(mu a + mu b + 9) > omega^4
+    have h2 : omega0 ^ (mu a + mu b + 9) > omega0 ^ (4 : Ordinal) :=
+      Ordinal.opow_lt_opow_of_exponent_lt omega_pos h1
+    -- 3. Show omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 2) < omega^(mu a + mu b + 9)
+    -- This requires showing the RHS exponent dominates all terms on LHS
+    have h3 : omega0 ^ (4 : Ordinal) * (omega0 ^ (3 : Ordinal) * (mu a + 1) + omega0 ^ (2 : Ordinal) * (mu b + 1) + 2) <
+              omega0 ^ (mu a + mu b + 9) := by
+      -- Use properties of ordinal multiplication and exponentiation
+      -- omega^4 * omega^3 = omega^(4+3) = omega^7 < omega^(mu a + mu b + 9) when mu a + mu b ≥ 2
+      have h4 : omega0 ^ (4 : Ordinal) * omega0 ^ (3 : Ordinal) = omega0 ^ (7 : Ordinal) := by
+        rw [← Ordinal.opow_add]
+        omega
+      have h5 : 7 < mu a + mu b + 9 := by
+        omega
+      have h6 : omega0 ^ (7 : Ordinal) < omega0 ^ (mu a + mu b + 9) :=
+        Ordinal.opow_lt_opow_of_exponent_lt omega_pos h5
+      -- The other terms are dominated by omega^7
+      sorry
+    exact lt_of_lt_of_le (by omega) h3
+```
+
+## Key Mathematical Lemmas Needed
+
+To complete these proofs, you'll need to use the following ordinal arithmetic properties from Mathlib:
+
+1. **Exponentiation properties**:
+   - `Ordinal.opow_pos : 0 < a → 0 < a ^ b` for `b > 0`
+   - `Ordinal.opow_lt_opow_of_exponent_lt : 1 < a → b < c → a ^ b < a ^ c`
+   - `Ordinal.opow_le_opow_right : 1 < a → b ≤ c → a ^ b ≤ a ^ c`
+   - `Ordinal.opow_add : a ^ (b + c) = a ^ b * a ^ c` for `a > 0`
+
+2. **Multiplication properties**:
+   - `Ordinal.mul_le_mul_left : a ≤ b → c * a ≤ c * b` for `c > 0`
+   - `Ordinal.mul_lt_mul_of_pos_left : a < b → 0 < c → c * a < c * b`
+   - `Ordinal.mul_lt_mul_of_pos_right : a < b → 0 < c → a * c < b * c`
+
+3. **Addition properties**:
+   - Basic properties from `Mathlib.Tactic.Omega`
+
+4. **Specific to omega**:
+   - `omega_pos : 0 < ω`
+   - Properties of `ω` as a limit ordinal
+
+## Implementation Strategy
+
+1. **Use the `omega` tactic** for linear arithmetic with ordinals
+2. **Break down complex inequalities** into smaller lemmas
+3. **Leverage the fact that `ω` is a principal ordinal** (imported via `Mathlib.SetTheory.Ordinal.Principal`)
+4. **Use `calc` blocks** to structure the proof clearly
+5. **Consider adding helper lemmas** if the proofs become too complex
+
+The most challenging case is `R_rec_succ` due to the nested exponentiation. You may need to prove additional lemmas about how `ω^(ω^5 * x)` dominates polynomial expressions in `ω`.

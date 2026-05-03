@@ -1,0 +1,41 @@
+**Conclusion**
+- The helper strategy in KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean is not sound as written: `kappa_rec_delta_step` is false for some `n`, and consequently `kappa_rec_succ_drop` is also false in those cases.
+
+**Key Calculation (Counterexample)**
+Take `b = void`, `s = void`, and `n = delta void`.
+
+1) Evaluate the left side of `kappa_rec_delta_step`:
+- `kappa (recDelta void void (delta (delta void)))`
+- By the `recDelta ... (.delta n)` clause and `kappa_delta`:
+  - `kappa (recDelta void void (delta (delta void)))`
+  - `= max (max (kappa void) (kappa void)) (kappa (delta void)) + 1`
+  - `= max (max 0 0) (kappa void) + 1`
+  - `= max 0 0 + 1`
+  - `= 1`
+
+2) Evaluate the right side:
+- `kappa (recDelta void void (delta void)) + 1`
+- Again by the `.delta n` clause:
+  - `kappa (recDelta void void (delta void))`
+  - `= max (max 0 0) (kappa void) + 1`
+  - `= 1`
+- So RHS `= 1 + 1 = 2`
+
+Thus `kappa (recDelta void void (delta (delta void))) = 1` but `kappa (recDelta void void (delta void)) + 1 = 2`, so the claimed equality fails.
+
+**Why `kappa_rec_succ_drop` Also Fails**
+With the same values (`b = void`, `s = void`, `n = delta void`):
+
+- Left side:
+  - `kappa (app void (recDelta void void (delta void)))`
+  - `= max (kappa void) (kappa (recDelta void void (delta void)))`
+  - `= max 0 1 = 1`
+- Right side:
+  - `kappa (recDelta void void (delta (delta void))) = 1` (computed above)
+
+So the strict inequality `1 < 1` is false.
+
+**Underlying Issue**
+- Your `kappa` “charges” `+1` only for the *outermost* `delta` in the third argument of `recDelta`, but it does **not** distinguish `n` from `delta n` in general (`kappa (delta t) = kappa t`). This makes nested deltas collapse, and the “+1 per successor peel” intuition breaks exactly when `n` itself is a `delta _`.
+
+If you want, I can suggest minimal conditions under which a corrected lemma *would* hold (e.g. adding a hypothesis “`n` is not a `delta _`”), or an alternative measure that actually decreases on repeated `R_rec_succ` steps—without editing the file.

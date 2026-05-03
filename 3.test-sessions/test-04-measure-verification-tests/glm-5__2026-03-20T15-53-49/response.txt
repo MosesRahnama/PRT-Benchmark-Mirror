@@ -1,0 +1,46 @@
+## Assessment: The Termination Measure is **Unsound**
+
+I've analyzed the Lean 4 file. The proposed lexicographic measure `(phase t, cost t)` is **not sound** for proving termination of the rewrite system.
+
+### The Measure Components
+
+- **`phase`**: Returns 1 only for terms of the form `recDelta _ _ (.delta _)`, otherwise 0
+- **`cost`**: A structural size measure counting constructors with weights
+- **`measure`**: Lexicographic pair `(phase, cost)`
+
+### Counterexample: `R_merge_void_left`
+
+Consider the rule:
+```lean
+R_merge_void_left : ∀ t, Step (merge void t) t
+```
+
+When `t = recDelta b s (delta n)`:
+- **Before**: `merge void (recDelta b s (delta n))`
+  - `phase = 0` (merge doesn't match the recDelta pattern)
+  - `cost = 1 + 0 + cost(recDelta ...) = 1 + cost(t)`
+  - **Measure**: `(0, 1 + cost(t))`
+
+- **After**: `recDelta b s (delta n)`
+  - `phase = 1` (matches the recDelta-delta pattern!)
+  - `cost = cost(t)`
+  - **Measure**: `(1, cost(t))`
+
+In lexicographic ordering, **`(1, cost(t)) > (0, 1 + cost(t))`** because the first component 1 > 0.
+
+### Additional Problematic Rules
+
+The same issue affects:
+- **`R_merge_void_right`**: `merge t void → t` when `phase t = 1`
+- **`R_merge_cancel`**: `merge t t → t` when `phase t = 1`  
+- **`R_rec_zero`**: `recDelta b s void → b` when `phase b = 1`
+
+### What Works
+
+The measure correctly handles:
+- **`R_rec_succ`**: Phase decreases from 1 to 0, so measure decreases regardless of cost
+- **`R_int_delta`**, **`R_eq_refl`**, **`R_eq_diff`**: Cost decreases with same phase
+
+### Conclusion
+
+The measure fails because the `phase` function only identifies a narrow pattern (`recDelta _ _ (.delta _)`), but rewrite rules can produce such terms from terms with phase 0. A sound measure would need to account for the possibility that reducing a term can increase its phase.

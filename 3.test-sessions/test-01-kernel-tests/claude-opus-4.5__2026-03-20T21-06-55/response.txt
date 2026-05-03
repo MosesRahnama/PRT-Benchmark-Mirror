@@ -1,0 +1,29 @@
+**Assessment: Yes, strong normalization is provable from this calculus alone.**
+
+The system admits a polynomial interpretation over ℕ⁺ that strictly decreases on every rewrite rule:
+
+**Interpretation:**
+- `⟦void⟧ = 1`
+- `⟦delta t⟧ = ⟦t⟧ + 1`
+- `⟦integrate t⟧ = ⟦t⟧ + 1`
+- `⟦merge t₁ t₂⟧ = ⟦t₁⟧ + ⟦t₂⟧ + 1`
+- `⟦app t₁ t₂⟧ = ⟦t₁⟧ + ⟦t₂⟧ + 1`
+- `⟦recΔ b s n⟧ = ⟦b⟧ + (⟦s⟧ + 2)·⟦n⟧ + 1`
+- `⟦eqW a b⟧ = 2·(⟦a⟧ + ⟦b⟧ + 1)`
+
+**Verification sketch:**
+
+| Rule | LHS | RHS | Decrease |
+|------|-----|-----|----------|
+| R_int_delta | ⟦t⟧ + 2 | 1 | ✓ |
+| R_merge_void_left | ⟦t⟧ + 2 | ⟦t⟧ | ✓ |
+| R_merge_void_right | ⟦t⟧ + 2 | ⟦t⟧ | ✓ |
+| R_merge_cancel | 2⟦t⟧ + 1 | ⟦t⟧ | ✓ |
+| R_rec_zero | ⟦b⟧ + ⟦s⟧ + 3 | ⟦b⟧ | ✓ |
+| R_rec_succ | ⟦b⟧ + (⟦s⟧+2)(⟦n⟧+1) + 1 | ⟦b⟧ + ⟦s⟧ + (⟦s⟧+2)⟦n⟧ + 2 | ✓ (difference = 1) |
+| R_eq_refl | 4⟦a⟧ + 2 | 1 | ✓ |
+| R_eq_diff | 2⟦a⟧ + 2⟦b⟧ + 2 | ⟦a⟧ + ⟦b⟧ + 2 | ✓ |
+
+The multiplicative weight on `eqW` compensates for the syntactic size increase in R_eq_diff. The coefficient `(⟦s⟧ + 2)` on the recursor's third argument handles the step function application in R_rec_succ.
+
+**No external axioms required**—polynomial interpretations over well-founded ℕ are a purely syntactic termination method derivable from the rewrite system itself.

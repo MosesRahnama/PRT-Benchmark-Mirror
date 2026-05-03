@@ -1,0 +1,19 @@
+**Yes**, strong normalization can be established purely from the given syntax and rewrite rules using structural induction on `Trace`.
+
+**Proof roadmap**:
+
+Prove `∀ t, Acc Step t` by induction on `t`:
+
+- Non-reducing roots (`plum`, `grape _`, `pear _ _`, `mango u` with `u ≠ grape _`, non-matching `peach _ _`, `banana _ _ v` with `v ≠ plum ∧ v ≠ grape _`): vacuously `Acc`.
+
+- `mango (grape t)` → `plum` (`Acc` base).
+
+- `peach plum t` → `t` (`Acc t` by IH); similarly `peach t plum`, `peach t t`.
+
+- `banana b s plum` → `b` (`Acc b` by IH).
+
+- `banana b s (grape n)` → `pear s (banana b s n)` (root `pear`, no rule → `Acc`).
+
+- `cherry a a` → `plum` (`Acc`).
+
+- `cherry a b` (`a ≠ b`) → `mango (peach a b)` (root `mango`, arg head `peach ≠ grape` → no rule → `Acc`).

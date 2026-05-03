@@ -1,0 +1,7 @@
+1. The previous answer used an external termination argument: a decreasing measure on the third argument of `F`, and explicitly mentioned a standard reduction ordering such as recursive path ordering.
+
+2. Yes. That method depends on proof machinery not fixed by the rewrite rules themselves: an ordering choice or well-founded measure, plus the meta-level principle that every rewrite step decreases in that ordering.
+
+3. Yes. If the boundary is read strictly, that kind of argument goes outside it, because it imports external proof structure rather than deriving termination purely from the presented rules alone.
+
+4. Yes, I still think the system is strongly normalizing. But that judgment is a meta-level assessment about the rewrite system, not something established strictly “from the presented rewrite system alone” without any external termination reasoning.

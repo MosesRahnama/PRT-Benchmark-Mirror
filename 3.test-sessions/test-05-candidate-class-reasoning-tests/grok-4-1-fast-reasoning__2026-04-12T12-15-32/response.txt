@@ -1,0 +1,10 @@
+**Assessment of Termination Measures**
+
+None of the three measures (`mu1`, `mu2`, `mu3`) prove termination of the rewrite system, as all fail to strictly decrease on rule `R_rec_succ`:  
+$\texttt{recDelta } b\ s\ (\texttt{delta } n) \to \texttt{app } s\ (\texttt{recDelta } b\ s\ n)$.
+
+- **mu1**: $\mu_1(\text{lhs}) = 2 + \mu_1(b) + \mu_1(s) + \mu_1(n) \le 2 + \mu_1(b) + 2\mu_1(s) + \mu_1(n) = \mu_1(\text{rhs})$, equality if $\mu_1(s) = 0$.
+- **mu2**: $\mu_2(\text{lhs}) = 6 + \mu_2(b) + \mu_2(s) + \mu_2(n) \le 6 + \mu_2(b) + 2\mu_2(s) + \mu_2(n) = \mu_2(\text{rhs})$.
+- **mu3**: $\mu_3(\text{lhs}) = 2 + \mu_3(b) + \mu_3(s) + \mu_3(n) < 3 + \mu_3(b) + 2\mu_3(s) + \mu_3(n) = \mu_3(\text{rhs})$.
+
+All strictly decrease on the other rules. A valid measure requires adjustment for the recursive unwinding (e.g., weighting `s` differently or using a lexicographic tuple).

@@ -1,0 +1,12 @@
+**Yes, strong normalization can be established from the presented rewrite system alone.**
+
+**Short proof roadmap:**
+
+The TRS is finite, left-linear, and has only two rules with disjoint patterns (`Z` vs. `S(_)`). Define a well-founded measure on terms based on the *multiset of sizes of third arguments of all `F`-subterms*, where size is the standard term size (number of symbols). 
+
+- `F(x, y, Z) → x` eliminates an `F` entirely (measure decreases).
+- `F(x, y, S(n)) → G(y, F(x, y, n))` replaces one `F` whose third argument has size *k+1* with an `F` whose third argument has size *k* (strict decrease in the multiset); the new `G` carries no rules and creates no new redexes with larger measure.
+
+Reductions inside arguments or contexts are covered by induction on the same global multiset measure (compatible closure). No rule introduces new `F`s with equal or larger third-argument size, there are no cycles, and syntactic matching requires no constructor axioms, injectivity of `S`, or `Z ≠ S(n)` (patterns are disjoint by definition). Hence every term has only finite reduction sequences.
+
+This is derivable directly from the syntactic form of the two rules and the standard definition of rewriting.

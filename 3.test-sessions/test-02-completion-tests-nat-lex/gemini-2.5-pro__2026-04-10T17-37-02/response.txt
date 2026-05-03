@@ -1,0 +1,74 @@
+I will now read the specified file to understand the proof structure and identify the parts that need completion. Then, I will provide a proof skeleton for the five remaining cases as you requested.
+Here
+is the proof skeleton for the remaining cases.
+
+### Case: `integrate (delta t) → void`
+
+The `kappa` measure drops from `kappa t` to `0`. If `kappa t` is positive, this is a lexicographic decrease. If `kappa t` is `0`, the `mu` measure drops from `1 + mu t` to `0`, which is also a decrease.
+
+```lean
+| _, _, Step.R_int_delta t => by
+    unfold measure
+    simp [kappa, mu]
+    by_cases h_kappa_t_zero : kappa t = 0
+    · rw [h_kappa_t_zero]
+      apply Prod.Lex.right
+      simp [mu]
+    · apply Prod.Lex.left
+      simp [kappa]
+      exact Nat.pos_of_ne_zero h_kappa_t_zero
+```
+
+### Case: `recDelta b s void → b`
+
+The `kappa` measure is preserved because the third argument to `recDelta` is not `delta`-wrapped. The `mu` measure decreases by `3 + mu s + mu void` (which is `3 + mu s`), which is always positive.
+
+```lean
+| _, _, Step.R_rec_zero b s => by
+    have hmu : mu b < mu (recDelta b s void) := by simp [mu]; omega
+    have hk : kappa b = kappa (recDelta b s void) := by
+      simp [kappa, Nat.max_assoc]
+    exact drop_right hmu hk
+```
+
+### Case: `recDelta b s (delta n) → app s (recDelta b s n)`
+
+The `kappa` measure for `recDelta b s (delta n)` is `max(κ(b), κ(s), κ(n)) + 1`. The `kappa` for `app s (recDelta b s n)` is `max(κ(s), κ(recDelta b s n))`, which simplifies to `max(κ(s), κ(b), κ(n))`. The `kappa` measure strictly decreases by 1.
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+      simp [kappa, Nat.max_assoc]
+      exact Nat.lt_succ_self _
+    exact drop_left hk
+```
+
+### Case: `eqW a a → void`
+
+The `kappa` measure drops from `max(κ(a), κ(a))` (which is `κ(a)`) to `0`. If `κ(a)` is positive, this is a lexicographic decrease. If `κ(a)` is `0`, the `mu` measure drops from `4 + 2 * mu a` to `0`.
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    unfold measure
+    simp [kappa, mu]
+    by_cases h_kappa_a_zero : kappa a = 0
+    · rw [h_kappa_a_zero]
+      apply Prod.Lex.right
+      simp [mu]; omega
+    · apply Prod.Lex.left
+      simp [kappa]
+      exact Nat.pos_of_ne_zero h_kappa_a_zero
+```
+
+### Case: `eqW a b → integrate (merge a b)`
+
+The `kappa` measure is preserved, as `kappa (integrate (merge a b))` simplifies to `max(κ(a), κ(b))`, which is the same as `kappa (eqW a b)`. The `mu` measure decreases by `1`, from `4 + mu a + mu b` to `1 + (2 + mu a + mu b)`.
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by
+      simp [mu]; omega
+    have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by
+      simp [kappa]
+    exact drop_right hmu hk
+```

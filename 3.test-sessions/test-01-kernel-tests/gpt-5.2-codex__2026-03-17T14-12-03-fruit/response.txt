@@ -1,0 +1,28 @@
+Here’s the raw assessment you asked for, staying strictly within the given calculus and standard meta‑level methods.
+
+## Assessment ✅
+
+Yes — strong normalization can be established from the presented calculus alone, without adding any structural axioms or extra rewrite rules. A standard termination proof (e.g., Lexicographic Path Ordering or Recursive Path Ordering) suffices to show all rewrite steps strictly decrease under a well‑founded ordering.
+
+This stays entirely meta‑theoretic: you’re not strengthening the object system, just proving its termination.
+
+## Short proof roadmap (within your boundary)
+
+1. **Assume the usual rewrite relation** as the context‑closure of your 8 root rules (if you intend *root‑only* reduction, SN is even more immediate).
+2. **Choose a simplification order** such as LPO/RPO with a precedence like:
+   - `cherry > mango > peach > pear > banana > grape > plum`  
+   (you can tweak; key constraints are `cherry > mango`, `cherry > peach`, `banana > pear`, `mango > plum`).
+3. **Orient all rules**:
+   - Rules 2, 3, 4, 5, 7 are subterm reductions (strictly decreasing).
+   - Rule 1 decreases by precedence/constant.
+   - Rule 6 is handled by LPO:  
+     `banana b s (grape n) > pear s (banana b s n)` because `banana > pear` and `grape n > n`.
+   - Rule 8 is handled by precedence:  
+     `cherry a b > mango (peach a b)` since `cherry > mango` and `cherry > peach`.
+4. **Conclude well‑foundedness** of the rewrite relation, hence **strong normalization**.
+
+If you intended **root‑only rewriting**, the same argument (or an even simpler size‑based measure) yields termination immediately.
+
+---
+
+If you want, I can also provide a formal Lean sketch for the ordering proof — still without adding any new rewrite rules.

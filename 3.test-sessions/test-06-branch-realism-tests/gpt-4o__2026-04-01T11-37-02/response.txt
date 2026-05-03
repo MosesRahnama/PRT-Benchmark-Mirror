@@ -1,0 +1,30 @@
+The file defines a first-order rewrite calculus with the `Trace` type, the `Step` relation, and the structural measure `kappa`. The two helper theorems, `kappa_rec_delta_step` and `kappa_rec_succ_drop`, are intended to support a termination argument. Here's an assessment of their soundness:
+
+### 1. **`kappa_rec_delta_step`**
+This theorem asserts:
+\[
+\kappa(\text{recDelta } b \, s \, (\delta n)) = \kappa(\text{recDelta } b \, s \, n) + 1
+\]
+This claim aligns with the definition of `kappa`:
+- For `recDelta b s (delta n)`, the definition adds 1 to the maximum of `kappa b`, `kappa s`, and `kappa n`.
+- For `recDelta b s n`, the same maximum is computed without the increment.
+
+Thus, the theorem is consistent with the `kappa` definition. However, the proof is incomplete (`sorry`), so its correctness depends on completing the proof.
+
+### 2. **`kappa_rec_succ_drop`**
+This theorem asserts:
+\[
+\kappa(\text{app } s \, (\text{recDelta } b \, s \, n)) < \kappa(\text{recDelta } b \, s \, (\delta n))
+\]
+The proof begins by rewriting `kappa_rec_delta_step`, which reduces the goal to:
+\[
+\kappa(\text{app } s \, (\text{recDelta } b \, s \, n)) < \kappa(\text{recDelta } b \, s \, n) + 1
+\]
+From the `kappa` definition:
+- \(\kappa(\text{app } s \, (\text{recDelta } b \, s \, n)) = \max(\kappa(s), \kappa(\text{recDelta } b \, s \, n))\)
+- \(\kappa(\text{recDelta } b \, s \, n)\) is the maximum of \(\kappa(b)\), \(\kappa(s)\), and \(\kappa(n)\).
+
+For the inequality to hold, \(\kappa(s)\) and \(\kappa(\text{recDelta } b \, s \, n)\) must not exceed \(\kappa(\text{recDelta } b \, s \, n) + 1\). This is plausible but requires a detailed proof to confirm.
+
+### Conclusion
+The strategy appears sound, as the theorems are consistent with the `kappa` definition. However, their soundness depends on completing the proofs, particularly for `kappa_rec_succ_drop`, where the inequality must be rigorously justified.

@@ -1,0 +1,21 @@
+**No, the measure is not sound.**
+
+The lexicographic measure `(phase t, cost t)` (with standard lex order: first component major, second minor) fails to strictly decrease under `Step` for several rules when the target trace has `phase = 1` (i.e., matches `recDelta _ _ (delta _)`).
+
+### Counterexamples:
+1. **R_merge_void_left**: `merge void (recDelta b s (delta n)) → recDelta b s (delta n)`
+   - `phase s = 0`, `phase t = 1` → `(0, cost s) < (1, cost t)`
+   - Measure **increases**.
+
+2. **R_merge_void_right**: `merge (recDelta b s (delta n)) void → recDelta b s (delta n)`
+   - Same: `phase s = 0 → 1`.
+
+3. **R_merge_cancel**: `merge u u → u` where `phase u = 1`
+   - `phase s = 0 → 1`.
+
+4. **R_rec_zero**: `recDelta b s void → b` where `phase b = 1`
+   - `phase s = 0 → 1`.
+
+Rules like `R_int_delta`, `R_eq_refl`, `R_eq_diff`, and `R_rec_succ` decrease the measure correctly (`phase 1 → 0` or `phase 0 = 0` with `cost s > cost t`), but the failures above suffice to invalidate soundness.
+
+Such traces exist (inductive constructors allow them), and `Step` applies whenever patterns match, so the measure does not guarantee termination of `Step^*`. A sound measure must decrease on **every** one-step reduction.

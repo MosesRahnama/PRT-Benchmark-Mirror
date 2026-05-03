@@ -1,0 +1,116 @@
+Here are paste-in proof skeletons for the five remaining `sorry` branches in
+. They follow the same `drop_left` / `drop_right` pattern already used.
+
+```lean
+-- integrate (delta t) --> void
+| _, _, Step.R_int_delta t => by
+    by_cases hk0 : kappa t = 0
+    · have hmu : mu void < mu (integrate (delta t)) := by
+        simp [mu]
+      have hk : kappa void = kappa (integrate (delta t)) := by
+        simp [kappa, hk0]
+      exact drop_right hmu hk
+    · have hkpos : 0 < kappa t := Nat.pos_of_ne_zero hk0
+      have hk : kappa void < kappa (integrate (delta t)) := by
+        simpa [kappa] using hkpos
+      exact drop_left hk
+```
+
+```lean
+-- recDelta b s void --> b
+| _, _, Step.R_rec_zero b s => by
+    -- Always: mu(b) < mu(recDelta b s void)
+    have hmu : mu b < mu (recDelta b s void) := by
+      simp [mu]; omega
+
+    -- For kappa: either it ties (then use mu), or it strictly drops (then use kappa).
+    -- Split on which branch of the max controls kappa(recDelta b s void).
+    cases Nat.le_total (kappa s) (kappa b) with
+    | inl hs_le =>
+        -- kappa(recDelta ...) = kappa b, so use drop_right via mu
+        have hk : kappa b = kappa (recDelta b s void) := by
+          -- simp should reduce kappa(recDelta b s void) to max (max kb ks) 0,
+          -- then use hs_le to collapse max kb ks to kb.
+          -- (You may need to hand-hold simp with Nat.max_eq_left / Nat.max_eq_right.)
+          simp [kappa, hs_le, Nat.max_eq_left, Nat.max_eq_right, Nat.zero_le]
+        exact drop_right hmu hk
+    | inr hb_le =>
+        -- Here kb ≤ ks; refine further into kb < ks (drop_left) or kb = ks (drop_right).
+        cases lt_or_eq_of_le hb_le with
+        | inl hk_lt =>
+            have hk : kappa b < kappa (recDelta b s void) := by
+              -- show kappa(recDelta ...) = kappa s, then rewrite to hk_lt
+              -- (again: simp + Nat.max_eq_right + Nat.zero_le)
+              simpa [kappa, hb_le, Nat.max_eq_left, Nat.max_eq_right, Nat.zero_le] using hk_lt
+            exact drop_left hk
+        | inr hk_eq =>
+            have hk : kappa b = kappa (recDelta b s void) := by
+              -- if kb = ks, then kappa(recDelta ...) collapses to kb
+              simp [kappa, hk_eq, Nat.max_eq_left, Nat.max_eq_right, Nat.zero_le]
+            exact drop_right hmu hk
+```
+
+```lean
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    -- Intended route: strict drop on kappa (source has +1, target doesn't).
+    -- Let m be the “base” max that appears in both.
+    let m : Nat := Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)
+
+    have hk_src : kappa (recDelta b s (delta n)) = m + 1 := by
+      simp [kappa, kappa_rec_delta, m]
+
+    -- You want: kappa(app s (recDelta b s n)) = m.
+    -- This is straightforward if you can establish:
+    --   hk_rec : kappa (recDelta b s n) = m
+    -- However, if `n` can be `delta _`, then `kappa (recDelta b s n)` may also have a `+1`,
+    -- and the measure may fail to strictly decrease without an additional well-formedness invariant.
+    -- Skeleton: split on `n` and close each constructor case by simp/max-arithmetic.
+    have hk_rec : kappa (recDelta b s n) = m := by
+      -- cases n <;> simp [kappa, m, Nat.max_assoc, Nat.max_left_comm, Nat.max_comm]
+      -- (fill in any remaining max normalization)
+      sorry
+
+    have hk_tgt : kappa (app s (recDelta b s n)) = m := by
+      -- since m = max(max kb ks) kn, we have kappa s ≤ m
+      have hs_le_m : kappa s ≤ m := by
+        -- m = max (max kb ks) kn
+        -- kappa s ≤ max kb ks ≤ max (max kb ks) kn
+        exact Nat.le_trans (Nat.le_max_right _ _) (Nat.le_max_left _ _)
+      -- and with hk_rec, the max collapses to m
+      simp [kappa, hk_rec, m, Nat.max_eq_right hs_le_m]
+
+    have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+      -- m < m+1
+      simpa [hk_tgt, hk_src] using Nat.lt_succ_self m
+
+    exact drop_left hk
+```
+
+```lean
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    by_cases hk0 : kappa a = 0
+    · have hmu : mu void < mu (eqW a a) := by
+        simp [mu]
+      have hk : kappa void = kappa (eqW a a) := by
+        simp [kappa, hk0]
+      exact drop_right hmu hk
+    · have hkpos : 0 < kappa a := Nat.pos_of_ne_zero hk0
+      have hk : kappa void < kappa (eqW a a) := by
+        -- kappa(eqW a a) = kappa a
+        simpa [kappa] using hkpos
+      exact drop_left hk
+```
+
+```lean
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by
+      simp [mu]; omega
+    have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by
+      simp [kappa]
+    exact drop_right hmu hk
+```
+
+If you want, I can also rewrite the `R_rec_succ` skeleton into a fully explicit `cases n` proof layout (one subgoal per constructor), so you can see exactly where the potential “`n = delta _`” subcase forces an extra invariant or a tweaked measure.

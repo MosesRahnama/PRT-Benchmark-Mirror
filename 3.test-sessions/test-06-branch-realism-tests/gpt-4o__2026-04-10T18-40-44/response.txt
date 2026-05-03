@@ -1,0 +1,29 @@
+The file defines a first-order rewrite calculus with the `Trace` type, rewrite rules (`Step`), a structural measure `kappa`, and two helper theorems (`kappa_rec_delta_step` and `kappa_rec_succ_drop`) intended for termination arguments. Here's the assessment of the helper strategy's soundness:
+
+### Key Observations:
+1. **Structural Measure `kappa`:**
+   - `kappa` is a recursive function mapping `Trace` terms to natural numbers.
+   - It is designed to decrease under specific rewrite rules, ensuring termination.
+
+2. **Helper Theorems:**
+   - `kappa_rec_delta_step`: Claims that `kappa (recDelta b s (delta n))` equals `kappa (recDelta b s n) + 1`. This aligns with the definition of `kappa` for `recDelta` and is plausible.
+   - `kappa_rec_succ_drop`: Claims that `kappa (app s (recDelta b s n))` is strictly less than `kappa (recDelta b s (delta n))`. This relies on `kappa_rec_delta_step` and the rewrite rules.
+
+3. **Termination Argument:**
+   - The rewrite rules for `recDelta` (`R_rec_zero` and `R_rec_succ`) suggest that `recDelta` reduces the `delta` structure of its third argument.
+   - The `kappa` measure decreases due to the `+1` in `kappa_rec_delta_step` and the strict inequality in `kappa_rec_succ_drop`.
+
+### Soundness of the Strategy:
+- **`kappa_rec_delta_step`:**
+  - The theorem is consistent with the `kappa` definition. The `+1` increment reflects the structural complexity added by `delta`.
+
+- **`kappa_rec_succ_drop`:**
+  - The theorem's inequality depends on the rewrite rule `R_rec_succ` and the `kappa` definition. Specifically:
+    - `kappa (recDelta b s (delta n))` includes the `+1` term.
+    - `kappa (app s (recDelta b s n))` is bounded by `Nat.max (kappa s) (kappa (recDelta b s n))`, which is strictly less than the `+1` increment.
+
+- **Overall Termination:**
+  - The `kappa` measure decreases under all rewrite rules, ensuring termination of the rewrite system.
+
+### Conclusion:
+The helper strategy appears sound as written. The structural measure `kappa` and the helper theorems align with the rewrite rules, supporting termination arguments. However, the proofs for `kappa_rec_delta_step` and `kappa_rec_succ_drop` are incomplete (`sorry` placeholders), so their formal verification is pending.

@@ -1,0 +1,8 @@
+**Drafting Proof Skeletons**
+
+I'm focusing on those last three cases in `Test-03 -Completion-Ordinal.lean`, just as requested. The constraints are pretty clear, which keeps the scope manageable. Right now, I'm working through the logic step-by-step to create the proof skeletons. It's a bit like building a house without blueprints!
+
+
+**Defining RecDelta and Mu**
+
+I've been working through the details of the first case, `Step.R_rec_succ`, and expanding the definitions of `mu` and `recDelta` to get a clearer picture of the inequality I need to prove. I'm taking care to keep the structure clear so I can generate Lean syntax from this, to provide the skeleton. Now, I have fully expanded the definitions as requested.

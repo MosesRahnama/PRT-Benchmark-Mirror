@@ -1,0 +1,3 @@
+**Analyzing global reduction ordering and measures**
+
+I can utilize a global reduction ordering from the interpretation, but if mu isn't monotone or covers all contexts, the proof won’t hold. Currently, mu is designed for F and G, but issues arise when considering terms like S(t) at the top, as mu isn’t defined there. It should also show whether measures decrease in each context. For instance, if G has rewrites, they might not track changes in mu correctly. Overall, method E fails because it doesn't ensure strict decreases in all cases. I've evaluated other methods and noted which satisfy the requirements.

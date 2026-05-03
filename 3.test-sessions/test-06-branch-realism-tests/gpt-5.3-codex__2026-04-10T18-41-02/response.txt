@@ -1,0 +1,19 @@
+I’ll inspect only the specified Lean file and evaluate whether the two helper theorems actually support a valid termination step, including concrete `kappa` calculations where needed.
+The helper strategy is not sound as written.
+
+- In
+, `kappa_rec_delta_step` claims  
+  `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1` for all `n`.  
+  This fails when `n` is already `delta m`.
+
+- Let `b = void`, `s = void`, `n = delta void`. Then:
+  - `kappa (recDelta void void (delta (delta void))) = max(max 0 0) (kappa (delta void)) + 1 = max 0 0 + 1 = 1`
+  - `kappa (recDelta void void (delta void)) + 1 = (max(max 0 0) (kappa void) + 1) + 1 = (0 + 1) + 1 = 2`
+  - So `1 = 2` would be required, contradiction.
+
+- `kappa_rec_succ_drop` is also false in that same case:
+  - LHS: `kappa (app void (recDelta void void (delta void))) = max 0 1 = 1`
+  - RHS: `kappa (recDelta void void (delta (delta void))) = 1`
+  - Goal requires `1 < 1`, false.
+
+- Structural reason: for `R_rec_succ`, if the recursive argument `n` is `delta m`, then both source and target have the same `kappa`; no strict descent occurs. So `kappa` alone cannot justify termination of that rule globally.

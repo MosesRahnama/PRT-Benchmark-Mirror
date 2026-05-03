@@ -1,0 +1,52 @@
+**Assessment: Yes.** Strong normalization of the compatible closure of `Step` is provable from the presented calculus alone, by a standard polynomial interpretation into $(\ \mathbb{N},>)$. No extra rules, guards, or external axioms are needed.
+
+---
+
+## Proof roadmap
+
+### Method — polynomial interpretation
+
+Assign every `Trace` constructor an interpretation $[\cdot] : \text{Trace}\to\mathbb{N}$ satisfying two properties: (i) every constructor is **strictly monotone** in each argument, and (ii) every rewrite rule **strictly decreases** the value. This gives a well-founded measure that decreases under the compatible closure (rewriting in any subterm position), which is exactly strong normalization.
+
+### Interpretation
+
+| Constructor | $[\ \cdot\ ]$ |
+|---|---|
+| `void` | $1$ |
+| `delta t` | $[t]+1$ |
+| `integrate t` | $[t]+1$ |
+| `merge a b` | $[a]+[b]+1$ |
+| `app a b` | $[a]+[b]$ |
+| `recΔ b s n` | $([s]+1)\cdot[n]+[b]$ |
+| `eqW a b` | $[a]+[b]+3$ |
+
+**All values are $\geq 1$** (immediate induction), so the monotonicity coefficients are always positive.
+
+### Rule-by-rule verification
+
+| Rule | LHS value | RHS value | Decrease |
+|---|---|---|---|
+| R_int_delta | $[t]+2$ | $1$ | $[t]+1$ |
+| R_merge_void_left | $[t]+2$ | $[t]$ | $2$ |
+| R_merge_void_right | $[t]+2$ | $[t]$ | $2$ |
+| R_merge_cancel | $2[t]+1$ | $[t]$ | $[t]+1$ |
+| R_rec_zero | $[s]+1+[b]$ | $[b]$ | $[s]+1$ |
+| **R_rec_succ** | $([s]+1)([n]+1)+[b]$ | $[s]+([s]+1)[n]+[b]$ | **$1$** |
+| R_eq_refl | $2[a]+3$ | $1$ | $2[a]+2$ |
+| R_eq_diff | $[a]+[b]+3$ | $[a]+[b]+2$ | $1$ |
+
+Every entry in the "Decrease" column is $\geq 1$.
+
+### Why this suffices
+
+1. **Strict monotonicity of all constructors** in the interpretation guarantees that if $[t] > [t']$ at a redex, then $[C[t]] > [C[t']]$ for any one-hole context $C$. Hence every step of the compatible closure (rewriting anywhere inside a term) strictly decreases the interpretation.
+
+2. Since the codomain $(\mathbb{N}, >)$ is well-founded, no infinite reduction sequence exists. This is strong normalization.
+
+### Notes on the R_eq_refl / R_eq_diff overlap
+
+When $a = b$, both rules fire. R_eq_refl sends $\texttt{eqW}\ a\ a$ to $\texttt{void}$; R_eq_diff sends it to $\texttt{integrate (merge}\ a\ a\texttt{)}$. Both paths strictly decrease the interpretation ($2[a]+3 \to 1$ and $2[a]+3 \to 2[a]+2$ respectively), so non-determinism does not threaten SN. (The system is not confluent, but that is orthogonal to the termination question.)
+
+### Conclusion
+
+Strong normalization holds and is certifiable by a single polynomial interpretation with no appeal to any axiom, rule, or assumption beyond what the syntax and eight rewrite rules provide.

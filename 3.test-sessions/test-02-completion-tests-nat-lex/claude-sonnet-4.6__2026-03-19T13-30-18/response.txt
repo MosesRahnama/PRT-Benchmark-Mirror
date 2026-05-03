@@ -1,0 +1,142 @@
+Here is the complete analysis and proof skeleton for all five remaining cases.
+
+---
+
+## Measure analysis per case
+
+| Rule | kappa behaviour | mu behaviour | Tactic |
+|---|---|---|---|
+| `R_int_delta` | drops when `kappa t > 0`; ties at 0 otherwise | drops by `1 + mu t` when kappa ties | `by_cases` + `drop_left` / `drop_right` |
+| `R_rec_zero` | ties when `ks ≤ kb`; drops otherwise | drops by `3 + mu s` when kappa ties | `by_cases` + `drop_right` / `drop_left` |
+| `R_rec_succ` | drops by 1 when `n` is **not** `delta`-wrapped; **ties** when `n = delta n'` | increases when kappa ties — **measure is insufficient** | case split; `n = delta n'` sub-case cannot be closed |
+| `R_eq_refl` | drops when `kappa a > 0`; ties at 0 otherwise | drops by `4 + 2·mu a` when kappa ties | `by_cases` + `drop_left` / `drop_right` |
+| `R_eq_diff` | **always ties**: `max(ka,kb) = max(ka,kb)` | **always drops** by 1: `(4+ma+mb) → (3+ma+mb)` | `drop_right` unconditionally |
+
+---
+
+## Proof skeleton
+
+```lean
+-- ① integrate (delta t) → void
+-- kappa (integrate (delta t)) = kappa t;  mu (integrate (delta t)) = 1 + mu t
+-- kappa void = 0;                          mu void = 0
+| _, _, Step.R_int_delta t => by
+    by_cases h : kappa t = 0
+    · -- kappa ties at 0; mu drops: 0 < 1 + mu t
+      apply drop_right
+      · simp [mu]; omega
+      · simp [kappa, h]          -- kappa void = kappa t (= 0 from h)
+    · -- kappa drops: 0 < kappa t
+      apply drop_left
+      simp [kappa]; omega
+
+-- ② recDelta b s void → b
+-- kappa (recDelta b s void) = max(max(kb,ks), kappa void) = max(kb, ks)
+-- mu (recDelta b s void) = 3 + mb + ms
+| _, _, Step.R_rec_zero b s => by
+    -- expose kappa (recDelta b s void) using the catch-all equation plus kappa_void
+    have hk_lhs : kappa (recDelta b s void) =
+        Nat.max (Nat.max (kappa b) (kappa s)) 0 := rfl
+    simp only [Nat.max_zero_right] at hk_lhs
+    by_cases h : kappa s ≤ kappa b
+    · -- kappa ties at kappa b (max(kb,ks) = kb when ks ≤ kb)
+      -- mu drops: mb < 3 + mb + ms
+      apply drop_right
+      · simp [mu]; omega
+      · -- kappa b = max(kb, ks); need Nat.max_eq_left h
+        rw [hk_lhs]; rw [Nat.max_eq_left h]
+    · -- kappa drops: kb < max(kb, ks) = ks when ks > kb
+      apply drop_left
+      rw [hk_lhs]
+      push_neg at h
+      omega   -- kb < max(kb, ks) because ks > kb
+
+-- ③ recDelta b s (delta n) → app s (recDelta b s n)
+-- LHS kappa = max(max(kb,ks), kappa n) + 1
+--
+-- Sub-case breakdown on the structure of n:
+--
+--   n NOT delta-wrapped (void / integrate / merge / app / recDelta / eqW):
+--     kappa (recDelta b s n) = max(max(kb,ks), kappa n)           [catch-all]
+--     kappa (app s (…))      = max(ks, max(max(kb,ks), kappa n))
+--                            = max(max(kb,ks), kappa n)           < LHS kappa
+--     → drop_left
+--
+--   n = delta n'  (HITS THE FIRST recDelta EQUATION AGAIN):
+--     kappa (recDelta b s (delta n')) = max(max(kb,ks), kappa n') + 1
+--     kappa (app s (…))               = max(max(kb,ks), kappa n') + 1  ← TIES with LHS
+--     mu    (app s (recDelta b s (delta n')))
+--           = 1 + ms + (3 + mb + ms + mu n') = 4 + mb + 2·ms + mu n'
+--     mu    (recDelta b s (delta (delta n')))
+--           = 3 + mb + ms + mu n'                                  ← STRICTLY LESS
+--     The lex-measure STRICTLY INCREASES in this sub-case.
+--     Root cause: kappa adds only one +1 regardless of delta-nesting depth,
+--     so a single step from `recDelta b s (delta (delta n'))` leaves kappa
+--     unchanged; the correct fix is to let kappa track total delta-depth on
+--     recDelta's third argument (e.g. replace the +1 with
+--     +1 + kappa (recDelta b s n) or use a separate `deltaDepth` counter).
+| _, _, Step.R_rec_succ b s n => by
+    rcases n with _ | n' | n' | a' b' | a' b' | b'' s'' n'' | a' b'
+    -- n = void  ─────────────────────────────────── kappa drops
+    · apply drop_left
+      simp [kappa]; omega
+    -- n = delta n'  ─────────────────────────── MEASURE INSUFFICIENT
+    · /- kappa ties and mu increases; cannot be closed with drop_left or
+         drop_right under the current (kappa, mu) measure.
+         A repaired kappa that records the full delta-depth of recDelta's
+         third argument would make this sub-case available to drop_left. -/
+      sorry
+    -- n = integrate n'  ──────────────────────────── kappa drops
+    · apply drop_left
+      simp [kappa]; omega
+    -- n = merge a' b'  ───────────────────────────── kappa drops
+    · apply drop_left
+      simp [kappa]; omega
+    -- n = app a' b'  ──────────────────────────────── kappa drops
+    · apply drop_left
+      simp [kappa]; omega
+    -- n = recDelta b'' s'' n''  ───────────────────── kappa drops
+    · apply drop_left
+      simp [kappa]; omega
+    -- n = eqW a' b'  ──────────────────────────────── kappa drops
+    · apply drop_left
+      simp [kappa]; omega
+
+-- ④ eqW a a → void
+-- kappa (eqW a a) = max(ka, ka) = ka;  mu (eqW a a) = 4 + 2·ma
+-- kappa void = 0;                       mu void = 0
+| _, _, Step.R_eq_refl a => by
+    by_cases h : kappa a = 0
+    · -- kappa ties at 0; mu drops: 0 < 4 + 2·ma
+      apply drop_right
+      · simp [mu]; omega
+      · simp [kappa, h]          -- kappa void = kappa a (= 0 from h)
+    · -- kappa drops: 0 < kappa a
+      apply drop_left
+      simp [kappa]; omega
+
+-- ⑤ eqW a b → integrate (merge a b)
+-- kappa (eqW a b)            = max(ka, kb)
+-- kappa (integrate (merge a b)) = max(ka, kb)   ← always ties
+-- mu (eqW a b)               = 4 + ma + mb
+-- mu (integrate (merge a b)) = 1 + (2 + ma + mb) = 3 + ma + mb  ← always drops by 1
+| _, _, Step.R_eq_diff a b => by
+    apply drop_right
+    · simp [mu]; omega           -- 3 + ma + mb < 4 + ma + mb
+    · simp [kappa]               -- max(ka,kb) = max(ka,kb)
+```
+
+---
+
+## Summary of what remains
+
+Four of the five cases close cleanly under the existing measure:
+
+| Case | Proof path |
+|---|---|
+| `R_int_delta` | `by_cases` on `kappa t = 0`, then `drop_right` / `drop_left` |
+| `R_rec_zero` | `by_cases` on `kappa s ≤ kappa b`, then `drop_right` / `drop_left` |
+| `R_eq_refl` | `by_cases` on `kappa a = 0`, then `drop_right` / `drop_left` |
+| `R_eq_diff` | `drop_right` unconditionally — kappa always ties, mu always drops by 1 |
+
+**`R_rec_succ` with `n = delta n'` is genuinely unprovable with the current measure.** A concrete counterexample: `b = void`, `s = delta void`, `n = delta void` gives `measure (app s (recDelta b s (delta void))) = (1, 4)` strictly greater than `measure (recDelta b s (delta (delta void))) = (1, 3)`. The fix requires replacing the single `+1` in `kappa`'s `recDelta` branch with a measure that tracks the complete delta-depth of the third argument — for example, adding a `def deltaDepth : Trace → Nat | .delta t => 1 + deltaDepth t | _ => 0` term to `kappa`.

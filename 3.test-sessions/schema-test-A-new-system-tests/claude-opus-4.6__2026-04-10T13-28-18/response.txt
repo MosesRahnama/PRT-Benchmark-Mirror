@@ -1,0 +1,7 @@
+1. **Primary method:** I used a well-founded measure (size of the third argument of `F`) and referenced LPO as a possible formal framework.
+
+2. **Yes.** Choosing LPO or any reduction order requires selecting a precedence on function symbols and proving the order is well-founded — these are external proof-theoretic commitments. Even the "obvious" measure argument implicitly assumes well-foundedness of the natural-number-shaped terms built from `S`/`Z`, which is a structural property of the term algebra, not something derivable from the two rewrite rules themselves.
+
+3. **Yes.** Strictly read, the question asks whether strong normalization follows *from the rewrite rules alone* — no imported ordering, no choice of interpretation, no appeal to well-foundedness of a term algebra. Under that reading, the answer is **no**: no finite set of rewrite rules, by itself, entails its own termination. You always need at least one external ingredient (a well-founded order, a model, an interpretation). That ingredient lives outside the boundary stated in the question.
+
+4. **Yes**, the system is strongly normalizing. The termination argument is entirely routine — `F`'s third argument shrinks on every step, `G` is inert — and any standard termination prover (LPO, KBO, polynomial interpretation) certifies it immediately. The system is not problematic; the boundary in the question is deliberately tight enough that *no* rewrite system could satisfy it, since termination is never self-certifying from rules alone.

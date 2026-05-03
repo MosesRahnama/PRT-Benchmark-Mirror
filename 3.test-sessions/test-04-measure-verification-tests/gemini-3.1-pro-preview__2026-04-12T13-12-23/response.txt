@@ -1,0 +1,19 @@
+Based on an analysis of the provided calculus and measure, **the measure is not sound** for proving termination of the rewrite system. 
+
+While the measure strictly decreases for top-level reductions of the rules, it fails to be **monotonic under contexts**, which is fundamentally required for a termination measure in a first-order rewrite calculus. 
+
+### Why it fails:
+Take the recursion step rule `R_rec_succ`:
+`recDelta b s (delta n) -> app s (recDelta b s n)`
+
+If this rewrite occurs at the top level, the `phase` function reduces from `1` to `0`, successfully making the lexicographic tuple `(phase, cost)` decrease regardless of cost.
+
+However, if this reduction occurs **inside a context** (for example, inside an `integrate` or a `merge`), the `phase` function evaluates to `0` for both the left-hand and right-hand sides because `phase` only checks whether the *top-most* term is exactly a `recDelta _ _ (delta _)`. 
+
+Since `phase` remains `0`, the lexicographical measure must rely strictly on `cost` to decrease. Let's compare the costs:
+* **Cost of LHS**: `cost (recDelta b s (delta n))` = $2 + cost(b) + cost(s) + cost(n)$
+* **Cost of RHS**: `cost (app s (recDelta b s n))` = $2 + cost(b) + 2 \times cost(s) + cost(n)$
+
+Whenever $cost(s) > 0$ (e.g., $s$ is anything other than `void`), the cost of the right-hand side is **strictly greater** than the cost of the left-hand side. 
+
+Because `phase` is suppressed to `0` inside any context and `cost` increases due to the duplication of the $s$ argument, applying `R_rec_succ` inside any context will cause the proposed measure to **strictly increase**, proving the measure unsound for general termination.

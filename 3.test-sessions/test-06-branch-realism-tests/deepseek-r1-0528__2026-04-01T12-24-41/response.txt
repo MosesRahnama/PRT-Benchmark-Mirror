@@ -1,0 +1,38 @@
+Based on the provided Lean 4 code, I'll assess the soundness of the helper strategy for the termination argument. The key elements are:
+
+1. **Structural measure `kappa`**: Defined recursively on the `Trace` type with specific cases for each constructor.
+
+2. **Helper theorems**:
+   - `kappa_rec_delta_step`: Claims `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`
+   - `kappa_rec_succ_drop`: Claims `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`
+
+### Assessment of soundness:
+
+1. **`kappa_rec_delta_step` is unsound**:
+   - From the definition of `kappa`:
+     - `kappa (recDelta b s (delta n)) = max (max (κb) (κs)) (κn) + 1`
+     - `kappa (recDelta b s n) = max (max (κb) (κs)) (κn)`
+   - This implies `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1` should hold
+   - ✅ **Sound** as written
+
+2. **`kappa_rec_succ_drop` is unsound**:
+   - From the reduction rule `R_rec_succ`:
+     `recDelta b s (delta n) → app s (recDelta b s n)`
+   - For termination, we need:
+     `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`
+   - But from `kappa` definitions:
+     ```
+     LHS: kappa (app s (recDelta b s n)) = max (κs) (kappa (recDelta b s n))
+     RHS: kappa (recDelta b s (delta n)) = max (max (κb) (κs)) (κn) + 1
+     ```
+   - There exists cases where `max (κs) (max (max (κb) (κs)) (κn)) ≥ max (max (κb) (κs)) (κn) + 1`:
+     - When `κs` is the dominant term and `κs ≥ max (max (κb) (κs)) (κn) + 1`
+   - ❌ **Not sound** as written - the strict inequality doesn't hold in all cases
+
+### Recommendation:
+The termination argument requires additional constraints on the relationship between `s` and other terms in the `recDelta` constructor. Specifically, we need to ensure that `kappa s` is strictly less than the measure of the recursive call structure.   - There exists cases where `max (κs) (max (max (κb) (κs)) (κn)) ≥ max (max (κb) (κs)) (κn) + 1`:
+     - When `κs` is the dominant term and `κs ≥ max (max (κb) (κs)) (κn) + 1`
+   - ❌ **Not sound** as written - the strict inequality doesn't hold in all cases
+
+### Recommendation:
+The termination argument requires additional constraints on the relationship between `s` and other terms in the `recDelta` constructor. Specifically, we need to ensure that `kappa s` is strictly less than the measure of the recursive call structure.

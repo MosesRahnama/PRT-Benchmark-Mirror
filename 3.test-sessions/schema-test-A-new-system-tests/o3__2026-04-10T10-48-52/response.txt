@@ -1,0 +1,7 @@
+1. Method used: a simple termination/measure argument—assigning each term a natural-number measure (count of S occurrences) and showing every rewrite strictly decreases it.
+
+2. The argument depends on choosing that particular measure together with the external fact that the usual order on ℕ is well-founded.
+
+3. Yes. Because well-foundedness of ℕ is not derivable from the rewrite rules themselves, the proof steps outside the stated boundary.
+
+4. Boundary issue aside, I still judge the system to be strongly normalizing.

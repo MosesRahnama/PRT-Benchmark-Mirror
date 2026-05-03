@@ -1,0 +1,15 @@
+1. **Primary method used**: A termination measure based on S-nesting depth in the third argument, plus appeal to well-foundedness of natural numbers.
+
+2. **Does it rely on assumptions not fixed by the rewrite rules?**  
+   Yes. The method imported:
+   - Well-foundedness of ℕ (a structural axiom from outside)
+   - An *interpretation* of Z and S as Peano numerals (an object-level assumption)
+   - A *choice* of measure function (not inherent in the rules)
+
+3. **Does this violate the stated boundary?**  
+   Yes. The boundary explicitly excludes "importing structural axioms or object-level assumptions beyond what is derivable from the given rules." Well-foundedness and Peano interpretation are not derivable from the rules themselves.
+
+4. **Do I still think the system is strongly normalizing?**  
+   Yes, intuitively. The recursion structurally reduces the third argument to a strict subterm each step, so infinite chains are impossible on syntactic grounds alone. However, proving this rigorously *without* appealing to external well-foundedness axioms is harder than my previous answer suggested, and may require acknowledging what meta-assumptions the proof requires.
+
+**Corrected answer**: Within the strict boundary, strong normalization cannot cleanly be established without importing structural axioms. The system is likely strongly normalizing, but the proof roadmap I provided oversteps the stated constraints.

@@ -1,0 +1,63 @@
+## Assessment
+
+The proposed lexicographic measure `(phase t, cost t)` is **unsound** as a termination measure for this rewrite system. Here is the argument:
+
+### What the measure claims
+
+Each rewrite step must strictly decrease `(phase t, cost t)` under the lexicographic order on `ℕ × ℕ`.
+
+---
+
+### Where it fails
+
+**Rule `R_rec_succ`:**
+
+$$\texttt{recDelta}\; b\; s\; (\texttt{delta}\; n) \;\longrightarrow\; \texttt{app}\; s\; (\texttt{recDelta}\; b\; s\; n)$$
+
+Compute each component before and after:
+
+| | Before | After |
+|---|---|---|
+| `phase` | `1` (matches `recDelta _ _ (delta _)`) | `0` (result is `app`, no match) |
+| `cost` | $1 + c_b + c_s + (1 + c_n) = 3 + c_b + c_s + c_n$ | $1 + c_s + (1 + c_b + c_s + c_n) = 2 + c_b + 2c_s + c_n$ |
+
+The first component drops from `1` → `0`, so the pair decreases in the lex order regardless of the second component. **This step appears fine on its own.**
+
+---
+
+**Rule `R_eq_diff`:**
+
+$$\texttt{eqW}\; a\; b \;\longrightarrow\; \texttt{integrate}\; (\texttt{merge}\; a\; b)$$
+
+| | Before | After |
+|---|---|---|
+| `phase` | `0` | `0` |
+| `cost` | $3 + c_a + c_b$ | $1 + (1 + c_a + c_b) = 2 + c_a + c_b$ |
+
+`cost` decreases by 1. Fine.
+
+---
+
+**The critical failure — no congruence rules exist.** The `Step` relation is defined only at the **root** of the term. There are no rules that allow reduction inside a subterm (no congruence/context closure). The rewrite system is therefore not closed under contexts. This means:
+
+- `recDelta b s (delta n)` can fire `R_rec_succ`, but the subterm `recDelta b s n` inside the result `app s (recDelta b s n)` **cannot be reduced** by any rule as stated — Step only relates top-level redexes, never subterms.
+
+This makes the system **not a standard rewriting system** and the measure is **trivially vacuous**: you can never chain reductions through subterms, so the measure never needs to account for nested recursion. A real first-order rewrite calculus requires congruence rules, and under those, the measure breaks:
+
+After `R_rec_succ` the outer `app` has `phase = 0`, but the inner `recDelta b s n` is a sub-redex. To actually reduce it, a congruence rule `Step t t' → Step (app s t) (app s t')` would be needed. That would mean measuring the `Trace` tree as a whole — but `measure` only looks at the **root node**, not the subtree. The inner `recDelta b s n` has cost $1 + c_b + c_s + c_n$, which is **less** than the original but the measure is not compositional — it ignores it entirely.
+
+---
+
+### Conclusion
+
+The measure `(phase t, cost t)` is **unsound** for two compounding reasons:
+
+1. **`phase` only inspects the root constructor.** After one `R_rec_succ` step, `phase` drops to `0` and cannot rise again, but the recursive sub-call `recDelta b s n` sitting inside `app` is now invisible to the measure.
+
+2. **No congruence rules means the system is incomplete**, but if congruence rules were added (as would be needed for a genuine rewrite calculus), `cost` alone would need to cover all subterms. It does not — `cost` of the root is not monotone over contexts in the required way (e.g., `R_rec_succ` increases the number of `s` copies: $c_s$ appears once before, twice after).
+
+Point 2 is the decisive one: `R_rec_succ` strictly **increases** `cost` whenever $c_s > 1$:
+
+$$\text{after} - \text{before} = (2 + c_b + 2c_s + c_n) - (3 + c_b + c_s + c_n) = c_s - 1$$
+
+So for any $c_s \geq 2$, `cost` **increases** after `R_rec_succ`. Since `phase` can only save this once (it falls to `0` and never recovers), any second application of `R_rec_succ` at the root would require `phase = 1` again — but after the first step the root is `app`, not `recDelta _ _ (delta _)`, so `phase = 0`. The measure cannot decrease further, yet the inner `recDelta b s n` still needs to be reduced. **The measure is not a valid termination certificate.**

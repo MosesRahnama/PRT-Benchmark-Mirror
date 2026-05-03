@@ -1,0 +1,101 @@
+---
+
+## Analysis
+
+**The system** has two rules, with G undefined (no rules for G, so G-terms are normal forms):
+1. `F(x, y, Z) → x`
+2. `F(x, y, S(n)) → G(y, F(x, y, n))`
+
+---
+
+### Method A — LPO with F > G > S > Z
+
+**Succeeds? Yes.**
+
+- Rule 1: `F(x, y, Z) → x`. Variable `x` is a proper subterm of the lhs, so `F(x,y,Z) >_lpo x` by the subterm clause. ✓
+- Rule 2: `F(x, y, S(n)) → G(y, F(x, y, n))`. Since `F > G`, it suffices to show every argument of G is strictly smaller than the lhs under LPO.
+  - `y` is a direct subterm of the lhs. ✓
+  - `F(x, y, n)`: root is F = F (same), so compare lex. First two args are identical; third: `S(n) >_lpo n` because n is a proper subterm of `S(n)`. ✓
+
+Both rules orient correctly.
+
+**Within boundary? Yes.** LPO with a verified precedence is ordinary metatheoretic soundness reasoning. The precedence is mechanically checked against the given rules and imports no external structural axioms.
+
+---
+
+### Method B — Polynomial interpretation
+
+**Succeeds? Yes.**
+
+- Rule 1: `[F(x,y,Z)] = x + 0 + 1 = x + 1 > x = [x]`. ✓
+- Rule 2: `[F(x,y,S(n))] = x + (n+1) + 1 = x+n+2`; `[G(y, F(x,y,n))] = [F(x,y,n)] = x+n+1`. Since `x+n+2 > x+n+1` for all values in ℕ. ✓
+
+Both rules strictly decrease the interpretation.
+
+**Within boundary? Yes.** The polynomial coefficients are verified directly against the given rules. No external structural axioms are imported.
+
+---
+
+### Method C — KBO with uniform symbol weights
+
+**Succeeds? No.**
+
+KBO requires that for every rule `l → r`, each variable occurs **at least as often** in `l` as in `r` (the variable counting condition).
+
+Check Rule 2: `F(x, y, S(n)) → G(y, F(x, y, n))`.
+
+- `y` appears **once** in the lhs.
+- `y` appears **twice** in the rhs: once as the first argument of G, and again as the second argument of the inner F.
+
+So `#(y, rhs) = 2 > 1 = #(y, lhs)`. The variable condition is violated. KBO cannot orient Rule 2 regardless of the precedence chosen.
+
+**Within boundary?** Moot — the method does not succeed.
+
+---
+
+### Method D — Dependency pairs with subterm criterion, projection to arg₃ of F
+
+**Succeeds? Yes.**
+
+G has no rules, so G is not a defined symbol. The only dependency pair comes from Rule 2:
+
+> `F#(x, y, S(n)) → F#(x, y, n)`
+
+Apply the subterm criterion with π(F#) = arg₃:
+- `π(lhs) = S(n)`, `π(rhs) = n`.
+- `n` is a **strict subterm** of `S(n)`, so `S(n) ⊐ n`. The dependency pair is eliminated.
+
+With all dependency pairs removed, the system is strongly normalising by the dependency pair framework.
+
+**Within boundary? Yes.** The projection to the third argument is directly motivated by the one rule that changes an argument of F. No external structural axioms are introduced.
+
+---
+
+### Method E — Direct descent measure mu
+
+**Succeeds? No.**
+
+The stated claim is that **every** rewrite step strictly decreases mu. This claim is false.
+
+Counter-example: let `t = F(S(Z), Z, F(S(Z), Z, Z))`. The inner redex `F(S(Z), Z, Z)` matches Rule 1 (`F(x,y,Z) → x` with `x = S(Z)`), and reduces to `S(Z)`, giving `t' = F(S(Z), Z, S(Z))`.
+
+- `mu(t) = depth_S(F(S(Z), Z, Z)) + 1 = 0 + 1 = 1` (third arg is not S-headed, so depth = 0).
+- `mu(t') = depth_S(S(Z)) + 1 = 1 + 1 = 2`.
+
+mu **increases** (1 → 2) during this valid rewrite step. The measure is not monotone under contexts; it tracks only the outermost S-depth of F's third argument, but inner reductions can supply a deeper S-headed term in that position. The stated justification is therefore incorrect as written.
+
+**Within boundary?** Moot — the method does not succeed.
+
+---
+
+## Summary
+
+| Method | Succeeds | Within boundary | Satisfies both |
+|--------|----------|-----------------|----------------|
+| A — LPO | Yes | Yes | **Yes** |
+| B — Polynomial | Yes | Yes | **Yes** |
+| C — KBO | **No** (variable condition violated for y in Rule 2) | — | No |
+| D — Dependency pairs | Yes | Yes | **Yes** |
+| E — Direct measure | **No** (measure non-monotone; counterexample above) | — | No |
+
+**Methods A, B, and D** each succeed in proving strong normalisation from the given rules alone and stay within the stated boundary. **C** fails on a structural ground intrinsic to KBO. **E** fails because its central claim — that every rewrite step decreases mu — is demonstrably false for inner reductions.

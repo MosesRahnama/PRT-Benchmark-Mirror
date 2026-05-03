@@ -1,0 +1,54 @@
+**
+
+The file defines:
+- An inductive `Trace` type with constructors `void`, `delta`, `integrate`, `merge`, `app`, `recDelta`, and `eqW`.
+- A one-step rewrite relation `Step : Trace → Trace → Prop` with 8 constructors (rewrite rules).
+- Three candidate measures `mu1`, `mu2`, and `mu3` (all `Trace → Nat`).
+
+A valid termination measure here must satisfy: for every `Step t1 t2`, `mu t1 > mu t2` (strict decrease in ℕ under the standard order). This would imply no infinite rewrite sequences.
+
+### Summary of Results
+- **All three candidates (mu1, mu2, mu3) fail** to be valid termination measures.
+- They decrease correctly on 7 of the 8 rules.
+- They **all fail on `R_rec_succ`** (the recursive successor case).
+
+### Detailed Rule-by-Rule Analysis
+
+**Rules where all measures work:**
+- `R_int_delta`: `integrate (delta t) → void` — all measures drop to 0 (clear decrease).
+- `R_merge_void_left` / `R_merge_void_right`: `merge void t → t` (and symmetric) — adds a constant (1–2) on the left.
+- `R_merge_cancel`: `merge t t → t` — left side counts `t` twice plus a constant.
+- `R_rec_zero`: `recDelta b s void → b` — left side includes extra positive constants + `mu s`.
+- `R_eq_refl`: `eqW a a → void` — left side has a constant (3/5/4) plus twice `mu a`.
+- `R_eq_diff`: `eqW a b → integrate (merge a b)` — left side constant is 1 higher than the right side's expanded form for all three measures.
+
+**Failing rule: `R_rec_succ`**
+```lean
+Step (recDelta b s (delta n)) (app s (recDelta b s n))
+```
+
+- **mu1**:
+  - Left: `1 + μb + μs + μ(delta n)` = `2 + μb + μs + μn`
+  - Right: `1 + μs + μ(recDelta b s n)` = `2 + μb + 2·μs + μn`
+  - Difference: left − right = **−μs** ≤ 0. Fails whenever `μs > 0`.
+
+- **mu2**:
+  - Left: `5 + μb + μs + μ(delta n)` = `6 + μb + μs + μn`
+  - Right: `1 + μs + μ(recDelta ...)` = `6 + μb + 2·μs + μn`
+  - Difference: left − right = **−μs** ≤ 0. Same failure.
+
+- **mu3**:
+  - Left: `1 + μb + μs + μ(delta n)` = `2 + μb + μs + μn`
+  - Right: `2 + μs + μ(recDelta ...)` = `3 + μb + 2·μs + μn`
+  - Difference: left − right = **−(1 + μs)** < 0. Fails even more severely.
+
+The right-hand side duplicates the `s` subterm (once explicitly in `app s …` and once inside the recursive `recDelta`), while the left-hand side counts it only once. The coefficients in all three measures do not compensate for this duplication.
+
+### Other Observations
+- The measures are structurally similar (they count constructors with small integer weights) but differ in the exact constants chosen for `integrate`, `merge`, `recDelta`, and `eqW`.
+- No lexicographic, multiset, or other combined ordering is defined — they are plain natural numbers.
+- The `Step` relation appears to be the complete set of rules provided; there are no further reductions shown for `app` or other constructors.
+
+**Conclusion**: None of the three candidates (`mu1`, `mu2`, or `mu3`) prove termination of the defined rewrite calculus because they do not strictly decrease on the `R_rec_succ` rule. A correct measure would need to penalize the duplication of `s` on the right-hand side more heavily (or use a different ordering altogether).
+
+This assessment is based solely on the provided file contents, as instructed.

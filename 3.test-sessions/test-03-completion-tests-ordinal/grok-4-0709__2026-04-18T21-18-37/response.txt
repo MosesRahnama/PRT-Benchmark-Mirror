@@ -1,0 +1,103 @@
+### Proof Skeleton for Remaining Cases in `mu_decreases`
+
+Below, I provide proof skeletons for the three remaining cases marked with `sorry` in the theorem `mu_decreases`. These skeletons are structured similarly to the existing proved cases, using `simp [mu]` to unfold definitions, `have` statements for intermediate inequalities, and `calc` blocks to chain the reasoning. The skeletons focus on ordinal arithmetic properties (e.g., dominance of exponents, positivity, and inequalities like `lt_add_one`, `le_mul_right`, `le_add_left/right`). They do not include full proofs but outline the key steps and justifications needed to complete them.
+
+These skeletons assume standard ordinal properties from `Mathlib.SetTheory.Ordinal` (e.g., `omega0_pos`, `opow_pos`, `add_pos_right`, `lt_of_lt_of_le`, `le_add_left/right`). You can fill in the details by applying these lemmas where indicated.
+
+#### 1. Case for `Step.R_merge_cancel t` (merge t t --> t)
+This case appears in the "Remaining cases" section but has a partial proof without `sorry`. If it's intended to be complete, no action is needed; otherwise, here's a skeleton to refine it.
+
+```lean
+| _, _, Step.R_merge_cancel t => by
+    simp [mu]
+    -- Goal: mu t < omega0 ^ 3 * (mu t + 1) + omega0 ^ 2 * (mu t + 1) + 1
+    have h1 : mu t < mu t + 1 := lt_add_one (mu t)  -- Basic positivity
+    have h2 : mu t + 1 ≤ omega0 ^ (3 : Ordinal) * (mu t + 1) :=
+      le_mul_right _ (opow_pos 3 omega0_pos)  -- Multiply by ω^3 > 1
+    have h3 : mu t < omega0 ^ (3 : Ordinal) * (mu t + 1) := lt_of_lt_of_le h1 h2
+    calc mu t
+      _ < omega0 ^ (3 : Ordinal) * (mu t + 1) := h3
+      _ ≤ omega0 ^ (3 : Ordinal) * (mu t + 1) + omega0 ^ (2 : Ordinal) * (mu t + 1) :=
+          le_add_right _ _  -- Add positive term (ω^2 * (mu t + 1) > 0)
+      _ ≤ omega0 ^ (3 : Ordinal) * (mu t + 1) + omega0 ^ (2 : Ordinal) * (mu t + 1) + 1 :=
+          le_add_right _ _  -- Add +1 (positive)
+```
+
+#### 2. Case for `Step.R_rec_zero b s` (recDelta b s void --> b)
+This case has a partial proof without `sorry` in the file, but if it's one of the remaining, here's a skeleton.
+
+```lean
+| _, _, Step.R_rec_zero b s => by
+    simp [mu]
+    -- Goal: mu b < omega0 ^ (mu s + 6) + omega0 * (mu b + 1) + 1  (since mu(void) = 0)
+    have h1 : mu b < mu b + 1 := lt_add_one (mu b)  -- Basic positivity
+    have h2 : mu b + 1 ≤ omega0 * (mu b + 1) := le_mul_right _ omega0_pos  -- Multiply by ω > 1
+    have h3 : mu b < omega0 * (mu b + 1) := lt_of_lt_of_le h1 h2
+    have h4 : 0 < omega0 ^ (mu s + 6) := opow_pos _ omega0_pos  -- Exponent term positive
+    calc mu b
+      _ < omega0 * (mu b + 1) := h3
+      _ ≤ omega0 ^ (mu s + 6) + omega0 * (mu b + 1) :=
+          le_add_left _ _  -- Add dominant exponent term (ω^(mu s + 6) > ω * anything)
+      _ ≤ omega0 ^ (mu s + 6) + omega0 * (mu b + 1) + 1 :=
+          le_add_right _ _  -- Add +1 (positive)
+```
+
+#### 3. Case for `Step.R_rec_succ b s n` (recDelta b s (delta n) --> app s (recDelta b s n))
+This is a complex case due to the nested exponents. The skeleton emphasizes showing that the LHS exponent (involving ω^5) dominates all RHS terms.
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- LHS: omega0 ^ (omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6) + omega0 * (mu b + 1) + 1
+    -- RHS: omega0 ^ 3 * (mu s + 1) + omega0 ^ 2 * (omega0 ^ (mu n + mu s + 6) + omega0 * (mu b + 1) + 2) + 1
+    -- Goal: RHS < LHS (LHS exponent with ω^5 * (mu n + 1) dominates RHS's ω^(mu n + mu s + 6))
+    have h_exp_dom : mu n + mu s + 6 < omega0 ^ 5 * (mu n + 1) + mu s + 7 :=
+      -- Prove exponent dominance: ω^5 * (mu n + 1) >> mu n + mu s + 6 (use opow_mul_lt, add_lt_add)
+      sorry  -- Fill with ordinal mul/opow inequalities
+    have h_rhs_bound : omega0 ^ 3 * (mu s + 1) + omega0 ^ 2 * (omega0 ^ (mu n + mu s + 6) + omega0 * (mu b + 1) + 2) + 1
+                     < omega0 ^ (omega0 ^ 5 * (mu n + 1) + mu s + 7) :=
+      -- Bound RHS by something < ω^{large exp} (use lt_opow_of_lt_exponent)
+      sorry  -- Fill with opow dominance lemmas
+    calc _  -- RHS
+      _ < omega0 ^ (omega0 ^ 5 * (mu n + 1) + mu s + 7) := h_rhs_bound
+      _ ≤ omega0 ^ (omega0 ^ 5 * (mu n + 1) + mu s + 7) + omega0 * (mu b + 1) :=
+          le_add_right _ _  -- Add positive term (ω * (mu b + 1) > 0)
+      _ ≤ omega0 ^ (omega0 ^ 5 * (mu n + 1) + mu s + 7) + omega0 * (mu b + 1) + 1 :=
+          le_add_right _ _  -- Add +1 (positive)
+      _ = _ := rfl  -- Equals LHS
+```
+
+#### 4. Case for `Step.R_eq_refl a` (eqW a a --> void)
+This is a simple positivity case.
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- Goal: 0 < omega0 ^ (2 * mu a + 9) + 1
+    exact add_pos_right (opow_pos _ omega0_pos) one_pos  -- ω^{anything} > 0, +1 > 0
+```
+
+#### 5. Case for `Step.R_eq_diff a b` (eqW a b --> integrate (merge a b))
+This case shows the RHS exponent dominates the LHS's ω^4 * (complex but smaller) term.
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- LHS: omega0 ^ (mu a + mu b + 9) + 1
+    -- RHS: omega0 ^ 4 * (omega0 ^ 3 * (mu a + 1) + omega0 ^ 2 * (mu b + 1) + 2) + 1
+    -- Goal: RHS < LHS (exponent mu a + mu b + 9 > 4, and dominates the coefficient)
+    have h_exp_dom : 4 < mu a + mu b + 9 ∨ (4 = mu a + mu b + 9 ∧ [handle small cases]) :=
+      -- Handle base cases (e.g., if mu a = mu b = 0, direct computation); otherwise exponent > 4
+      sorry  -- Fill with cases or add_lt_add
+    have h_rhs_bound : omega0 ^ 4 * (omega0 ^ 3 * (mu a + 1) + omega0 ^ 2 * (mu b + 1) + 2) + 1
+                     < omega0 ^ (mu a + mu b + 9) :=
+      -- Use mul_lt_opow_of_lt_exponent or similar (ω^4 * anything < ω^{larger exp})
+      sorry  -- Fill with opow/mul inequalities
+    calc _  -- RHS
+      _ < omega0 ^ (mu a + mu b + 9) := h_rhs_bound
+      _ ≤ omega0 ^ (mu a + mu b + 9) + 1 :=
+          le_add_right _ _  -- Add +1 (positive)
+      _ = _ := rfl  -- Equals LHS
+```
+
+These skeletons should integrate directly into the pattern match arms in `mu_decreases`. Once filled, the full theorem enables the well-foundedness proof for `strong_normalization`.

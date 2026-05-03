@@ -1,0 +1,38 @@
+Now I've read the entire file. Let me analyze the structure:
+
+1. **Term language**: 7 constructors (void, delta, integrate, merge, app, recDelta, eqW)
+2. **Step relation**: 8 rewrite rules
+3. **Measures**:
+   - `kappa`: recursion depth (adds +1 only when recDelta's third arg is delta-wrapped)
+   - `mu`: weighted structural size
+
+4. **Proved cases** (3):
+   - `R_merge_void_left`: merge void t → t (mu drops by 2, kappa ties)
+   - `R_merge_void_right`: merge t void → t (mu drops by 2, kappa ties)
+   - `R_merge_cancel`: merge t t → t (mu drops by 2 + mu(t), kappa ties)
+
+5. **Remaining cases** (5):
+   - `R_int_delta`: integrate (delta t) → void
+   - `R_rec_zero`: recDelta b s void → b
+   - `R_rec_succ`: recDelta b s (delta n) → app s (recDelta b s n)
+   - `R_eq_refl`: eqW a a → void
+   - `R_eq_diff`: eqW a b → integrate (merge a b)
+
+Let me analyze each remaining case:
+
+### R_int_delta: `integrate (delta t) → void`
+- LHS: `integrate (delta t)`
+  - kappa = kappa(delta t) = kappa t
+  - mu = 1 + mu(delta t) = 1 + mu t
+- RHS: `void`
+  - kappa = 0
+  - mu = 0
+- For lexicographic decrease:
+  - If kappa t > 0: kappa drops (0 < kappa t), use drop_left
+  - If kappa t = 0: kappa ties, mu drops (0 < 1 + mu t), use drop_right
+
+Since kappa(void) ≤ kappa(integrate (delta t)) always holds, and mu(void) < mu(integrate (delta t)) when kappa values are equal, I can apply drop_right to establish the measure decrease.
+
+For `R_rec_zero`, the lexicographic order works because kappa b ≤ max(kappa b, kappa s) while mu b < 3 + mu b + mu s. When kappa ties at the maximum, mu still drops by at least 3, so drop_right applies.
+
+For `R_rec_succ`, the situation is more complex. When the third argument is not already delta-wrapped, kappa strictly decreases by 1 (drop_left). But if the argument is itself a delta, kappa ties and mu increases rather than decreases, which breaks the termination argument. This suggests the measure definition may need refinement or the rewrite system requires additional constraints to ensure well-foundedness.

@@ -1,0 +1,11 @@
+**Assessment**
+
+No. From the presented rewrite system alone, strong normalization cannot be established.
+
+- The rule `F(x, y, S(n)) -> G(y, F(x, y, n))` is structurally recursive on the third argument, but the system provides no rewrite rules that reduce or eliminate `G` or otherwise guarantee that `n` decreases to a base case.  
+- Without any rules for `G` (or for `S`/`Z` beyond pattern matching), you cannot conclude that every ground term eventually reaches the base rule `F(x, y, Z) -> x`.  
+- In particular, terms of the form `F(a, b, t)` with `t` not provably reducible to `Z` (e.g., stuck or cyclic terms built using `S` and uninterpreted symbols) have no derivable measure decrease from the given rules alone.
+
+**Short proof roadmap (if it were possible)**
+
+To prove strong normalization from just these rules, you would need a well-founded measure that strictly decreases on every rewrite step. The only candidate is the third argument’s “size,” but this requires a proof that every term in that position reduces to `Z` via the given rules, which is not derivable here (no rules reduce `S` or `G`). Therefore, the standard structural recursion argument cannot be closed with the current rule set.

@@ -1,0 +1,12 @@
+The proposed lexicographic termination measure is **not sound**. 
+
+The issue lies in the definition of the `phase` function combined with structural simplification rules, causing the measure to strictly *increase* in some reduction steps.
+
+Specifically, the `phase` of a `merge` term is always `0`. However, the `phase` of a term like `recDelta b s (delta n)` is `1`. 
+
+Consider the reduction rule `R_merge_void_left : ∀ t, Step (merge void t) t`:
+If we let `t = recDelta b s (delta n)`:
+* **LHS (`merge void t`) measure**: `phase = 0`, `cost = 1 + cost void + cost t`. As a tuple: `(0, 1 + cost t)`
+* **RHS (`t`) measure**: `phase = 1`, `cost = cost t`. As a tuple: `(1, cost t)`
+
+In a lexicographic tuple comparison `(Nat × Nat)`, the first element takes priority. The reduction steps from a phase of `0` to `1` (`0 < 1`), which means the measure increases instead of decreasing. The exact same failure occurs for `R_merge_void_right` and `R_merge_cancel` if the simplified result exposes a `recDelta` applied to a `delta`.

@@ -1,0 +1,40 @@
+## Raw Assessment
+
+**Yes**, strong normalization can be established from this calculus alone using standard proof techniques that require no external axioms or system strengthening.
+
+---
+
+### The System
+
+**Constructors:** `void`, `delta`, `integrate`, `merge`, `app`, `recΔ`, `eqW`
+
+**Rules:**
+- `R_int_delta`, `R_merge_*`, `R_eq_refl` — strictly reduce term size
+- `R_rec_zero` — eliminates `recΔ` when third arg is `void`
+- `R_rec_succ` — reduces third arg structurally (`delta n` ↦ `n`), may duplicate `s`
+- `R_eq_diff` — replaces `eqW` with lower-precedence constructors
+
+---
+
+### Proof Roadmap (Recursive Path Ordering)
+
+1. **Fix a precedence:** `recΔ > eqW > app > integrate > merge > delta > void`
+
+2. **Verify each rule under RPO:**
+   - **R_rec_succ:** `recΔ b s (delta n) → app s (recΔ b s n)` 
+     - Head symbol `recΔ > app` ✓
+     - Subterm `s` is proper subterm of LHS ✓
+     - Subterm `recΔ b s n` has smaller third argument (`n ≺ delta n`) ✓
+   - **R_eq_diff:** `eqW a b → integrate (merge a b)`  
+     - `eqW > integrate > merge` and `a`,`b` are subterms of LHS ✓
+   - **All other rules:** Strictly reduce term size ✓
+
+3. **Conclude:** RPO is well-founded, so all reduction sequences terminate.
+
+---
+
+### Notes
+
+- The overlap between `R_eq_refl` and `R_eq_diff` (both apply when `a = b`) creates non-determinism but does not affect SN.
+- No typing, guards, or external structural lemmas are required—RPO applies directly to the untyped term algebra.
+- The duplication of `s` in `R_rec_succ` is harmless because the recursion strictly decreases on the third argument.

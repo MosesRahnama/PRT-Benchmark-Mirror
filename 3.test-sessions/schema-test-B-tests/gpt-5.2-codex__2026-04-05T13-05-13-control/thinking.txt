@@ -1,0 +1,6 @@
+**Determining termination using LPO**
+
+The rules orient under LPO with precedence F > G > S > Z, as the first rule's left side is greater than the variable on the right, and the second rule's left F(...) is greater than G(...) since F > G, and also greater than the arguments by lexicographic comparison, particularly because S(n) > n. This supports termination by descent on n.
+**Confirming termination by multiple methods**
+
+LPO, polynomial interpretation, dependency pairs with subterm criterion, and a direct descent measure all successfully prove termination within standard boundaries; KBO fails due to weight constraints.

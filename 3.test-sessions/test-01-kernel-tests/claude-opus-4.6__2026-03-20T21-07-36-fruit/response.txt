@@ -1,0 +1,34 @@
+**Assessment: Yes.** Strong normalization of this system can be established purely from the presented syntax and rewrite rules, using a standard lexicographic path ordering (LPO). No additional axioms, guards, side conditions, or hidden assumptions are needed.
+
+---
+
+## Proof Roadmap
+
+**Method:** Lexicographic Path Ordering (LPO) with a precedence on constructors.
+
+**Precedence:** `banana > pear > cherry > mango > peach > grape > plum`
+
+**Verification that every rule is strictly oriented by this LPO:**
+
+| Rule | LHS → RHS | Why LPO orients it |
+|---|---|---|
+| R_mango_grape | `mango (grape t) → plum` | `mango > plum` in precedence |
+| R_peach_plum_left | `peach plum t → t` | `t` is a subterm of LHS |
+| R_peach_plum_right | `peach t plum → t` | `t` is a subterm of LHS |
+| R_peach_cancel | `peach t t → t` | `t` is a subterm of LHS |
+| R_banana_zero | `banana b s plum → b` | `b` is a subterm of LHS |
+| R_apple_orange | `banana b s (grape n) → pear s (banana b s n)` | See below |
+| R_cherry_refl | `cherry a a → plum` | `cherry > plum` in precedence |
+| R_cherry_diff | `cherry a b → mango (peach a b)` | `cherry > mango > peach`; both `a`, `b` are subterms |
+
+**The critical rule (R_apple_orange):** `banana b s (grape n) → pear s (banana b s n)`
+
+- `banana > pear`, so we check that the LHS exceeds each RHS argument:
+  - `banana(b, s, grape(n)) >_lpo s` — holds by the subterm property (`s` is the second argument).
+  - `banana(b, s, grape(n)) >_lpo banana(b, s, n)` — same head `banana`; lex-compare arguments: `b = b`, `s = s`, then `grape(n) >_lpo n` by the subterm property. No further obligations since position 3 is the last.
+
+This is the only non-trivial case. The duplication of `s` in the RHS is harmless because LPO is closed under substitution and contexts — it does not rely on a simple additive size measure (which would indeed fail here when `size(s) ≥ 2`).
+
+**The conditional rule (R_cherry_diff):** The side condition `a ≠ b` only restricts when the rule fires. Since the unconditional orientation `cherry a b >_lpo mango (peach a b)` holds for all `a`, `b`, the conditional version is a fortiori oriented.
+
+**Conclusion:** Since LPO is a reduction ordering (well-founded, stable under substitution, compatible with all contexts), every rewrite step — at any position in any term — strictly decreases the LPO. Therefore, no infinite rewrite sequence exists: the system is strongly normalizing.

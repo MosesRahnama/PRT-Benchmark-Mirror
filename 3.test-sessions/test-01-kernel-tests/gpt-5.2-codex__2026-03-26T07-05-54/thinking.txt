@@ -1,0 +1,18 @@
+**Confirming strong normalization via LPO with explicit ordering**
+
+Strong normalization can be established purely within the given calculus by viewing the rules as a TRS closed under contexts and using lexicographic path ordering (LPO) with precedence recΔ > app and eqW > integrate > merge > delta > void. Each rule orients under this order: crucially, rule 6 is handled by LPO’s subterm property and lexicographic comparison on arguments. Since LPO is well-founded and stable under contexts, this proves termination without extra axioms.
+
+## Short proof roadmap  
+1. Treat the rules as a TRS with usual context closure.  
+2. Choose LPO with precedence recΔ > app, eqW > integrate > merge > delta > void and lexicographic status (default argument order for recΔ suffices).  
+3. Show each rule’s LHS is greater than its RHS (e.g., recΔ(b,s,delta n) > app(s, recΔ(b,s,n)) because delta n > n and recΔ > app).  
+4. Use LPO’s closure under context and substitution to conclude all rewrite sequences terminate.  
+
+No structural axioms beyond the provided syntax and rewrite rules are needed. The duplication in recΔ’s RHS is controlled by the recursive argument’s decrease and handled by LPO’s ordering properties.
+
+## Checklist  
+[x] Read `Test-01-Kernel.lean` rules and defined TRS.  
+[x] Analyzed rules for termination under context closure.  
+[x] Developed LPO ordering and argument status to orient all rules.  
+[x] Confirmed no extra axioms or assumptions required beyond given calculus.  
+[x] Provided raw assessment and termination proof sketch.

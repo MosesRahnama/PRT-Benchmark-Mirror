@@ -1,0 +1,3 @@
+**Linking measures definitions**
+
+I’m trying to understand the valid range specified in the instructions. The earlier file linkification allowed for certain line ranges, so maybe I can use that approach here. I want to link specific rule lines like #20 and mention definitions for measures mu1, mu2, and mu3 in their respective line ranges. I also need the target path relative to my workspace, which is called KO7-LLM-Benchmark. I think my final answer can summarize that all three candidates fail as global termination measures.

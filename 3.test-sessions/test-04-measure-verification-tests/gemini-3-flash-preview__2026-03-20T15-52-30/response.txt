@@ -1,0 +1,37 @@
+I’ve identified a concrete counterexample in the target file, so I’ll now close out the checklist and then give you a crisp soundness verdict with the exact failing rewrite.
+I’m marking the final checklist item complete now that the verdict is ready to report.
+## Verdict
+
+The proposed measure is **not sound** (for standard lexicographic descent on `Nat × Nat`).
+
+A single counterexample is enough:
+
+- Use rule `R_merge_void_left : Step (merge void t) t`
+- Pick  
+  $t := \text{recDelta void void (delta void)}$
+
+Then:
+
+- $\text{phase}( \text{merge void } t ) = 0$
+- $\text{phase}(t) = 1$
+
+and
+
+- $\text{cost}(t)=2$
+- $\text{cost}(\text{merge void } t)=1+0+2=3$
+
+So
+\[
+\text{measure}(\text{merge void } t)=(0,3),\quad \text{measure}(t)=(1,2).
+\]
+
+Under lex order (first component compared first), $(0,3) < (1,2)$, meaning the rewrite step goes to a **larger** measure, not a smaller one.  
+So this cannot justify termination.
+
+(And this issue is structural: any rule rewriting to an unconstrained variable like `t`/`b` can similarly jump `phase` from `0` to `1`.)
+
+## Checklist update
+
+- ✅ Read target Lean file
+- ✅ Analyze termination measure soundness
+- ✅ Deliver verdict with rationale

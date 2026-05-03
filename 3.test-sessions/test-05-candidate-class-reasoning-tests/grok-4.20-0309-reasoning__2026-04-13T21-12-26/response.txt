@@ -1,0 +1,46 @@
+**Assessment of the three termination measure candidates (mu1, mu2, mu3)**
+
+The provided Lean 4 code defines a small first-order rewrite calculus on `Trace` terms via the inductive `Step` relation (8 contraction rules). A valid termination measure `mu : Trace → Nat` must satisfy **strict decrease** (`mu s > mu t`) for every `Step s t`. (This is required for any well-founded order argument to prove termination of the rewrite system; non-strict or increasing measures do not suffice.)
+
+All three candidates are structurally recursive measures that assign additive weights to constructors and recurse on subterms. I evaluated them against every rule by direct substitution. **None of the three candidates is valid.**
+
+### Common Failure on `R_rec_succ`
+```lean
+R_rec_succ : ∀ b s n, Step (recDelta b s (delta n)) (app s (recDelta b s n))
+```
+This rule unfolds a recursive trace. The key issue is **duplication of the `s` subterm** on the RHS (it appears both as the left argument of `app` *and* inside the inner `recDelta`).
+
+- **mu1**:
+  - LHS: `2 + μb + μs + μn`
+  - RHS: `2 + μb + 2·μs + μn`
+  - Result: LHS = RHS − μs. **Increases** by μs (or equal if μs = 0). Fails.
+
+- **mu2**:
+  - LHS: `6 + μb + μs + μn`
+  - RHS: `6 + μb + 2·μs + μn`
+  - Result: LHS = RHS − μs. **Increases** by μs (or equal if μs = 0). Fails. (The elevated base weights on `recDelta`/`eqW` do not compensate for the duplication.)
+
+- **mu3**:
+  - LHS: `2 + μb + μs + μn`
+  - RHS: `3 + μb + 2·μs + μn`
+  - Result: LHS = RHS − (1 + μs). **Strictly increases**. Fails worst of the three.
+
+Because the coefficient of `μs` on the LHS is always ≤ the summed coefficients of the two occurrences on the RHS (for any positive weights on `app`/`recDelta`), *no* measure of this additive shape can succeed on this rule.
+
+### Performance on the Other Rules
+All three pass the remaining 7 rules (`R_int_delta`, the three `merge` rules, `R_rec_zero`, `R_eq_refl`, `R_eq_diff`):
+- They assign positive weight to every constructor.
+- `void` is the clear minimum (0).
+- Rules that eliminate `delta`/`integrate`/`merge`/`eqW` or shrink recursion depth yield strict decrease.
+- The `merge t t → t` and `merge void t → t` rules are handled by the extra +1/+2 base weights.
+
+The `eqW` cases are particularly well-covered (extra constants 3/5/4), but this is irrelevant given the fatal flaw elsewhere.
+
+### Summary Ranking of Candidates
+- **mu2** is the strongest *structurally* (highest weights on the complex constructors `recDelta`, `eqW`, `integrate`/`merge`; good balance on `app`).
+- **mu1** is a reasonable lightweight default but still fails the critical rule.
+- **mu3** is the weakest (under-weights `merge`, over-weights `app`, produces the largest increase on `R_rec_succ`).
+
+**Conclusion**: All three candidates are invalid termination measures. The rewrite system as defined does not terminate under any of them (or any similar additive Nat-valued measure) because of the `s`-duplication in the recursor successor case. A correct measure would require a different approach (e.g., a lexicographic combination, multiset order, or a measure that charges the *context* of `s` differently on the RHS). 
+
+This matches the spirit of a "candidate class reasoning" test: the obvious structural measures look plausible at first glance but contain a subtle soundness flaw exposed by exhaustive case analysis on the inductive `Step` relation.

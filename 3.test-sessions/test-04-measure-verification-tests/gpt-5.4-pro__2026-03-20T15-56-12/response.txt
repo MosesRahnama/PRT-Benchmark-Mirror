@@ -1,0 +1,43 @@
+No — assuming the usual ascending lexicographic order on `Nat × Nat`, the measure is **not sound**.
+
+- The failure is immediate for `R_merge_void_left` (and similarly `R_merge_void_right`, `R_merge_cancel`, `R_rec_zero`).
+- Take  
+  `r := recDelta void void (delta void)`.  
+  Then `Step (merge void r) r`.
+
+Now compute:
+
+- `phase (merge void r) = 0`
+- `cost (merge void r) = 1 + 0 + 2 = 3`
+- so `measure (merge void r) = (0, 3)`
+
+but
+
+- `phase r = 1`
+- `cost r = 2`
+- so `measure r = (1, 2)`
+
+For a valid lexicographic descent, the target must satisfy  
+$measure(r) <_{\mathrm{lex}} measure(merge\ void\ r)$,  
+but here
+
+$$(1,2) \not<_{\mathrm{lex}} (0,3).$$
+
+So the measure can **increase** on a rewrite step.
+
+A second issue is that `cost` by itself also does not handle `R_rec_succ`:
+
+$$
+cost(app\ s\ (recDelta\ b\ s\ n))
+= cost(recDelta\ b\ s\ (delta\ n)) + cost(s).
+$$
+
+So on `R_rec_succ`, `cost` is unchanged when `s = void` and increases when `cost s > 0`.
+
+## Conclusion
+
+This pair
+
+`measure t := (phase t, cost t)`
+
+does **not** give a sound termination argument for `Step`. The system may still terminate, but this specific lexicographic measure does not prove it.

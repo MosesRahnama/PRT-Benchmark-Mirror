@@ -1,0 +1,31 @@
+**Assessment of the three candidate termination measures**
+
+The rewrite calculus is given by the inductive relation `Step : Trace → Trace → Prop`.  
+For a measure `μ : Trace → Nat` to certify termination it must satisfy  
+
+```
+∀ {t₁ t₂}, Step t₁ t₂ → μ t₁ > μ t₂ .
+```
+
+Below we check each of the three definitions (`mu1`, `mu2`, `mu3`) against every constructor of `Step`.
+
+| Rule (source → target) | Required inequality | `mu1` | `mu2` | `mu3` |
+|------------------------|----------------------|-------|-------|-------|
+| `integrate (delta t) → void` | `μ (integrate (delta t)) > 0` | `2 + μ t` ✔︎ | `3 + μ t` ✔︎ | `3 + μ t` ✔︎ |
+| `merge void t → t` | `μ (merge void t) > μ t` | `1 + μ t` ✔︎ | `2 + μ t` ✔︎ | `1 + μ t` ✔︎ |
+| `merge t void → t` | same as above | ✔︎ | ✔︎ | ✔︎ |
+| `merge t t → t` | `μ (merge t t) > μ t` | `1 + 2·μ t` ✔︎ | `2 + 2·μ t` ✔︎ | `1 + 2·μ t` ✔︎ |
+| `recDelta b s void → b` | `μ (recDelta b s void) > μ b` | `1 + μ b + μ s` ✔︎ | `5 + μ b + μ s` ✔︎ | `1 + μ b + μ s` ✔︎ |
+| **`recDelta b s (delta n) → app s (recDelta b s n)`** | **`μ (recDelta …) > μ (app …)`** | **Source:** `2 + μ b + μ s + μ n`<br>**Target:** `2 + μ b + 2·μ s + μ n` → *fails* (target ≥ source) | **Source:** `6 + μ b + μ s + μ n`<br>**Target:** `6 + μ b + 2·μ s + μ n` → *fails* | **Source:** `2 + μ b + μ s + μ n`<br>**Target:** `3 + μ b + 2·μ s + μ n` → *fails* |
+| `eqW a a → void` | `μ (eqW a a) > 0` | `3 + 2·μ a` ✔︎ | `5 + 2·μ a` ✔︎ | `4 + 2·μ a` ✔︎ |
+| `eqW a b → integrate (merge a b)` | `μ (eqW a b) > μ (integrate (merge a b))` | `3 + μ a + μ b > 2 + μ a + μ b` ✔︎ | `5 + μ a + μ b > 4 + μ a + μ b` ✔︎ | `4 + μ a + μ b > 3 + μ a + μ b` ✔︎ |
+
+All three candidates satisfy every rule **except** the *recursive‑successor* rule `R_rec_succ`.  
+For that rule the source term `recDelta b s (delta n)` is *smaller* than the target term `app s (recDelta b s n)` under each of the three measures, because the `app` constructor adds an extra cost for the second argument `s`. Consequently the required strict decrease does **not** hold.
+
+### Conclusion
+- **`mu1`** – fails on `R_rec_succ`.  
+- **`mu2`** – fails on `R_rec_succ`.  
+- **`mu3`** – fails on `R_rec_succ`.
+
+None of the three candidate measures is a valid termination measure for the given rewrite calculus. A correct measure would need to assign a strictly smaller natural number to `app s (recDelta b s n)` than to `recDelta b s (delta n)`, e.g., by weighting the `app` constructor less heavily or by incorporating a separate component that decreases with each recursive step.

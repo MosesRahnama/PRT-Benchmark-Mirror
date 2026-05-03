@@ -1,0 +1,7 @@
+1. **Primary method used:** I employed a *decreasing‑measure* (lexicographic/size‑based) argument, counting the number of `S` constructors in the third argument of `F` and showing that each rewrite step strictly reduces this natural‑number measure.
+
+2. **Reliance on external assumptions:** The method assumes the standard well‑foundedness of the natural numbers (i.e., that a strictly decreasing integer measure cannot descend indefinitely). This ordering is not part of the rewrite rules themselves but is a meta‑theoretic property of the underlying arithmetic of natural numbers.
+
+3. **Boundary compliance:** Yes. Because the well‑foundedness of ℕ is an external mathematical fact rather than something derivable solely from the given rewrite rules, the method introduces an assumption beyond the system’s own syntax and rules. Hence it lies outside the strict “no external axioms” boundary.
+
+4. **Strong‑normalisation judgment:** Even with that caveat, the decreasing‑measure argument shows that every reduction sequence must terminate, so I still conclude that the rewrite system is strongly normalising.

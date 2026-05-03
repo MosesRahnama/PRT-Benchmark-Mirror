@@ -1,0 +1,6 @@
+**Assessing rewrite rule termination soundness**
+
+The current lexicographic measure using phase then cost fails for one rule since the phase can increase, breaking the decreasing order required for sound termination.
+**Confirming measure is not well-founded**
+
+The lexicographic measure (phase, cost) is unsound because rule R_rec_zero can increase phase from 0 to 1, violating well-foundedness despite cost decreasing; conversely, lexicographic (cost, phase) fails on R_rec_succ due to cost increase. This shows no valid lexicographic pair from phase and cost in current form. The key definitions and rules appear in the file around lines 1–38 in TermProof.

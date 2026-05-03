@@ -1,0 +1,38 @@
+### Assessment of Helper Strategy Soundness
+
+The provided Lean 4 file defines a first-order rewrite calculus via the inductive `Trace` type and the `Step` relation, along with a structural measure `kappa : Trace → Nat` intended to support termination arguments (e.g., showing that rewriting steps decrease `kappa`). The "helper strategy" refers to the two theorems at the end:
+
+1. `kappa_rec_delta_step`: Claims `κ(recΔ b s (δ n)) = κ(recΔ b s n) + 1` for all `b, s, n : Trace`.
+2. `kappa_rec_succ_drop`: Claims `κ(app s (recΔ b s n)) < κ(recΔ b s (δ n))` for all `b, s, n : Trace`, relying on rewriting via the first theorem.
+
+These appear designed to show that the `R_rec_succ` rule (from `Step`) strictly decreases `kappa`, aiding a termination proof for rewriting traces involving recursion.
+
+#### Soundness Analysis
+The strategy is **not sound as written**. The first theorem (`kappa_rec_delta_step`) is false in general, invalidating the proof tactic in the second theorem (which rewrites using it). Below, I explain with calculations based solely on the `kappa` definition. Let `kb ≔ κ b`, `ks ≔ κ s`, `kn ≔ κ n`, and `M ≔ max(max(kb, ks), kn)` for brevity. Recall `κ(δ t) = κ t` and `κ(app x y) = max(κ x, κ y)` from the definition and simp lemmas.
+
+##### Case 1: `n` is not of the form `δ k` (base case, e.g., `n = void`)
+- Left: `κ(recΔ b s (δ n))` matches the `.recDelta b s (δ n)` pattern, so `= M + 1`.
+- Right: `κ(recΔ b s n)` matches the fallback `.recDelta b s n` pattern (since `n ≠ δ _`), so `= M`.
+- Thus, left = right + 1, and the theorem holds.
+
+##### Case 2: `n = δ k` for some `k : Trace` (inductive counterexample)
+- Left: `κ(recΔ b s (δ (δ k)))` matches `.recDelta b s (δ (δ k))`, so `= max(max(kb, ks), κ(δ k)) + 1 = max(max(kb, ks), κ k) + 1 = M' + 1`, where `M' ≔ max(max(kb, ks), κ k)`.
+- Right: `κ(recΔ b s (δ k))` matches `.recDelta b s (δ k)`, so `= max(max(kb, ks), κ k) + 1 = M' + 1`.
+- Thus, left = `M' + 1` and right = `M' + 1`, so left = right (not right + 1).
+
+The theorem fails here: it claims left = `(M' + 1) + 1 = M' + 2`, but actually left = right. This counterexample generalizes to any `n` with one or more leading `δ`s (since `κ(δ^m t) = κ t` for any `m ≥ 0`, but the pattern matching adds +1 only once per `recΔ` invocation, not cumulatively).
+
+##### Implications for the Second Theorem
+- It rewrites the right-hand side using `kappa_rec_delta_step`, yielding `κ(app s (recΔ b s n)) < κ(recΔ b s n) + 1`.
+- Left: `max(ks, κ(recΔ b s n))`.
+- In the base case (from Case 1), this becomes `max(ks, M) < M + 1`.
+  - Since `M ≥ ks` (by definition of `M`), left = `M`, so `M < M + 1` holds.
+- But in the counterexample (Case 2), the rewrite assumes a false equality, so the inequality cannot be trusted. Even without the rewrite, direct computation shows:
+  - Left: `max(ks, κ(recΔ b s (δ k))) = max(ks, M' + 1) = M' + 1` (since `M' + 1 ≥ ks`).
+  - Right: `κ(recΔ b s (δ (δ k))) = M' + 1`.
+  - Thus, left = `M' + 1` ≯ right = `M' + 1` (equality, not strict decrease).
+
+The `R_rec_succ` rule does not always strictly decrease `κ` under nested `δ`s, breaking the termination argument.
+
+#### Recommendations
+To fix, the theorems need guards (e.g., `n` not starting with `δ`) or a refined `κ` (e.g., counting leading `δ`s explicitly in `recΔ`). The current version overclaims universality, making the strategy unsound for general traces.

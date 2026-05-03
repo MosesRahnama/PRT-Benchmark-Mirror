@@ -1,0 +1,24 @@
+**Assessment: Yes, strong normalization can be established from the presented rewrite system alone.**
+
+**Reasoning:**
+
+The system has two rules over the signature `{F, G, S, Z}` with variables `{x, y, n}`:
+
+1. `F(x, y, Z) → x`
+2. `F(x, y, S(n)) → G(F(x, y, n))`
+
+Strong normalization holds because there is a straightforward **structural descent** on the third argument of `F`:
+
+- Rule 1 is a **base case**: when the third argument is `Z` (a constructor/constant), `F` eliminates itself entirely, returning `x`. No recursive call occurs.
+- Rule 2 is a **step case**: when the third argument is `S(n)`, the right-hand side calls `F(x, y, n)` — the third argument has strictly decreased from `S(n)` to `n`. The outer `G` is a uninterpreted function symbol with no rewrite rules, so it is inert (already in normal form with respect to `G`).
+
+This gives a termination proof via a **polynomial interpretation** or, more simply, by assigning a measure equal to the depth of the `S`-nesting in the third argument of `F`. Every application of Rule 2 reduces this measure by exactly 1, and Rule 1 fires at measure 0. Since the measure is a natural number that strictly decreases, every reduction sequence is finite.
+
+Key points:
+
+- **No additional axioms are needed.** The termination argument is purely syntactic, relying only on the subterm relation on the third argument.
+- **No variable binding or higher-order features** complicate the analysis.
+- `G` has no rewrite rules, so wrapping in `G(...)` introduces no new redexes.
+- The system is **orthogonal** (left-linear, no critical pairs), so strong normalization and confluence both hold trivially.
+
+This is a textbook case of termination by **structural recursion on a first-order data type** (the `Z`/`S` natural numbers).

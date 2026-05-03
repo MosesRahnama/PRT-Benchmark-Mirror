@@ -1,0 +1,100 @@
+Looking at the file, I can see a strong normalization proof using a lexicographic measure `(kappa, mu)`. Three of the eight cases are completed. Here's a proof skeleton for the remaining five cases:
+
+## Proof Skeleton for Remaining Cases
+
+### Case 1: `R_int_delta` — `integrate (delta t) --> void`
+
+**Strategy**: Kappa always drops (or stays 0), and mu drops from `1 + mu t` to `0`.
+
+```lean
+| _, _, Step.R_int_delta t => by
+    -- kappa(integrate (delta t)) = kappa t
+    -- kappa(void) = 0
+    -- Either kappa drops if kappa t > 0, or we need a case split
+    by_cases h : kappa t = 0
+    · -- kappa ties at 0, mu drops
+      have hmu : mu void < mu (integrate (delta t)) := by simp [mu]; omega
+      have hk  : kappa void = kappa (integrate (delta t)) := by simp [h]
+      exact drop_right hmu hk
+    · -- kappa drops strictly
+      have hk : kappa void < kappa (integrate (delta t)) := by simp; omega
+      exact drop_left hk
+```
+
+### Case 2: `R_rec_zero` — `recDelta b s void --> b`
+
+**Strategy**: Kappa is `max(kappa b, kappa s)` on LHS vs `kappa b` on RHS. If they tie, mu drops by `3 + mu s`.
+
+```lean
+| _, _, Step.R_rec_zero b s => by
+    -- kappa(recDelta b s void) = max(kappa b, kappa s)
+    -- kappa b ≤ max(kappa b, kappa s)
+    by_cases h : kappa b = Nat.max (kappa b) (kappa s)
+    · -- kappa ties, mu drops
+      have hmu : mu b < mu (recDelta b s void) := by simp [mu]; omega
+      have hk  : kappa b = kappa (recDelta b s void) := by simp; exact h.symm
+      exact drop_right hmu hk
+    · -- kappa drops strictly (kappa s > kappa b)
+      have hk : kappa b < kappa (recDelta b s void) := by
+        simp; push_neg at h; omega
+      exact drop_left hk
+```
+
+### Case 3: `R_rec_succ` — `recDelta b s (delta n) --> app s (recDelta b s n)`
+
+**Strategy**: This is the key case where kappa drops by 1 (the +1 disappears).
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    -- LHS kappa: max(max(kappa b, kappa s), kappa n) + 1
+    -- RHS kappa: max(kappa s, max(max(kappa b, kappa s), kappa n))
+    --          = max(max(kappa b, kappa s), kappa n)
+    -- Kappa drops by exactly 1
+    have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+      simp [kappa]
+      -- Simplify to show max(...) < max(...) + 1
+      omega
+    exact drop_left hk
+```
+
+### Case 4: `R_eq_refl` — `eqW a a --> void`
+
+**Strategy**: Similar to `R_int_delta`, handle whether kappa is 0 or positive.
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    -- kappa(eqW a a) = max(kappa a, kappa a) = kappa a
+    -- kappa(void) = 0
+    by_cases h : kappa a = 0
+    · -- kappa ties at 0, mu drops
+      have hmu : mu void < mu (eqW a a) := by simp [mu]; omega
+      have hk  : kappa void = kappa (eqW a a) := by simp [h]
+      exact drop_right hmu hk
+    · -- kappa drops strictly
+      have hk : kappa void < kappa (eqW a a) := by simp; omega
+      exact drop_left hk
+```
+
+### Case 5: `R_eq_diff` — `eqW a b --> integrate (merge a b)`
+
+**Strategy**: Kappa ties at `max(kappa a, kappa b)`, mu drops from `4 + ...` to `3 + ...`.
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    -- kappa ties: both are max(kappa a, kappa b)
+    -- mu drops: 4 + mu a + mu b --> 3 + mu a + mu b
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by 
+      simp [mu]; omega
+    have hk  : kappa (integrate (merge a b)) = kappa (eqW a b) := by 
+      simp [kappa]
+    exact drop_right hmu hk
+```
+
+## Key Insights
+
+1. **R_int_delta** and **R_eq_refl**: Both reduce to `void`, requiring case analysis on whether kappa is already 0
+2. **R_rec_zero**: Requires case analysis on whether `kappa s > kappa b` or not
+3. **R_rec_succ**: The critical recursion case where kappa strictly decreases by 1 (the special +1 in the recDelta definition disappears)
+4. **R_eq_diff**: Simple mu-decrease case where the 4-weight becomes 3-weight total
+
+All cases fit the lexicographic pattern established by the three completed proofs.

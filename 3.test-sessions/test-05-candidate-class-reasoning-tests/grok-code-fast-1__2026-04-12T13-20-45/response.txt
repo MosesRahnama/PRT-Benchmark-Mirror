@@ -1,0 +1,9 @@
+The three proposed termination measures (mu1, mu2, and mu3) are all functions from Trace to Nat that are intended to decrease strictly under each Step relation rule, ensuring termination of the rewrite calculus.
+
+However, none of them qualify as valid termination measures. All three fail to decrease on the R_rec_succ rule: recDelta b s (delta n) → app s (recDelta b s n). In each case, the measure value of the left-hand side is less than or equal to that of the right-hand side, violating the requirement for strict decrease.
+
+- For mu1: Left = 2 + mu1 b + mu1 s + mu1 n; Right = 2 + mu1 b + 2 × mu1 s + mu1 n
+- For mu2: Left = 6 + mu2 b + mu2 s + mu2 n; Right = 6 + mu2 b + 2 × mu2 s + mu2 n  
+- For mu3: Left = 2 + mu3 b + mu3 s + mu3 n; Right = 3 + mu3 b + 2 × mu3 s + mu3 n
+
+All other rules do decrease under these measures, but the failure on R_rec_succ is sufficient to disqualify them.

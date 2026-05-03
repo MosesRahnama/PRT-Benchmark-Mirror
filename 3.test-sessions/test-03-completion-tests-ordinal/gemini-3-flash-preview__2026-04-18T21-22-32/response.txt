@@ -1,0 +1,63 @@
+I will provide a proof skeleton for the three remaining cases in KO7-LLM-Benchmark/test-files/Test-03-Completion-Ordinal.lean based on the provided ordinal measure $\mu$.
+
+### Case 1: `R_rec_succ`
+**Goal:** `mu (app s (recDelta b s n)) < mu (recDelta b s (delta n))`
+
+The current `mu` definition for `recDelta b s (delta n)` results in:
+$$\omega^{\mu(\delta n) + \mu(s) + 6} + \omega \cdot (\mu(b) + 1) + 1$$
+Substituting $\mu(\delta n) = \omega^5 \cdot (\mu(n) + 1) + 1$:
+$$\omega^{\omega^5 \cdot (\mu(n) + 1) + 1 + \mu(s) + 6} + \dots$$
+
+The RHS `mu (app s (recDelta b s n))` expands to:
+$$\omega^3 \cdot (\mu(s) + 1) + \omega^2 \cdot (\mu(\text{recDelta } b s n) + 1) + 1$$
+Where $\mu(\text{recDelta } b s n) = \omega^{\mu(n) + \mu(s) + 6} + \dots$
+
+**Skeleton:**
+```lean4
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- 1. Identify that the exponent on the LHS is:
+    --    exp_LHS = (omega^5 * (mu n + 1) + 1) + mu s + 6
+    -- 2. Identify the highest exponent on the RHS is inside the second term:
+    --    exp_RHS_inner = mu n + mu s + 6
+    -- 3. Since omega^5 * (mu n + 1) + 1 > mu n + 1, we show exp_LHS > exp_RHS_inner + 2
+    --    (the +2 accounts for the omega^2 multiplier in the 'app' definition).
+    -- 4. Use 'Ordinal.opow_lt_opow_iff_base' and the fact that omega^x dominates 
+    --    polynomial combinations of omega^y where y < x.
+    sorry
+```
+
+### Case 2: `R_eq_refl`
+**Goal:** `mu void < mu (eqW a a)`
+Since $\mu(\text{void}) = 0$, we just need to prove $\mu(\text{eqW } a a) > 0$.
+
+**Skeleton:**
+```lean4
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- 1. mu(eqW a a) = omega^(mu a + mu a + 9) + 1
+    -- 2. Use 'Ordinal.pos_iff_ne_zero' and 'Ordinal.add_pos_right'.
+    -- 3. Since 1 > 0, the sum is strictly positive regardless of the omega term.
+    exact Ordinal.add_pos_right _ Ordinal.one_pos
+```
+
+### Case 3: `R_eq_diff`
+**Goal:** `mu (integrate (merge a b)) < mu (eqW a b)`
+LHS: $\omega^4 \cdot (\omega^3 \cdot (\mu(a) + 1) + \omega^2 \cdot (\mu(b) + 1) + 1 + 1) + 1$
+RHS: $\omega^{\mu(a) + \mu(b) + 9} + 1$
+
+**Skeleton:**
+```lean4
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- 1. Simplify LHS to: omega^7 * (mu a + 1) + omega^6 * (mu b + 1) + omega^4 * 2 + 1
+    -- 2. Note that the RHS exponent is (mu a + mu b + 9).
+    -- 3. Use the property that omega^x + omega^y < omega^z if x, y < z.
+    -- 4. Here, 7 < mu a + mu b + 9 and 6 < mu a + mu b + 9.
+    -- 5. Specifically, use 'Ordinal.opow_lt_opow_iff_base' to show that the single 
+    --    tower in the RHS wipes out the sum of smaller towers in the LHS.
+    sorry
+```

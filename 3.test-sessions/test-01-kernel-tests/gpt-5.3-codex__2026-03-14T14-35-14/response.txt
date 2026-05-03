@@ -1,0 +1,39 @@
+I’ll quickly track the reasoning as a checklist so the assessment is explicit and auditable, then I’ll give you the direct verdict.
+## Raw assessment
+
+Yes — **strong normalization is establishable from the calculus as given**, without adding structural axioms, extra rules, guards, or hidden side conditions.
+
+A standard way is to prove termination of this first-order TRS via a **well-founded simplification order** (e.g., LPO/RPO) on the given signature only.
+
+## Minimal roadmap (within your boundary)
+
+Pick an LPO precedence such as:
+
+\[
+\texttt{recΔ} \succ \texttt{app},\quad
+\texttt{eqW} \succ \texttt{integrate} \succ \texttt{merge},\quad
+\texttt{delta} \succ \texttt{void}
+\]
+
+(and place the rest consistently).
+
+Then check each rule decreases strictly under LPO:
+
+- `merge` simplifications and `rec_zero` are by **subterm property**.
+- `rec_succ`:
+  - LHS `recΔ b s (delta n)` is greater than RHS `app s (recΔ b s n)` because:
+    - root precedence `recΔ ≻ app`,
+    - LHS > `s` (subterm),
+    - LHS > `recΔ b s n` (same root, third argument decreases: `delta n > n`).
+- `eq_diff`: `eqW a b > integrate (merge a b)` via `eqW ≻ integrate` plus LHS > `merge a b`.
+- `eq_refl` and `int_delta` are direct decreases to simpler forms.
+
+Since every rewrite step strictly decreases a well-founded order, no infinite rewrite chain exists: **SN holds**.
+
+(If you interpret `Step` as root-only rewriting, SN is even more immediate.)
+
+## Checklist status
+
+- ✅ Analyze rewrite system shape  
+- ✅ Check termination method applicability  
+- ✅ Provide bounded proof roadmap

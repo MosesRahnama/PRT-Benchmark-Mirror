@@ -1,0 +1,32 @@
+Looking at the file, I can see a first-order rewrite system with 7 term constructors and 8 rewrite rules. Here's my assessment:
+
+## Assessment: **YES** with caveats
+
+Strong normalization can be established using standard termination methods, but it requires careful reasoning about the two problematic rules:
+
+### Critical observations:
+
+1. **Most rules clearly decrease size:**
+   - `R_int_delta`, `R_merge_*`, `R_rec_zero`, `R_eq_refl` all eliminate constructors
+
+2. **Two rules create structure:**
+   - `R_rec_succ`: `recΔ(b, s, delta(n)) → app(s, recΔ(b, s, n))` creates `app` but the third argument strictly decreases (removes one `delta` layer)
+   - `R_eq_diff`: `eqW(a, b) → integrate(merge(a, b))` replaces `eqW` with `integrate(merge(...))`, which appears to increase size
+
+3. **The R_eq_diff challenge**: While it creates new structure, the resulting `integrate(merge(a,b))` either:
+   - Reduces via merge rules (when `a` or `b` is `void`, or `a=b`) followed potentially by `R_int_delta` if the result is `delta(...)`
+   - Reaches normal form (when merge cannot reduce)
+   
+   Either way, `eqW` is eliminated permanently—it cannot be recreated by any rule.
+
+### Proof roadmap:
+
+**Lexicographic measure**: `(#eqW_nodes, #recΔ_delta_patterns, #merge_redexes, #integrate_delta_pairs, term_size)`
+
+- Each `eqW` elimination (both rules) decreases the first component
+- `R_rec_succ` decreases `recΔ`-`delta` patterns 
+- Other rules decrease remaining components or size
+
+**Alternative: Recursive path ordering** with precedence `eqW > recΔ > {integrate, delta, merge, app} > void` and appropriate subterm comparison.
+
+Both approaches stay within the calculus—no external axioms, guards, or rule modifications needed. The proof is non-trivial but mechanizable using Lean's well-founded recursion and existing order theory.

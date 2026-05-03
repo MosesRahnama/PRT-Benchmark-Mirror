@@ -1,0 +1,31 @@
+## Raw Assessment: Strong Normalization is Establishable
+
+**Yes**, strong normalization can be established from the presented calculus alone.
+
+### Quick Analysis
+
+The 8 rewrite rules fall into three categories:
+
+| Category | Rules | Behavior |
+|----------|-------|----------|
+| **Size-reducing** | R_int_delta, R_merge_void_*, R_merge_cancel, R_rec_zero, R_eq_refl | Strictly decrease term size |
+| **Structural recursion** | R_rec_succ | Decreases the `delta`-depth of the third argument |
+| **Expansion-then-reduce** | R_eq_diff | Expands to `integrate (merge a b)`, but `merge` rules only reduce |
+
+### Why No Infinite Reductions
+
+1. **`recΔ` is well-founded**: The rule `recΔ b s (delta n) → app s (recΔ b s n)` is structurally recursive on the third argument. Each step strips one `delta`, terminating at `void`.
+
+2. **No critical pair cycles**: The only "expanding" rule is `R_eq_diff`, producing `integrate (merge a b)`. But `merge` never produces `delta _`, so `R_int_delta` cannot fire on the result. The `merge` rules only reduce.
+
+3. **No overlapping redexes create loops**: None of the right-hand sides match any left-hand side in a way that could recreate the original redex.
+
+### Proof Roadmap (Within Bounds)
+
+1. **Define measure**: μ(t) = (structural size, δ-depth in recΔ third arguments) as a lexicographic pair in ℕ × ℕ
+
+2. **Show strict decrease**: Each rule strictly decreases μ in the lexicographic order
+
+3. **Apply well-founded induction**: ℕ × ℕ with lexicographic order is well-founded
+
+No external axioms, guards, or hidden assumptions needed—the calculus as given is strongly normalizing.

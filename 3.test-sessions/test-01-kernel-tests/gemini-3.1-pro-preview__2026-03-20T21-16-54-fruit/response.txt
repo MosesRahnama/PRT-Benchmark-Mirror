@@ -1,0 +1,21 @@
+Based on the explicitly provided rules in the
+file, **yes**, strong normalization can be established directly from the presented calculus without importing any structural axioms or additional rules.
+
+### Raw Assessment & Proof Roadmap
+
+The system is trivially strongly normalizing because of two primary factors:
+
+1. **Lack of Congruence Rules (Root-Only Reduction):**
+   The `Step` relation is defined only at the root of terms. There are no contextual/congruence rules provided (such as `Step a b → Step (grape a) (grape b)`). Consequently, reduction cannot occur inside subterms; it only happens at the top level.
+
+2. **Strict Size Decrease and Dead-Ends:**
+   Analyzing the root-level steps confirms that every valid rewrite either strictly decreases the size of the term (by extracting a subterm) or immediately produces an irreducible term:
+   *   `R_mango_grape`: Returns `plum` (irreducible).
+   *   `R_peach_plum_left`, `R_peach_plum_right`, `R_peach_cancel`: Return a strict subterm `t`. 
+   *   `R_banana_zero`: Returns the strict subterm `b`.
+   *   `R_apple_orange`: Transforms the root to `pear s (...)`. Since there are zero rewrite rules matching a `pear` root, this path terminates immediately in exactly 1 step.
+   *   `R_cherry_refl`: Returns `plum` (irreducible).
+   *   `R_cherry_diff`: Transforms the root to `mango (peach a b)`. Since the only `mango` reduction rule specifically requires an immediate child of `grape`, and congruence evaluation inside the `mango` argument is not possible due to point 1, this form immediately halts.
+
+**Conclusion:** 
+Because every possible sequence of root-only rewrites either strictly decreases term depth or transitions into an inert constructor form (`pear`, `plum`, or mismatched `mango`), infinite reduction chains are syntactically impossible. No sophisticated ordinal assignments or extensions are required.

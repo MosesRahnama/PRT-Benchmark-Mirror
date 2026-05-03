@@ -1,0 +1,39 @@
+## Raw Assessment: Strong Normalization is Not Provable from Presented Rules Alone
+
+**Answer: No** — strong normalization cannot be established from this calculus alone without additional structural reasoning or interpretation methods that go beyond the presented syntax and rewrite rules.
+
+### Critical Issues:
+
+1. **Pattern-Matching Ambiguity (Rules 7 & 8)**
+   - Both `R_eq_refl` and `R_eq_diff` claim to be "unconditional" but logically require determining whether `a ≡ b` structurally
+   - This requires metalevel reasoning about syntactic equality that isn't derivable from the rewrite rules themselves
+   - Pure rewriting without guards would make both rules applicable to `eqW(t, t)`, causing non-determinism
+
+2. **Term Duplication Without Obvious Decreasing Measure (Rule 6)**
+   ```
+   recΔ(b, s, delta(n)) → app(s, recΔ(b, s, n))
+   ```
+   - Duplicates arbitrary term `s` while only decreasing `delta`-nesting in third argument
+   - If `s` itself contains `recΔ` with `delta`-wrapped arguments, total recursion budget may increase
+   - Standard lexicographic path orderings (LPO/RPO) fail on this duplication pattern
+
+3. **Size-Increasing Rule (Rule 8)**
+   ```
+   eqW(a, b) → integrate(merge(a, b))
+   ```
+   - Adds two constructors at the root, increasing term size
+   - Blocks simple size-based termination arguments
+
+### Why Standard Methods Fail:
+
+- **Structural recursion**: Not applicable (rule 6 duplicates non-decreasing subterms)
+- **Simple measures**: Blocked by rules 6 (duplication) and 8 (growth)
+- **LPO/RPO**: Require precedence where `integrate > eqW` AND `merge > eqW`, but rule 8 creates both simultaneously
+- **Polynomial interpretations**: Would need to assign values making rule 6 decrease despite duplication
+
+**Verdict**: Proving SN requires either:
+1. Importing Lean's pattern-matching semantics as a structural axiom (distinguishing rules 7/8)
+2. Adding a semantic interpretation (e.g., ordinal assignment)
+3. Strengthening with explicit guards/side conditions
+
+None of these are "derivable from given syntax and rewrite rules" — they're metalevel commitments about how the system operates.

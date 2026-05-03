@@ -1,0 +1,53 @@
+## Assessment
+
+The helper strategy is **unsound** as written. Here's why:
+
+### Theorem 1: `kappa_rec_delta_step`
+
+**Claim:** `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`
+
+**Analysis:**
+
+From the definition of `kappa`:
+- `kappa (recDelta b s (delta n)) = max(max(κb, κs), κn) + 1`
+
+For `kappa (recDelta b s n)`, we must consider whether `n` matches the `.delta _` pattern:
+- If `n = delta m` for some `m`: `kappa (recDelta b s n) = max(max(κb, κs), κm) + 1`
+- Otherwise: `kappa (recDelta b s n) = max(max(κb, κs), κn)`
+
+Since `kappa (delta n) = kappa n`, we have `κ(delta n) = κn`.
+
+So the LHS is `max(max(κb, κs), κn) + 1`.
+
+For the equation to hold, we need the RHS to be `max(max(κb, κs), κn)`. But `kappa (recDelta b s n)` equals this **only when `n` is not of the form `delta _`**.
+
+**Counterexample:** Let `n = delta void`.
+- LHS: `kappa (recDelta b s (delta (delta void))) = max(max(κb, κs), κ(delta void)) + 1 = max(max(κb, κs), 0) + 1`
+- RHS: `kappa (recDelta b s (delta void)) + 1 = (max(max(κb, κs), κvoid) + 1) + 1 = max(max(κb, κs), 0) + 2`
+
+These differ by 1, so the theorem is **false** when `n` is itself a `delta`.
+
+### Theorem 2: `kappa_rec_succ_drop`
+
+**Claim:** `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`
+
+This relies on `kappa_rec_delta_step`, but even setting that aside:
+
+- LHS: `max(κs, kappa(recDelta b s n))`
+- RHS: `max(max(κb, κs), κn) + 1`
+
+**Counterexample:** Let `b = void`, `s = void`, `n = void`.
+- LHS: `max(0, kappa(recDelta void void void)) = max(0, max(max(0,0),0)) = 0`
+- RHS: `max(max(0,0),0) + 1 = 1`
+
+This works (0 < 1). But consider `s = delta (delta void)`:
+- `κs = 0` (since `kappa (delta t) = kappa t`)
+- `kappa(recDelta void s void) = max(max(0, 0), 0) = 0`
+- LHS: `max(0, 0) = 0`
+- RHS: `max(max(0, 0), 0) + 1 = 1`
+
+Still works. However, the fundamental issue is that when `n` itself is nested deltas, the reasoning chain breaks.
+
+### Conclusion
+
+**The strategy is unsound** because `kappa_rec_delta_step` does not hold universally—it fails when the third argument `n` is already a `delta` term. The `kappa` function has special-case behavior for `recDelta _ _ (delta _)` that adds 1, and this nesting compounds rather than telescopes cleanly.

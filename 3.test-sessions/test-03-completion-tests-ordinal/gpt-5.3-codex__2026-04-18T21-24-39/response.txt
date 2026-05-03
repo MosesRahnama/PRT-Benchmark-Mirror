@@ -1,0 +1,150 @@
+## Proof skeleton for the 3 remaining `sorry` cases
+
+Perfect — here is a **non-invasive skeleton** you can paste into your own edits for the three open cases in  
+`KO7-LLM-Benchmark/test-files/Test-03-Completion-Ordinal.lean`.
+
+I’m not compiling/running this (as requested), so think of it as a structured roadmap with likely lemma hooks.
+
+### 1) `Step.R_rec_succ b s n`
+
+The key shape is: bound `mu (app s (recDelta b s n))` by a finite-height polynomial in $\omega$, then show that polynomial is strictly below the huge principal term coming from `mu (recDelta b s (delta n))`.
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+  simp [mu]
+  /-
+    Goal shape after simp:
+      omega0 ^ (3:Ordinal) * (mu s + 1) +
+        omega0 ^ (2:Ordinal) *
+          (omega0 ^ (mu n + mu s + (6:Ordinal)) + omega0 * (mu b + 1) + 1 + 1) + 1
+      <
+      omega0 ^ (omega0 ^ (5:Ordinal) * (mu n + 1) + 1 + mu s + (6:Ordinal)) +
+        omega0 * (mu b + 1) + 1
+
+    Strategy:
+    1) Prove a coarse upper bound:
+         LHS ≤ omega0 ^ (E_small)    (for some E_small around mu n + mu s + C)
+    2) Prove E_small < E_big where
+         E_big := omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6
+    3) Use monotonicity/strictness of opow in exponent to get
+         omega0 ^ E_small < omega0 ^ E_big
+    4) Then conclude with `lt_of_le_of_lt` and `lt_of_lt_of_le`.
+  -/
+
+  let Ebig : Ordinal := omega0 ^ (5:Ordinal) * (mu n + 1) + 1 + mu s + (6:Ordinal)
+
+  -- (A) Package LHS into a convenient symbol
+  let L : Ordinal :=
+    omega0 ^ (3:Ordinal) * (mu s + 1) +
+      omega0 ^ (2:Ordinal) *
+        (omega0 ^ (mu n + mu s + (6:Ordinal)) + omega0 * (mu b + 1) + 1 + 1) + 1
+
+  -- (B) Show L is below some omega-power with “small” exponent
+  have hL_small : L ≤ omega0 ^ (mu n + mu s + (8:Ordinal)) := by
+    -- fill with ordinal polynomial bounding lemmas:
+    -- - each additive summand is ≤ omega0 ^ (mu n + mu s + 8)
+    -- - finite sum of such terms stays ≤ same principal bound
+    sorry
+
+  -- (C) Show small exponent < big exponent
+  have hExp : (mu n + mu s + (8:Ordinal)) < Ebig := by
+    -- use that omega0^5 * (mu n + 1) is enormous, and +1/+mu s/+6 keep it above linear tail
+    sorry
+
+  -- (D) Lift strict exponent inequality through omega-power
+  have hPow : omega0 ^ (mu n + mu s + (8:Ordinal)) < omega0 ^ Ebig := by
+    -- use strict monotonicity in exponent for base > 1 (omega0)
+    sorry
+
+  -- (E) Chain to target
+  have hMain : L < omega0 ^ Ebig := lt_of_le_of_lt hL_small hPow
+
+  -- unwrap Ebig/L and finish by monotonicity of + (omega*(mu b+1)+1) on RHS
+  -- i.e. `omega0 ^ Ebig ≤ omega0 ^ Ebig + omega0 * (mu b + 1) + 1`
+  exact lt_of_lt_of_le hMain (by
+    -- right-side enlargement
+    sorry)
+```
+
+---
+
+### 2) `Step.R_eq_refl a`
+
+This one is very short: after `simp [mu]`, use positivity of `... + 1`.
+
+```lean
+| _, _, Step.R_eq_refl a => by
+  simp [mu]
+  -- Goal: 0 < omega0 ^ (mu a + mu a + (9:Ordinal)) + 1
+  exact Ordinal.pos_iff_ne_zero.mpr (by
+    apply ne_of_gt
+    exact add_pos_right _ one_pos)
+```
+
+(If this exact form doesn’t line up after `simp`, keep the same pattern: prove nonzero via `add_pos_right`.)
+
+---
+
+### 3) `Step.R_eq_diff a b`
+
+Core idea: LHS is bounded by roughly $\omega^{8}$-level growth plus coefficients, while RHS is a single principal term $\omega^{\mu a + \mu b + 9}$, so it dominates.
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+  simp [mu]
+  /-
+    Goal shape:
+      omega0 ^ (4:Ordinal) *
+        (omega0 ^ (3:Ordinal) * (mu a + 1) + omega0 ^ (2:Ordinal) * (mu b + 1) + 1 + 1) + 1
+      <
+      omega0 ^ (mu a + mu b + (9:Ordinal)) + 1
+
+    Strategy:
+    1) Bound the parenthesized merge-term by omega0 ^ (mu a + mu b + 8).
+    2) Multiply by omega0^4 and absorb into omega0 ^ (mu a + mu b + 8) (or +const).
+    3) Show resulting exponent is < mu a + mu b + 9.
+    4) Lift via omega-power monotonicity; then add +1 on RHS.
+  -/
+
+  let E : Ordinal := mu a + mu b + (9:Ordinal)
+
+  let L : Ordinal :=
+    omega0 ^ (4:Ordinal) *
+      (omega0 ^ (3:Ordinal) * (mu a + 1) + omega0 ^ (2:Ordinal) * (mu b + 1) + 1 + 1) + 1
+
+  -- coarse bound of L by a principal omega power with exponent < E
+  have hL_bound : L ≤ omega0 ^ (mu a + mu b + (8:Ordinal)) := by
+    -- fill with standard bounds on finite sums/products of omega-polynomials
+    sorry
+
+  have hExp_lt : (mu a + mu b + (8:Ordinal)) < E := by
+    -- arithmetic on final constants
+    -- essentially: ... + 8 < ... + 9
+    sorry
+
+  have hPow_lt : omega0 ^ (mu a + mu b + (8:Ordinal)) < omega0 ^ E := by
+    -- strict monotonicity in exponent
+    sorry
+
+  have hCore : L < omega0 ^ E := lt_of_le_of_lt hL_bound hPow_lt
+
+  -- final RHS is bigger by +1
+  exact lt_of_lt_of_le hCore (le_add_right _ _)
+```
+
+---
+
+## What to focus on when filling the `sorry`s
+
+- Build **coarse principal bounds** first (`≤ omega0 ^ (...)`) rather than trying exact normal forms.
+- Reuse this pattern repeatedly:
+  - `lt_of_le_of_lt`
+  - `lt_of_lt_of_le`
+  - monotonicity of `+` on the right (`le_add_right`, `le_add_left`)
+- For strict steps, reduce to exponent inequalities and then lift through `omega0 ^ _`.
+
+## Updated checklist
+
+- ✅ Inspect Lean file cases  
+- ✅ Draft skeleton for 3 sorries  
+- ✅ Summarize completion strategy

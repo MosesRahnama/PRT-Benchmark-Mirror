@@ -1,0 +1,40 @@
+## Assessment: **YES, strong normalization can be established from the presented rewrite system alone.**
+
+### The System
+
+```
+(VAR x y n)
+(RULES
+  F(x, y, Z) -> x
+  F(x, y, S(n)) -> G(F(x, y, n))
+)
+```
+
+### Reasoning
+
+This is a straightforward case of **structural recursion on the third argument** of `F`. The termination argument is immediate:
+
+1. **Rule 1** (`F(x, y, Z) → x`): Eliminates an `F` entirely. The RHS is a variable, which is a normal form.
+
+2. **Rule 2** (`F(x, y, S(n)) → G(F(x, y, n))`): The third argument structurally decreases from `S(n)` to `n`. The `G` wrapper is inert (no rules for `G`), so it cannot create new redexes.
+
+### Termination Measure
+
+A simple polynomial interpretation suffices:
+
+| Term | Interpretation |
+|------|----------------|
+| `Z` | 0 |
+| `S(t)` | ⟦t⟧ + 1 |
+| `G(t)` | ⟦t⟧ |
+| `F(t₁, t₂, t₃)` | ⟦t₁⟧ + ⟦t₃⟧ + 1 |
+
+**Verification:**
+- Rule 1: ⟦F(x, y, Z)⟧ = ⟦x⟧ + 1 > ⟦x⟧ ✓
+- Rule 2: ⟦F(x, y, S(n))⟧ = ⟦x⟧ + ⟦n⟧ + 2 > ⟦x⟧ + ⟦n⟧ + 1 = ⟦G(F(x, y, n))⟧ ✓
+
+Each rewrite step strictly decreases the measure, guaranteeing strong normalization.
+
+### Conclusion
+
+No imported structural axioms or object-level assumptions are required. The rewrite system itself encodes a primitive recursion schema on a Peano-style natural number (the third argument of `F`), which is classically terminating. The system is **strongly normalizing by construction**.

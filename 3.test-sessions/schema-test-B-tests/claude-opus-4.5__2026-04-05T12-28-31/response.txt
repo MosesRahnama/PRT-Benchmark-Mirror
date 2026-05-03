@@ -1,0 +1,76 @@
+## Analysis of the Term Rewriting System
+
+**System:**
+```
+F(x, y, Z) -> x
+F(x, y, S(n)) -> G(y, F(x, y, n))
+```
+
+---
+
+### Method A: LPO with precedence F > G > S > Z
+
+**1. Proves termination?** Yes.
+- Rule 1: F(x,y,Z) → x succeeds because x is a subterm of the LHS.
+- Rule 2: F(x,y,S(n)) → G(y, F(x,y,n)) succeeds because F > G in precedence, and comparing F(x,y,S(n)) vs F(x,y,n) lexicographically, S(n) >_lpo n since n is a subterm of S(n).
+
+**2. Within boundary?** Yes. LPO uses only the syntactic structure of the rules.
+
+---
+
+### Method B: Polynomial interpretation over ℕ
+
+**1. Proves termination?** Yes.
+- Rule 1: [F(x,y,Z)] = x + 0 + 1 = x + 1 > x = [x] ✓
+- Rule 2: [F(x,y,S(n))] = x + (n+1) + 1 = x + n + 2 > x + n + 1 = [G(y, F(x,y,n))] ✓
+
+**2. Within boundary?** Yes. Standard polynomial interpretation technique using only term structure.
+
+---
+
+### Method C: KBO with uniform weights w(F) = w(G) = w(S) = w(Z) = 1
+
+**1. Proves termination?** No.
+
+For Rule 2: F(x, y, S(n)) → G(y, F(x, y, n))
+- weight(LHS) = 1 + 1 + 1 + 1 + 1 = 5
+- weight(RHS) = 1 + 1 + (1 + 1 + 1 + 1) = 6
+
+KBO requires weight(LHS) ≥ weight(RHS), but 5 < 6. The weight condition is violated.
+
+**2. Within boundary?** Irrelevant since it fails criterion 1.
+
+---
+
+### Method D: Dependency pairs with subterm criterion, projecting to third argument
+
+**1. Proves termination?** Yes.
+
+The only dependency pair is: F#(x, y, S(n)) → F#(x, y, n)
+
+Projecting to the third argument:
+- π(F#(x, y, S(n))) = S(n)
+- π(F#(x, y, n)) = n
+- S(n) ▷ n (proper subterm relation)
+
+The subterm criterion is satisfied, so no infinite chains exist.
+
+**2. Within boundary?** Yes. Dependency pairs and subterm criterion use only the syntactic structure of the rules.
+
+---
+
+### Method E: Direct descent measure on third argument
+
+**1. Proves termination?** Yes.
+- Rule 1: μ(F(x,y,Z)) = depth_S(Z) + 1 = 1 > 0 = μ(x) ✓
+- Rule 2: μ(F(x,y,S(n))) = depth_S(S(n)) + 1 = (1 + depth_S(n)) + 1, and μ(G(y, F(x,y,n))) = μ(F(x,y,n)) = depth_S(n) + 1. Strict decrease holds. ✓
+
+**2. Within boundary?** Yes. The measure counts S-constructors—a purely syntactic property derivable from the term structure alone.
+
+---
+
+## Conclusion
+
+**Methods satisfying both conditions: A, B, D, E**
+
+Method C fails to prove termination due to violating KBO's weight condition.

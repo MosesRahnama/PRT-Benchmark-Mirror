@@ -1,0 +1,112 @@
+### Proof Skeletons for Remaining Cases
+
+Below, I provide proof skeletons for the three remaining cases in the `mu_decreases` theorem that are currently marked with `sorry`. These skeletons outline the key steps, ordinal arithmetic insights, and intermediate lemmas or calculations needed to complete each proof. They are based on the structure of the existing proved cases, focusing on showing strict decrease in `mu` using properties of ordinal multiplication, addition, and exponentiation (e.g., dominance of larger exponents or bases). I've kept them concise, with placeholders for any detailed subproofs or imported lemmas from `Mathlib.SetTheory.Ordinal`.
+
+Each skeleton replaces the `sorry` in the corresponding case. Note that these are skeletons, not fully elaborated proofs— they highlight the logical flow and critical inequalities.
+
+#### Case: `R_rec_succ b s n`
+**Goal:** Show `mu (app s (recDelta b s n)) < mu (recDelta b s (delta n))`.
+
+**Skeleton:**
+```lean
+| _, _, Step.R_rec_succ b s n => by
+  simp [mu]
+  -- LHS: omega^3 * (mu s + 1) + omega^2 * (mu (recDelta b s n) + 1) + 1
+  --      = omega^3 * (mu s + 1) + omega^2 * (omega^(mu n + mu s + 6) + omega * (mu b + 1) + 1 + 1) + 1
+  -- RHS: omega^(mu (delta n) + mu s + 6) + omega * (mu b + 1) + 1
+  --      = omega^(omega^5 * (mu n + 1) + 1 + mu s + 6) + omega * (mu b + 1) + 1
+
+  -- Key insight: The RHS exponent (omega^5 * (mu n + 1) + mu s + 7) dominates all LHS terms,
+  -- since omega^5 * (mu n + 1) >> mu n + mu s + 6 for the inner omega^(...) in LHS.
+
+  -- Step 1: Bound the inner recDelta measure in LHS
+  have h_inner : omega^(mu n + mu s + 6) + omega * (mu b + 1) + 2
+      < omega^(omega^5 * (mu n + 1) + mu s + 7) := by
+    -- Subproof: Use ordinal exp dominance; omega^α + β < omega^γ when γ > α and γ is limit-like
+    -- (invoke Mathlib lemmas like opow_lt_opow_right_of_lt or add_lt_opow)
+    sorry  -- Fill with ordinal inequality chain showing exp dominance
+
+  -- Step 2: Multiply by omega^2 and add remaining terms
+  have h_mult : omega^2 * (omega^(mu n + mu s + 6) + omega * (mu b + 1) + 2)
+      < omega^2 * omega^(omega^5 * (mu n + 1) + mu s + 7) := by
+    -- Monotonicity of multiplication: lt_mul_left (opow_pos 2 omega0_pos) h_inner
+    exact lt_mul_left _ (opow_pos 2 omega0_pos) h_inner
+
+  -- Step 3: Bound full LHS < RHS main term
+  have h_full : omega^3 * (mu s + 1) + omega^2 * (omega^(mu n + mu s + 6) + omega * (mu b + 1) + 2) + 1
+      < omega^(omega^5 * (mu n + 1) + mu s + 7) := by
+    -- Show LHS < omega^3 * something small + omega^(something < RHS exp) << RHS
+    -- Use add_lt_of_lt_opow or similar to absorb smaller terms
+    sorry  -- Fill with absorption into larger exp
+
+  -- Final: LHS < RHS main term <= full RHS
+  exact lt_of_lt_of_le h_full (le_add_right _ _)
+```
+
+#### Case: `R_eq_refl a`
+**Goal:** Show `0 < mu (eqW a a)` (i.e., `0 < omega^(mu a + mu a + 9) + 1`).
+
+**Skeleton:**
+```lean
+| _, _, Step.R_eq_refl a => by
+  simp [mu]
+  -- Goal: 0 < omega^(2 * mu a + 9) + 1
+
+  -- Key insight: Ordinal exp is always positive for positive base/exponent,
+  -- and adding 1 preserves positivity.
+
+  -- Step 1: Exponent is positive (even if mu a = 0, 9 > 0)
+  have h_exp_pos : 0 < 2 * mu a + 9 :=
+    add_pos_right _ (by decide)  -- Or use Ordinal.pos_iff_ne_zero
+
+  -- Step 2: omega^positive > 0
+  have h_opow_pos : 0 < omega0 ^ (2 * mu a + 9) :=
+    opow_pos _ omega0_pos h_exp_pos
+
+  -- Step 3: Add 1 and chain positivity
+  exact add_pos_left h_opow_pos one_pos
+```
+
+#### Case: `R_eq_diff a b`
+**Goal:** Show `mu (integrate (merge a b)) < mu (eqW a b)`.
+
+**Skeleton:**
+```lean
+| _, _, Step.R_eq_diff a b => by
+  simp [mu]
+  -- LHS: omega^4 * (mu (merge a b) + 1) + 1
+  --      = omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 1 + 1) + 1
+  -- RHS: omega^(mu a + mu b + 9) + 1
+
+  -- Key insight: RHS exponent (mu a + mu b + 9) dominates the LHS structure,
+  -- as 4 is much smaller than mu a + mu b + 9 in general (even if mu a or mu b small,
+  -- +9 ensures dominance over omega^4 * (omega^3 * ...)).
+
+  -- Assume without loss of generality mu a ≥ mu b (symmetric)
+  let m := max (mu a) (mu b)
+  have h_max : mu a ≤ m ∧ mu b ≤ m := max_spec _ _
+
+  -- Step 1: Bound mu (merge a b) ≤ omega^3 * (m + 1) + omega^2 * (m + 1) + 1
+  have h_merge_bound : mu (merge a b) ≤ omega^3 * (m + 1) + omega^2 * (m + 1) + 1 := by
+    -- Use le_trans with h_max and monotonicity of +/*
+    sorry  -- Fill with bounding each term
+
+  -- Step 2: Bound full LHS < omega^4 * (omega^3 * (m + 1) + omega^2 * (m + 1) + 3)
+  have h_lhs_bound : omega^4 * (mu (merge a b) + 1) + 1
+      < omega^4 * (omega^3 * (m + 1) + omega^2 * (m + 1) + 3) := by
+    -- Use lt_mul_left and add_lt_add_right with h_merge_bound
+    sorry  -- Fill with strict inequality chain
+
+  -- Step 3: Simplify bound to something < omega^(2*m + 9) ≤ RHS main term
+  have h_dominate : omega^4 * (omega^3 * (m + 1) + omega^2 * (m + 1) + 3)
+      < omega^(2 * m + 9) := by
+    -- Ordinal arithmetic: omega^4 * omega^3 * (m+1) = omega^7 * (m+1) < omega^(2*m + 9)
+    -- since 7 < 2*m + 9 for m ≥ 0 (case on small m if needed); absorb smaller terms
+    -- Use opow_mul and lt_opow_of_lt_exponent
+    sorry  -- Fill with detailed exp comparison
+
+  -- Final: Chain LHS < bound < RHS main term < RHS
+  exact lt_of_lt_of_le (lt_trans h_lhs_bound h_dominate) (le_add_right _ _)
+```
+
+These skeletons should integrate directly into the `mu_decreases` theorem. For full completion, you may need to import additional ordinal lemmas from Mathlib (e.g., for exponent dominance or multiplication monotonicity) and fill in the subproofs marked `sorry` with explicit calculations. If any case requires special handling (e.g., base cases for small `mu` values), add them as auxiliary lemmas.

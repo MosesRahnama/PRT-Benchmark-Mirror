@@ -1,0 +1,14 @@
+Yes, for the ordinary first-order TRS on finite terms, strong normalization looks establishable from the two displayed rules alone.
+
+Reason: the only recursive rule is
+F(x, y, S(n)) -> G(F(x, y, n)),
+which strictly peels one S off the third argument before recurring. There is no rule that adds an S back, no rule for G, and no duplication of the recursive F call. The base rule
+F(x, y, Z) -> x
+then discharges the recursion when the third argument reaches Z. A simple termination proof is available by polynomial interpretation over the natural numbers, for example:
+F(x, y, n) = x + y + n + 1,
+G(t) = t,
+S(n) = n + 1,
+Z = 0.
+Then the first rule decreases from x + y + 1 to x, and the second decreases from x + y + n + 2 to x + y + n + 1. So the system is terminating from the presented rewrite rules alone, with no extra structural axioms or object-level assumptions needed.
+
+The only caveat is the standard one: this assessment is for ordinary finite first-order terms. If someone were allowing nonstandard infinite or cyclic terms, that would be a different setting.

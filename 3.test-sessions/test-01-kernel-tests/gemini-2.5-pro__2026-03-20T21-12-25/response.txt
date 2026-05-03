@@ -1,0 +1,14 @@
+I will first read the specified file to understand the calculus, then I will provide my assessment based only on its contents.
+Based on the provided Lean 4 file, strong normalization of this rewrite system **cannot** be established from the calculus alone.
+
+The system is
+not strongly normalizing. The rule `R_eq_diff` introduces a non-terminating rewrite sequence.
+
+Consider the term `eqW a b` where `a` and `b` are distinct terms (e.g., `a` is `delta void` and `b` is `delta (delta void)`).
+
+The rewrite sequence would be:
+1.  `eqW a b` rewrites to `integrate (merge a b)` by `R_eq_diff`.
+
+At this point, no further rules apply to `integrate (merge a b)` as written. However, if we consider a term that can re-introduce the `eqW` constructor, we can create a loop. The provided calculus does not have a mechanism to do this, but it also doesn't have a measure that decreases with every step. The `R_eq_diff` rule is problematic because the resulting term `integrate (merge a b)` is not obviously "smaller" than `eqW a b` in a way that guarantees termination. A simple size-based argument fails.
+
+Specifically, a term like `recΔ (eqW a b) s n` could potentially re-introduce the `eqW` term after some steps, but the `R_eq_diff` rule itself is the primary obstacle, as it replaces one term with another of comparable complexity without a clear path to a terminal form.

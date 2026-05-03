@@ -1,0 +1,26 @@
+I'll read the Lean 4 file to analyze the termination measure.
+## Assessment: The Lexicographic Termination Measure is **NOT Sound**
+
+The proposed lexicographic measure `(phase t, cost t)` fails for several rewrite rules when the right-hand side has `phase = 1`.
+
+### Critical Issues
+
+**1. Problematic rules when RHS has phase 1:**
+
+The following rules violate the termination property:
+- **R_merge_void_left**: `merge void t → t` — When `t` has `phase(t) = 1`, the measure increases from `(0, 1 + cost t)` to `(1, cost t)` (first component increases).
+- **R_merge_void_right**: `merge t void → t` — Same issue.
+- **R_merge_cancel**: `merge t t → t` — When `t` has `phase(t) = 1`, the measure increases from `(0, 1 + 2·cost t)` to `(1, cost t)`.
+- **R_rec_zero**: `recDelta b s void → b` — When `b` has `phase(b) = 1`, the measure increases from `(0, 1 + cost b + cost s)` to `(1, cost b)`.
+
+**2. Lexicographic ordering violation:**
+
+In lexicographic order on pairs, `(a₁, a₂) < (b₁, b₂)` requires either `a₁ < b₁` OR (`a₁ = b₁` AND `a₂ < b₂`). 
+
+Going from phase 0 → phase 1 **increases** the first component, making the measure strictly larger. The cost reduction in the second component cannot compensate in lexicographic order.
+
+### Why R_rec_succ Works
+
+This rule is the only one that properly leverages the phase mechanism: `recDelta b s (delta n) → app s (recDelta b s n)` takes a term with `phase = 1` and produces one with `phase = 0`, ensuring termination.
+
+**Conclusion:** The measure is unsound because the `phase` function can jump upward instead of downward, contradicting the definition of a valid termination measure under lexicographic order.

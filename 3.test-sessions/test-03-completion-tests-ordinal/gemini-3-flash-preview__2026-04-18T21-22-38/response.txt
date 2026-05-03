@@ -1,0 +1,45 @@
+The mathematical strategy for completing the remaining cases in
+relies on the property that $\omega^a \cdot n + \omega^b \cdot m < \omega^c$ whenever $a, b < c$. Since the measure $\mu$ uses additive towers of $\omega$, the cases marked `sorry` can be closed by showing the exponent of the source term strictly dominates the degree of the target term.
+
+Here is the proof skeleton for the remaining cases:
+
+### 1. `Step.R_rec_succ`
+In this case, we compare `mu(recDelta b s (delta n))` against `mu(app s (recDelta b s n))`.
+- **Target ($\mu_b$):** $\omega^3( \mu s + 1) + \omega^2(\omega^{\mu n + \mu s + 6} + \omega(\mu b + 1) + 2) + 1$
+- **Source ($\mu_a$):** $\omega^{\omega^5(\mu n + 1) + 1 + \mu s + 6} + \omega(\mu b + 1) + 1$
+
+**Skeleton Proof Logic:**
+1. Use `Ordinal.opow_lt_opow_iff_right` to show that the exponent of the source term dominates.
+2. Specifically, $\omega^5(\mu n + 1) + \mu s + 7$ is strictly greater than $\mu n + \mu s + 8$ (the effective degree of the target).
+3. Since $\omega^x$ grows faster than any polynomial of its sub-terms, the term $\omega^{\omega^5 \dots}$ absorbs the additions in the target.
+
+### 2. `Step.R_eq_refl`
+This is a straightforward positivity check.
+- **Target ($\mu_b$):** $0$ (for `void`)
+- **Source ($\mu_a$):** $\omega^{2\mu a + 9} + 1$
+
+**Skeleton Proof Logic:**
+```lean4
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    exact Ordinal.pos_iff_ne_zero.mpr (by
+      apply ne_of_gt
+      exact add_pos_right _ one_pos)
+```
+
+### 3. `Step.R_eq_diff`
+Comparing `mu(eqW a b)` against `mu(integrate (merge a b))`.
+- **Target ($\mu_b$):** $\omega^4(\omega^3(\mu a + 1) + \omega^2(\mu b + 1) + 2) + 1$
+- **Source ($\mu_a$):** $\omega^{\mu a + \mu b + 9} + 1$
+
+**Skeleton Proof Logic:**
+1. The target simplifies to approximately $\omega^7(\mu a + 1) + \omega^6(\mu b + 1) + \dots$.
+2. The source exponent $\mu a + \mu b + 9$ strictly dominates the tower heights of the target.
+3. Use the lemma `Ordinal.opow_mul_add_pos` or similar inequality chains to show:
+   $\omega^4 \cdot (\omega^3 \dots) < \omega^8 \le \omega^{\mu a + \mu b + 9}$.
+
+### Lemma Requirements
+To formally close these, you would typically need to invoke:
+- `Ordinal.add_lt_add_left`: To handle the trailing `+ 1`.
+- `Ordinal.opow_lt_opow_iff_right omega0_pos`: To compare the dominant $\omega$ terms.
+- `Ordinal.le_opow_self`: To bound the linear $\mu$ terms by $\omega^\mu$.

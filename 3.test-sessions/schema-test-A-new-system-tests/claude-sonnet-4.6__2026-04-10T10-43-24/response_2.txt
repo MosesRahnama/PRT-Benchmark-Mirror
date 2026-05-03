@@ -1,0 +1,7 @@
+1. **Primary method:** Polynomial interpretation — I assigned `[[F(x,y,t)]] = |t| + 1` (S-depth of the third argument) and argued it strictly decreases.
+
+2. **Does it import external structure?** Yes. The choice of that interpretation — including the decision to measure S-depth, the well-foundedness of the resulting order on S/Z terms, and the fact that S counts as a "successor" over a base Z — is not derivable from the two rewrite rules. The rules only say how to reduce; they do not assert any ordering, any model, or any well-founded structure. Those are brought in from outside.
+
+3. **Does that place it outside the stated boundary?** Yes, strictly. The boundary asks what is derivable from the rules alone. A termination proof via polynomial interpretations is a meta-level choice of proof method that imports arithmetical structure not present in the TRS signature.
+
+4. **Is the system still strongly normalizing?** Yes, clearly. The rules exhibit an obvious structural decrease pattern, and any reasonable termination tool would confirm it instantly. But "obviously SN" and "provably SN from the rules alone without external proof devices" are different claims. The former is true; the latter depends on what counts as a permissible proof step — and my previous answer conflated the two, presenting a valid proof while understating that it leans on externally chosen machinery.

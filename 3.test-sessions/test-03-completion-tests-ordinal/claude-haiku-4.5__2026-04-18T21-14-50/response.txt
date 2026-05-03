@@ -1,0 +1,94 @@
+I'll read the file to examine the partial proof and the remaining cases.
+I've examined the file. Here's a proof skeleton for completing the three remaining cases:
+
+## Proof Skeleton for Remaining Cases
+
+### Case 1: `R_eq_refl` (line 152–156)
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- Goal: 0 < omega^(mu a + mu a + 9) + 1
+    -- Strategy: Show that the exponent is positive, then ordinal addition preserves inequality
+    have h1 : 0 < mu a + mu a + 9 := by omega  -- or: Nat.add_pos_iff_...
+    have h2 : 0 < omega0 ^ (mu a + mu a + 9) := opow_pos h1 omega0_pos
+    exact Ordinal.add_pos_right h2 one_pos
+```
+
+**Key insight:** This is a pure positivity argument. Since `mu a + mu a + 9` is always a positive ordinal, `omega^(...)` is positive, and adding 1 preserves positivity.
+
+---
+
+### Case 2: `R_rec_succ` (line 131–147, currently has `sorry`)
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- Goal: omega^3 * (mu s + 1) + omega^2 * (omega^(mu n + mu s + 6) + omega * (mu b + 1) + 2) + 1
+    --       < omega^(omega^5 * (mu n + 1) + 1 + mu s + 6) + omega * (mu b + 1) + 1
+    -- 
+    -- Strategy: Show that the exponent on the RHS strictly dominates the LHS base
+    -- The RHS exponent contains omega^5 * (mu n + 1), which is >> mu n + mu s + 6
+    have h1 : mu n + 1 ≤ omega0 ^ (5 : Ordinal) * (mu n + 1) := 
+      le_mul_right _ (opow_pos 5 omega0_pos)
+    have h2 : omega0 ^ (5 : Ordinal) * (mu n + 1) < omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1)) :=
+      opow_lt_opow_iff_right omega0_pos |>.mpr ⟨by omega, h1⟩
+    -- Now show that the RHS exponent is large enough to dominate the LHS
+    have h3 : omega0 ^ (mu n + mu s + 6) < omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6) := by
+      apply opow_lt_opow_left omega0_pos
+      omega  -- or explicit: show omega^5 * (mu n + 1) >> mu n
+    omega  -- Finish by ordinal arithmetic
+```
+
+**Key insight:** The exponent on the RHS (`omega^5 * (mu n + 1) + ...`) grows much faster than anything on the LHS. The reduction moves from exponentiating a large number to a medium number, causing strict decrease.
+
+---
+
+### Case 3: `R_eq_diff` (line 158–165, currently has `sorry`)
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- Goal: omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 2) + 1
+    --       < omega^(mu a + mu b + 9) + 1
+    -- 
+    -- Strategy: Show that mu a + mu b + 9 is much larger than the base in the LHS exponent
+    have h1 : omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 2 < mu a + mu b + 9 := by
+      -- The LHS is bounded by omega^3 * (mu a) + omega^2 * (mu b) + O(1)
+      -- which is strictly less than mu a + mu b + 9 for reasonable ordinals
+      omega  -- This may require more explicit steps; see alternative below
+    have h2 : omega0 ^ 4 < omega0 ^ (mu a + mu b) := by
+      apply opow_lt_opow_left omega0_pos
+      omega
+    calc omega0 ^ 4 * (omega0 ^ 3 * (mu a + 1) + omega0 ^ 2 * (mu b + 1) + 2) + 1
+        < omega0 ^ (mu a + mu b + 9) + 1 := by
+          -- multiply out and apply ordinal arithmetic properties
+          sorry
+```
+
+**Alternative for R_eq_diff (more detailed):**
+```lean
+    -- If the above `omega` tactic doesn't work, proceed by bounding explicitly:
+    have h1 : mu a + 1 ≤ mu a + 9 := by omega
+    have h2 : mu b + 1 ≤ mu b + 9 := by omega
+    have h3 : omega0 ^ 3 * (mu a + 1) ≤ omega0 ^ (mu a + 9) := by
+      apply mul_le_mul_left
+      exact opow_le_opow_right omega0_pos h1
+    have h4 : omega0 ^ 4 * (omega0 ^ 3 * (mu a + 1) + omega0 ^ 2 * (mu b + 1) + 2) 
+            < omega0 ^ (mu a + mu b + 9) := by
+      calc omega0 ^ 4 * (omega0 ^ 3 * (mu a + 1) + omega0 ^ 2 * (mu b + 1) + 2)
+          ≤ omega0 ^ (mu a + 2) * omega0 ^ (mu b + 2) := by
+            -- Bound the base term and apply exponent rules
+            sorry
+          _ = omega0 ^ (mu a + mu b + 4) := by ring_nf; rw [← opow_add]
+          _ < omega0 ^ (mu a + mu b + 9) := by
+            apply opow_lt_opow_left omega0_pos; omega
+    exact Ordinal.add_lt_add_right h4 1
+```
+
+**Key insight:** The RHS exponent `mu a + mu b + 9` is much larger than any term expressible from the LHS structure, because `merge` contributions are polynomial in `mu a` and `mu b`, while the RHS exponent is linear in both.
+
+---
+
+## Summary
+
+- **R_eq_refl**: Pure positivity — straightforward.
+- **R_rec_succ**: Tower dominance — exponent on RHS contains `omega^5 * (mu n + 1)` term.
+- **R_eq_diff**: Linear exponent defeats polynomial base — RHS exponent grows much faster than LHS structure.

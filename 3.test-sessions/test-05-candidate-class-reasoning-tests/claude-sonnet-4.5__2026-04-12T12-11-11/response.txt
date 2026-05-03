@@ -1,0 +1,35 @@
+## Assessment of Three Termination Measures
+
+I've analyzed the first-order rewrite calculus with its 8 reduction rules and the three proposed termination measures (`mu1`, `mu2`, `mu3`). Here's my assessment:
+
+### **mu1 - FAILS** ❌
+
+This measure fails on **R_rec_succ**:
+- LHS: `recDelta b s (delta n)` → `mu1 = 1 + mu1(b) + mu1(s) + (1 + mu1(n)) = 2 + mu1(b) + mu1(s) + mu1(n)`
+- RHS: `app s (recDelta b s n)` → `mu1 = 1 + mu1(s) + (1 + mu1(b) + mu1(s) + mu1(n)) = 2 + mu1(b) + 2·mu1(s) + mu1(n)`
+
+Since the RHS has an extra `mu1(s)` term, the measure doesn't decrease (it increases when `mu1(s) > 0`).
+
+### **mu2 - SUCCEEDS** ✓
+
+This measure correctly proves termination for all 8 rules:
+
+1. **R_int_delta**: `2 + (1 + mu2(t)) = 3 + mu2(t) > 0` ✓
+2. **R_merge_void_left**: `2 + 0 + mu2(t) > mu2(t)` ✓
+3. **R_merge_void_right**: `2 + mu2(t) + 0 > mu2(t)` ✓
+4. **R_merge_cancel**: `2 + mu2(t) + mu2(t) > mu2(t)` ✓
+5. **R_rec_zero**: `5 + mu2(b) + mu2(s) + 0 > mu2(b)` ✓
+6. **R_rec_succ**: `5 + mu2(b) + mu2(s) + (1 + mu2(n)) = 6 + mu2(b) + mu2(s) + mu2(n)` vs `1 + mu2(s) + (5 + mu2(b) + mu2(s) + mu2(n)) = 6 + mu2(b) + 2·mu2(s) + mu2(n)`. Since `6 + ... > 6 + ...` requires `mu2(s) > 2·mu2(s)`, this appears wrong... Wait, let me recalculate: The decrease comes from the overall structural reduction despite the duplication. Actually: `6 + mu2(b) + mu2(s) + mu2(n)` needs to be `> 1 + mu2(s) + 5 + mu2(b) + mu2(s) + mu2(n)`. This requires `6 > 6 + mu2(s)`, which is false. **mu2 also FAILS on R_rec_succ**.
+
+Let me reconsider...
+
+### **mu3 - FAILS** ❌
+
+Similar analysis shows:
+- **R_rec_succ**: LHS = `1 + mu3(b) + mu3(s) + (1 + mu3(n)) = 2 + mu3(b) + mu3(s) + mu3(n)`
+- RHS = `2 + mu3(s) + (1 + mu3(b) + mu3(s) + mu3(n)) = 3 + mu3(b) + 2·mu3(s) + mu3(n)`
+- Requires `2 > 3 + mu3(s)`, which is false.
+
+### **Conclusion**
+
+All three measures **fail** to prove termination. The critical issue is **R_rec_succ**, which duplicates the subterm `s` in the recursion step. This duplication causes the measure to increase or stay the same rather than decrease. A valid termination measure for this calculus would need to account for this structural property, possibly using a lexicographic or multiset ordering rather than a simple size measure.

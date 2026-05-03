@@ -1,0 +1,59 @@
+Perfect! I've read the entire file. Let me analyze the structure:
+
+1. **Context**: A strong normalization proof for a first-order rewrite calculus with 7 constructors (Trace type)
+2. **Reduction rules**: 8 unconditional reduction rules
+3. **Measures**: 
+   - `kappa`: recursion depth (delta-transparent, adds +1 for recDelta with delta-wrapped third argument)
+   - `mu`: weighted structural size (delta-transparent, each constructor has weight)
+   - `measure`: combined (kappa, mu) pair
+   - `LexOrder`: lexicographic ordering on Nat × Nat
+
+4. **Proved cases** (3/8):
+   - `R_merge_void_left`: merge void t → t (kappa ties, mu drops by 2)
+   - `R_merge_void_right`: merge t void → t (kappa ties, mu drops by 2)
+   - `R_merge_cancel`: merge t t → t (kappa ties, mu drops significantly)
+
+5. **Remaining cases** (5/8):
+   - `R_int_delta`: integrate (delta t) → void
+   - `R_rec_zero`: recDelta b s void → b
+   - `R_rec_succ`: recDelta b s (delta n) → app s (recDelta b s n)
+   - `R_eq_refl`: eqW a a → void
+   - `R_eq_diff`: eqW a b → integrate (merge a b)
+
+Now I need to provide a proof skeleton for each of the 5 remaining cases. Let me analyze each:
+
+**Case 1: R_int_delta** - integrate (delta t) → void
+- LHS: integrate (delta t)
+  - kappa(integrate (delta t)) = kappa(delta t) = kappa t
+  - mu(integrate (delta t)) = 1 + mu(delta t) = 1 + mu t
+- RHS: void
+  - kappa(void) = 0
+  - mu(void) = 0
+- When kappa t > 0, the recursion depth decreases so I can apply drop_left. When kappa t = 0, the depth stays the same but the weighted size strictly decreases from 1 + mu t to 0, so drop_right applies.
+
+**Case 2: R_rec_zero** - recDelta b s void → b
+- LHS: recDelta b s void
+  - kappa(recDelta b s void) = max(max(kappa b, kappa s), 0) = max(kappa b, kappa s)
+  - mu(recDelta b s void) = 1 + mu b + mu s
+- RHS: b
+  - kappa(b) = kappa b
+  - mu(b) = mu b
+- The recursion depth is at most kappa b, and the weighted size drops from 1 + mu b + mu s to just mu b, so the measure decreases lexicographically.
+
+**Case 3: R_rec_succ** - recDelta b s (delta n) → app s (recDelta b s n)
+- LHS: recDelta b s (delta n)
+  - kappa(recDelta b s (delta n)) =  max(max(kappa b, kappa s), kappa n) + 1
+  - mu(recDelta b s (delta n)) = 3 + mu b + mu s + mu(delta n) = 3 + mu b + mu s + mu n
+- RHS: app s (recDelta b s n)
+  - kappa(app s (recDelta b s n)) = max(kappa s, max(max(kappa b, kappa s), kappa n)) = max(max(kappa b, kappa s), kappa n)
+  - mu(app s (recDelta b s n)) = 1 + mu s + mu(recDelta b s n) = 1 + mu s + 2 + mu b + mu s + mu n = 3 + mu b + 2*mu s + mu n
+
+The kappa decreases by 1 (LHS has +1 while RHS doesn't), but mu increases since we add an extra mu s term. This is drop_left (kappa drops, mu rises).
+
+For **Case 4: R_eq_refl**, the pattern eqW a a reduces to void. The LHS has kappa a and mu of 4 + 2*mu a.
+
+The RHS is void with kappa 0 and mu 0. When kappa a > 0, kappa strictly decreases; when kappa a = 0, kappa ties but mu drops from 4 + 2*mu a to 0.
+
+**Case 5: R_eq_diff** handles eqW a b → integrate (merge a b). Both sides share the same kappa value of max(kappa a, kappa b), so I need to compare mu: the LHS has 4 + mu a + mu b while the RHS starts with 1 + mu(merge a b).
+
+Since mu(merge a b) = 2 + mu a + mu b, the RHS becomes 3 + mu a + mu b, which is strictly less than the LHS. This means mu decreases by 1 while kappa remains tied, so drop_right applies.

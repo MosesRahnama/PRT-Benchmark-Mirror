@@ -1,0 +1,46 @@
+I'll analyze the soundness of the helper strategy by examining the two theorems and their relationship to the `kappa` measure definition.
+
+## Analysis of `kappa_rec_delta_step`
+
+**Claimed theorem:**
+```lean
+theorem kappa_rec_delta_step (b s n : Trace) :
+  kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1
+```
+
+Let me evaluate both sides:
+
+**Left-hand side:** `kappa (recDelta b s (delta n))`
+- This matches the pattern `recDelta b s (.delta n)` in line 6 of the definition
+- Result: `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1`
+
+**Right-hand side:** `kappa (recDelta b s n) + 1`
+- The value depends on whether `n` itself has the form `(delta m)` for some `m`
+
+**Case 1:** If `n` is **not** of the form `(delta m)`:
+- `kappa (recDelta b s n) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)` (line 7)
+- RHS = `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1`
+- LHS = RHS ✓
+
+**Case 2:** If `n` **is** of the form `(delta m)` for some `m`:
+- `kappa (recDelta b s (delta m)) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1` (line 6)
+- RHS = `Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1 + 1`
+- But LHS = `kappa (recDelta b s (delta (delta m))) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa (delta m)) + 1`
+- Since `kappa (delta m) = kappa m`, we have LHS = `Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1`
+- Therefore: LHS = RHS - 1 ✗
+
+**Concrete counterexample:**
+Let `b = void`, `s = void`, `n = delta void`:
+- LHS: `kappa (recDelta void void (delta (delta void))) = max(0, 0, 0) + 1 = 1`
+- RHS: `kappa (recDelta void void (delta void)) + 1 = (max(0, 0, 0) + 1) + 1 = 2`
+- `1 ≠ 2`
+
+## Analysis of `kappa_rec_succ_drop`
+
+This theorem relies on the first theorem via the `rw [kappa_rec_delta_step]` tactic. Since the first theorem is unsound, any proof built upon it is also unsound.
+
+## Conclusion
+
+**The helper strategy is unsound.** 
+
+The theorem `kappa_rec_delta_step` fails when `n` has the form `(delta m)` because the `kappa` definition uses pattern matching that distinguishes `recDelta b s (delta n)` from `recDelta b s n`, causing a "+1" increment to compound when `n` itself is a `delta` constructor. The equality claimed by the theorem does not hold universally—it's off by exactly 1 in the nested-delta case.

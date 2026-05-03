@@ -1,0 +1,48 @@
+Let me analyze this file carefully.
+
+## Structure
+
+The file defines:
+1. An inductive type `Trace` with constructors: `void`, `delta`, `integrate`, `merge`, `app`, `recDelta`, `eqW`
+2. A step relation `Step` defining rewrite rules
+3. A structural measure `kappa : Trace -> Nat`
+4. Two helper theorems for termination
+
+## The `kappa` function
+
+Looking at the definition:
+```lean
+def kappa : Trace -> Nat
+| .void => 0
+| .delta t => kappa t
+| .integrate t => kappa t
+| .merge a b => Nat.max (kappa a) (kappa b)
+| .app a b => Nat.max (kappa a) (kappa b)
+| .recDelta b s (.delta n) => Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1
+| .recDelta b s n => Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)
+| .eqW a b => Nat.max (kappa a) (kappa b)
+```
+
+Note that there are two cases for `recDelta`:
+1. `recDelta b s (.delta n)` => `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1`
+2. `recDelta b s n` (general case) => `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)`
+
+The first pattern has higher priority because it's more specific.
+
+## Theorem 1: `kappa_rec_delta_step`
+
+```lean
+theorem kappa_rec_delta_step (b s n : Trace) :
+  kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1 := by
+  sorry
+```
+
+This claims:
+- LHS: `kappa (recDelta b s (delta n))` matches the first `recDelta` pattern, giving `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1`
+- RHS: `kappa (recDelta b s n) + 1` depends on what `n` is. If `n = delta m` for some `m`, then `kappa (recDelta b s n)` evaluates to `Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1`, making the RHS equal to `Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 2`. But if `n` is not of the form `delta m`, then `kappa (recDelta b s n) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)`, making the RHS equal to `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1`, which matches the LHS.
+
+The problem emerges when `n = delta m`: the LHS becomes `Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1` while the RHS becomes `Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 2`. These don't match. Testing with `b = s = void` and `n = delta void` confirms this: LHS evaluates to 1 while RHS evaluates to 2.
+
+For the second theorem, when `n` is not wrapped in `delta`, the inequality holds because `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) < Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1`. However, when `n = delta m`, both sides simplify to the same value `M + 1` where `M = Nat.max (Nat.max (kappa b) (kappa s)) (kappa m)`, requiring `M + 1 < M + 1`, which is false. The same counterexample applies: with `b = s = void` and `n = delta void`, both LHS and RHS equal 1, violating the strict inequality.
+
+The core issue is that nested `delta` constructors cause `kappa` to accumulate multiple +1 increments through overlapping pattern matches, but these theorems assume a simpler relationship. Both statements are unsound.

@@ -1,0 +1,59 @@
+The Lean file defines a first-order rewrite calculus with the following components:
+
+### Rewrite Calculus
+1. **Trace**: An inductive type representing various operations:
+   - `void`: Represents an empty trace.
+   - `delta`, `integrate`, `merge`, `app`, `recDelta`, `eqW`: Represent different operations on traces.
+
+2. **Step**: A relation (`Trace -> Trace -> Prop`) defining rewrite rules:
+   - Examples include:
+     - `R_int_delta`: Simplifies `integrate (delta t)` to `void`.
+     - `R_merge_void_left` and `R_merge_void_right`: Handle merging with `void`.
+     - `R_eq_diff`: Handles equality between two traces by integrating their merge.
+
+### Termination Measures
+Three candidate measures (`mu1`, `mu2`, `mu3`) are defined as functions mapping `Trace` to `Nat`. These measures aim to ensure termination by assigning a "size" to each trace, which decreases with each rewrite step.
+
+#### Candidate 1: `mu1`
+- Assigns a weight of `1` to most operations, with additional weights for nested traces.
+- `eqW` has a higher weight (`3 + mu1 a + mu1 b`), reflecting its complexity.
+
+#### Candidate 2: `mu2`
+- Similar to `mu1`, but:
+  - `integrate` and `merge` have higher weights (`2`).
+  - `recDelta` has a significantly higher weight (`5`), emphasizing its complexity.
+
+#### Candidate 3: `mu3`
+- Assigns weights differently:
+  - `merge` has a lower weight (`1`), suggesting it is less critical.
+  - `app` has a higher weight (`2`), reflecting its importance.
+  - `eqW` has a weight of `4`, slightly higher than `mu1`.
+
+### Assessment of Termination Measures
+To assess the candidates, we analyze their ability to decrease with each rewrite step:
+
+1. **`mu1`**:
+   - Strengths:
+     - Simple and uniform weighting.
+     - Ensures a decrease in most cases due to the additive structure.
+   - Weaknesses:
+     - May not adequately capture the complexity of `recDelta` or `integrate`.
+
+2. **`mu2`**:
+   - Strengths:
+     - Higher weights for `integrate` and `recDelta` reflect their complexity.
+     - Likely to decrease more consistently for complex traces.
+   - Weaknesses:
+     - Overemphasis on `recDelta` may lead to inefficiencies in simpler cases.
+
+3. **`mu3`**:
+   - Strengths:
+     - Balanced weights for `merge` and `app`, reflecting their relative importance.
+     - Slightly higher weight for `eqW` captures its complexity.
+   - Weaknesses:
+     - Lower weight for `merge` may fail to ensure termination in some cases.
+
+### Conclusion
+- **`mu2`** appears to be the most robust candidate, as it assigns weights proportional to the complexity of operations, ensuring a consistent decrease in most cases.
+- **`mu1`** is simpler but may struggle with more complex traces.
+- **`mu3`** is balanced but may underweight certain operations, potentially compromising termination guarantees.

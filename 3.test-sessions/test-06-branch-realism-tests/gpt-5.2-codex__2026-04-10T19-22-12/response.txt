@@ -1,0 +1,15 @@
+The helper strategy is not sound as written in
+.
+
+- `kappa_rec_delta_step` is false in general. Counterexample: let `n = delta m`. Then  
+  LHS $kappa(recDelta\ b\ s\ (delta\ n)) = max(max(k b)(k s))(k n)+1 = max(max(k b)(k s))(k m)+1$.  
+  RHS $kappa(recDelta\ b\ s\ n)+1 = (max(max(k b)(k s))(k m)+1)+1$, which is strictly larger.  
+  So the claimed equality fails unless you assume `n` is not a `delta _`.
+
+- `kappa_rec_succ_drop` is also not derivable from the definition, even if `kappa_rec_delta_step` held.  
+  $kappa(app\ s\ (recDelta\ b\ s\ n)) = max(k s)(k rec)$ where $k rec = kappa(recDelta\ b\ s\ n)$.  
+  Using the intended rewrite, RHS would be $k rec + 1$.  
+  But $max(k s)(k rec) < k rec + 1$ fails when $k s > k rec$ (e.g. $k s = k rec + 5$).  
+  So you need an extra hypothesis like $kappa s \le kappa(recDelta\ b\ s\ n)$ to make the inequality go through.
+
+If you want, I can suggest corrected statements that match the current `kappa` definition.

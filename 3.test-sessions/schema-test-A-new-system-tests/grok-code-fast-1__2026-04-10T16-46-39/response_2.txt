@@ -1,0 +1,7 @@
+1. A termination argument based on the structural decrease in the third argument of F, assuming S(n) is "larger" than n and Z is the minimal element.
+
+2. Yes, it relies on an interpretation of Z and S as representing natural numbers with Z as zero and S as successor, which is an object-level assumption not derivable from the rules themselves.
+
+3. Yes, that places the method outside the stated boundary, as it imports assumptions about the intended model beyond the rewrite rules.
+
+4. Yes, I still think the system is strongly normalizing, assuming the standard interpretation of the symbols.

@@ -1,0 +1,7 @@
+1. **LPO** (Lexicographic Path Order) with a chosen precedence $F \succ G \succ S \succ Z$.
+
+2. **Yes.** The precedence is a free choice not fixed by the rules. The well-foundedness of LPO itself is a metatheorem (ultimately resting on Kruskal's tree theorem) — that is external mathematical machinery brought to bear on the system.
+
+3. **Arguably no, under a reasonable reading.** The precedence and LPO are *proof tools at the meta-level* — they are not "structural axioms" or "object-level assumptions" injected into the rewrite system. They make no claims about the objects beyond what the rules syntactically present. Any termination proof for any rewrite system must invoke *some* external well-foundedness argument; if the boundary excludes all metatheory, then no system can ever prove its own SN (by analogy with Gödel's second incompleteness theorem). Under a strict reading where even the choice of interpretation counts as "importing," then yes, the method is outside the boundary — but so is every possible method.
+
+4. **Yes, unambiguously.** The system is strongly normalizing. `G` is a constructor (never reduced), and `F` recurses on a structurally decreasing third argument. Every reduction chain is bounded by the size of the third argument's `S`-nesting. This is about as clean a terminating system as exists.

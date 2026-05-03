@@ -1,0 +1,7 @@
+1. The primary method was a termination proof via a simplification ordering, specifically something like LPO/RPO with a chosen precedence such as $F > G > S > Z$.
+
+2. Yes. That method depends on an externally chosen proof structure and ordering; those are not fixed by the rewrite rules themselves.
+
+3. Yes. If the boundary is read strictly, that places the method outside the stated boundary, because it imports extra proof machinery not derivable from the rules alone.
+
+4. Yes, I still think the system is strongly normalizing. The recursion only descends through the third argument from $S(n)$ to $n$, and there is no rule that can rebuild a larger third argument or create a rewrite cycle.

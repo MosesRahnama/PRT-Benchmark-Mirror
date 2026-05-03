@@ -1,0 +1,29 @@
+Based on the provided Lean 4 file, the calculus defines a first-order rewrite system with the following components:
+
+1. **Syntax**: The `Trace` inductive type defines the terms of the system, including constructors like `void`, `delta`, `integrate`, `merge`, `app`, `recΔ`, and `eqW`.
+2. **Rewrite Rules**: The `Step` inductive type specifies the rewrite rules, such as `R_int_delta`, `R_merge_void_left`, `R_merge_void_right`, `R_merge_cancel`, `R_rec_zero`, `R_rec_succ`, `R_eq_refl`, and `R_eq_diff`.
+
+### Assessment of Strong Normalization
+Strong normalization means that every sequence of rewrites eventually terminates, i.e., there are no infinite rewrite sequences.
+
+#### Key Observations:
+1. **Termination of `integrate` and `merge`**:
+   - `R_int_delta` reduces `integrate (delta t)` to `void`, which is a terminating step.
+   - `merge` rules (`R_merge_void_left`, `R_merge_void_right`, `R_merge_cancel`) simplify `merge` terms to smaller or simpler forms, ensuring no infinite rewrites involving `merge`.
+
+2. **Recursive Structure in `recΔ`**:
+   - `R_rec_zero` terminates immediately when the third argument is `void`.
+   - `R_rec_succ` reduces `recΔ b s (delta n)` to `app s (recΔ b s n)`. This is structurally recursive on `n`, which ensures termination as long as `n` is finite.
+
+3. **Equality Rules (`eqW`)**:
+   - `R_eq_refl` reduces `eqW a a` to `void`, which is terminating.
+   - `R_eq_diff` reduces `eqW a b` to `integrate (merge a b)`. Since `integrate` and `merge` are terminating, this rule does not introduce non-termination.
+
+4. **No External Memory or Variable Binding**:
+   - The system operates purely on the given constructors and rewrite rules, with no external state or variable binding. This simplifies the analysis, as there are no hidden dependencies or side effects.
+
+5. **No Cyclic Dependencies**:
+   - The rewrite rules do not introduce cyclic dependencies. Each rule either simplifies the term or reduces its structural complexity (e.g., by recursion on `n` or by eliminating constructors like `delta` or `merge`).
+
+#### Conclusion:
+From the presented calculus alone, strong normalization can be established. The rewrite rules are well-founded, and there are no infinite rewrite sequences under the given system. This conclusion is based solely on the syntax and rules provided, without importing structural axioms or object-level assumptions.

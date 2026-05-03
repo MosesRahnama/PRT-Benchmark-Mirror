@@ -1,0 +1,33 @@
+**Assessment**: Strong normalization **can likely be established** from the presented calculus alone using standard term rewriting techniques, but a simple proof is not immediate.
+
+---
+
+**Key observations**:
+
+1. **No rule creates `delta` constructors** — all RHS are either `void`, subterms, or combinations via `app`/`merge`/`integrate`. This bounds the "fuel" for `recΔ` unfolding.
+
+2. **R_rec_succ is the critical rule**: `recΔ b s (delta n) → app s (recΔ b s n)` duplicates `s`, which may contain nested `recΔ` subterms. This duplication prevents simple size-based or polynomial interpretation arguments.
+
+3. **R_eq_diff** `eqW a b → integrate (merge a b)` grows the term structurally, but introduces no new `delta` or `recΔ`, so it doesn't create unbounded work.
+
+---
+
+**Why simple methods fail**:
+- **Polynomial interpretations**: The duplication of `s` in R_rec_succ causes the RHS interpretation to match or exceed the LHS.
+- **Recursive path ordering (RPO)**: R_eq_diff's RHS contains `a` and `b` inside additional constructors without structural decrease in the multiset sense.
+
+---
+
+**Proof roadmap (within boundary)**:
+
+A termination proof can proceed via **dependency pairs** or **matrix interpretations**:
+
+1. Identify dependency pairs: The only recursive dependency is `recΔ b s (delta n) → ... recΔ b s n`, where the third argument strictly decreases.
+2. Show that duplicated subterms in `s` don't create a cycle in the dependency graph — the duplicated `recΔ` subterms operate on independent third arguments.
+3. Use a lexicographic measure: `(delta-depth of third argument, term size)` on the dependency chain.
+
+Since no rule introduces new `delta` nodes, each `delta` in the original term contributes at most a bounded (though potentially exponential) number of steps, and the reduction relation is well-founded.
+
+---
+
+**Verdict**: Provable within the boundary using dependency pairs analysis — no extra axioms, guards, or side conditions required.

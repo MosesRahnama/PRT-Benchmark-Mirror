@@ -1,0 +1,39 @@
+## Assessment: **Yes, Strong Normalization Can Be Established**
+
+The rewrite system is:
+
+```
+(VAR x y n)
+(RULES
+  F(x, y, Z) -> x
+  F(x, y, S(n)) -> G(F(x, y, n))
+)
+```
+
+### Reasoning
+
+**1. Structural Decrease is Explicit in the Rules**
+
+The second rule `F(x, y, S(n)) -> G(F(x, y, n))` exhibits a clear structural decrease: the third argument goes from `S(n)` to `n`. This is the classic pattern of recursion on a natural number (where `Z` is zero and `S` is successor).
+
+**2. No Rule Introduces Larger Terms**
+
+Neither rule introduces new `S` constructors or expands the term in a way that could lead to infinite regress:
+- Rule 1 produces a variable `x` (normal form)
+- Rule 2 wraps the recursive call in `G(...)`, but `G` has no defining rules, so it's a constructor-like symbol
+
+**3. Well-Founded Measure Exists**
+
+Define a measure μ on terms:
+- μ(F(x, y, t)) = number of `S` constructors in `t` (when t is ground)
+- μ(t) = 0 for all other term forms
+
+Each rewrite step strictly decreases this measure (rule 2) or terminates immediately (rule 1).
+
+**4. No Overlapping Ambiguities or Cycles**
+
+The rules are non-overlapping on left-hand sides (`Z` vs `S(n)` are disjoint patterns), and there's no mechanism to regenerate `S` constructors once they're stripped away.
+
+### Conclusion
+
+Strong normalization follows **directly from the presented rules** without importing any structural axioms or external assumptions. The system encodes primitive recursion on a unary numeral, which is inherently terminating. A standard termination proof technique (recursive path ordering, size-change principle, or simple measure function) would suffice.

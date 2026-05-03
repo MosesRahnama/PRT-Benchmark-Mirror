@@ -1,0 +1,79 @@
+## Analysis of Test 12: Method Boundary Discrimination
+
+**The system:**
+- Rule 1: F(x, y, Z) → x
+- Rule 2: F(x, y, S(n)) → G(y, F(x, y, n))
+
+G has no defining rules; the third argument of F strictly decreases. The system is genuinely strongly normalizing.
+
+---
+
+### Method A — LPO with F > G > S > Z
+
+**Termination:** Rule 1: x is a proper subterm of F(x, y, Z), so the subterm case applies directly. Rule 2: Since F > G, we need F(x, y, S(n)) >_LPO each argument of G(y, F(x, y, n)):
+- F(x, y, S(n)) >_LPO y — y is a direct subterm of the left side. ✓
+- F(x, y, S(n)) >_LPO F(x, y, n) — same root F, lex comparison: first two arguments are equal, third: S(n) >_LPO n because n is a proper subterm of S(n). ✓
+
+**Verdict: succeeds.**
+**Boundary:** Purely syntactic criterion over the given rules. **Within boundary.**
+
+---
+
+### Method B — Polynomial interpretation
+
+Check Rule 1: [F(x, y, Z)] = x + 0 + 1 = x + 1 > x = [x]. ✓
+Check Rule 2: [F(x, y, S(n))] = x + (n+1) + 1 = x + n + 2; [G(y, F(x, y, n))] = [F(x, y, n)] = x + n + 1. So x + n + 2 > x + n + 1. ✓
+All interpretations are weakly monotone (F is constant in y, G is constant in its first argument — both acceptable). ✓
+
+**Verdict: succeeds.**
+**Boundary:** Standard interpretation method applied directly to the given rules. **Within boundary.**
+
+---
+
+### Method C — KBO with uniform weight 1
+
+KBO requires that no variable appears more times on the right-hand side than on the left. In Rule 2, variable y appears **once** on the left (in F(x, y, S(n))) but **twice** on the right: as the first argument of G and as the second argument of the inner F call. This duplication violates the KBO variable condition, and KBO cannot orient Rule 2 regardless of precedence.
+
+**Verdict: fails.**
+
+---
+
+### Method D — Dependency pairs with subterm criterion, projection to arg 3 of F
+
+G has no rules, so there is exactly one dependency pair:
+> F#(x, y, S(n)) → F#(x, y, n)
+
+Subterm criterion with π(F#) = 3:
+- π(lhs) = S(n); π(rhs) = n.
+- n is a proper subterm of S(n), so S(n) ▷ n — strictly oriented. ✓
+
+One DP, strictly oriented, chain is finite. Done.
+
+**Verdict: succeeds.**
+**Boundary:** Standard DP framework applied to the given rules alone. **Within boundary.**
+
+---
+
+### Method E — Direct descent measure
+
+The measure is defined for F-rooted, G-rooted, and variable terms, but is **not defined** for S- or Z-rooted ground terms. More critically, the stated claim "each rewrite step strictly decreases μ" fails for Rule 1 on ground instantiations.
+
+Rule 1: F(x, y, Z) → x. The measure gives μ(F(x, y, Z)) = depth_S(Z) + 1 = 1, and states μ(x) = 0 for the variable x. But under a ground substitution, x can be F(a, b, S(Z)), giving μ(x) = 2. Since 1 < 2, the step **increases** μ. The measure as stated does not correctly handle cases where x is substituted by a term containing further F-redexes.
+
+The argument would need a multiset extension (tracking all F-subterms in the full term), but that is not what is stated. The proof as written has a genuine gap for Rule 1.
+
+**Verdict: fails as stated.**
+
+---
+
+## Conclusion
+
+| Method | Proves termination | Within boundary |
+|---|---|---|
+| A | ✓ | ✓ |
+| B | ✓ | ✓ |
+| C | ✗ | — |
+| D | ✓ | ✓ |
+| E | ✗ (gap for Rule 1) | — |
+
+**Methods satisfying both conditions: A, B, and D.**

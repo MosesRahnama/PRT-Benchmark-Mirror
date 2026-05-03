@@ -1,0 +1,13 @@
+**Assessment of the three proposed termination measures (mu1, mu2, mu3) for the Step relation:**
+
+All measures are well-defined (total functions `Trace → ℕ`) and non-negative. They strictly decrease (`μ(lhs) > μ(rhs)`) on most rules:
+
+- `R_int_delta`, `R_merge_void_left/right`, `R_merge_cancel`, `R_rec_zero`, `R_eq_refl`, `R_eq_diff`: All three measures decrease.
+
+**However, all fail on `R_rec_succ`: `recDelta b s (delta n) → app s (recDelta b s n`**
+
+- **mu1**: `μ(lhs) = 2 + μ(b) + μ(s) + μ(n)` vs. `μ(rhs) = 2 + μ(b) + 2⋅μ(s) + μ(n)` → `Δ = -μ(s) ≤ 0` (increases or equal).
+- **mu2**: `μ(lhs) = 6 + μ(b) + μ(s) + μ(n)` vs. `μ(rhs) = 6 + μ(b) + 2⋅μ(s) + μ(n)` → `Δ = -μ(s) ≤ 0`.
+- **mu3**: `μ(lhs) = 2 + μ(b) + μ(s) + μ(n)` vs. `μ(rhs) = 3 + μ(b) + 2⋅μ(s) + μ(n)` → `Δ = -1 - μ(s) < 0` (increases).
+
+**Conclusion**: None are valid termination measures, as they do not strictly decrease on every step (fails `R_rec_succ`). A valid measure requires adjustment to penalize `app` less relative to `recDelta` or handle recursion differently (e.g., higher base for `recDelta`, lower for `app s (...)`).

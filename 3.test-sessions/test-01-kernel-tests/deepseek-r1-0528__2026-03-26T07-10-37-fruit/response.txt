@@ -1,0 +1,29 @@
+Based on the provided rewrite calculus in the Lean 4 file, here is my assessment of whether strong normalization can be established:
+
+**Assessment:** Strong normalization **cannot** be established for this system using only the given rewrite rules without additional assumptions or structural axioms.
+
+**Key Reasons:**
+
+1. **Non-terminating reduction path exists:**
+   - Consider the term `cherry a b` where `a ≠ b`
+   - By `R_cherry_diff`, it reduces to `mango (peach a b)`
+   - If we choose `a = mango c` and `b = grape d` (for arbitrary `c,d`):
+     ```
+     cherry (mango c) (grape d) 
+     → mango (peach (mango c) (grape d))   [R_cherry_diff]
+     ```
+   - This new term cannot be reduced further by any rule since:
+     - No rule matches `mango (peach ...)` pattern
+     - No rule applies to the subterm `peach (mango c) (grape d)`
+
+2. **The system lacks:**
+   - A well-founded measure that decreases with each reduction
+   - Lexicographic ordering of arguments
+   - Subterm ordering properties
+   - Guarded recursion conditions
+
+3. **The problematic rules:**
+   - `R_cherry_diff` introduces new constructors (`mango`, `peach`) without decreasing term size
+   - `R_apple_orange` duplicates the `s` argument in `pear s (banana b s n)`, which could lead to size explosion
+
+**Conclusion:** The calculus as presented doesn't provide enough structure to prove strong normalization. The reduction relation allows creation of irreducible terms that don't converge to normal forms, and the absence of explicit ordering principles or termination guards makes it impossible to construct a well-founded termination measure using only the given rules.

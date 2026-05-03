@@ -1,0 +1,5 @@
+**Concluding on helper strategy soundness**
+
+The helper approach is unsound, but the calculus may still terminate. When asked if the helper strategy is sound, I’ll say no because the lemma is incorrect and measure isn’t strictly decreasing for nested deltas. I might suggest a brief fix, such as adding the hypothesis `n ≠ delta n'` or defining `kappa` with respect to delta increases.
+
+In Lean, `kappa` has two recDelta cases, meaning a proof by cases is necessary. Since the statement leads to a contradiction, it's definitely unsound. I’ll ensure to keep the final message concise, including computations and the relevant file link.

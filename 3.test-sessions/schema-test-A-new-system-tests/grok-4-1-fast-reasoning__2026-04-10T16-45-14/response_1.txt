@@ -1,0 +1,3 @@
+**Yes**, strong normalization can be established from the presented rewrite system alone.
+
+**Reasoning**: The TRS is orthogonal (non-overlapping, left-linear rules: `F(x, y, Z) → x` and `F(x, y, S(n)) → G(F(x, y, n))`), with `Z`/`S` as constructors for nats and `G` non-reducing. Reductions strictly decrease the number of `S` constructors in the third argument of any `F` (peeling successors until `Z`), without creating new `F`s that increase this measure or cycles. By Noetherian induction on nat size (multiset of depths across redexes), all sequences terminate. No extra axioms needed.

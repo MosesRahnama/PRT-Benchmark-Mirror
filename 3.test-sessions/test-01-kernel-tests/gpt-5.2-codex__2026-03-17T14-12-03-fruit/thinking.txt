@@ -1,0 +1,6 @@
+**Reasoning toward termination under context closure**
+
+Analyzing key rules shows grape constructors strictly decrease or stay bounded, and a suitable precedence (e.g., cherry > mango > peach, banana > pear) can orient all rules under standard path orderings; despite duplication in one rule, the system appears strongly normalizing with context closure using standard termination proofs.
+**Confirming termination via LPO with precedence**
+
+Using LPO with precedence (cherry > mango > peach; banana > pear; mango > plum) and lexicographic status orients all rewrite rules strictly decreasing, ensuring strong normalization with full context closure. The inequality condition on rule 8 poses no termination risk since no cycles or expansions recreate cherry terms. If rewriting is root-only, termination is trivial. Next, a stepwise plan will be outlined and tracked using the todo list tool.

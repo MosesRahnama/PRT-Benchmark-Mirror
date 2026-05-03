@@ -1,0 +1,31 @@
+Looking at this term rewriting system:
+
+**Variables:** `x, y, n`  
+**Rules:**
+1. `F(x, y, Z) -> x`
+2. `F(x, y, S(n)) -> G(y, F(x, y, n))`
+
+## Assessment: **Yes, strong normalization can be established**
+
+### Proof Roadmap:
+
+**Step 1: Define a termination measure**
+- Measure μ(t) = total count of `S` constructors appearing as third arguments to `F` subterms in term t
+
+**Step 2: Show measure decreases strictly** 
+- Rule 1: `F(x, y, Z) -> x` eliminates an F term, decreasing μ by 0 (since Z contributes 0)
+- Rule 2: `F(x, y, S(n)) -> G(y, F(x, y, n))` decreases μ by exactly 1 (removes one `S` from F's third argument)
+
+**Step 3: Show measure is well-founded**
+- μ(t) ∈ ℕ and decreases with each reduction step
+- Eventually reaches μ(t) = 0, where no further F-reductions are possible
+
+**Step 4: Show confluence (optional for SN, but holds here)**
+- No critical pairs exist since the left-hand sides `F(x, y, Z)` and `F(x, y, S(n))` don't overlap
+
+**Termination argument:** Every reduction sequence must terminate because:
+1. Rule 2 strictly decreases the structural complexity of F-terms
+2. Rule 1 eliminates F-terms entirely  
+3. Once all F-terms are reduced away, the remaining G-terms, variables, Z, and S constructors cannot reduce further
+
+The system is **strongly normalizing** based purely on the structural decrease in the third argument of F terms, requiring no external axioms.

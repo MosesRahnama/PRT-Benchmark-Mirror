@@ -1,0 +1,22 @@
+**Assessment: Yes, strong normalization can be established from the presented rewrite system alone.**
+
+**Reasoning:**
+
+The system has two rules:
+```
+F(x, y, Z)    -> x
+F(x, y, S(n)) -> G(y, F(x, y, n))
+```
+
+This terminates via a standard **lexicographic path ordering (LPO)** with precedence `F > G > S > Z`:
+
+1. **Rule 1** `F(x, y, Z) -> x`: Reduces trivially since `x` is a proper subterm of the left-hand side.
+
+2. **Rule 2** `F(x, y, S(n)) -> G(y, F(x, y, n))`: 
+   - `F > G` in precedence, so we check that `F(x, y, S(n))` dominates all arguments of the RHS
+   - `y` is a subterm of the LHS ✓
+   - `F(x, y, n)` has the same root `F`, so compare lexicographically: first two arguments equal, third argument `S(n) >_{LPO} n` because `n` is a proper subterm ✓
+
+The function `G` has no rewrite rules—it acts as a constructor and cannot introduce new redexes. The third argument of `F` is always a Peano numeral, and each application of Rule 2 strictly decreases its height.
+
+No structural axioms (associativity, commutativity, etc.) or imported object-level assumptions are required. The termination proof is self-contained within standard first-order term rewriting methodology.

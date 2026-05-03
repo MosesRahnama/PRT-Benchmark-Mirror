@@ -1,0 +1,28 @@
+## Assessment
+
+**YES — strong normalization is provable from the presented calculus alone.**
+
+### Raw Analysis
+
+The system has 7 term constructors and 8 rewrite rules. The critical observation:
+
+- **`R_rec_succ`** is the only rule that appears non-contracting: `recΔ(b, s, delta(n)) → app(s, recΔ(b, s, n))` creates an `app` layer. However, the **`delta`-nesting depth strictly decreases** (outer `delta` wrapping `n` is removed), so the new recursive call is structurally smaller in this dimension.
+
+- **All other rules contract redex complexity** directly (void elimination, merge cancellation, equality tests, etc.).
+
+- **`app` is inert** — it only appears as a wrapper created by `R_rec_succ` and is never itself a redex pattern. This means infinite application stacks are impossible; they must bottom out when the recursion terminator `R_rec_zero` fires.
+
+### Proof Roadmap (within stated boundaries)
+
+Define a lexicographic measure:
+1. **Primary:** $M_1(t) = $ maximum nesting depth of `delta` constructors in $t$
+2. **Secondary:** $M_2(t) = $ total node count in $t$
+
+Prove by structural induction on `Trace` and well-founded recursion on $(\mathbb{N}, <)$ that every rewrite step $(t_1, t_2) \in \text{Step}$ satisfies $(M_1(t_2), M_2(t_2)) <_{\text{lex}} (M_1(t_1), M_2(t_1))$.
+
+- **`R_rec_succ`** is the only step where $M_2$ might not decrease; verify $M_1$ decreases there.
+- All remaining rules monotonically decrease $M_2$ (or both coordinates).
+
+Termination follows from well-foundedness of the lexicographic order on $\mathbb{N} \times \mathbb{N}$.
+
+**No import of structural axioms, side conditions, or guards needed.** This is entirely self-contained in the syntax and rule structure.

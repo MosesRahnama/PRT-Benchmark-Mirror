@@ -1,0 +1,20 @@
+, the five methods come out as follows.
+
+A. Yes, it succeeds. With an LPO/RPO-style precedence `F > G > S > Z`, the first rule is straightforward since a non-variable term dominates its variable subterm, and the second rule can be oriented because the left side has root `F`, which dominates the right side’s root `G`, while also dominating the embedded call `F(x,y,n)` via the decrease from `S(n)` to `n`. It stays within the benchmark boundary.
+
+B. Yes, it succeeds. Under the stated polynomial interpretation,
+`F(x,y,Z)` maps to `x + 1`, which is strictly greater than `x`, and
+`F(x,y,S(n))` maps to `x + n + 2`, while `G(y,F(x,y,n))` maps to `x + n + 1`.
+So both rules strictly decrease. It stays within the benchmark boundary.
+
+C. No, it does not succeed as stated. With KBO and uniform weights `w(F)=w(G)=w(S)=w(Z)=1`, the second rule fails the variable condition because `y` occurs once on the left but twice on the right:
+`F(x,y,S(n)) -> G(y,F(x,y,n))`.
+That already blocks KBO orientation. It does stay within the benchmark boundary, but it does not prove termination.
+
+D. Yes, it succeeds. The only recursive dependency pair is effectively
+`F#(x,y,S(n)) -> F#(x,y,n)`.
+Projecting `F` to its third argument gives `S(n)` on the left and `n` on the right, so the subterm criterion applies directly. It stays within the benchmark boundary.
+
+E. No, it does not succeed as stated. The suggested measure works for top-level contractions of `F`, but the claim that “each rewrite step strictly decreases `mu`” is false for rewriting in context. Because `mu(G(a,b)) = mu(b)`, a rewrite inside the first argument of `G` need not change `mu` at all. So as stated, this is not a valid global termination proof. It does stay within the benchmark boundary, but it does not establish termination.
+
+The methods that satisfy both conditions are: A, B, and D.

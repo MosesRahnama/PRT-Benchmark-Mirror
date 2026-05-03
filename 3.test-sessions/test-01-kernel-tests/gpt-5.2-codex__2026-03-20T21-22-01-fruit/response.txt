@@ -1,0 +1,34 @@
+## Assessment
+
+Yes — based on the calculus alone, strong normalization is provable without adding any extra axioms or rewrite rules. A standard well‑founded measure argument suffices.
+
+### Short proof roadmap (within your boundary)
+
+Define three structural measures on terms:
+- $c(t)$ = number of `cherry` constructors in $t$
+- $g(t)$ = number of `grape` constructors in $t$
+- $s(t)$ = total node count (size) of $t$
+
+Order terms by the lexicographic order on $(c(t), g(t), s(t)) \in \mathbb{N}^3$.
+
+Check each rule:
+- `R_cherry_refl`, `R_cherry_diff`: strictly decrease $c(t)$.
+- `R_mango_grape`, `R_apple_orange`: strictly decrease $g(t)$ (even though `R_apple_orange` can increase size).
+- `R_peach_plum_left/right`, `R_peach_cancel`, `R_banana_zero`: keep $c,g$ fixed and strictly decrease $s$.
+
+No rule increases $c$ or $g$, and when a rule doesn’t reduce $c$ it reduces $g$, and when it doesn’t reduce $g$ it reduces $s$. Thus every step strictly decreases $(c,g,s)$.
+
+For contextual closure (if you take the usual term‑rewriting closure), $c$, $g$, and $s$ are additive over contexts, so replacing a redex by a strictly smaller RHS also strictly decreases the global lexicographic measure. Hence no infinite reductions exist.
+
+No extra structural axioms or object‑level assumptions are needed beyond standard well‑founded induction on $\mathbb{N}^3$.
+
+## ✅ Todo list (updated)
+
+- [x] Review rewrite rules  
+- [x] Assess termination measure  
+- [x] Draft assessment response  
+
+## Completion summary
+
+I read only
+, analyzed the rewrite rules, and gave a termination argument based solely on syntactic measures. Verification is purely meta‑theoretic; no additional axioms or rules are assumed.

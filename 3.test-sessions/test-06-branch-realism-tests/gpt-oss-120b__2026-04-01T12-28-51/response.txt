@@ -1,0 +1,120 @@
+**Assessment of the helper theorems**
+
+The file defines a structural measure `kappa : Trace → Nat` that is used to argue termination of the rewrite calculus.  
+Two lemmas are introduced to relate the `kappa`‑value of the `recDelta` constructor (the “recursive” case) to the `kappa`‑value of the term that appears after a rewrite step.
+
+Below we verify each lemma purely by unfolding the definition of `kappa` and using elementary properties of `Nat.max`.
+
+---
+
+### 1. `kappa_rec_delta_step`
+
+```lean
+theorem kappa_rec_delta_step (b s n : Trace) :
+  kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1
+```
+
+**Unfolding `kappa`**
+
+* For a term of the form `recDelta b s (delta n)` the definition gives  
+
+  \[
+  \kappa\bigl(\text{recDelta}\;b\;s\;(\delta n)\bigr)
+  = \max\bigl(\max(\kappa b,\kappa s),\kappa n\bigr) + 1 .
+  \]
+
+* For a term of the form `recDelta b s n` (where the third argument is *not* a `delta`) the definition gives  
+
+  \[
+  \kappa\bigl(\text{recDelta}\;b\;s\;n\bigr)
+  = \max\bigl(\max(\kappa b,\kappa s),\kappa n\bigr) .
+  \]
+
+Hence
+
+\[
+\kappa\bigl(\text{recDelta}\;b\;s\;(\delta n)\bigr)
+= \bigl(\max\bigl(\max(\kappa b,\kappa s),\kappa n\bigr)\bigr) + 1
+= \kappa\bigl(\text{recDelta}\;b\;s\;n\bigr) + 1 .
+\]
+
+The equality follows directly from the two clauses of `kappa`. No additional hypotheses are needed, so the lemma is **sound**.
+
+---
+
+### 2. `kappa_rec_succ_drop`
+
+```lean
+theorem kappa_rec_succ_drop (b s n : Trace) :
+  kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))
+```
+
+**Step‑by‑step calculation**
+
+1. **Left‑hand side** (`app` case)
+
+   By definition of `kappa` for `app`:
+
+   \[
+   \kappa\bigl(\text{app}\;s\;(\text{recDelta}\;b\;s\;n)\bigr)
+   = \max\bigl(\kappa s,\;\kappa(\text{recDelta}\;b\;s\;n)\bigr).
+   \]
+
+   Using the definition of `kappa` for `recDelta b s n` (non‑`delta` case),
+
+   \[
+   \kappa(\text{recDelta}\;b\;s\;n)
+   = M \quad\text{where}\quad
+   M := \max\bigl(\max(\kappa b,\kappa s),\kappa n\bigr).
+   \]
+
+   Since `M` already dominates `\kappa s` (it is a `max` that includes `\kappa s`), we have
+
+   \[
+   \max\bigl(\kappa s, M\bigr) = M .
+   \]
+
+   Therefore
+
+   \[
+   \kappa\bigl(\text{app}\;s\;(\text{recDelta}\;b\;s\;n)\bigr) = M .
+   \]
+
+2. **Right‑hand side** (`recDelta` with a `delta` argument)
+
+   By the `recDelta`‑`delta` clause:
+
+   \[
+   \kappa\bigl(\text{recDelta}\;b\;s\;(\delta n)\bigr)
+   = M + 1 .
+   \]
+
+3. **Inequality**
+
+   Combining the two results:
+
+   \[
+   \kappa\bigl(\text{app}\;s\;(\text{recDelta}\;b\;s\;n)\bigr) = M
+   \quad\text{and}\quad
+   \kappa\bigl(\text{recDelta}\;b\;s\;(\delta n)\bigr) = M + 1 .
+   \]
+
+   Since for natural numbers `M < M + 1` holds by definition of `<`, we obtain
+
+   \[
+   \kappa\bigl(\text{app}\;s\;(\text{recDelta}\;b\;s\;n)\bigr)
+   < \kappa\bigl(\text{recDelta}\;b\;s\;(\delta n)\bigr) .
+   \]
+
+Thus the inequality is a direct consequence of the `+1` added in the `delta` case and the monotonicity of `Nat.max`. No extra assumptions are required, so the lemma is **sound**.
+
+---
+
+## Conclusion
+
+Both helper theorems are provably correct given the current definition of `kappa`:
+
+* `kappa_rec_delta_step` is an exact rewriting of the two `kappa` clauses for `recDelta`.
+* `kappa_rec_succ_drop` follows from the fact that `kappa (app …)` collapses to the same maximum `M` that appears in the `recDelta` clause, while the `delta` version of `recDelta` adds a strict `+1`.
+
+Consequently, the helper strategy that uses these lemmas to show a strict decrease of the `kappa` measure across rewrite steps is **sound**. No contradictions or hidden side‑conditions appear, and the calculations confirm the intended termination argument.

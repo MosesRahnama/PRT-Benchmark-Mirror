@@ -1,0 +1,31 @@
+All three candidates fail as termination measures for the rewrite system in KO7-LLM-Benchmark/test-files/Test-05-Candidate-Class-Reasoning.lean. The obstruction is the same in each case: the successor recursion rule R_rec_succ does not strictly decrease.
+
+For mu1,
+$$
+\mu_1(\mathrm{recDelta}\ b\ s\ (\mathrm{delta}\ n)) = 2 + \mu_1(b) + \mu_1(s) + \mu_1(n)
+$$
+while
+$$
+\mu_1(\mathrm{app}\ s\ (\mathrm{recDelta}\ b\ s\ n)) = 2 + \mu_1(b) + 2\mu_1(s) + \mu_1(n).
+$$
+So the right-hand side is larger by $\mu_1(s)$. It is equal only when $s = \mathrm{void}$, and otherwise strictly larger. Every other rule decreases under `mu1`, but this one breaks it.
+
+For mu2, the same issue appears:
+$$
+\mu_2(\mathrm{recDelta}\ b\ s\ (\mathrm{delta}\ n)) = 6 + \mu_2(b) + \mu_2(s) + \mu_2(n),
+$$
+$$
+\mu_2(\mathrm{app}\ s\ (\mathrm{recDelta}\ b\ s\ n)) = 6 + \mu_2(b) + 2\mu_2(s) + \mu_2(n).
+$$
+Again, the right-hand side exceeds the left by $\mu_2(s)$. So `mu2` also fails, despite decreasing on the other rules.
+
+For mu3, the failure is even stronger:
+$$
+\mu_3(\mathrm{recDelta}\ b\ s\ (\mathrm{delta}\ n)) = 2 + \mu_3(b) + \mu_3(s) + \mu_3(n),
+$$
+$$
+\mu_3(\mathrm{app}\ s\ (\mathrm{recDelta}\ b\ s\ n)) = 3 + \mu_3(b) + 2\mu_3(s) + \mu_3(n).
+$$
+Now the right-hand side is larger by $1 + \mu_3(s)$, so it never decreases.
+
+Verdict: `mu1`, `mu2`, and `mu3` are all invalid as ranking functions into `Nat` for this rewrite relation. `mu1` and `mu2` are close in the sense that they only fail on R_rec_succ, while `mu3` fails there by a larger margin. A successful proof would need a different kind of measure, likely one that treats the recursion argument lexicographically or uses a nontrivial recursive path/multiset ordering rather than a single additive size.

@@ -1,0 +1,20 @@
+## Assessment: **Yes, strong normalization can be established from the presented rules alone.**
+
+### Reasoning:
+
+1. **Structure of the system**: The TRS has two rules for `F` with a simple recursion on the third argument (a Peano-style natural number with constructors `Z` and `S`).
+
+2. **Termination argument**: The third argument strictly decreases in the recursive call:
+   - Rule 1: Base case `F(x, y, Z) → x` — no recursion.
+   - Rule 2: `F(x, y, S(n)) → G(F(x, y, n))` — the third argument goes from `S(n)` to `n`.
+
+3. **Well-founded ordering**: The size of the third argument (measured by the number of `S` constructors) provides a well-founded measure that strictly decreases with each application of Rule 2. Since there are no rules for `G`, it acts as a constructor and doesn't introduce further reductions.
+
+4. **No problematic patterns**: 
+   - No nested recursion on multiple arguments
+   - No rules that could increase term size unboundedly
+   - The first two arguments `x`, `y` are simply passed through or returned unchanged
+
+5. **Standard termination proof**: This system is easily handled by polynomial interpretations or lexicographic path orderings. For instance, interpreting `F(x, y, n)` with weight dependent on `n` and `G` as a constructor suffices.
+
+**Conclusion**: Strong normalization holds — every reduction sequence terminates, provable purely from the given rewrite rules without any additional axioms.

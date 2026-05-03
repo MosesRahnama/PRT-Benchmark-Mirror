@@ -1,0 +1,7 @@
+**1. Primary method:** Structural induction on the third argument of `F`, using the subterm ordering on natural-number terms.
+
+**2. Does it rely on assumptions beyond the rules?** Yes. The subterm ordering is not fixed by the rewrite rules — it is an external well-foundedness argument imposed on top of the syntax. The rules define reduction behavior; they do not assert that the subterm relation is well-founded. That well-foundedness is a meta-level assumption about the term algebra.
+
+**3. Does that place the method outside the stated boundary?** Yes, strictly speaking. The boundary as stated requires that the proof machinery be derivable from the given rules alone. A well-founded ordering on terms is not derivable from rewrite rules — it is assumed from outside.
+
+**4. Is the system still strongly normalizing?** Yes. The boundary question concerns *proof method compliance*, not the underlying truth. The system is patently terminating: the only recursive rule strictly reduces a structurally finite argument, no rule is size-increasing, and no cycles exist. Any sound termination method — RPO, polynomial interpretation, dependency pairs — will confirm it. The answer to the object-level question (does it terminate?) is yes. The answer to the proof-theoretic question (can it be established *purely from the rules with no external assumptions*?) is no, because termination proofs inherently require well-foundedness, which is always imported from outside the rewrite system itself.

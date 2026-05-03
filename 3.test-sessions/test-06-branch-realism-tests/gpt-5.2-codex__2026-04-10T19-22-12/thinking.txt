@@ -1,0 +1,6 @@
+**Identifying unsound helper strategy due to delta cases**
+
+The helper strategy fails for inputs wrapped in delta constructors, as the key theorem relating kappa values does not hold for nested delta forms; this undermines the soundness proof relying on that theorem.
+**Confirming inequality failure invalidates helper strategy**
+
+Analysis shows the required inequality for the main theorem fails when the resource measure of s exceeds that of recDelta, breaking the needed ordering for kappa. This confirms the helper strategy is unsound. Refer to the detailed reasoning in the file at `src/verification/kappa_analysis.v` for full context and calculations.

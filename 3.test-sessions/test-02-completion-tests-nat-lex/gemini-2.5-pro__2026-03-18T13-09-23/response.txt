@@ -1,0 +1,106 @@
+Here are the proof skeletons for the remaining five cases in the Lean 4 file
+.
+
+### Case: `integrate (delta t) → void`
+
+For `Step.R_int_delta`, the `kappa` measure of `void` is 0, while `kappa (integrate (delta t))` is `kappa t`. The `mu` measure of `void` is 0, and `mu (integrate (delta t))` is `1 + mu t`. A case split on whether `kappa t` is zero or positive is effective. If `kappa t > 0`, `kappa` strictly decreases. If `kappa t = 0`, `kappa` ties, and `mu` strictly decreases.
+
+```lean
+-- integrate (delta t) --> void
+| _, _, Step.R_int_delta t => by
+    -- We need to show that the measure of `void` is lexicographically smaller than
+    -- the measure of `integrate (delta t)`.
+    -- The measure is (kappa, mu).
+    -- measure void = (kappa void, mu void) = (0, 0)
+    -- measure (integrate (delta t)) = (kappa (integrate (delta t)), mu (integrate (delta t)))
+    --                               = (kappa t, 1 + mu t)
+    by_cases h_kappa : kappa t = 0
+    · -- Case 1: kappa t = 0. Kappa ties, so we show mu decreases.
+      have hk : kappa void = kappa (integrate (delta t)) := by simp [h_kappa]
+      have hmu : mu void < mu (integrate (delta t)) := by simp [mu]; omega
+      exact drop_right hmu hk
+    · -- Case 2: kappa t > 0. Kappa drops, which is sufficient.
+      have hk : kappa void < kappa (integrate (delta t)) := by
+        simp [kappa]; exact Nat.pos_of_ne_zero h_kappa
+      exact drop_left hk
+```
+
+### Case: `recDelta b s void → b`
+
+For `Step.R_rec_zero`, `kappa` may not decrease, so we must show that if `kappa` ties, `mu` decreases. `kappa b` is at most `kappa (recDelta b s void)`, and `mu b` is strictly less than `mu (recDelta b s void)`.
+
+```lean
+-- recDelta b s void --> b
+| _, _, Step.R_rec_zero b s => by
+    -- We need to show LexOrder (measure b) (measure (recDelta b s void)).
+    -- measure b = (kappa b, mu b)
+    -- measure (recDelta b s void) = (kappa (recDelta b s void), mu (recDelta b s void))
+    --                             = (max (max (kappa b) (kappa s)) (kappa void), 3 + mu b + mu s + mu void)
+    --                             = (max (kappa b) (kappa s), 3 + mu b + mu s)
+    have h_kappa_le : kappa b ≤ kappa (recDelta b s void) := by
+      simp [kappa]; apply Nat.le_max_left
+    -- We proceed by cases on the kappa comparison.
+    by_cases h_kappa_lt : kappa b < kappa (recDelta b s void)
+    · -- Case 1: kappa strictly decreases.
+      exact drop_left h_kappa_lt
+    · -- Case 2: kappa ties. We must show mu decreases.
+      have h_kappa_eq : kappa b = kappa (recDelta b s void) :=
+        Nat.le_antisymm h_kappa_le (Nat.not_lt.mp h_kappa_lt)
+      have h_mu_lt : mu b < mu (recDelta b s void) := by simp [mu]; omega
+      exact drop_right h_mu_lt h_kappa_eq
+```
+
+### Case: `recDelta b s (delta n) → app s (recDelta b s n)`
+
+For `Step.R_rec_succ`, the `kappa` measure of `recDelta b s (delta n)` is `max(max(kappa b, kappa s), kappa n) + 1`. The `kappa` of the result `app s (recDelta b s n)` is `max(kappa s, kappa (recDelta b s n))`, which simplifies to `max(kappa s, max(max(kappa b, kappa s), kappa n))`. This is `max(max(kappa b, kappa s), kappa n)`. Thus, `kappa` strictly decreases by 1.
+
+```lean
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    -- We show that kappa strictly decreases.
+    -- kappa (recDelta b s (delta n)) = max (max (kappa b) (kappa s)) (kappa n) + 1
+    -- kappa (app s (recDelta b s n)) = max (kappa s) (kappa (recDelta b s n))
+    --                                = max (kappa s) (max (max (kappa b) (kappa s)) (kappa n))
+    --                                = max (max (kappa b) (kappa s)) (kappa n)
+    have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+      simp [kappa]
+      rw [Nat.max_assoc]
+      apply Nat.lt_succ_self
+    exact drop_left hk
+```
+
+### Case: `eqW a a → void`
+
+For `Step.R_eq_refl`, `kappa` might not decrease. `kappa (void)` is 0, and `kappa (eqW a a)` is `kappa a`. If `kappa a > 0`, `kappa` drops. If `kappa a = 0`, `kappa` ties, and we must show `mu` decreases. `mu (void)` is 0, while `mu (eqW a a)` is `4 + 2 * mu a`, which is strictly positive.
+
+```lean
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    -- We need to show LexOrder (measure void) (measure (eqW a a)).
+    -- measure void = (0, 0)
+    -- measure (eqW a a) = (kappa a, 4 + 2 * mu a)
+    by_cases h_kappa : kappa a = 0
+    · -- Case 1: kappa a = 0. Kappa ties, so we show mu decreases.
+      have hk : kappa void = kappa (eqW a a) := by simp [h_kappa]
+      have hmu : mu void < mu (eqW a a) := by simp [mu]; omega
+      exact drop_right hmu hk
+    · -- Case 2: kappa a > 0. Kappa drops.
+      have hk : kappa void < kappa (eqW a a) := by
+        simp [kappa]; exact Nat.pos_of_ne_zero h_kappa
+      exact drop_left hk
+```
+
+### Case: `eqW a b → integrate (merge a b)`
+
+For `Step.R_eq_diff`, `kappa` is preserved: `kappa (integrate (merge a b))` simplifies to `max (kappa a) (kappa b)`, which is the same as `kappa (eqW a b)`. We must show that `mu` strictly decreases. `mu (integrate (merge a b))` is `3 + mu a + mu b`, while `mu (eqW a b)` is `4 + mu a + mu b`. The `mu` measure thus drops by 1.
+
+```lean
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    -- We show that kappa ties and mu strictly decreases.
+    have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by
+      simp [kappa]
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by
+      simp [mu]; omega
+    exact drop_right hmu hk
+```

@@ -1,0 +1,37 @@
+**Raw assessment: Yes, strong normalization is provable from the rules alone.**
+
+---
+
+### The system
+
+```
+(VAR x y n)
+F(x, y, Z)    -> x
+F(x, y, S(n)) -> G(y, F(x, y, n))
+```
+
+Two critical structural observations:
+
+1. **`G` has no left-hand-side rule.** It is a free/constructor symbol. Any `G`-headed term is irreducible.
+2. **`F` is the only defined symbol.** Reduction can only fire on `F`-redexes, and each firing either eliminates `F` entirely (rule 1) or replaces `F(·,·,S(n))` with a `G`-wrapper around `F(·,·,n)`, where the third argument strictly shrinks.
+
+---
+
+### Proof roadmap (polynomial interpretation, self-contained)
+
+Define an additive interpretation over $\mathbb{N}_{>0}$:
+
+$$[Z] = 1, \quad [S(t)] = [t]+1, \quad [F(a,b,c)] = [a]+[c]+1, \quad [G(a,b)] = [b]$$
+
+**Rule 1** — $F(x,y,Z) \to x$:
+
+$$[F(x,y,Z)] = [x]+[Z]+1 = [x]+2 \;>\; [x] \checkmark$$
+
+**Rule 2** — $F(x,y,S(n)) \to G(y,F(x,y,n))$:
+
+$$[F(x,y,S(n))] = [x]+[n]+2, \quad [G(y,F(x,y,n))] = [F(x,y,n)] = [x]+[n]+1$$
+$$[x]+[n]+2 > [x]+[n]+1 \checkmark$$
+
+Both rules strictly decrease the interpretation for all ground substitutions. Because the interpretation maps every ground term to a positive integer and both steps are strictly decreasing, no infinite reduction sequence exists.
+
+**Conclusion:** The system is strongly normalizing. The proof uses only the two given rules and elementary arithmetic — no external structural axioms, no imported object-level assumptions.

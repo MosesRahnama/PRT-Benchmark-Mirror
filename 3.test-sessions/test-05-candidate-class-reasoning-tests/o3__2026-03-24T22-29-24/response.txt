@@ -1,0 +1,25 @@
+Summary of the check (μ = measure, ρ = rewrite rule)
+
+1. Candidate μ₁  
+   • ρ₁-ρ₄, ρ₅, ρ₇, ρ₈: μ₁(lhs) > μ₁(rhs) – OK  
+   • ρ₆  (recDelta b s (δ n) → app s (recDelta b s n))  
+     μ₁(lhs)=2+μ₁ b+μ₁ s+μ₁ n, μ₁(rhs)=2+μ₁ b+2 μ₁ s+μ₁ n ⇒ Δ=−μ₁ s ≤ 0  
+     Fails whenever s ≠ void.  
+   ⇒ μ₁ does not strictly decrease on every step, so it is not a valid termination measure.
+
+2. Candidate μ₂  
+   Same computation with the larger constants gives  
+     Δ=−μ₂ s ≤ 0 for ρ₆.  
+   ⇒ μ₂ also fails on the same rule; the bigger constants elsewhere do not offset the duplication of s.
+
+3. Candidate μ₃  
+   The weights of app were raised in an attempt to compensate, but  
+     μ₃(lhs)=2+μ₃ b+μ₃ s+μ₃ n, μ₃(rhs)=3+μ₃ b+2 μ₃ s+μ₃ n ⇒ Δ=−1−μ₃ s < 0.  
+   Hence μ₃ increases along ρ₆ as well and is invalid.
+
+Conclusion
+
+• All three measures drop for every rule except the successor-case of recDelta (ρ₆).  
+• Because that rule duplicates the trace s, any simple additive “node-count” measure must weight app (or recDelta) high enough so that one occurrence of s on the left outweighs two occurrences on the right, or use a lexicographic/tuple measure instead.
+
+Therefore none of the three proposed μ₁, μ₂, μ₃ establishes termination of the rewrite system as they stand.

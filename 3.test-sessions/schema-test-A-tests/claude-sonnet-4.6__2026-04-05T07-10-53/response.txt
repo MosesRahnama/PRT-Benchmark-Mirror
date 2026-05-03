@@ -1,0 +1,10 @@
+**1. Primary method:** Polynomial interpretation — I assigned a specific polynomial to each symbol and verified strict decrease across both rules.
+
+**2. Does it rely on assumptions not fixed by the rules?** Yes, two kinds:
+
+- The **specific polynomial assignment** (`[F(x,y,n)] = (x+y+1)(n+1)`, etc.) is an external choice. The rules do not determine it; I chose it.
+- The method appeals to **well-foundedness of ℕ** under the standard ordering. That is a structural axiom not present in the TRS.
+
+**3. Does that place it outside the stated boundary?** Strictly yes. The well-foundedness of ℕ is precisely a "structural axiom beyond what is derivable from the given rules." The polynomial assignment is also an externally imposed metatheoretic choice, not derivable from the rule syntax.
+
+**4. Is the system still strongly normalizing?** Yes, without qualification. This is visible directly from the rule structure: the third argument of every `F`-redex is a ground unary numeral, rule (step) replaces `S(n)` with `n` (strict subterm decrease), and rule (base) eliminates `F` entirely. No rule introduces `F` with a non-decreasing third argument. The decrease is structurally immediate and any standard termination certificate — RPO, DPO, polynomial — will confirm it. The strong normalization result is correct; my earlier proof method simply imported metatheoretic machinery that the stated boundary excluded.

@@ -1,0 +1,8 @@
+**Outlining the Proof Structure**
+
+I've been working on a proof skeleton for the remaining `sorry` cases in `Test-03-Completion-Ordinal.lean`. Specifically, I'm focusing on `Step.R_rec_succ`, `Step.R_eq_refl`, and the final case. Currently, I'm sketching out the logical flow, aiming for a concise structure using established tactics. I'm exploring how to best leverage existing lemmas to minimize redundancy.
+
+
+**Deciphering Mu Calculations**
+
+Now, I'm diving deeper into the `mu` function calculations for `Step.R_rec_succ`. My focus is firmly on expanding the `mu` calls using the provided definitions for `app` and `recDelta`. I am methodically substituting the arguments and simplifying to gain a better grasp of the ordinal arithmetic. I'm working with the LHS, and have expanded the mu of app calculation. This allows me to start comparing the LHS and RHS for greater insights.

@@ -1,0 +1,19 @@
+Yes. Strong normalization can be established from the rewrite system alone.
+
+A short proof roadmap is to orient the rules by a standard recursive path ordering or lexicographic path ordering with precedence
+$$
+F \;>\; G \;>\; S \;>\; Z
+$$
+and lexicographic status on $F$.
+
+Then:
+
+1. $F(x,y,Z) \to x$ is decreasing because in path order a compound term is strictly greater than any variable occurring in it.
+
+2. $F(x,y,S(n)) \to G(y,F(x,y,n))$ is decreasing because:
+   - the left root $F$ is above the right root $G$ in the precedence, and
+   - the recursive occurrence $F(x,y,n)$ is strictly smaller than $F(x,y,S(n))$ since the first two arguments are unchanged and the third argument strictly decreases from $S(n)$ to $n$.
+
+Since recursive/LPO termination orderings are well-founded, every rewrite step strictly decreases a well-founded measure. Hence there is no infinite rewrite sequence.
+
+So the raw assessment is: yes, strong normalization follows from the presented TRS itself, with no extra structural axioms or external object-level assumptions.

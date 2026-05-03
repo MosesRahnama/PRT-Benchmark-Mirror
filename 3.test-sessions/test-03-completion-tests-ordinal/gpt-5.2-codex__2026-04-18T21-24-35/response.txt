@@ -1,0 +1,152 @@
+Here’s a clean proof skeleton (no file changes) for the three remaining cases. I’ve written each as a structured outline with the key lemmas you’ll want to invoke, plus the intended inequality chain. The skeletons are Lean-flavored but intentionally leave the heavy ordinal arithmetic as “fill-in” steps, as requested.
+
+## Proof skeletons for remaining cases
+
+### 1) `R_rec_succ` case
+Goal:  
+`mu (app s (recDelta b s n)) < mu (recDelta b s (delta n))`
+
+Suggested skeleton:
+
+- Expand `mu` on both sides with `simp [mu]`.
+- Set:
+  - `A := mu n`
+  - `B := mu s`
+  - `C := mu b`
+- Note the key shape:
+  - LHS is **sum** of $\omega^3*(B+1) + \omega^2*(mu(recDelta b s n)+1) + 1$.
+  - RHS has the **dominant term** $\omega^{\omega^5*(A+1) + 1 + B + 6}$.
+- Use a domination lemma of the form:
+  - `omega0 ^ (omega0 ^ (5:Ordinal) * (A+1) + B + 7)` is strictly bigger than any combination of
+    `omega0 ^ 3 * (B+1)` and `omega0 ^ 2 * (omega0 ^ (A + B + 6) + ...)`.
+- Reduce to:
+  - show `omega0 ^ (omega0 ^ (5:Ordinal) * (A+1) + B + 7)` dominates
+    `omega0 ^ 2 * (omega0 ^ (A + B + 6) + ...)`
+  - use monotonicity of `opow` and `lt_of_lt_of_le` on the exponent.
+- Finally, wrap with:
+  - `lt_of_le_of_lt` to compare LHS with the dominant RHS term,
+  - then `lt_of_lt_of_le` to absorb RHS’s extra `+ omega0*(C+1) + 1`.
+
+Minimal skeleton:
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+  simp [mu]
+  -- Let A := mu n, B := mu s, C := mu b
+  -- Goal: omega^3*(B+1) + omega^2*(...) + 1
+  --   < omega^(omega^5*(A+1) + 1 + B + 6) + omega*(C+1) + 1
+  --
+  -- 1. Show: omega^3*(B+1) + omega^2*(...) + 1
+  --    < omega^(omega^5*(A+1) + 1 + B + 6)
+  --    using domination by the massive exponent omega^5*(A+1).
+  --
+  -- 2. Then use:
+  --    lt_of_lt_of_le with le_add_right to absorb + omega*(C+1) + 1.
+  --
+  -- Outline:
+  -- have h_dom : omega0 ^ (omega0 ^ (5:Ordinal) * (mu n + 1) + 1 + mu s + 6)
+  --               > omega0 ^ (2:Ordinal) * (omega0 ^ (mu n + mu s + 6) + omega0*(mu b+1) + 2)
+  --   := by
+  --      -- use exponent monotonicity + strict inequality
+  --      -- omega^5*(mu n + 1) + ... > mu n + mu s + 6
+  --      sorry
+  -- have h_main :
+  --   omega0 ^ (3:Ordinal) * (mu s + 1)
+  --     + omega0 ^ (2:Ordinal) * (omega0 ^ (mu n + mu s + 6) + omega0*(mu b+1) + 2) + 1
+  --   < omega0 ^ (omega0 ^ (5:Ordinal) * (mu n + 1) + 1 + mu s + 6) := by
+  --   -- combine h_dom with add_lt_add_left / add_lt_add_right
+  --   sorry
+  -- exact lt_of_lt_of_le h_main (le_add_right _ _)
+```
+
+---
+
+### 2) `R_eq_refl` case
+Goal:  
+`0 < omega^(mu a + mu a + 9) + 1`
+
+This is pure positivity. Skeleton:
+
+```lean
+| _, _, Step.R_eq_refl a => by
+  simp [mu]
+  -- show: 0 < omega0 ^ (mu a + mu a + 9) + 1
+  -- use: add_pos_right + opow_pos
+  apply Ordinal.pos_iff_ne_zero.mpr
+  apply ne_of_gt
+  -- omega^(...) > 0
+  have h : 0 < omega0 ^ (mu a + mu a + (9:Ordinal)) :=
+    opow_pos _ omega0_pos
+  -- then omega^(...) + 1 > 0
+  exact add_pos_right _ one_pos
+```
+
+If Lean needs a different lemma, you can replace with:
+
+- `have h : (0:Ordinal) < omega0 ^ (...) := opow_pos _ omega0_pos`
+- then `exact add_pos_right _ one_pos`
+
+---
+
+### 3) `R_eq_diff` case
+Goal:  
+`mu (integrate (merge a b)) < mu (eqW a b)`
+
+Skeleton:
+
+- Expand with `simp [mu]`.
+- LHS is `omega^4 * (omega^3*(mu a+1) + omega^2*(mu b+1) + 2) + 1`.
+- RHS is `omega^(mu a + mu b + 9) + 1`.
+- Prove a domination lemma:
+  - `omega^4 * (...) < omega^(mu a + mu b + 9)`.
+- Then use `lt_of_lt_of_le` to absorb `+1`.
+
+Lean skeleton:
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+  simp [mu]
+  -- Goal: omega^4*(omega^3*(mu a+1) + omega^2*(mu b+1) + 2) + 1
+  --   < omega^(mu a + mu b + 9) + 1
+  --
+  -- Key: omega^(mu a + mu b + 9) dominates all lower towers
+  --
+  have h_dom :
+    omega0 ^ (4:Ordinal) * (omega0 ^ (3:Ordinal) * (mu a + 1)
+      + omega0 ^ (2:Ordinal) * (mu b + 1) + 2)
+      < omega0 ^ (mu a + mu b + (9:Ordinal)) := by
+    -- use opow_strict_mono + exponent comparison
+    -- show: 4 + (something small) < mu a + mu b + 9
+    -- or use a lemma: omega^k * x < omega^α when α is large
+    sorry
+  -- then add 1 on both sides
+  exact lt_of_lt_of_le (lt_of_lt_of_le h_dom (le_add_right _ _)) (le_add_right _ _)
+```
+
+If you prefer a more robust sub-lemma, set:
+
+- `X := omega0 ^ (3:Ordinal) * (mu a + 1) + omega0 ^ (2:Ordinal) * (mu b + 1) + 2`
+- show `omega0 ^ 4 * X < omega0 ^ (mu a + mu b + 9)` by comparing exponents
+- use `opow_lt_opow` with a strict exponent inequality
+- then `lt_of_lt_of_le` with `le_add_right` to reintroduce `+1`.
+
+---
+
+## Notes on helpful lemmas
+
+These are the typical lemmas you’ll want to invoke or adapt:
+
+- `opow_pos`  
+- `opow_strict_mono` / `opow_lt_opow` (strict exponent monotonicity)
+- `lt_add_one`  
+- `le_add_right`, `le_add_left`
+- `lt_of_lt_of_le`, `lt_of_le_of_lt`
+- “dominates” facts: $\omega^\alpha$ beats any ordinal sum/product with smaller exponent.
+
+## ✅ Todo list (updated)
+
+- [x] Review remaining sorry cases  
+- [x] Draft proof skeletons  
+- [x] Summarize suggested lemmas  
+
+If you want, I can also tailor these skeletons to the exact lemmas already imported from `Mathlib.SetTheory.Ordinal.*`, but I’ll keep my hands off the file unless you ask.

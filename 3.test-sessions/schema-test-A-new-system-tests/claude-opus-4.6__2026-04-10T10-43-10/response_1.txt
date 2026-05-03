@@ -1,0 +1,25 @@
+**Assessment: Yes**, strong normalization of this system can be established from the rewrite rules alone.
+
+**Reasoning:**
+
+The system has two rules over the signature `{F, G, S, Z}` with variables `x, y, n`:
+
+1. `F(x, y, Z) → x`
+2. `F(x, y, S(n)) → G(F(x, y, n))`
+
+Strong normalization holds because there is a straightforward **structural descent** on the third argument of `F`:
+
+- Rule 1 is a base case: it eliminates `F` entirely when the third argument is `Z`.
+- Rule 2 replaces `S(n)` with `n` in the recursive call, strictly decreasing the size of the third argument. The outer `G` is a constructor (it appears on no left-hand side), so it introduces no new redexes.
+
+A simple **polynomial interpretation** suffices. For example, interpret:
+- $\llbracket Z \rrbracket = 0$
+- $\llbracket S(n) \rrbracket = n + 1$
+- $\llbracket G(x) \rrbracket = x$
+- $\llbracket F(x, y, n) \rrbracket = x + n$
+
+Then:
+- Rule 1: $\llbracket F(x, y, Z) \rrbracket = x + 0 = x > x$? We need strict decrease — adjust to $\llbracket F(x,y,n) \rrbracket = x + n + 1$: then LHS = $x + 0 + 1 = x + 1 > x$ = RHS. ✓
+- Rule 2: LHS = $x + (n+1) + 1 = x + n + 2$. RHS = $\llbracket G(F(x,y,n)) \rrbracket = x + n + 1$. $x + n + 2 > x + n + 1$. ✓
+
+Both rules strictly decrease under this interpretation, which maps into $(\mathbb{N}, >)$, a well-founded order. This proves **strong normalization** (termination for all terms under all reduction strategies) purely from the rules as given — no auxiliary structural axioms or imported object-level assumptions are needed.

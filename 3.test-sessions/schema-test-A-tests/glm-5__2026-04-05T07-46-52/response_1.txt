@@ -1,0 +1,41 @@
+**Raw assessment: Yes, strong normalization is establishable from the rules alone, with no external axioms needed.**
+
+---
+
+## The System
+
+```
+(VAR x y n)
+F(x, y, Z)    -> x
+F(x, y, S(n)) -> G(y, F(x, y, n))
+```
+
+Signature: `F/3`, `G/2`, `S/1`, `Z/0`. `G`, `S`, `Z` have no defining rules — they are constructors/stuck symbols.
+
+---
+
+## Why SN Holds
+
+**Structural observation.** The only active symbol is `F`. Rule 1 eliminates `F` entirely. Rule 2 replaces `F(x, y, S(n))` with `G(y, F(x, y, n))` — `G` never fires, and the third argument of the recursive `F` is `n`, a strict subterm of `S(n)`. No rule ever increases the third argument or introduces a new `F` with a larger third position.
+
+---
+
+## Proof Roadmap via LPO
+
+Assign precedence: $F \succ G \succ S \succ Z$.
+
+**Rule 1:** $F(x, y, Z) \succ_{\text{LPO}} x$
+  — $x$ is a proper subterm of the LHS; the subterm property of LPO applies immediately. ✓
+
+**Rule 2:** $F(x, y, S(n)) \succ_{\text{LPO}} G(y, F(x, y, n))$
+  — $F \succ G$, so we need $F(x,y,S(n)) \succ_{\text{LPO}}$ each argument of the RHS:
+  1. $F(x,y,S(n)) \succ_{\text{LPO}} y$ — subterm property. ✓
+  2. $F(x,y,S(n)) \succ_{\text{LPO}} F(x,y,n)$ — same head; compare argument lists lexicographically: positions 1 and 2 are equal ($x$, $y$); position 3: $S(n) \succ_{\text{LPO}} n$ since $n$ is a proper subterm of $S(n)$. ✓
+
+Both rules are strictly oriented by LPO. Since LPO is a well-founded reduction order closed under contexts and substitutions, the induced rewrite relation is terminating on all terms (ground and open). No auxiliary lemmas, imported axioms, or external induction principles are required.
+
+---
+
+## Summary
+
+SN is a direct one-step LPO certificate. The system is **not** a counterexample to in-system normalizability — it is, in fact, a textbook example of a simply terminating TRS. Nothing beyond the two rules is needed.

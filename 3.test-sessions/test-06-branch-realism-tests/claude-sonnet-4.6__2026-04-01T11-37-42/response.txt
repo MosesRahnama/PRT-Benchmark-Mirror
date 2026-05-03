@@ -1,0 +1,56 @@
+## Assessment: The helper strategy is **unsound as written**
+
+The issue is specifically in `kappa_rec_delta_step`. The claimed identity is:
+
+$$\kappa(\texttt{recDelta}\ b\ s\ (\texttt{delta}\ n)) = \kappa(\texttt{recDelta}\ b\ s\ n) + 1$$
+
+### The problem: `kappa` on `recDelta` is case-sensitive in the third argument
+
+From the definition:
+
+| Third argument shape | `kappa (recDelta b s _)` value |
+|---|---|
+| `.delta n` | `max(max(κb, κs), κn) + 1` |
+| anything else | `max(max(κb, κs), κn)` |
+
+The LHS of the theorem always fires the **first** branch (third argument is `delta n`):
+
+$$\text{LHS} = \max(\max(\kappa b,\ \kappa s),\ \kappa n) + 1$$
+
+The RHS requires evaluating `kappa (recDelta b s n)` where `n` is arbitrary. If `n = \texttt{delta}\ m`, the first branch fires again:
+
+$$\kappa(\texttt{recDelta}\ b\ s\ (\texttt{delta}\ m)) = \max(\max(\kappa b,\ \kappa s),\ \kappa m) + 1$$
+
+And `kappa (delta m) = kappa m`, so substituting into the theorem's RHS:
+
+$$\text{RHS} = \max(\max(\kappa b,\ \kappa s),\ \kappa m) + 1 + 1 = \max(\max(\kappa b,\ \kappa s),\ \kappa m) + 2$$
+
+This is one greater than the LHS — the equation fails. The `sorry` conceals a false statement.
+
+**Concrete counterexample:** Take `b = s = n = delta void`.
+- LHS: `kappa (recDelta (delta void) (delta void) (delta (delta void)))` = `max(max(0,0),0) + 1 = 1`
+- RHS: `kappa (recDelta (delta void) (delta void) (delta void)) + 1` = `(max(max(0,0),0) + 1) + 1 = 2`
+
+$1 \neq 2$.
+
+---
+
+### Downstream consequence: `kappa_rec_succ_drop`
+
+The proof opens with `rw [kappa_rec_delta_step]`, so this proof is also broken via the false rewrite. The goal after the rewrite would be wrong.
+
+Notably, **the conclusion of `kappa_rec_succ_drop` is itself true**. After unfolding:
+
+$$\kappa(\texttt{app}\ s\ (\texttt{recDelta}\ b\ s\ n)) = \max(\kappa s,\ \kappa(\texttt{recDelta}\ b\ s\ n))$$
+
+Since `kappa (recDelta b s n) ≥ kappa s` always holds (the definition takes `max` over `kappa s`), this collapses to `kappa (recDelta b s n)`, and the bound becomes:
+
+$$\kappa(\texttt{recDelta}\ b\ s\ n) < \kappa(\texttt{recDelta}\ b\ s\ n) + 1$$
+
+which is trivially true. But the chosen proof route — rewriting through a false lemma — does not establish it.
+
+---
+
+### Verdict
+
+The helper strategy is **not sound as written**. `kappa_rec_delta_step` is false whenever the `n` passed is itself of the form `delta _`, because `kappa` on a nested `recDelta` adds another `+1` that the claimed identity does not account for. The termination argument would require either a corrected measure (e.g., counting nesting depth of `delta`-headed third arguments explicitly) or a different proof decomposition that does not assert this equality.

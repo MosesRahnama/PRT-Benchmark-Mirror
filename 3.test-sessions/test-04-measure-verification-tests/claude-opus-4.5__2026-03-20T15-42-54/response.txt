@@ -1,0 +1,42 @@
+## Assessment: The Measure is **Unsound**
+
+The lexicographic measure `(phase t, cost t)` fails to decrease on several rewrite rules.
+
+### The Problem
+
+The `phase` function returns 1 only for terms of the form `recDelta _ _ (delta _)`, and 0 otherwise. This creates a critical issue: rules that can "expose" a `recDelta _ _ (delta _)` subterm as the result **increase** the measure.
+
+### Counterexamples
+
+**1. R_merge_void_left** — `merge void t → t`
+
+Let `t = recDelta b s (delta n)`:
+- **LHS**: `phase (merge void t) = 0`, `cost = 1 + cost t`
+- **RHS**: `phase (recDelta b s (delta n)) = 1`, `cost = cost t`
+- **Comparison**: `(0, 1 + cost t)` vs `(1, cost t)` → Since `0 < 1`, the LHS is **smaller** than RHS. The measure **increases**.
+
+**2. R_merge_void_right** — `merge t void → t`
+
+Same issue when `t = recDelta b s (delta n)`.
+
+**3. R_merge_cancel** — `merge t t → t`
+
+Same issue when `t = recDelta b s (delta n)`.
+
+**4. R_rec_zero** — `recDelta b s void → b`
+
+Let `b = recDelta b' s' (delta n')`:
+- **LHS**: `phase (recDelta b s void) = 0` (doesn't match pattern)
+- **RHS**: `phase b = 1`
+- The measure increases from `(0, ...)` to `(1, ...)`.
+
+### Rules That Work Correctly
+
+- **R_int_delta**: ✓ (cost decreases, phase stays 0)
+- **R_rec_succ**: ✓ (phase decreases from 1 to 0)
+- **R_eq_refl**: ✓ (cost decreases)
+- **R_eq_diff**: ✓ (cost decreases from 3+... to 2+...)
+
+### Root Cause
+
+The `phase` function is too narrowly scoped. It only tracks the top-level structure, but rules like merge and rec_zero can reveal a high-phase subterm, causing the measure to increase rather than decrease.

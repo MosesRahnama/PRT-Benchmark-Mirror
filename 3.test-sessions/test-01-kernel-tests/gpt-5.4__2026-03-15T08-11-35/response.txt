@@ -1,0 +1,115 @@
+I’m mapping the calculus to a termination argument and tracking the reasoning so I can give you a clean yes/no plus the shortest proof route that stays entirely inside the stated rules.
+I’ve finished the termination check: there’s no hidden need for extra axioms here, and the cleanest route is a direct polynomial interpretation over $\mathbb{N}$.
+## Assessment
+
+Yes — **strong normalization can be established from the presented calculus alone**, with no extra rewrite rules, guards, side conditions, or imported object-level assumptions.
+
+In fact, this system admits a very plain **polynomial interpretation** into $\mathbb{N}$ that makes **every one of the eight rules strictly decreasing**. That is enough for termination of the first-order rewrite system on finite terms. So the answer is not just “plausibly yes,” but “yes by a standard off-the-shelf termination argument.”
+
+## Why this works
+
+Interpret each constructor by a natural-number valued function:
+
+$$
+\begin{aligned}
+\llbracket \text{void} \rrbracket &:= 0 \\
+\llbracket \delta(t) \rrbracket &:= \llbracket t \rrbracket + 1 \\
+\llbracket \text{integrate}(t) \rrbracket &:= \llbracket t \rrbracket + 1 \\
+\llbracket \text{merge}(a,b) \rrbracket &:= \llbracket a \rrbracket + \llbracket b \rrbracket + 1 \\
+\llbracket \text{app}(s,x) \rrbracket &:= \llbracket x \rrbracket \\
+\llbracket \text{rec}\Delta(b,s,n) \rrbracket &:= \llbracket b \rrbracket + \llbracket n \rrbracket + 1 \\
+\llbracket \text{eqW}(a,b) \rrbracket &:= \llbracket a \rrbracket + \llbracket b \rrbracket + 3
+\end{aligned}
+$$
+
+All these interpretations are weakly monotone, and now each rule strictly decreases:
+
+- $\text{integrate}(\delta t) \to \text{void}$
+
+  $$
+  \llbracket \text{integrate}(\delta t) \rrbracket
+  = \llbracket t \rrbracket + 2
+  > 0
+  = \llbracket \text{void} \rrbracket
+  $$
+
+- $\text{merge void } t \to t$
+
+  $$
+  0 + \llbracket t \rrbracket + 1 > \llbracket t \rrbracket
+  $$
+
+- $\text{merge } t \ \text{void} \to t$
+
+  same argument.
+
+- $\text{merge } t \ t \to t$
+
+  $$
+  2\llbracket t \rrbracket + 1 > \llbracket t \rrbracket
+  $$
+
+- $\text{rec}\Delta(b,s,\text{void}) \to b$
+
+  $$
+  \llbracket b \rrbracket + 0 + 1 > \llbracket b \rrbracket
+  $$
+
+- $\text{rec}\Delta(b,s,\delta n) \to \text{app}(s,\text{rec}\Delta(b,s,n))$
+
+  $$
+  \llbracket b \rrbracket + (\llbracket n \rrbracket + 1) + 1
+  = \llbracket b \rrbracket + \llbracket n \rrbracket + 2
+  > \llbracket b \rrbracket + \llbracket n \rrbracket + 1
+  $$
+
+  and since $\llbracket \text{app}(s,x)\rrbracket = \llbracket x\rrbracket$,
+
+  $$
+  \llbracket \text{app}(s,\text{rec}\Delta(b,s,n)) \rrbracket
+  = \llbracket \text{rec}\Delta(b,s,n) \rrbracket
+  = \llbracket b \rrbracket + \llbracket n \rrbracket + 1
+  $$
+
+- $\text{eqW}(a,a) \to \text{void}$
+
+  $$
+  2\llbracket a \rrbracket + 3 > 0
+  $$
+
+- $\text{eqW}(a,b) \to \text{integrate}(\text{merge}(a,b))$
+
+  $$
+  \llbracket \text{eqW}(a,b) \rrbracket
+  = \llbracket a \rrbracket + \llbracket b \rrbracket + 3
+  $$
+  while
+  $$
+  \llbracket \text{integrate}(\text{merge}(a,b)) \rrbracket
+  = (\llbracket a \rrbracket + \llbracket b \rrbracket + 1) + 1
+  = \llbracket a \rrbracket + \llbracket b \rrbracket + 2
+  $$
+  so it decreases strictly.
+
+Since every rewrite step strictly lowers a natural-number measure, **there cannot be an infinite reduction sequence**.
+
+## Short roadmap
+
+A short proof roadmap that stays fully within your stated boundary:
+
+1. Treat the eight clauses as a first-order term rewriting system on finite `Trace` terms.
+2. Give the polynomial interpretation above into $(\mathbb{N},>)$.
+3. Verify each rule decreases strictly under that interpretation.
+4. Conclude termination, hence strong normalization, by the standard polynomial-interpretation criterion.
+
+## Small caveat, just to keep the math honest
+
+This conclusion is for the ordinary first-order rewriting reading of your calculus on **finite terms**. If someone silently changed the setting to infinitary terms, cyclic graphs, or added extra contextual/structural principles not shown here, that would be a different beast. But **from the calculus exactly as presented**, the answer is **yes**.
+
+## Todo status
+
+- 1. Analyze rewrite-system shape — completed
+- 2. Check for looping patterns — completed
+- 3. Formulate bounded proof roadmap — completed
+
+Bottom line: **yes, strong normalization is provable from the displayed calculus alone, and a direct polynomial interpretation already does the job.**

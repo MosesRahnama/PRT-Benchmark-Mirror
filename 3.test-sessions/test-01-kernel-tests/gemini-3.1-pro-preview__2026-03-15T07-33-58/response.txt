@@ -1,0 +1,47 @@
+**Raw Assessment:**
+Yes, strong normalization (SN) of this system can be established entirely from the presented calculus. It does not require importing any structural axioms, object-level assumptions, guards, or side conditions. 
+
+Because the calculus is a standard First-Order Term Rewriting System (TRS) with no variable binding, its termination can be proven purely syntactically using a standard well-founded monotone algebra, such as a **Polynomial Interpretation**.
+
+### Proof Roadmap
+
+We can map every term to a positive integer (domain $\mathbb{N}_{\ge 1}$) by assigning a strictly monotonic polynomial to each constructor. If we can show that for every rewrite rule $L \to R$, the polynomial value of the left-hand side is strictly greater than the right-hand side ($[L] > [R]$), then the system is strongly normalizing because there are no infinite strictly decreasing sequences of positive integers.
+
+**1. Polynomial Interpretation:**
+Define the interpretation $[\cdot]$ for each constructor as follows:
+*   $[void] = 1$
+*   $[delta](x) = x + 1$
+*   $[integrate](x) = x + 1$
+*   $[merge](x, y) = x + y + 1$
+*   $[app](x, y) = x + y + 1$
+*   $[eqW](x, y) = x + y + 3$
+*   $[recΔ](b, s, n) = b + s \cdot n + 2n + 1$
+
+*(Note: All operations are strictly monotonic for $x, y, b, s, n \ge 1$.)*
+
+**2. Checking the Rules ($[L] > [R]$):**
+We evaluate both sides of every reduction rule to verify strict decrease:
+
+*   **`R_int_delta`**: $[integrate]([delta](t)) \to [void]$
+    *   $(t + 1) + 1 > 1 \implies t + 2 > 1$ (Valid)
+*   **`R_merge_void_left`**: $[merge]([void], t) \to t$
+    *   $1 + t + 1 > t \implies t + 2 > t$ (Valid)
+*   **`R_merge_void_right`**: $[merge](t, [void]) \to t$
+    *   $t + 1 + 1 > t \implies t + 2 > t$ (Valid)
+*   **`R_merge_cancel`**: $[merge](t, t) \to t$
+    *   $t + t + 1 > t \implies 2t + 1 > t$ (Valid)
+*   **`R_rec_zero`**: $[recΔ](b, s, [void]) \to b$
+    *   $b + s(1) + 2(1) + 1 > b \implies b + s + 3 > b$ (Valid)
+*   **`R_rec_succ`**: $[recΔ](b, s, [delta](n)) \to [app](s, [recΔ](b, s, n))$
+    *   LHS: $b + s(n + 1) + 2(n + 1) + 1 = b + sn + s + 2n + 3$
+    *   RHS: $s + (b + sn + 2n + 1) + 1 = b + sn + s + 2n + 2$
+    *   $LHS - RHS = 1 \implies LHS > RHS$ (Valid)
+*   **`R_eq_refl`**: $[eqW](a, a) \to [void]$
+    *   $a + a + 3 > 1 \implies 2a + 3 > 1$ (Valid)
+*   **`R_eq_diff`**: $[eqW](a, b) \to [integrate]([merge](a, b))$
+    *   LHS: $a + b + 3$
+    *   RHS: $(a + b + 1) + 1 = a + b + 2$
+    *   $LHS - RHS = 1 \implies LHS > RHS$ (Valid)
+
+**Conclusion:**
+Since every rule results in a strict reduction of the term's polynomial weight, and the polynomial weight is bounded below by 1, no infinite reduction sequences can exist. The system is strongly normalizing.

@@ -1,0 +1,140 @@
+To assess whether the lexicographic termination measure defined in the Lean 4 file is sound, we need to verify that the measure decreases with every rewrite step defined by the `Step` relation. The measure is defined as a pair `(phase t, cost t)` where:
+
+1. `phase` is a function that assigns a phase value to a `Trace`.
+2. `cost` is a function that assigns a cost value to a `Trace`.
+
+The measure is lexicographically ordered, meaning that the `phase` value is compared first, and if equal, the `cost` value is compared.
+
+### Steps to Assess Soundness
+
+1. **Understand the Rewrite Rules**:
+   The `Step` relation defines how one `Trace` rewrites to another. Each rule must be analyzed to ensure that the measure decreases.
+
+2. **Analyze the Measure**:
+   - The `phase` function assigns a value of `1` only for `recDelta` traces with a `delta` argument. All other traces have a `phase` of `0`.
+   - The `cost` function assigns a non-negative integer to each `Trace`, with recursive definitions for composite traces.
+
+3. **Verify Decrease for Each Rule**:
+   For each rule in the `Step` relation, we check whether `(phase, cost)` decreases lexicographically.
+
+---
+
+### Rule-by-Rule Analysis
+
+#### Rule: `R_int_delta`
+```lean
+Step (integrate (delta t)) void
+```
+- **Before**: `integrate (delta t)`
+  - `phase = 0` (not `recDelta`)
+  - `cost = 1 + cost (delta t) = 1 + (1 + cost t) = 2 + cost t`
+- **After**: `void`
+  - `phase = 0`
+  - `cost = 0`
+- **Measure Decrease**: `(0, 2 + cost t) → (0, 0)` (lexicographically decreases).
+
+---
+
+#### Rule: `R_merge_void_left`
+```lean
+Step (merge void t) t
+```
+- **Before**: `merge void t`
+  - `phase = 0`
+  - `cost = 1 + cost void + cost t = 1 + 0 + cost t = 1 + cost t`
+- **After**: `t`
+  - `phase = 0`
+  - `cost = cost t`
+- **Measure Decrease**: `(0, 1 + cost t) → (0, cost t)` (lexicographically decreases).
+
+---
+
+#### Rule: `R_merge_void_right`
+```lean
+Step (merge t void) t
+```
+- **Before**: `merge t void`
+  - `phase = 0`
+  - `cost = 1 + cost t + cost void = 1 + cost t + 0 = 1 + cost t`
+- **After**: `t`
+  - `phase = 0`
+  - `cost = cost t`
+- **Measure Decrease**: `(0, 1 + cost t) → (0, cost t)` (lexicographically decreases).
+
+---
+
+#### Rule: `R_merge_cancel`
+```lean
+Step (merge t t) t
+```
+- **Before**: `merge t t`
+  - `phase = 0`
+  - `cost = 1 + cost t + cost t = 1 + 2 * cost t`
+- **After**: `t`
+  - `phase = 0`
+  - `cost = cost t`
+- **Measure Decrease**: `(0, 1 + 2 * cost t) → (0, cost t)` (lexicographically decreases).
+
+---
+
+#### Rule: `R_rec_zero`
+```lean
+Step (recDelta b s void) b
+```
+- **Before**: `recDelta b s void`
+  - `phase = 0`
+  - `cost = 1 + cost b + cost s + cost void = 1 + cost b + cost s + 0 = 1 + cost b + cost s`
+- **After**: `b`
+  - `phase = 0`
+  - `cost = cost b`
+- **Measure Decrease**: `(0, 1 + cost b + cost s) → (0, cost b)` (lexicographically decreases).
+
+---
+
+#### Rule: `R_rec_succ`
+```lean
+Step (recDelta b s (delta n)) (app s (recDelta b s n))
+```
+- **Before**: `recDelta b s (delta n)`
+  - `phase = 1` (since `n` is `delta`)
+  - `cost = 1 + cost b + cost s + cost (delta n) = 1 + cost b + cost s + (1 + cost n) = 2 + cost b + cost s + cost n`
+- **After**: `app s (recDelta b s n)`
+  - `phase = 0` (not `recDelta` with `delta`)
+  - `cost = 1 + cost s + cost (recDelta b s n)`
+    - `cost (recDelta b s n) = 1 + cost b + cost s + cost n`
+    - Total: `1 + cost s + (1 + cost b + cost s + cost n) = 2 + cost b + 2 * cost s + cost n`
+- **Measure Decrease**: `(1, 2 + cost b + cost s + cost n) → (0, 2 + cost b + 2 * cost s + cost n)` (lexicographically decreases because `phase` decreases).
+
+---
+
+#### Rule: `R_eq_refl`
+```lean
+Step (eqW a a) void
+```
+- **Before**: `eqW a a`
+  - `phase = 0`
+  - `cost = 3 + cost a + cost a = 3 + 2 * cost a`
+- **After**: `void`
+  - `phase = 0`
+  - `cost = 0`
+- **Measure Decrease**: `(0, 3 + 2 * cost a) → (0, 0)` (lexicographically decreases).
+
+---
+
+#### Rule: `R_eq_diff`
+```lean
+Step (eqW a b) (integrate (merge a b))
+```
+- **Before**: `eqW a b`
+  - `phase = 0`
+  - `cost = 3 + cost a + cost b`
+- **After**: `integrate (merge a b)`
+  - `phase = 0`
+  - `cost = 1 + cost (merge a b) = 1 + (1 + cost a + cost b) = 2 + cost a + cost b`
+- **Measure Decrease**: `(0, 3 + cost a + cost b) → (0, 2 + cost a + cost b)` (lexicographically decreases).
+
+---
+
+### Conclusion
+
+The lexicographic termination measure `(phase, cost)` is sound because it decreases for every rewrite step defined in the `Step` relation.

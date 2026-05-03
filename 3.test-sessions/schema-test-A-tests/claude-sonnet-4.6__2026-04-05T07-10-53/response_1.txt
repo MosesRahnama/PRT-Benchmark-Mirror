@@ -1,0 +1,60 @@
+## Raw Assessment
+
+**Yes, strong normalization can be established from the presented rules alone.**
+
+The system has two rules and one defined symbol:
+
+```
+F(x, y, Z)    -> x                    (base)
+F(x, y, S(n)) -> G(y, F(x, y, n))    (step)
+```
+
+`G`, `Z`, `S` are constructors (no left-hand sides). `F` is the sole defined symbol.
+
+---
+
+## Why It Is Strongly Normalizing
+
+The third argument of every `F`-redex is a unary natural number. Rule (step) replaces `S(n)` with `n` — a strict structural decrease — while rule (base) eliminates `F` entirely. No rule introduces a new `F`-symbol with a third argument that is larger than or equal to the original, and no rule introduces `F` anywhere except in the (step) RHS with a strictly smaller third argument.
+
+---
+
+## Proof Roadmap — Polynomial Interpretation
+
+Define a weakly monotone polynomial interpretation over $\mathbb{N}$:
+
+$$
+[Z] = 0,\quad [S(n)] = [n]+1,\quad [G(y,z)] = [y]+[z]
+$$
+$$
+[F(x,y,n)] = (x + y + 1)(n + 1)
+$$
+
+**Check rule 1** $F(x,y,Z) \to x$:
+
+$$
+(x+y+1)(0+1) = x+y+1 \;>\; x \qquad \checkmark \quad (\text{since } y \ge 0)
+$$
+
+**Check rule 2** $F(x,y,S(n)) \to G(y, F(x,y,n))$:
+
+$$
+(x+y+1)(n+2) \;\stackrel{?}{>}\; y + (x+y+1)(n+1)
+$$
+$$
+\Leftrightarrow\; (x+y+1)(n+1) + (x+y+1) > y + (x+y+1)(n+1)
+$$
+$$
+\Leftrightarrow\; x+y+1 > y \;\Leftrightarrow\; x+1 > 0 \qquad \checkmark
+$$
+
+Both inequalities are strict for all values of $x, y, n \in \mathbb{N}$. By the standard **polynomial interpretation method** (Lankford 1979), this certifies that every rewrite sequence is finite, i.e., the TRS is **strongly normalizing**.
+
+---
+
+## No External Axioms Needed
+
+The proof uses only:
+1. The two rules as written.
+2. The polynomial interpretation (a syntactic termination technique applied to the rule signatures).
+3. No object-level induction axioms, no imported structural results — the decreasing measure is entirely derivable from the rule shapes.

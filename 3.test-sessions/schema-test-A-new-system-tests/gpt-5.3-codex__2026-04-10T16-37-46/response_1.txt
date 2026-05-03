@@ -1,0 +1,10 @@
+Assessment: **Yes** — under standard first-order TRS semantics (finite terms, no extra equations/axioms), strong normalization is derivable from these two rules alone.
+
+Reasoning (brief):
+- The only recursive rule is  
+  \(F(x,y,S(n)) \to G(F(x,y,n))\), which strictly decreases the third argument from \(S(n)\) to \(n\).
+- There is no rule that rewrites \(G\), \(S\), or \(Z\), so nothing can rebuild the lost \(S\)-layer.
+- The base rule \(F(x,y,Z) \to x\) removes that \(F\)-redex entirely.
+- No rule duplicates the recursive argument \(n\), so you cannot create an infinite descending chain from one call.
+
+So every reduction sequence must terminate; no imported structural/object-level assumptions are needed beyond standard rewriting mechanics.

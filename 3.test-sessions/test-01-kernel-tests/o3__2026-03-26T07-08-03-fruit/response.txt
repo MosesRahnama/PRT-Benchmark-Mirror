@@ -1,0 +1,32 @@
+Yes – strong normalization is provable from the rules exactly as written, without importing any extra axioms.
+
+Sketch of a self-contained proof
+
+0.  Preliminaries  
+    • Work only in Lean’s standard inductive reasoning over ℕ.  
+    • Let |t| denote the ordinary syntactic size of a term (number of constructor nodes).  
+    • Define occσ t = “number of occurrences of constructor σ in t”.
+
+1.  Global, well-founded measure  
+    μ : Trace → ℕ × ℕ × ℕ,  
+    μ t := ( occ cherry t , occ grape t , |t| ).  
+    Order the triple lexicographically, left component first.  
+    Because each component is a natural number, the product order is well-founded.
+
+2.  Rule-by-rule decrease of μ
+
+    • R_cherry_refl, R_cherry_diff: one cherry node disappears ⇒ first component −1.  
+      (For R_cherry_diff the size actually grows by 1, but the first component drops, so the lexicographic measure still strictly decreases.)
+
+    • R_mango_grape, R_apple_orange: one outer grape node disappears ⇒ second component −1.  
+      (No other rule ever introduces a new grape node, so this component is strictly descending.)
+
+    • R_peach_* and R_banana_zero: neither cherry nor grape count changes, but at least one constructor node is removed ⇒ third component |t| strictly decreases.
+
+    Thus every Step reduces μ strictly.
+
+3.  Strong normalization  
+    Any infinite reduction sequence would yield an infinite strictly descending sequence of triples in ℕ × ℕ × ℕ, contradicting well-foundedness.  
+    Therefore Step is well-founded; all terms are strongly normalizing.
+
+No side conditions, additional rewrite rules, or external structural principles are used—only counting constructors and Lean’s built-in induction over ℕ.

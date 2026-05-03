@@ -1,0 +1,13 @@
+Raw assessment: yes. Strong normalization can be established from the rewrite system alone, with no need to import structural axioms or object-level assumptions.
+
+Short roadmap:
+1. Use a standard simplification ordering such as LPO or RPO with precedence F > G > S > Z.
+2. Orient the first rule immediately, since F(x, y, Z) is strictly greater than the variable x.
+3. Orient the second rule by noting:
+   F(x, y, S(n)) > F(x, y, n) because the third argument strictly decreases from S(n) to n.
+   F(x, y, S(n)) > y as well.
+   Since F > G, this yields F(x, y, S(n)) > G(y, F(x, y, n)).
+
+That gives a well-founded decrease on every rewrite step, so there is no infinite reduction sequence. In other words, the TRS is strongly normalizing on its own.
+
+The key reason this works is that the only recursive call is on a strictly smaller third argument, and G is inert here: it introduces no new rewrite rule and does not increase the ordering.

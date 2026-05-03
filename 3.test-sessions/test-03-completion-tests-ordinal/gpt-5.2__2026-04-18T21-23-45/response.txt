@@ -1,0 +1,201 @@
+I’ll give you Lean-style proof skeletons (with the right shape of `simp`, `have`, and `calc` blocks) for the three remaining `sorry` cases, emphasizing the ordinal lemmas you’ll likely want to slot in.### `Step.R_rec_succ` skeleton (`recDelta b s (delta n) → app s (recDelta b s n)`)
+
+The clean way to structure this case is: reduce with `simp [mu]`, then prove the entire LHS is **already** below the *leading* $\omega^{(\mu(\delta n)+\mu(s)+6)}$ term of the RHS, and finish by monotonicity of `+` on the right.
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+  -- Goal: mu (app s (recDelta b s n)) < mu (recDelta b s (delta n))
+  simp [mu]
+
+  -- After simp, your goal will look like:
+  --   ω^3*(mu s + 1) + ω^2*(mu (recDelta b s n) + 1) + 1
+  --     < ω^(mu (delta n) + mu s + 6) + ω*(mu b + 1) + 1
+
+  -- 1) Set the big exponent E and the big leading term W := ω^E
+  set E : Ordinal := mu (delta n) + mu s + (6 : Ordinal)
+  set W : Ordinal := omega0 ^ E
+
+  -- 2) It suffices to show:
+  --      ω^3*(mu s + 1) + ω^2*(mu (recDelta b s n) + 1) + 1 < W
+  --    because then < W + ω*(mu b + 1) + 1 by monotonicity.
+  have h_core :
+      omega0 ^ (3 : Ordinal) * (mu s + 1)
+        + omega0 ^ (2 : Ordinal) * (mu (recDelta b s n) + 1) + 1
+      < W := by
+    -- Typical approach:
+    --   (a) prove each summand is < W
+    --   (b) use that W is additively principal / limit to absorb finite sums
+
+    -- (a) show ω^3*(mu s + 1) < W
+    have h₁ :
+        omega0 ^ (3 : Ordinal) * (mu s + 1) < W := by
+      -- Key facts you’ll use here:
+      --   - E is huge because mu (delta n) has a ω^5*(...) in it
+      --   - monotonicity: if 3 < E then ω^3 < ω^E
+      --   - then upgrade ω^3*(mu s + 1) < ω^E using “mul_lt_of_lt_opow”
+      --
+      -- Suggested lemma-search targets in Mathlib:
+      --   `opow_lt_opow` / `opow_lt_opow_iff_right` (strict mono in exponent)
+      --   `mul_lt_mul_left'` / `mul_le_mul_left'` (monotone in RHS factor)
+      --   lemmas about `omega0 ^ E` being (add/mul)-principal when E ≠ 0:
+      --     e.g. `isAddPrincipal_omega0_opow`, `isLimit_omega0_opow`
+      --
+      -- Skeleton:
+      --   have hE : (3 : Ordinal) < E := by
+      --     -- unfold E; use that mu (delta n) ≥ ω^5*(...) + 1, hence E ≥ 7, etc.
+      --     ...
+      --   have hω : omega0 ^ (3 : Ordinal) < omega0 ^ E := by
+      --     exact opow_lt_opow_right omega0_lt_omega0 ? hE
+      --   -- then lift to product:
+      --   -- exact (some lemma turning ω^3 < ω^E into ω^3*(mu s + 1) < ω^E)
+      --   ...
+      sorry
+
+    -- (a) show ω^2*(mu (recDelta b s n)+1) < W
+    have h₂ :
+        omega0 ^ (2 : Ordinal) * (mu (recDelta b s n) + 1) < W := by
+      -- Similar structure; it’s even easier because the coefficient exponent is 2.
+      -- Often you show:
+      --   mu (recDelta b s n) + 1 < omega0 ^ (mu (delta n) + mu s + 6)
+      -- using that mu (delta n) >> mu n, hence E dominates mu n + mu s + 6.
+      --
+      -- Again, the “principal” lemmas for ω^E are the right hammer.
+      sorry
+
+    -- (b) now absorb the sum +1 into W
+    -- Use either:
+    --   - `lt_of_lt_of_le` + `le_add_*` chain,
+    --   - or an "IsLimit" lemma: if W is limit, then a < W and b < W => a+b < W.
+    --
+    -- Typical:
+    --   have hWlim : IsLimit W := by
+    --     -- `W = omega0 ^ E`; show `E ≠ 0` so opow is limit
+    --     ...
+    --   exact hWlim.add_lt h₁ (hWlim.add_lt h₂ (? : (1:Ordinal) < W))
+    --
+    -- If you don’t want to go through `IsLimit`, you can prove
+    --   ω^3*(...) + ω^2*(...) + 1 < W
+    -- by bounding the whole LHS ≤ ω^(something < E) and then `opow_lt_opow`.
+    sorry
+
+  -- 3) Conclude using monotonicity of addition on the right:
+  --    h_core : LHS < W
+  --    and    W ≤ W + ω*(mu b + 1) + 1
+  have h_le : W ≤ W + omega0 * (mu b + 1) + 1 := by
+    -- `le_add_right` twice, or `le_trans (le_add_right _ _) (le_add_right _ _)`
+    simpa [W] using (le_add_right (le_add_right W (omega0 * (mu b + 1))) 1)
+
+  exact lt_of_lt_of_le h_core h_le
+```
+
+**What you’re really formalizing:** $E = \mu(\delta n)+\mu(s)+6$ is so large that $W=\omega^E$ is additively principal/limit, hence it dominates the comparatively tiny Cantor-normal-form expression coming from `app`.
+
+---
+
+### `Step.R_eq_refl` skeleton (`eqW a a → void`)
+
+This one is just a positivity/monotonicity argument: $\omega^{(\dots)}+1>0$.
+
+```lean
+| _, _, Step.R_eq_refl a => by
+  simp [mu]
+  -- goal: 0 < omega0 ^ (mu a + mu a + 9) + 1
+
+  -- show ω^... > 0, then use `≤` into `+ 1`
+  have hpos : (0 : Ordinal) < omega0 ^ (mu a + mu a + (9 : Ordinal)) := by
+    -- lemma used earlier in your file: `opow_pos _ omega0_pos`
+    simpa using (opow_pos (mu a + mu a + (9 : Ordinal)) omega0_pos)
+
+  -- monotonicity: x ≤ x + 1
+  exact lt_of_lt_of_le hpos (le_add_right _ _)
+```
+
+---
+
+### `Step.R_eq_diff` skeleton (`eqW a b → integrate (merge a b)`)
+
+Here the standard structure is: cancel the trailing `+1` by monotonicity on the right, reduce to proving a product is below a big $\omega$-power, and discharge that using “$\omega^E$ is (mul/add)-principal” lemmas from `Mathlib.SetTheory.Ordinal.Principal`.
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+  simp [mu]
+  -- goal after simp is essentially:
+  --   omega0 ^ 4 * (mu (merge a b) + 1) + 1 < omega0 ^ (mu a + mu b + 9) + 1
+
+  -- 1) reduce to proving the part before +1 is strictly smaller
+  apply (add_lt_add_right_iff).1?  -- (If this lemma doesn’t exist for Ordinal, use `add_lt_add_right` forward.)
+  -- In practice, more robust:
+  --   have h : omega0 ^ 4 * (mu (merge a b) + 1) < omega0 ^ (mu a + mu b + 9) := by ...
+  --   exact add_lt_add_right h 1
+
+  -- So:
+  suffices h :
+      omega0 ^ (4 : Ordinal) * (mu (merge a b) + 1)
+        < omega0 ^ (mu a + mu b + (9 : Ordinal)) by
+    exact add_lt_add_right h 1
+
+  -- 2) prove the strict inequality using principality of ω^(mu a + mu b + 9)
+  -- Let E := mu a + mu b + 9 and W := ω^E.
+  set E : Ordinal := mu a + mu b + (9 : Ordinal)
+  set W : Ordinal := omega0 ^ E
+
+  -- Typical approach A (principality):
+  --   show (omega0^4) < W and (mu(merge a b) + 1) < W, then use that W is multiplicatively principal:
+  --     x < W → y < W → x*y < W.
+  have hW_principal : IsPrincipal W := by
+    -- This is exactly why you imported `Ordinal.Principal`.
+    -- There are lemmas like `isPrincipal_omega0_opow` / `principal_omega0_opow`
+    -- (name may vary).
+    sorry
+
+  have hx : omega0 ^ (4 : Ordinal) < W := by
+    -- prove 4 < E, then `opow_lt_opow` in the exponent
+    sorry
+
+  have hy : (mu (merge a b) + 1) < W := by
+    -- show mu(merge a b) is far below ω^E; again use additive principality / CNF bounds.
+    -- Often easiest: bound mu(merge a b) by something like ω^(mu a + mu b + 5),
+    -- then compare ω^(mu a + mu b + 5) < ω^(mu a + mu b + 9) by exponent monotonicity.
+    sorry
+
+  -- Now combine using principality:
+  -- exact hW_principal.mul_lt hx hy
+  -- (actual lemma name might be `hW_principal.mul_lt` or `hW_principal.isMulPrincipal.mul_lt`)
+  sorry
+```
+
+**Alternative approach B (no `IsPrincipal`):** bound
+\[
+\mu(\mathrm{merge}\ a\ b)+1 < \omega^{(\mu a + \mu b + 5)}
+\]
+then multiply by $\omega^4$ and use `opow_add`:
+\[
+\omega^4 \cdot \omega^{(\mu a + \mu b + 5)} = \omega^{(4 + \mu a + \mu b + 5)} = \omega^{(\mu a + \mu b + 9)}
+\]
+and finish with strictness + monotonicity.
+
+---
+
+### Lemmas/“glue” you’ll likely end up using
+
+You already used `opow_pos` and basic `le_add_*` lemmas; for the missing cases, the usual missing ingredients are:
+
+- **Strict monotonicity of $\omega^x$ in the exponent** (for base $\omega0>1$): something in the family of
+  - `opow_lt_opow` / `opow_lt_opow_iff_right` / `opow_le_opow` (names vary)
+- **$\omega^E$ is limit / additively principal when $E \neq 0$**, to absorb finite sums:
+  - something like `isLimit_omega0_opow` or `IsLimit.opow` specializations
+  - something like `isAddPrincipal_omega0_opow` / `IsAddPrincipal` lemmas
+- **Multiplicative principality** for the `eq_diff` product bound:
+  - something like `principal_omega0_opow` / `isPrincipal_omega0_opow`
+  - and a method lemma like `mul_lt` on the principal object
+
+If a particular lemma name doesn’t resolve, keep the *shape* and swap in the local Mathlib name via autocomplete: the proof architecture above is the important part.
+
+---
+
+## Updated checklist
+
+- 1. Skeleton for `R_rec_succ` case — completed  
+- 2. Skeleton for `R_eq_refl` case — completed  
+- 3. Skeleton for `R_eq_diff` case — completed  
+- 4. Summarize key lemmas to use — completed

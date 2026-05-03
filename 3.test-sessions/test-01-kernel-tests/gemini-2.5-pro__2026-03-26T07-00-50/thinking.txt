@@ -1,0 +1,26 @@
+**Analyzing Normalization Proof**
+
+I'm currently focused on the Lean 4 file. My initial analysis is centered on identifying the core components of the system. I'm looking at potential areas where strong normalization might be provable. I'm focusing on the structural properties of the file, specifically examining rewrite rules and reduction steps.
+
+
+**Investigating Rewrite Rules**
+
+I am now delving into the rewrite rules defined in the `Test-01-Kernel.lean` file, carefully examining their properties. My goal is to determine if these rules consistently reduce some well-defined measure, a key indicator for strong normalization. I'm focusing on the `Rewrite` inductive type and tracing its usage throughout the reduction process.
+
+
+**Mapping Term Structures**
+
+I've moved from the rewrite rules and have now turned my attention to the core `Term` structure defined in the `Test-01-Kernel.lean` file. Understanding the syntax is critical. I'm focusing on the constructors and their arity. I am mapping the term structure to identify potential sizes or weights for terms to prove strong normalization, considering syntactic methods first.
+**1. Understanding the System**
+
+I'm starting to build a mental model of the `Trace` type. Its inductive nature, and the constructors within it are key. I'm focusing on how these constructors build terms, which will be essential to analyze the system's rewrites. Right now, I'm particularly interested in how nested structures are formed.
+
+
+**2. Examining Reduction Rules**
+
+I am now thoroughly studying the `Step` relation. The reduction rules, specifically those involving `merge` and `recΔ`, are captivating. I am currently concentrating on the interaction of the `recΔ` rule with the `delta` operator, analyzing how terms are rewritten in the successor case. I must determine if this recursive structure could lead to divergence.
+
+
+**1. Analyzing Rewrite Paths**
+
+I am now focusing on the implications of the `Step` relation.  I'm exploring potential rewrite paths to gain insight into the system's behavior. The cancellation rule, `R_int_delta`, is obviously critical, but I need to consider all the interactions. Specifically, how do `recΔ` and `merge` interact? I'm formulating several test cases to identify possible non-terminating rewrite loops.

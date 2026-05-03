@@ -1,0 +1,7 @@
+**1.** Structural induction on the third argument (subterm ordering on presumed Z/S numerals).
+
+**2.** Yes (relies on choosing a size/ordering on the third argument and assuming Z/S form a well-founded constructor set).
+
+**3.** Yes, that places the method outside the stated boundary.
+
+**4.** Yes, the system is strongly normalizing in the standard sense.

@@ -1,0 +1,27 @@
+The file defines a first-order rewrite calculus with the `Trace` type, rewrite rules (`Step`), a structural measure `kappa`, and two helper theorems (`kappa_rec_delta_step` and `kappa_rec_succ_drop`) intended for a termination argument.
+
+### Analysis of the Helper Strategy
+
+1. **Structural Measure `kappa`**:
+   - `kappa` is a recursive function mapping `Trace` terms to natural numbers.
+   - It is designed to decrease under certain rewrite rules, ensuring progress toward termination.
+   - The definition of `kappa` aligns with the structure of `Trace`, and its recursive nature is well-formed.
+
+2. **Theorem `kappa_rec_delta_step`**:
+   - States that `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`.
+   - This theorem is plausible given the definition of `kappa` for `recDelta` with `.delta n`.
+   - However, the proof is incomplete (`sorry`), so its correctness cannot be fully verified.
+
+3. **Theorem `kappa_rec_succ_drop`**:
+   - Claims that `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`.
+   - The proof relies on `kappa_rec_delta_step` (via `rw`), but since `kappa_rec_delta_step` is unproven, this theorem's validity is also uncertain.
+   - The inequality seems reasonable because `kappa (recDelta b s (delta n))` includes an additional `+1` term compared to `kappa (recDelta b s n)`.
+
+### Soundness of the Helper Strategy
+- The strategy appears sound in principle:
+  - `kappa` is a well-defined measure that decreases under the rewrite rules.
+  - Theorems aim to formalize this decrease, supporting termination arguments.
+- However, the proofs are incomplete (`sorry`), leaving the soundness unverified.
+
+### Conclusion
+The helper strategy is conceptually sound but requires completed proofs for `kappa_rec_delta_step` and `kappa_rec_succ_drop` to confirm its correctness.

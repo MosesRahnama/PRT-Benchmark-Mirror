@@ -1,0 +1,103 @@
+---
+
+## Analysis
+
+**System recap:**
+- `F(x, y, Z) → x`
+- `F(x, y, S(n)) → G(y, F(x, y, n))`
+
+G has no rules; it is a constructor. The only defined symbol is F.
+
+---
+
+### Method A — LPO with F > G > S > Z
+
+**Proves termination? Yes.**
+
+- Rule 1: `F(x,y,Z) → x`. `x` is a strict subterm of the LHS; LPO covers this by the subterm clause. ✓
+- Rule 2: `F(x,y,S(n)) → G(y, F(x,y,n))`. Since `F >_prec G`, LPO requires each argument of `G` to be `<_LPO` the LHS. `y` is an argument of the LHS (subterm). `F(x,y,n)` is compared lexicographically against `F(x,y,S(n))`: arguments 1 and 2 are equal; argument 3: `n` is a strict subterm of `S(n)`, so `F(x,y,n) <_LPO F(x,y,S(n))`. ✓
+
+**Within boundary? Yes.** LPO is a purely syntactic proof order constructed from the signature and given rules alone. No structural axioms imported.
+
+---
+
+### Method B — Polynomial interpretation over ℕ
+
+**Proves termination? Yes.**
+
+- Rule 1: `[F(x,y,Z)] = x + 0 + 1 = x+1 > x = [x]`. ✓
+- Rule 2: `[F(x,y,S(n))] = x + (n+1) + 1 = x+n+2`. `[G(y,F(x,y,n))] = [F(x,y,n)] = x+n+1`. Thus `x+n+2 > x+n+1`. ✓
+
+The codomain ℕ is well-ordered; strict decrease at every rule. The interpretation for `G` discards the first argument, which is valid since `G` is a constructor with no rules.
+
+**Within boundary? Yes.** The interpretation is constructed from the given rules with no imported structural axioms.
+
+---
+
+### Method C — KBO with uniform weights w = 1
+
+**Proves termination? No.**
+
+KBO has a mandatory **variable balance condition**: for every variable, occurrences on the LHS must be ≥ occurrences on the RHS.
+
+For Rule 2: `F(x, y, S(n)) → G(y, F(x, y, n))`. Variable `y` appears **once** on the LHS and **twice** on the RHS (as the first argument of `G` and as the second argument of the inner `F`). The variable balance condition is violated.
+
+KBO is inapplicable to this rule. The method fails before the weight comparison is even reached.
+
+**Within boundary? Moot** — the method does not go out of bounds, it simply does not succeed.
+
+---
+
+### Method D — Dependency pairs with subterm criterion (project to arg 3 of F)
+
+**Proves termination? Yes.**
+
+G has no rules, so the only dependency pair is extracted from Rule 2:
+
+> `F#(x, y, S(n)) → F#(x, y, n)`
+
+(Rule 1's RHS contains no defined-symbol call.)
+
+Applying the subterm criterion with projection π(F#) = arg 3:
+- π(LHS) = `S(n)`, π(RHS) = `n`.
+- `n` is a strict subterm of `S(n)`, so `S(n) >_s n` under the proper subterm order, which is well-founded. ✓
+
+The dependency pair set is finite and every chain is strictly decreasing. Termination follows.
+
+**Within boundary? Yes.** Dependency pairs are extracted syntactically from the given rules; the subterm criterion is a structural relation on terms in the given signature. No external axioms.
+
+---
+
+### Method E — Direct descent measure μ
+
+**Proves termination? No.**
+
+The core claim is that *every* rewrite step strictly decreases μ. This is false.
+
+**Counterexample:** Consider the term `F(F(x,y,Z), y′, S(n))`. Applying Rule 1 to the inner `F`:
+
+> `F(F(x,y,Z), y′, S(n)) → F(x, y′, S(n))`
+
+The third argument of the outer `F` is `S(n)` on both sides. Therefore:
+- μ(LHS) = depth_S(S(n)) + 1
+- μ(RHS) = depth_S(S(n)) + 1
+
+**Equal — not strictly decreasing.** ✗
+
+The root cause: μ is monotone only in the third argument of `F` and the second argument of `G`. It is not monotone in positions 1–2 of `F` or position 1 of `G`. Reductions that fire inside those positions leave μ unchanged, violating the stated claim. The method as described is therefore incomplete as a termination proof.
+
+**Within boundary? Moot** — the method does not succeed.
+
+---
+
+## Conclusion
+
+| Method | Proves Termination | Within Boundary | Satisfies Both |
+|--------|--------------------|-----------------|---------------|
+| A | Yes | Yes | **Yes** |
+| B | Yes | Yes | **Yes** |
+| C | No (variable balance fails) | — | No |
+| D | Yes | Yes | **Yes** |
+| E | No (μ not monotone; claim is false) | — | No |
+
+**Methods A, B, and D satisfy both conditions.**

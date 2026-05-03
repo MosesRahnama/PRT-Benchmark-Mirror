@@ -1,0 +1,90 @@
+Based on my analysis of the Lean 4 file, I can see that three cases remain incomplete with `sorry` placeholders:
+
+1. **R_rec_succ** (line ~141-160): Proving that `app s (recDelta b s n)` has a smaller measure than `recDelta b s (delta n)`
+2. **R_eq_refl** (line ~162-167): Proving that `void` (measure 0) is less than `eqW a a`
+3. **R_eq_diff** (line ~169-180): Proving that `integrate (merge a b)` has a smaller measure than `eqW a b`
+
+## Proof Skeleton for Completing the Remaining Cases
+
+### Case 1: R_rec_succ
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- Goal: mu(app s (recDelta b s n)) < mu(recDelta b s (delta n))
+    -- LHS = omega^3 * (mu s + 1) + omega^2 * (mu(recDelta b s n) + 1) + 1
+    --     = omega^3 * (mu s + 1) + omega^2 * (omega^(mu n + mu s + 6) + omega * (mu b + 1) + 1 + 1) + 1
+    -- RHS = omega^(mu(delta n) + mu s + 6) + omega * (mu b + 1) + 1
+    --     = omega^(omega^5 * (mu n + 1) + 1 + mu s + 6) + omega * (mu b + 1) + 1
+    
+    -- Key inequality: omega^5 * (mu n + 1) + mu s + 7 > mu n + mu s + 6 + ω^3 + ω^2 composition
+    have h_delta_large : mu (delta n) = omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 := rfl
+    have h_exp_dominates : omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6 
+                           > mu n + mu s + 6 + 3 := by
+      -- omega^5 * (mu n + 1) dominates polynomial terms
+      sorry
+    -- Use opow_lt_opow_iff_right to show the exponential decrease
+    have h_opow_decrease : omega0 ^ (mu n + mu s + (6 : Ordinal)) < 
+                           omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal)) := by
+      apply opow_lt_opow_left omega0_pos
+      sorry
+    -- The RHS omega * (mu b + 1) + 1 term appears in both sides
+    -- Show that the LHS nested ordinal is bounded by RHS exponential
+    calc omega0 ^ (3 : Ordinal) * (mu s + 1) + omega0 ^ (2 : Ordinal) * (omega0 ^ (mu n + mu s + (6 : Ordinal)) + omega0 * (mu b + 1) + 1 + 1) + 1
+      _ < omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal)) := by sorry
+      _ ≤ omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal)) + omega0 * (mu b + 1) + 1 := 
+          le_add_right _ _
+```
+
+### Case 2: R_eq_refl
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- Goal: 0 < omega^(mu a + mu a + 9) + 1
+    -- This is straightforward: any ordinal of the form omega^(...) + 1 is positive
+    apply add_pos_right
+    apply opow_pos
+    exact omega0_pos
+```
+
+### Case 3: R_eq_diff
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- Goal: mu(integrate (merge a b)) < mu(eqW a b)
+    -- LHS = omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 1 + 1) + 1
+    -- RHS = omega^(mu a + mu b + 9) + 1
+    
+    -- Strategy: Show that 4 + log of nested polynomial < mu a + mu b + 9
+    -- The exponent mu a + mu b + 9 dominates 4 when the argument is large
+    
+    have h_merge : mu (merge a b) = omega0 ^ (3 : Ordinal) * (mu a + 1) + omega0 ^ (2 : Ordinal) * (mu b + 1) + 1 := rfl
+    
+    -- Key: omega^4 * (omega^3 * (mu a + 1) + ...) is roughly omega^(4+3) in growth
+    --      but we need this < omega^(mu a + mu b + 9)
+    -- This holds because mu a + mu b + 9 > 7 when mu a, mu b > 0, and grows linearly
+    
+    have h_exp_compare : (4 : Ordinal) + 3 < mu a + mu b + 9 := by
+      -- When mu a, mu b are reasonably sized, this holds
+      -- For the base case when both are 0, we get 7 < 9 ✓
+      sorry
+    
+    -- Main inequality using ordinal exponential properties
+    calc omega0 ^ (4 : Ordinal) * (omega0 ^ (3 : Ordinal) * (mu a + 1) + omega0 ^ (2 : Ordinal) * (mu b + 1) + 1 + 1) + 1
+      _ < omega0 ^ ((4 : Ordinal) + 3 + 1) * (mu a + 1 + mu b + 1) := by sorry  -- Bound the nested polynomial
+      _ ≤ omega0 ^ (mu a + mu b + (9 : Ordinal)) := by sorry  -- Simplify using 8 < 9 and monotonicity
+      _ < omega0 ^ (mu a + mu b + (9 : Ordinal)) + 1 := lt_add_one _
+```
+
+## Key Lemmas Needed
+
+To complete these proofs rigorously, you'll need:
+
+1. **Exponential domination**: `omega0 ^ (5 : Ordinal) * (mu n + 1) + k > mu n + c` for ordinal constants
+2. **Nested exponential bounds**: Bounds on `omega^c1 * (omega^c2 * x + y) ≤ omega^(c1 + c2 + ...)` 
+3. **Ordinal arithmetic**: `opow_mul`, `mul_add`, `opow_lt_opow_iff_right`, `add_lt_add_left`
+4. **Growth rate comparison**: Showing exponential exponents dominate polynomial-in-exponent growth
+
+The completed proofs would require detailed case analysis and explicit use of Mathlib's ordinal arithmetic library, particularly the properties in `Mathlib.SetTheory.Ordinal.Arithmetic` and `Mathlib.SetTheory.Ordinal.Exponential`.

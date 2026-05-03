@@ -1,0 +1,63 @@
+## Assessment of `mu1`, `mu2`, `mu3`
+
+I'll check each measure against every rule. A measure is valid only if `mu(lhs) > mu(rhs)` holds for **all** instantiations of the rule.
+
+---
+
+### All three fail on exactly one rule: `R_rec_succ`
+
+The rule is:
+```
+recDelta(b, s, delta(n)) → app(s, recDelta(b, s, n))
+```
+`s` appears **once** on the left (inside `recDelta`) but **twice** on the right: as the first argument of `app`, and again inside the inner `recDelta`. Any additive linear measure suffers a net gain of at least `mu(s)` that the mere stripping of one `delta` constructor cannot compensate.
+
+---
+
+### `mu1` — fails on `R_rec_succ`
+
+| Rule | LHS | RHS | Δ |
+|---|---|---|---|
+| `R_int_delta` | `2 + mu1(t)` | `0` | `+2+mu1(t)` ✓ |
+| `R_merge_void_left/right` | `1 + mu1(t)` | `mu1(t)` | `+1` ✓ |
+| `R_merge_cancel` | `1 + 2·mu1(t)` | `mu1(t)` | `+1+mu1(t)` ✓ |
+| `R_rec_zero` | `1 + mu1(b) + mu1(s)` | `mu1(b)` | `+1+mu1(s)` ✓ |
+| **`R_rec_succ`** | `2 + mu1(b) + mu1(s) + mu1(n)` | `2 + mu1(b) + 2·mu1(s) + mu1(n)` | **`−mu1(s)` ✗** |
+| `R_eq_refl` | `3 + 2·mu1(a)` | `0` | ✓ |
+| `R_eq_diff` | `3 + mu1(a) + mu1(b)` | `2 + mu1(a) + mu1(b)` | `+1` ✓ |
+
+**Failure mode:** the deficit is exactly `−mu1(s)`. When `s = void` the measure is flat (ties, not a strict decrease); when `s` is any non-trivial term the measure strictly *increases*.
+
+---
+
+### `mu2` — fails on `R_rec_succ` for the same structural reason
+
+`mu2` assigns `recDelta` the overhead `5` and `app` the overhead `1`, but the coefficient on `s` within `recDelta` remains `1`. The calculation is identical in form:
+
+- LHS: `6 + mu2(b) + mu2(s) + mu2(n)`
+- RHS: `6 + mu2(b) + 2·mu2(s) + mu2(n)`
+- **Δ = `−mu2(s)` ✗**
+
+All seven other rules pass (the larger `eqW` overhead of `5` ensures `R_eq_diff` still yields `+1`, and inflating the `recDelta` overhead to `5` helps `R_rec_zero` but does nothing for the duplication in `R_rec_succ`).
+
+---
+
+### `mu3` — fails on `R_rec_succ` and the failure is **strictly worse**
+
+`mu3` raises the `app` constructor overhead to `2` (vs `1` in `mu1`/`mu2`). That extra `1` on the `app` wrapper means even the notional benefit of stripping `delta` is erased:
+
+- LHS: `2 + mu3(b) + mu3(s) + mu3(n)`
+- RHS: `3 + mu3(b) + 2·mu3(s) + mu3(n)`
+- **Δ = `−1 − mu3(s)` ✗**
+
+The deficit is now **at least `1`** regardless of `s`. Even when `s = void` (`mu3(s) = 0`) the measure strictly *increases* by `1`. This is strictly worse than `mu1`/`mu2`.
+
+The other seven rules all pass; `R_eq_diff` still yields `+1` (the `eqW` overhead of `4` exceeds the combined `integrate` + `merge` overhead of `2 + 1 = 3`).
+
+---
+
+### Root cause
+
+`R_rec_succ` copies `s` from the single occurrence stored in `recDelta(b, s, ─)` into two occurrences on the right: `app(s, recDelta(b, s, n))`. The only structural decrease is the removal of the outermost `delta` from the third argument, which contributes exactly `1` unit to any of these measures. For any additive linear measure with coefficient `1` on `s` inside `recDelta`, the duplication produces a surplus of `mu(s)` that overcomes the `1`-unit saving as soon as `s` is non-trivial. A valid closed-form termination measure for this calculus would require either a **non-linear** (e.g., exponential) weighting, a **lexicographic** order with the third argument of `recDelta` as the primary component, or a **polynomial** measure where the coefficient on `s` in `recDelta` is at least **twice** its coefficient in `app`—none of which is achieved here.
+
+**Verdict: all three candidates are invalid. The sole failing rule is `R_rec_succ` in every case; `mu3` is the weakest of the three because it fails there unconditionally (even for `s = void`).**

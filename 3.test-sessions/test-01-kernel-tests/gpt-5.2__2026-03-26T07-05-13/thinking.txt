@@ -1,0 +1,3 @@
+**Examining strong normalization**
+
+I’m considering whether duplicating s could lead to new recΔ constructs with deeper delta-depths. However, it seems that while duplication may increase occurrences, it doesn’t create new patterns or exceed existing delta chains. The termination should still hold because the overall count is limited. Overall, I think strong normalization (SN) should be provable. I'd clarify the relation defined in the file and provide a brief roadmap at the end. There are limitations, especially regarding contextual closure, which I'll note as well.

@@ -1,0 +1,3 @@
+Yes, strong normalization can be established from the presented rewrite system alone.
+
+The system consists of two non-overlapping rules that define F recursively on its third argument, reducing terms of the form F(x,y,S(n)) to G(F(x,y,n)) until the third argument reaches Z, at which point F(x,y,Z) reduces to x. This creates a terminating reduction sequence for any term matching the left-hand sides, with no infinite loops or ambiguities. Since the rules don't overlap and are left-linear, confluence follows directly, ensuring unique normal forms. No additional axioms about the symbols (Z, S, F, G) are needed beyond what's implied by the rules themselves.

@@ -1,0 +1,105 @@
+**Assessment**
+
+The two helper theorems are intended to give a decreasing‑measure argument for the rewrite step  
+
+```
+Step (recDelta b s (delta n)) (app s (recDelta b s n))
+```
+
+by showing that the structural measure `kappa` strictly drops along this step.
+
+Below we verify each theorem against the definition of `kappa`.
+
+---
+
+### 1.  `kappa_rec_delta_step`
+
+```lean
+theorem kappa_rec_delta_step (b s n : Trace) :
+  kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1
+```
+
+**Definition of `kappa`**
+
+```
+kappa (recDelta b s (.delta n)) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1
+kappa (recDelta b s n)            = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)
+```
+
+Hence, for *any* `b s n` we have
+
+```
+kappa (recDelta b s (delta n))
+  = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1
+  = (Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)) + 1
+  = kappa (recDelta b s n) + 1
+```
+
+The equality follows directly from unfolding the two `kappa` equations; no additional reasoning is required. Therefore the lemma is **sound** (it can be proved by `rfl` after rewriting the left‑hand side with the definition of `kappa`).
+
+---
+
+### 2.  `kappa_rec_succ_drop`
+
+```lean
+theorem kappa_rec_succ_drop (b s n : Trace) :
+  kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))
+```
+
+**Unfolding `kappa`**
+
+* For the left‑hand side:
+
+```
+kappa (app s (recDelta b s n))
+  = Nat.max (kappa s) (kappa (recDelta b s n))
+  = Nat.max (kappa s)
+            (Nat.max (Nat.max (kappa b) (kappa s)) (kappa n))
+```
+
+* For the right‑hand side (using the previous lemma’s definition):
+
+```
+kappa (recDelta b s (delta n))
+  = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1
+```
+
+**Simplifying the left‑hand side**
+
+`Nat.max` is associative and idempotent, so
+
+```
+Nat.max (kappa s)
+         (Nat.max (Nat.max (kappa b) (kappa s)) (kappa n))
+ = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)
+```
+
+Call this common value `M`. Then we have
+
+```
+kappa (app s (recDelta b s n)) = M
+kappa (recDelta b s (delta n)) = M + 1
+```
+
+**Inequality**
+
+For natural numbers, `M < M + 1` holds by definition of `<`. Consequently
+
+```
+kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))
+```
+
+is provable by a single rewrite (`rw [kappa_rec_delta_step]`) followed by `exact Nat.lt_succ_self _` (or an equivalent `simp`/`omega` step).
+
+Thus the second lemma is also **sound**.
+
+---
+
+### Conclusion
+
+Both helper theorems correctly capture the intended decrease of the `kappa` measure:
+
+* `kappa_rec_delta_step` precisely relates the `delta`‑wrapped and unwrapped `recDelta` cases.
+* `kappa_rec_succ_drop` shows that the `app`‑construction yields a strictly smaller `kappa` value than the corresponding `recDelta … (delta n)` term.
+
+No hidden side‑conditions or counter‑examples arise from the inductive definition of `Trace`. Hence the helper strategy is sound as written.

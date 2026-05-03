@@ -1,0 +1,58 @@
+## Assessment: The Measure is **Unsound**
+
+The proposed lexicographic measure `(phase t, cost t)` does not strictly decrease on every rewrite step. There are concrete counterexamples where a step **increases** the measure.
+
+---
+
+### The Core Defect
+
+`phase` inspects only the outermost constructor. Several rules strip away an outer constructor and expose a subterm whose `phase` is 1, causing the first component to **rise** from 0 to 1 — a lex increase that no decrease in `cost` can compensate.
+
+---
+
+### Counterexamples
+
+**1. `R_merge_void_left` / `R_merge_void_right` / `R_merge_cancel`**
+
+Let `t = recDelta b s (delta n)` for arbitrary `b s n`.
+
+| | LHS: `merge void t` | RHS: `t` |
+|---|---|---|
+| `phase` | 0 (outer is `merge`) | **1** (outer is `recDelta _ _ (delta _)`) |
+| `cost` | `1 + cost t` | `cost t` |
+| measure | `(0, 1 + cost t)` | **(1, cost t)** |
+
+Since $1 > 0$ in the first component, `(1, cost\;t) >_{\text{lex}} (0, 1 + cost\;t)$. The measure **increases**.
+
+The same argument applies to `merge t void → t` and `merge t t → t`.
+
+**2. `R_rec_zero`**
+
+Let `b = recDelta b' s' (delta n')`.
+
+| | LHS: `recDelta b s void` | RHS: `b` |
+|---|---|---|
+| `phase` | 0 (third arg is `void`, not `delta _`) | **1** |
+| measure | `(0, 1 + cost b + cost s)` | **(1, cost b)** |
+
+Again, $1 > 0$ in the first component — the measure **increases**.
+
+---
+
+### Rules That *Do* Decrease
+
+For completeness, the remaining rules behave correctly under the measure:
+
+- **`R_int_delta`**: `(0, 2+cost\;t) \to (0, 0)` — cost drops. ✓
+- **`R_rec_succ`**: `(1, 2+cost\;b+cost\;s+cost\;n) \to (0, 2+cost\;b+2\cdot cost\;s+cost\;n)` — phase drops from 1 to 0. ✓
+- **`R_eq_refl`**: `(0, 3+2\cdot cost\;a) \to (0, 0)` — cost drops. ✓
+- **`R_eq_diff`**: `(0, 3+cost\;a+cost\;b) \to (0, 2+cost\;a+cost\;b)` — cost drops. ✓
+
+---
+
+### Root Cause and Repair Sketch
+
+`phase` is a **shallow** (depth-1) function, but rules like `merge void t → t` and `recDelta b s void → b` perform an **unfolding** that can surface any subterm at the root. A sound measure would need either:
+
+1. A **global** phase (e.g., count all `recDelta _ _ (delta _)` subterms), or
+2. A single combined weight that accounts for the outer constructor wrapper absorbing the inner phase (e.g., weighting `merge` and `recDelta _ _ void` above any subterm's phase contribution).

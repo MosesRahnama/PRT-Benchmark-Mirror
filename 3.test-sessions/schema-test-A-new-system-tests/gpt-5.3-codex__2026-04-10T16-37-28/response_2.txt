@@ -1,0 +1,7 @@
+1. It used an informal well-founded descent argument on the third argument of `F` (effectively: each recursive step removes one `S` until `Z`).
+
+2. Yes. That argument implicitly chooses a proof structure/measure (a ranking on terms), which is not explicitly “fixed” by the raw rewrite rules themselves.
+
+3. Yes. Under a strict reading of your boundary, that makes the method outside the boundary, because it imports a meta-level termination proof principle rather than deriving termination purely by internal rewriting steps alone.
+
+4. Yes. Separately from that boundary issue, I still assess the TRS as strongly normalizing in the standard first-order finite-term setting.

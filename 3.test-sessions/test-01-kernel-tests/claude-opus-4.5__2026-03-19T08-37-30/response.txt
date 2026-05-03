@@ -1,0 +1,36 @@
+## Assessment
+
+**Yes**, strong normalization is provable from this calculus alone using standard methods—specifically the **dependency pair method** combined with a **size-based interpretation** for the non-recursive rules.
+
+---
+
+### Proof Roadmap
+
+1. **Classify rules by behavior:**
+   - **Strictly size-reducing**: R_int_delta, R_merge_void_left/right, R_merge_cancel, R_rec_zero, R_eq_refl
+   - **Size-increasing but argument-decreasing**: R_rec_succ
+   - **Size-neutral**: R_eq_diff (creates `integrate (merge a b)` which then reduces)
+
+2. **Handle recΔ via dependency pairs:**
+   - The only self-recursive dependency is `recΔ(b, s, δn) → app s (recΔ b s n)`
+   - The third argument strictly decreases: `delta n` → `n`
+   - This forms a well-founded descent under any measure counting `delta` depth
+   - Duplication of `s` does not create new recursive chains—it only replicates existing subterms whose reduction is handled by induction
+
+3. **Handle remaining rules with polynomial interpretation:**
+   - Assign weight `|void| = 1`, `|f(t₁,...,tₙ)| = Σ|tᵢ| + 1`
+   - All non-recΔ rules have LHS weight > RHS weight
+
+4. **Combine using lexicographic product:**
+   - First component: multiset of `delta`-depths of all `recΔ` third arguments (decreases under R_rec_succ)
+   - Second component: term size (decreases under all other rules)
+
+---
+
+### Critical Observations
+
+- **R_eq_diff overlaps with R_eq_refl** when `a = b`, creating non-determinism but not non-termination—both paths are finite
+- **R_rec_succ duplicates `s`**, but this is controlled because each copy contributes independently to the well-founded measure; no term can generate `delta` constructors in the third position of a `recΔ` faster than they're consumed
+- **No rule produces `recΔ` at the root** except as a subterm of the original, so new recursive obligations cannot be manufactured
+
+The system terminates because recursive depth is consumed monotonically and all other complexity measures decrease under their respective rules.

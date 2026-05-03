@@ -1,0 +1,7 @@
+1. Structural argument based on decreasing successor depth in the third argument, establishing a well-founded order on term size.
+
+2. Yes, it relies on the assumption that terms have finite successor depth (no infinite chains of S), which is a structural well-foundedness property of the signature not enforced or derivable solely from the rewrite rules.
+
+3. Yes, as this imports a structural axiom about term construction beyond the rules themselves.
+
+4. Yes, the system is strongly normalizing under standard finite-term assumptions.

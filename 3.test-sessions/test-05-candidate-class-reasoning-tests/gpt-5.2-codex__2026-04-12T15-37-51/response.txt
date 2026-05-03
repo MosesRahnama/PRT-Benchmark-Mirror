@@ -1,0 +1,8 @@
+All three candidates fail to be strictly decreasing for the `R_rec_succ` rule, so none is a valid global termination measure. Details from
+:
+
+- `mu1`: For `recDelta b s (delta n) → app s (recDelta b s n)`, LHS $=2+\mu_1(b)+\mu_1(s)+\mu_1(n)$, RHS $=2+\mu_1(b)+2\mu_1(s)+\mu_1(n)$, so the measure increases by $\mu_1(s)$ (strictly if `s` is not `void`).
+- `mu2`: Same pattern; RHS − LHS $=\mu_2(s)$, so it is non-decreasing and often increases.
+- `mu3`: Even worse; RHS − LHS $=1+\mu_3(s)\ge 1$, so it strictly increases for every instance.
+
+All other rules are decreasing for each candidate, but the single increase on `R_rec_succ` is enough to invalidate each measure for termination.

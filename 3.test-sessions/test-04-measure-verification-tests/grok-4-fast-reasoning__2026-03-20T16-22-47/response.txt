@@ -1,0 +1,15 @@
+The proposed lexicographic measure `(phase t, cost t)` is not sound for termination of the `Step` relation.
+
+### Explanation
+A sound termination measure requires that for every rule `Step t t'`, the measure of `t` is strictly greater than the measure of `t'` in lexicographic order (i.e., `phase t > phase t'` or `phase t = phase t'` and `cost t > cost t'`).
+
+This holds for rules `R_int_delta`, `R_rec_succ`, `R_eq_refl`, and `R_eq_diff`:
+- `phase` either decreases (e.g., from 1 to 0 in `R_rec_succ`) or stays 0 with `cost` decreasing.
+- All cases yield a strict decrease.
+
+However, it fails for `R_merge_void_left`, `R_merge_void_right`, `R_merge_cancel`, and `R_rec_zero` when the right-hand side `t'` has `phase t' = 1` (possible if `t'` is a `recDelta _ _ (delta _)`):
+- Left-hand side always has `phase = 0` (none of these forms match the `phase` condition).
+- Right-hand side has `phase = 1 > 0`, so measure(`t`) < measure(`t'`), causing an *increase*.
+- Example for `R_merge_void_left`: Let `t = recDelta b s (delta n)` (phase 1, cost `c = 1 + cost b + cost s + 1 + cost n`). Then `merge void t` has phase 0 and cost `1 + c`, while `t` has phase 1 and cost `c`. Thus `(0, 1 + c) < (1, c)`.
+
+Since the measure can increase in valid steps, it does not prove termination. A sound measure would need to ensure no increases (e.g., by adjusting `phase` to be non-decreasing across merges/recursion bases or using a different multiset-based measure).

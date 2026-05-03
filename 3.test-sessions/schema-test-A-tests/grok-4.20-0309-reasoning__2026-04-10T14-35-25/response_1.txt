@@ -1,0 +1,8 @@
+**Yes**, strong normalization can be established from the presented rewrite system alone.
+
+The two rules encode a strictly decreasing recursion on the third argument of `F`: the `Z` base case eliminates the redex, while the `S(n)` case replaces `F(..., S(n))` by `G(y, F(..., n))`, exposing an inner `F` whose third argument has one fewer `S` constructor. Because:
+- Terms are finite,
+- Matching is purely syntactic (no rules for `G`, `S`, or `Z`),
+- No rule introduces new redexes that could increase the measure or create cycles,
+
+every reduction sequence must terminate after a number of steps bounded by the number of `S` symbols reachable in third-argument position of any `F`. No structural axioms (e.g., induction, injectivity of `S`, or Peano-style recursion) or object-level assumptions beyond what the rules themselves permit are required; the termination argument follows directly from the shape of the left-hand sides and the absence of other rules.

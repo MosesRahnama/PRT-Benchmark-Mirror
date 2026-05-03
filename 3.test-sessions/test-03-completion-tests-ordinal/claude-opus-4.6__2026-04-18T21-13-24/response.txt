@@ -1,0 +1,83 @@
+Here are proof skeletons for the three `sorry` cases:
+
+---
+
+### Case `R_rec_succ` (line 153)
+
+The goal after `simp [mu]` is to show that `mu(app s (recDelta b s n))` is strictly less than `mu(recDelta b s (delta n))`.
+
+**LHS** (target): $\omega^3 \cdot (\mu(s)+1) + \omega^2 \cdot (\omega^{\mu(n)+\mu(s)+6} + \omega \cdot (\mu(b)+1) + 1 + 1) + 1$
+
+**RHS** (source): $\omega^{\omega^5 \cdot (\mu(n)+1) + 1 + \mu(s) + 6} + \omega \cdot (\mu(b)+1) + 1$
+
+The RHS exponent contains $\omega^5 \cdot (\mu(n)+1)$, which is strictly larger than the LHS's largest exponent $\mu(n)+\mu(s)+6$ (appearing inside the $\omega^2 \cdot (\ldots)$ term). Skeleton:
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- 1. Establish that omega^5 * (mu n + 1) + 1 + mu s + 6 > mu n + mu s + 6
+    have hexp : mu n + mu s + 6 < omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6 := by
+      apply Ordinal.add_lt_add_right
+      apply Ordinal.add_lt_add_right
+      calc mu n < mu n + 1 := lt_add_one _
+        _ ≤ omega0 ^ 5 * (mu n + 1) := le_mul_right _ (opow_pos 5 omega0_pos)
+        _ < omega0 ^ 5 * (mu n + 1) + 1 := lt_add_one _
+    -- 2. Bound every LHS summand below omega^(big exponent)
+    --    The largest piece on the LHS is
+    --      omega^2 * (omega^(mu n + mu s + 6) + ...) ≤ omega^(mu n + mu s + 8)
+    --    which is still < omega^(omega^5*(mu n+1)+1+mu s+6)  by hexp
+    -- 3. Conclude with a calc chain comparing LHS < omega^(big exponent) + ... = RHS
+    sorry -- fill with the calc chain above
+```
+
+### Case `R_eq_refl` (line 163)
+
+The goal is $0 < \omega^{\mu(a)+\mu(a)+9} + 1$. This is pure positivity:
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- omega^(mu a + mu a + 9) + 1 > 0 because each summand is non-negative
+    -- and the +1 alone gives positivity
+    exact Ordinal.pos_iff_ne_zero.mpr (by
+      apply ne_of_gt
+      exact add_pos_right _ one_pos)
+```
+
+This mirrors the structure already used in the `R_int_delta` case. The key lemma is `add_pos_right _ one_pos`, showing $x + 1 > 0$ for any ordinal $x$.
+
+### Case `R_eq_diff` (line 175)
+
+The goal is $\omega^4 \cdot (\omega^3 \cdot (\mu(a)+1) + \omega^2 \cdot (\mu(b)+1) + 2) + 1 < \omega^{\mu(a)+\mu(b)+9} + 1$.
+
+**Strategy**: It suffices to show the strict inequality on the leading $\omega$-power terms (the $+1$ is equal on both sides, so use `Ordinal.add_lt_add_iff_right` or prove the stronger `<` on the main term). The LHS leading term is $\omega^4 \cdot (\ldots)$ which is at most $\omega^{4 + 3 + \ldots}$ — an exponent bounded by a finite polynomial in $\mu(a), \mu(b)$. The RHS exponent is $\mu(a)+\mu(b)+9$, which dominates because $4 + 3 = 7 < 9$ and the extra $+\mu(a)+\mu(b)$ in the exponent absorbs the subterm sizes. Skeleton:
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- 1. Collapse the LHS omega-tower:
+    --    omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 2)
+    --    The leading monomial is omega^(4+3) * (mu a + 1) = omega^7 * (mu a + 1)
+    --    so the whole LHS main term < omega^(7 + mu a + 1) = omega^(mu a + 8)
+    have hLHS : omega0 ^ 4 * (omega0 ^ 3 * (mu a + 1) + omega0 ^ 2 * (mu b + 1) + 2)
+                < omega0 ^ (mu a + mu b + 9) := by
+      -- bound: omega^7 * (mu a + 1) < omega^(mu a + 8) ≤ omega^(mu a + mu b + 9)
+      -- and the lower-order terms are absorbed
+      sorry -- fill with opow_add / mul_assoc / principal_add_omega lemmas
+    -- 2. Lift to the +1 version
+    calc omega0 ^ 4 * (omega0 ^ 3 * (mu a + 1) + omega0 ^ 2 * (mu b + 1) + 2) + 1
+        ≤ omega0 ^ (mu a + mu b + 9) := by linarith [hLHS] -- or use le_of_lt
+      _ ≤ omega0 ^ (mu a + mu b + 9) + 1 := le_add_right _ _
+```
+
+---
+
+### Summary of proof obligations
+
+| Case | Core lemma needed | Difficulty |
+|---|---|---|
+| `R_rec_succ` | $\omega^5 \cdot (n+1) + s + 7 > n + s + 6$ gives exponential dominance | Medium — needs `opow_lt_opow_right` and absorption |
+| `R_eq_refl` | $\omega^k + 1 > 0$ | Trivial — mirrors existing `R_int_delta` proof |
+| `R_eq_diff` | $\omega^7 \cdot (a+1) < \omega^{a+b+9}$ | Medium — needs `opow_add`, `mul_lt_opow`, absorption |
+
+The `R_eq_refl` case can be filled in verbatim from the skeleton above. The other two require fleshing out the ordinal arithmetic `calc` chains using Mathlib's `Ordinal.opow_lt_opow_right`, `Ordinal.mul_lt_opow`, and `Ordinal.add_absorp` (or `principal_add_omega`).

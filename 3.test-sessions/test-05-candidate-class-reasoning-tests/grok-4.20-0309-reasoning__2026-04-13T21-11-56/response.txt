@@ -1,0 +1,42 @@
+**Assessment of the three termination measure candidates (mu1, mu2, mu3):**
+
+All three candidates are **invalid** as strict termination measures (ranking functions) for the given rewrite relation `Step`.
+
+### Summary of the rewrite rules
+The `Step` relation encodes these one-step rewrites on `Trace`:
+- `integrate (delta t) → void`
+- `merge void t → t`, `merge t void → t`, `merge t t → t`
+- `recDelta b s void → b`
+- `recDelta b s (delta n) → app s (recDelta b s n)`
+- `eqW a a → void`
+- `eqW a b → integrate (merge a b)`
+
+A valid measure `mu : Trace → Nat` must satisfy **strict decrease** (`mu t > mu u`) for every `Step t u`.
+
+### Analysis per candidate
+
+**mu1**:
+- Decreases correctly on all rules *except* `R_rec_succ`.
+- On `recDelta b s (delta n) → app s (recDelta b s n)`:  
+  `mu1(left) = 2 + μb + μs + μn`  
+  `mu1(right) = 2 + μb + 2·μs + μn`  
+  Right side is larger by `μs` (equal when `μs = 0`; strictly larger otherwise).  
+- Concrete counterexample (`b = void`, `s = delta void`, `n = void`): left = 3, right = 4.
+
+**mu2**:
+- Same failure pattern as mu1 on `R_rec_succ` (and decreases on the others).
+- On successor rule: left = `6 + μb + μs + μn`, right = `6 + μb + 2·μs + μn` (increases by `μs`).
+- Same counterexample: left = 7, right = 8.
+
+**mu3**:
+- Also decreases on the other rules but fails (more severely) on `R_rec_succ`.
+- On successor rule: left = `2 + μb + μs + μn`, right = `3 + μb + 2·μs + μn` (increases by `1 + μs`).
+- Same counterexample: left = 3, right = 5.
+
+### Why the failure occurs
+The `R_rec_succ` rule "unfolds" a recursive trace while duplicating the step function `s` in the `app` constructor. All three measures count the duplicated `s` fully on the right-hand side (via both the `app` and inner `recDelta` cases) while only counting it once on the left, plus the structural cost of `app` vs. the `delta` on the argument. This produces non-decreasing (or increasing) values.
+
+The other rules are unproblematic for all three measures (they produce strict decreases of at least 1).
+
+### Conclusion
+None of mu1, mu2, or mu3 can be used (alone or directly) to prove well-foundedness/termination of `Step`, because none is strictly decreasing on every rewrite. A correct measure would need to assign different weights to `app` vs. `recDelta` (or combine lexicographically with a secondary measure on the third argument of `recDelta`) to compensate for the duplication of `s`. The provided candidates do not achieve this.

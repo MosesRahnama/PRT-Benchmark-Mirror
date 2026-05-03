@@ -1,0 +1,8 @@
+The three proposed termination measures (μ₁, μ₂, μ₃) in the Lean 4 file are all invalid. Each maps `Trace` terms to natural numbers and is intended to decrease under the `Step` relation to prove termination. However, all three fail to decrease under the `R_rec_succ` rule:
+
+- `Step (recDelta b s (delta n)) (app s (recDelta b s n))`
+- For μ₁: The left side evaluates to `2 + μ₁ b + μ₁ s + μ₁ n`, while the right side evaluates to `2 + μ₁ b + 2 × μ₁ s + μ₁ n`. If `μ₁ s > 0`, the left side is smaller; if `μ₁ s = 0`, they are equal (no strict decrease).
+- For μ₂: The left side evaluates to `6 + μ₂ b + μ₂ s + μ₂ n`, while the right side evaluates to `6 + μ₂ b + 2 × μ₂ s + μ₂ n`. If `μ₂ s > 0`, the left side is smaller; if `μ₂ s = 0`, they are equal.
+- For μ₃: The left side evaluates to `2 + μ₃ b + μ₃ s + μ₃ n`, while the right side evaluates to `3 + μ₃ b + 2 × μ₃ s + μ₃ n`. The left side is always smaller.
+
+All other rules decrease the measures appropriately, but the failure on `R_rec_succ` means none qualify as termination measures.

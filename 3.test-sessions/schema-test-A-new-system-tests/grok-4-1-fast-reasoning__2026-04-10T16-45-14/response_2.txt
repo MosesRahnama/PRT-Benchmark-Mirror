@@ -1,0 +1,7 @@
+1. Noetherian induction on the structural size of the natural number term (depth/number of `S` constructors) in the third argument of `F`.
+
+2. Yes; it assumes a well-founded measure on terms (decreasing `S`-count), induction principle, and constructor interpretations (e.g., `Z` base, `S` successor), none fixed/derivable purely from the rules' syntax or conversions.
+
+3. Yes.
+
+4. Yes.

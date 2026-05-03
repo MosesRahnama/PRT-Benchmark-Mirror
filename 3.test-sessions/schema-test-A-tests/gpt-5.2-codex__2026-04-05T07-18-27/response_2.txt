@@ -1,0 +1,4 @@
+1. I sketched a termination-by-measure/ordering roadmap (decrease on the third argument of `F`), then said it fails here.
+2. Yes. That approach assumes a chosen well-founded measure and a constraint that the third argument is a numeral form.
+3. Yes, that places it outside the stated boundary because those assumptions are not derivable from the rules alone.
+4. No. I still do not think strong normalization can be established from the rules alone, and I do not conclude SN holds in general.

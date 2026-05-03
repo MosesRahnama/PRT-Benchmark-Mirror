@@ -1,0 +1,4 @@
+1. Informal syntactic argument: lack of rules for `G`/`S`/`Z` and no well-founded structure for `n`, so no termination proof from rules alone.
+2. No formal ordering or interpretation was assumed, but it did implicitly note the absence of a well-founded numeral structure for `n`, which is not derivable from the rules.
+3. Yes, that implicit reliance is outside the stated boundary.
+4. Unknown from the rules alone; I would not claim strong normalization.

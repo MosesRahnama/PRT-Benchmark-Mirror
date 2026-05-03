@@ -1,0 +1,23 @@
+## Assessment: **Yes, strong normalization can be established**
+
+The system is strongly normalizing, provable from the rules alone through a simple termination measure.
+
+### Reasoning:
+
+Define a measure μ on terms:
+- μ(Z) = 0, μ(S(t)) = 1 + μ(t), μ(G(t)) = μ(t)
+- μ(F(x, y, z)) = 1 + μ(x) + μ(y) + 2·μ(z)
+
+Both rules strictly decrease this measure:
+
+**Rule 1:** F(x, y, Z) → x  
+- LHS: 1 + μ(x) + μ(y)  
+- RHS: μ(x)  
+- Decrease: 1 + μ(y) > 0 ✓
+
+**Rule 2:** F(x, y, S(n)) → G(F(x, y, n))  
+- LHS: 3 + μ(x) + μ(y) + 2·μ(n)  
+- RHS: 1 + μ(x) + μ(y) + 2·μ(n)  
+- Decrease: 2 > 0 ✓
+
+Since every rewrite decreases a natural number measure, infinite rewrite sequences are impossible. This is a purely syntactic argument using only the given rules—no structural axioms or imported assumptions needed.

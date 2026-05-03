@@ -1,0 +1,41 @@
+**The helper strategy is not sound.**
+
+The provided file defines a `Trace` inductive type, a rewrite relation `Step` (with rules including `R_rec_succ`), a structural measure `kappa : Trace → Nat`, and simp lemmas for `kappa`. It then states two "helper" theorems intended to support a termination argument for the `recDelta` case:
+
+```lean
+theorem kappa_rec_delta_step (b s n : Trace) :
+  kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1 := by
+  sorry
+
+theorem kappa_rec_succ_drop (b s n : Trace) :
+  kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+  rw [kappa_rec_delta_step]
+  sorry
+```
+
+(The second theorem is clearly meant to be used together with the first to show that the RHS of `R_rec_succ` has strictly smaller `kappa` than the LHS.)
+
+### Counterexample (explicit calculations)
+
+Take `b = void`, `s = void`, `n = delta void`.
+
+- `kappa void = 0`
+- `kappa (delta void) = 0`
+- Let `M = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) = Nat.max (Nat.max 0 0) 0 = 0`
+
+**For `kappa_rec_delta_step`**:
+- LHS: `kappa (recDelta void void (delta (delta void)))`
+  - Third argument is a `.delta _`, so by definition: `M + 1 = 0 + 1 = 1`
+- RHS: `kappa (recDelta void void (delta void)) + 1`
+  - `recDelta void void (delta void)` has third argument `.delta _`, so `kappa(...) = 0 + 1 = 1`
+  - Thus RHS = `1 + 1 = 2`
+- `1 ≠ 2`, so the equality does **not** hold.
+
+**For `kappa_rec_succ_drop`** (the actual termination claim):
+- LHS: `kappa (app void (recDelta void void (delta void))) = Nat.max (kappa void) (kappa (recDelta ...)) = Nat.max 0 1 = 1`
+- RHS: `kappa (recDelta void void (delta (delta void))) = 1` (from above)
+- `1 < 1` is false.
+
+The claimed strict decrease fails. (When the third argument to the inner `recDelta` is *not* a `delta`, both statements hold trivially via the definition of `kappa`, but the universal quantifiers make the helpers false in general.)
+
+The `kappa` measure is well-defined and decreases on most `Step` rules (via the provided simp lemmas), but the specific helpers for the `recDelta`/`R_rec_succ` case are incorrect as written. They cannot be used as-is for a termination argument (e.g., to justify a `decreasing_by` tactic or well-founded recursion). A corrected measure or more precise case analysis on the shape of `n` would be needed.

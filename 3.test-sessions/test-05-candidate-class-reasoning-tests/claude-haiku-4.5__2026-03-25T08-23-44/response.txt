@@ -1,0 +1,29 @@
+## Assessment of the Three Termination Measures
+
+I've analyzed all eight rewrite rules against the three proposed measures. Here's the assessment:
+
+### Overview
+- **mu1**: Declares 1 constant cost for most constructors (except `eqW` = 3)
+- **mu2**: Uses higher weights: `integrate` = 2, `recDelta` = 5, `eqW` = 5
+- **mu3**: Moderate weights: `integrate` = 2, `app` = 2, `recDelta` = 1, `eqW` = 4
+
+### Critical Finding: All Three Measures Fail
+
+**Rule R_rec_succ is problematic for all measures:**
+```
+Step (recDelta b s (delta n)) (app s (recDelta b s n))
+```
+
+For this rule, the recursive call on the right-hand side contains `(recDelta b s n)` inside an `app`, which introduces an extra application term without sufficient weight reduction:
+
+| Measure | Analysis | Status |
+|---------|----------|--------|
+| **mu1** | LHS = 2 + b + s + n; RHS = 2 + b + 2s + n → requires s > 2s | ❌ FAILS |
+| **mu2** | LHS = 6 + b + s + n; RHS = 6 + b + 2s + n → requires s > 2s | ❌ FAILS |
+| **mu3** | LHS = 2 + b + s + n; RHS = 3 + b + 2s + n → requires 2 + s > 3 + 2s | ❌ FAILS |
+
+### Other Rules
+Seven of the eight rules pass for all three measures (R_int_delta, merge variants, R_rec_zero, R_eq_refl, R_eq_diff all decrease correctly).
+
+### Recommendation
+**None of these measures can establish termination.** The R_rec_succ rule fundamentally requires a weight assignment that decreases the measure of the target argument (the `delta n` term inside `recDelta`), but the measure must simultaneously account for the structural increase from wrapping the result in an `app` constructor. The current weights don't reconcile this tension on any of the three candidates.

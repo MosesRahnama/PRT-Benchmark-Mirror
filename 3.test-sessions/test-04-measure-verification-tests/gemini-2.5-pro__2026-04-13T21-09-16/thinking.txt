@@ -1,0 +1,13 @@
+**Assessing File's Termination**
+
+I'm now diving into the `Test-04-Measure-Verification.lean` file, meticulously scrutinizing its structure to pinpoint the termination measure. My focus is on understanding the measure's properties, particularly its potential soundness. I'll need to dissect the code and look for possible loopholes.
+
+
+**Investigating Step Rewrites**
+
+I'm now fully immersed in examining the `Step` type, rule by rule. I've successfully analyzed the `Trace` and `cost` functions. My current focus is to determine, for each rewrite step, if the cost decreases or remains the same. I'm especially focused on `recDelta` and how it interacts with the `measure` function.
+
+
+**Dissecting Measure Soundness**
+
+My analysis of the `cost` function is now complete, revealing a cost of `1 + cost a + cost b` for binary operations. I've mapped how cost scales across all constructors, and it seems to increase with each function call. Now, I'm verifying the measure against each `Step` constructor. I'm focusing on the interaction of the `recDelta` constructor and how it influences termination.

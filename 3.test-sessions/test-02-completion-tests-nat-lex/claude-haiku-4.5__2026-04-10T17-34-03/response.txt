@@ -1,0 +1,64 @@
+Looking at this file, the goal is to prove that each of the 8 reduction rules strictly decreases the lexicographic measure `(kappa, mu)`. Three cases are complete; here are proof skeletons for the remaining five:
+
+## **Case 1: R_int_delta** (`integrate (delta t) → void`)
+Kappa may drop strictly (if `kappa t > 0`) or tie (if `kappa t = 0`). When it ties, mu drops by at least 1.
+
+```lean
+| _, _, Step.R_int_delta t => by
+  by_cases h : kappa t = 0
+  · have hmu : mu void < mu (integrate (delta t)) := by simp [mu]; omega
+    have hk : kappa void = kappa (integrate (delta t)) := by simp [kappa]; rw [h]
+    exact drop_right hmu hk
+  · have hk : kappa void < kappa (integrate (delta t)) := by simp [kappa]; omega
+    exact drop_left hk
+```
+
+## **Case 2: R_rec_zero** (`recDelta b s void → b`)
+Kappa may drop strictly or tie. When it ties, mu drops by 3 + `mu s`.
+
+```lean
+| _, _, Step.R_rec_zero b s => by
+  by_cases h : kappa s ≤ kappa b
+  · have hmu : mu b < mu (recDelta b s void) := by simp [mu]; omega
+    have hk : kappa b = kappa (recDelta b s void) := by simp [kappa]; omega
+    exact drop_right hmu hk
+  · have hk : kappa b < kappa (recDelta b s void) := by simp [kappa]; omega
+    exact drop_left hk
+```
+
+## **Case 3: R_rec_succ** (`recDelta b s (delta n) → app s (recDelta b s n)`)
+Kappa strictly decreases by 1 when we move from a delta-wrapped third argument to an unwrapped one.
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+  have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by 
+    simp [kappa]; omega
+  exact drop_left hk
+```
+
+## **Case 4: R_eq_refl** (`eqW a a → void`)
+Kappa may drop strictly (if `kappa a > 0`) or tie (if `kappa a = 0`). When it ties, mu drops by 4 + `2 * mu a`.
+
+```lean
+| _, _, Step.R_eq_refl a => by
+  by_cases h : kappa a = 0
+  · have hmu : mu void < mu (eqW a a) := by simp [mu]; omega
+    have hk : kappa void = kappa (eqW a a) := by simp [kappa]; rw [h]
+    exact drop_right hmu hk
+  · have hk : kappa void < kappa (eqW a a) := by simp [kappa]; omega
+    exact drop_left hk
+```
+
+## **Case 5: R_eq_diff** (`eqW a b → integrate (merge a b)`)
+Kappa ties; mu drops by exactly 1 (from `4 + mu a + mu b` to `3 + mu a + mu b`).
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+  have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by simp [mu]; omega
+  have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by simp [kappa]
+  exact drop_right hmu hk
+```
+
+---
+
+**Strategy summary**: Cases 1, 2, and 4 require case analysis because kappa may either drop strictly or remain equal. Cases 3 and 5 have unconditional strict decreases in kappa and mu respectively. The `omega` tactic handles all arithmetic constraints on `Nat.max` and measure values automatically after unfolding definitions with `simp`.

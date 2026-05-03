@@ -1,0 +1,9 @@
+Assessment: the measure is sound **only if** you order pairs lexicographically with `phase` as the primary component (i.e., `(p₁,c₁) > (p₂,c₂)` when `p₁ > p₂` or `p₁ = p₂ ∧ c₁ > c₂`).
+
+- From
+, all rules except `R_rec_succ` keep `phase = 0` and strictly decrease `cost`.
+- `R_rec_succ` (
+) is the critical case: `phase` drops `1 → 0`, while `cost` may stay equal (`cost s = 0`) or increase (`cost s > 0`), so `cost` alone is not a ranking.
+- Therefore, with lexicographic priority on `phase`, every step decreases `measure`; the measure is valid for one-step `Step`.
+- If you instead use reverse lexicographic order or prioritize `cost`, the measure is not sound because of `R_rec_succ`.
+- Minor scope note: this validates decrease for the given root-step relation `Step`, not automatically for a larger context-closure relation unless that is separately defined and proved.

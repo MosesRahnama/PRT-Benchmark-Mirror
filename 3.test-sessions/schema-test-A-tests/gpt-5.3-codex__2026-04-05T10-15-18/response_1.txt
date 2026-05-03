@@ -1,0 +1,14 @@
+Yes — from the two rules alone, strong normalization is establishable.
+
+Short roadmap (no extra axioms needed):
+- Use a polynomial interpretation into $\mathbb{N}$ with well-founded order $>$.
+- Interpret symbols as:
+  - $[Z]=0$, $[S](n)=n+1$
+  - $[G](a,b)=b$ (ignores first argument, still monotone)
+  - $[F](x,y,n)=x+n+1$
+- Check strict decrease on each rule:
+  - $F(x,y,Z)\to x$: $[F]=x+1>x=[x]$
+  - $F(x,y,S(n))\to G(y,F(x,y,n))$: $[LHS]=x+n+2$, $[RHS]=[F(x,y,n)]=x+n+1$, so $[LHS]>[RHS]$
+- Since every rewrite step strictly decreases a natural-number measure, there is no infinite rewrite sequence; hence the TRS is strongly normalizing.
+
+So the raw assessment is: **SN is provable from the presented rewrite system itself**.

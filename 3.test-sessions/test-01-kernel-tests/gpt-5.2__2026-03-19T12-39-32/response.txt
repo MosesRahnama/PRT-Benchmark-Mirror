@@ -1,0 +1,58 @@
+Yes — **strong normalization can be established from the presented calculus alone**, with a purely *syntactic* termination argument. You don’t need any structural axioms, semantics, side conditions, or extra rewrite rules.
+
+### Why it’s provable (raw assessment)
+
+Your rules have a key “one-way” character:
+
+- **No rule ever introduces an `eqW`.**  
+  So the total number of `eqW` nodes strictly decreases whenever an `eqW`-rule fires.
+- **No rule ever introduces a `delta`.**  
+  So the total number of `delta` nodes never increases, and it *strictly decreases* when either:
+  - `recΔ b s (delta n) → app s (recΔ b s n)` (consumes one `delta`), or
+  - `integrate (delta t) → void` (consumes that `delta`).
+- **No rule ever introduces a `recΔ`.**  
+  `recΔ` either disappears (`recΔ ... void → b`) or persists with a strictly “smaller” argument (`delta n` becomes `n`).
+- The `merge` simplifications strictly reduce the number of `merge` nodes when they apply at the redex.
+
+This is exactly the shape where a **lexicographic, well-founded measure** on natural-number counts proves termination of *all* reduction sequences, including non-deterministic ones (like the overlap between `R_eq_refl` and `R_eq_diff` on `eqW a a`).
+
+### A short termination roadmap (stays within your boundary)
+
+To make this fully formal, you’d do:
+
+1. **Define the reduction relation you mean.**
+   - If you mean *root-only* rewriting, then termination is immediate (there is extremely limited chaining).
+   - If you mean the standard rewrite calculus notion: **compatible/contextual closure** of `Step` (rewrite at any position), the argument below still works.
+
+2. **Define a measure** \( \mu : \text{Trace} \to \mathbb{N}^k \) such as:
+   \[
+   \mu(t) :=
+   \big(
+     \#eqW(t),\;
+     \#delta(t),\;
+     \#merge(t),\;
+     \#recΔ(t),\;
+     \#integrate(t),\;
+     \text{size}(t)
+   \big)
+   \]
+   ordered lexicographically.
+
+3. **Prove each rewrite step strictly decreases \( \mu \)** (and never increases earlier components):
+   - `eqW` rules: strictly decrease `#eqW`.
+   - `recΔ ... (delta n)` rule: keeps `#eqW` same, strictly decreases `#delta`.
+   - `merge` rules: keep `#eqW, #delta` same, strictly decrease `#merge`.
+   - `recΔ ... void → b`: keeps earlier counts non-increasing and strictly decreases `#recΔ` (also drops the `s` argument entirely, which only helps).
+   - `integrate (delta t) → void`: strictly decreases `#delta` (and others non-increasing).
+
+   For contextual closure, you use the standard lemma that these symbol-count measures are **additive over contexts**, so decreasing at a redex decreases the whole term’s tuple.
+
+4. Since lexicographic order on \( \mathbb{N}^k \) is well-founded, there is **no infinite descending chain**, hence **no infinite reduction sequence**: strong normalization.
+
+That’s it—fully internal to the given syntax + rules.
+
+## Todo list (final state)
+
+1. Read the Lean rewrite rules — completed  
+2. Assess strong normalization possibility — completed  
+3. Provide bounded proof roadmap or impossibility — completed

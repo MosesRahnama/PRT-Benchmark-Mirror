@@ -1,0 +1,37 @@
+OK, so the file is just 20 lines. Let me analyze this rewrite system.
+
+The system defines:
+- An inductive type `Trace` with constructors: plum (0-ary), grape/mango/peach (1-ary), peach/pear/banana (2-3-ary), cherry (2-ary)
+- Actually let me re-read: plum (0), grape (1), mango (1), peach (2), pear (2), banana (3), cherry (2)
+
+Rewrite rules (Step relation):
+1. R_mango_grape: mango(grape(t)) → plum
+2. R_peach_plum_left: peach(plum, t) → t
+3. R_peach_plum_right: peach(t, plum) → t
+4. R_peach_cancel: peach(t, t) → t
+5. R_banana_zero: banana(b, s, plum) → b
+6. R_apple_orange: banana(b, s, grape(n)) → pear(s, banana(b, s, n))
+7. R_cherry_refl: cherry(a, a) → plum
+8. R_cherry_diff: a ≠ b → cherry(a, b) → mango(peach(a, b))
+
+Now, can strong normalization (SN) be established?
+
+The key question is: do all rewrite sequences terminate?
+
+Let me think about potential issues:
+
+1. Rule R_apple_orange: banana(b, s, grape(n)) → pear(s, banana(b, s, n))
+   This rule is problematic because:
+   - The RHS contains `banana(b, s, n)` which has `n` instead of `grape(n)` - so the third argument gets smaller
+   - But `s` appears twice on the RHS (once as first arg to pear, once as second arg to banana)
+   - This is term duplication
+
+2. Rule R_cherry_diff creates a new term mango(peach(a, b)) from cherry(a, b). This increases the term size but introduces mango and peach which can then be reduced.
+
+The critical issue is the duplication in R_apple_orange. If `s` contains redexes that can grow when duplicated, this could potentially lead to non-termination. However, the Step relation as defined only specifies root reductions—there are no congruence rules allowing reduction within subterms.
+
+If we interpret this strictly as root-level reductions only, strong normalization becomes trivial since infinite chains of root reductions are impossible. But the standard interpretation for a first-order rewrite calculus includes rewriting at any position within a term.
+
+Assuming rewriting can occur anywhere, I need to check whether the system terminates. The key problematic rule is R_apple_orange, which duplicates `s` while the third argument strictly decreases from grape(n) to n. This unrolling eventually terminates when the third argument becomes plum, yielding b.
+
+For the other rules: mango(grape(t)) reduces to plum; peach rules return subterms or simpler combinations; cherry(a,a) reduces to plum immediately, while cherry(a,b) introduces mango(peach(a,b)) that can be further reduced. The system appears to have no cycles or patterns that grow indefinitely. A rigorous proof would require constructing a termination measure—perhaps using lexicographic ordering on the count of banana and cherry constructors combined with the depths of their arguments—but the structure suggests the system is strongly normalizing.

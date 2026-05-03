@@ -1,0 +1,53 @@
+To complete the proof of `measure_decreases` for the remaining five cases in
+, you can use the following proof skeleton. These cases use the helper lemmas `drop_left` and `drop_right` defined in the file to establish lexicographic decrease based on the measures $\kappa$ (recursion depth) and $\mu$ (weighted size).
+
+```lean
+-- integrate (delta t) --> void
+-- kappa: k(t) vs 0. mu: 1+mu(t) vs 0.
+| _, _, Step.R_int_delta t => by
+    by_cases h : kappa t > 0
+    · exact drop_left h
+    · have hmu : mu void < mu (integrate (delta t)) := by simp [mu]
+      have hk  : kappa void = kappa (integrate (delta t)) := by simp [kappa]; omega
+      exact drop_right hmu hk
+
+-- recDelta b s void --> b
+-- kappa: max(k(b), k(s)) >= k(b). mu: 3+mu(b)+mu(s) > mu(b).
+| _, _, Step.R_rec_zero b s => by
+    have hk : kappa b <= kappa (recDelta b s void) := by simp [kappa]; apply Nat.le_max_left
+    cases Nat.lt_or_eq_of_le hk with
+    | inl hlt => exact drop_left hlt
+    | inr heq => 
+      have hmu : mu b < mu (recDelta b s void) := by simp [mu]; omega
+      exact drop_right hmu heq
+
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+-- kappa: K+1 vs K (where K = max(k(b), k(s), k(n))). kappa strictly drops.
+| _, _, Step.R_rec_succ b s n => by
+    have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+      simp [kappa]; omega
+    exact drop_left hk
+
+-- eqW a a --> void
+-- kappa: k(a) vs 0. mu: 4+2*mu(a) vs 0.
+| _, _, Step.R_eq_refl a => by
+    by_cases h : kappa a > 0
+    · exact drop_left h
+    · have hmu : mu void < mu (eqW a a) := by simp [mu]
+      have hk  : kappa void = kappa (eqW a a) := by simp [kappa]; omega
+      exact drop_right hmu hk
+
+-- eqW a b --> integrate (merge a b)
+-- kappa: ties at max(k(a), k(b)). mu: 4+mu(a)+mu(b) vs 3+mu(a)+mu(b).
+| _, _, Step.R_eq_diff a b => by
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by simp [mu]; omega
+    have hk  : kappa (integrate (merge a b)) = kappa (eqW a b) := by simp [kappa]
+    exact drop_right hmu hk
+```
+
+### Summary of Logic for Each Case:
+1.  **`R_int_delta`**: If $\kappa(t) > 0$, the first component of the measure strictly decreases. Otherwise, $\kappa$ ties at 0, and the structural weight $\mu$ decreases from $1 + \mu(t)$ to 0.
+2.  **`R_rec_zero`**: The recursion depth $\kappa$ is non-increasing ($\max(\kappa(b), \kappa(s)) \ge \kappa(b)$). If it is strictly greater, `drop_left` applies; if they are equal, the constructor weight $\mu$ drops by at least 3.
+3.  **`R_rec_succ`**: This is the primary reason for the definition of $\kappa$. Stripping a `delta` from the recursion argument strictly reduces the depth component $(\dots) + 1 \to (\dots)$, allowing a `drop_left` proof regardless of the size of the term produced by `app`.
+4.  **`R_eq_refl`**: Similar to `R_int_delta`, it either drops $\kappa$ (if $\kappa(a) > 0$) or ties $\kappa$ and drops $\mu$ (from $4 + 2\mu(a)$ to 0).
+5.  **`R_eq_diff`**: The $\kappa$ measure is identical on both sides ($\max(\kappa(a), \kappa(b))$). The structural weight $\mu$ drops because `eqW` has a weight of 4, while `integrate` + `merge` combined have a weight of $1 + 2 = 3$.

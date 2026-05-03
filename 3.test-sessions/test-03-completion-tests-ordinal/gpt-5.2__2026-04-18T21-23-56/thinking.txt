@@ -1,0 +1,3 @@
+**Structuring the eq_refl and eq_diff proofs**
+
+I'm working through the `eq_refl` case, starting with `simp [mu]`. I need to show that `0 < omega0^(mu a + mu a + (9:Ordinal)) + 1` and prove a few inequalities. For `eq_diff`, I'll simplify and compare left-hand and right-hand sides, ensuring that I use `le_add_right` and other relevant lemmas where necessary. It’s crucial that I keep placeholders for `have` statements in my skeleton so the user can fill in proper lemma names later. Finally, I’ll set up a todo list for completed tasks and call manage_todo_list at the end.

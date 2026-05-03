@@ -1,0 +1,40 @@
+---
+
+**Raw assessment: Yes, strong normalization is provable from this calculus alone.**
+
+---
+
+**The decisive structural fact**
+
+`Step` carries no congruence rules. There is no rule of the form `Step t t' → Step (f t) (f t')`. Reduction is therefore purely **root-positional**: a term can only step if the outermost constructor matches a left-hand side. Subterms are frozen unless they become the root after a step.
+
+---
+
+**Case analysis of all eight rules**
+
+| Rule | RHS root | Observation |
+|---|---|---|
+| `R_mango_grape` | `plum` | constant; no LHS has `plum` as root → dead end |
+| `R_peach_plum_left` | `t` | strict subterm of input |
+| `R_peach_plum_right` | `t` | strict subterm of input |
+| `R_peach_cancel` | `t` | strict subterm of input |
+| `R_banana_zero` | `b` | strict subterm of input |
+| `R_apple_orange` | `pear(s, banana b s n)` | root is `pear`; **no LHS has `pear` as outermost constructor** → dead end after one step |
+| `R_cherry_refl` | `plum` | dead end |
+| `R_cherry_diff` | `mango(peach a b)` | root is `mango`, but `R_mango_grape` requires argument `grape(t)`; `peach a b ≠ grape t` by constructor injectivity → dead end |
+
+---
+
+**Proof roadmap (within the calculus)**
+
+Define the measure $\mu(t) = |t|$ (total constructor-node count). For every reduction $t \to t'$:
+
+- **Rules 1, 7** — $t'$ is `plum`, so $|t'| = 1 < |t|$.
+- **Rules 2, 3, 4, 5** — $t'$ is a strict syntactic subterm of $t$, so $|t'| < |t|$ by the subterm property on inductive types.
+- **Rules 6, 8** — $t'$ has a root constructor (`pear`, resp. `mango` with a `peach` argument) that matches no LHS. No further root step is possible. The sequence terminates in exactly one more step (to an irred. term).
+
+In every case the reduction sequence starting from any $t$ has length bounded by $|t|$, because each continuing step strictly decreases the measure, and terminating steps add at most one final move. Well-foundedness of $\mathbb{N}$ under $<$ closes the argument.
+
+No rule creates a new root-reducible term from an already-larger intermediate: `R_apple_orange` is the only rule whose RHS size can exceed its LHS size (when $|s| > 0$), but it simultaneously kills further reduction by introducing an irred. root.
+
+**No additional axioms, guards, or structural imports are required.** The argument uses only: (1) the inductive definition of `Trace` (finite trees, well-founded subterm relation), (2) constructor disjointness (to rule out `peach a b = grape t` in the `R_cherry_diff` case), and (3) the eight rules as stated.

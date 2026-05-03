@@ -1,0 +1,29 @@
+In KO7-LLM-Benchmark/test-files/Test-05-Candidate-Class-Reasoning.lean, all three $\mu_i$ are “weighted size” maps `Trace → Nat`. As such, they’re good candidates only if they *strictly decrease on every `Step` rule*. They all fail on the same critical rule.
+
+**Candidate `mu1`**
+- Works (strictly decreases) for: `R_int_delta`, all `R_merge_*`, `R_rec_zero`, `R_eq_refl`, `R_eq_diff`.
+- Fails for `R_rec_succ`:  
+  $$\mu_1(\text{recDelta } b\ s\ (\delta n)) = 2 + \mu_1(b) + \mu_1(s) + \mu_1(n)$$
+  $$\mu_1(\text{app } s\ (\text{recDelta } b\ s\ n)) = 2 + \mu_1(b) + 2\mu_1(s) + \mu_1(n)$$
+  so the rewrite *increases* the measure by $\mu_1(s)$ whenever $\mu_1(s) > 0$.
+- Concrete counterexample (showing increase): let $b=\text{void}$, $n=\text{void}$, $s=\delta\ \text{void}$. Then $\mu_1(\text{LHS})=3$ but $\mu_1(\text{RHS})=4$.
+
+**Candidate `mu2`**
+- Same story: decreases on every rule *except* `R_rec_succ`.
+- For `R_rec_succ`, you get:
+  $$\mu_2(\text{recDelta } b\ s\ (\delta n)) = 6 + \mu_2(b) + \mu_2(s) + \mu_2(n)$$
+  $$\mu_2(\text{app } s\ (\text{recDelta } b\ s\ n)) = 6 + \mu_2(b) + 2\mu_2(s) + \mu_2(n)$$
+  again increasing by $\mu_2(s)$ unless $s=\text{void}$.
+- Same counterexample choice gives $\mu_2(\text{LHS})=7$, $\mu_2(\text{RHS})=8$.
+
+**Candidate `mu3`**
+- Also decreases on all rules *except* `R_rec_succ`.
+- For `R_rec_succ`:
+  $$\mu_3(\text{recDelta } b\ s\ (\delta n)) = 2 + \mu_3(b) + \mu_3(s) + \mu_3(n)$$
+  $$\mu_3(\text{app } s\ (\text{recDelta } b\ s\ n)) = 3 + \mu_3(b) + 2\mu_3(s) + \mu_3(n)$$
+  which increases by $1+\mu_3(s)$ for all $s$.
+- With $b=\text{void}$, $n=\text{void}$, $s=\delta\ \text{void}$: $\mu_3(\text{LHS})=3$, $\mu_3(\text{RHS})=5$.
+
+**Bottom line**
+- None of `mu1`, `mu2`, `mu3` is a valid single-number termination measure for the full `Step` relation, because `R_rec_succ` duplicates the contribution of `s` under an `app`, and all three measures are additive with nonnegative weights.
+- If the rewrite system is intended to be terminating, it likely needs a *lexicographic* (or otherwise non-additive) measure with the primary component decreasing on the recursion argument `n` (since `delta n → n` is the structurally decreasing part of `R_rec_succ`).

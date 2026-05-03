@@ -1,0 +1,562 @@
+{
+  "generated_at_utc": "2026-05-03T18:00:59.612792+00:00",
+  "source_root": "<workspace>",
+  "destination_root": "<workspace>",
+  "dry_run": false,
+  "root_files": {
+    "models-list.md": "<workspace>\\models-list.md"
+  },
+  "folders": {
+    "1.test-prompts": {
+      "source": "<workspace>\\test-prompts",
+      "destination": "1.test-prompts",
+      "mode": "full-copy",
+      "excluded_dirs": []
+    },
+    "2.test-files": {
+      "source": "<workspace>\\test-files",
+      "destination": "2.test-files",
+      "mode": "full-copy",
+      "excluded_dirs": []
+    },
+    "3.lean": {
+      "source": "<workspace>\\lean",
+      "destination": "3.lean",
+      "mode": "curated-public-lean-copy",
+      "files": [
+        "lakefile.lean",
+        "lake-manifest.json",
+        "lean-toolchain",
+        "README.md",
+        "KO7Benchmark/SchemaTests/SchemaKernel.lean",
+        "KO7Benchmark/SchemaTests/NonlinearWitness.lean",
+        "KO7Benchmark/SchemaTests/CandidateA_PathOrderSupport.lean",
+        "KO7Benchmark/SchemaTests/CandidateB_PolynomialCounterexample.lean",
+        "KO7Benchmark/SchemaTests/CandidateC_KBOFailure.lean",
+        "KO7Benchmark/SchemaTests/CandidateD_DependencyPairsWitness.lean",
+        "KO7Benchmark/SchemaTests/CandidateD_SoundnessBridge.lean",
+        "KO7Benchmark/SchemaTests/CandidateE_DirectMeasureCounterexample.lean",
+        "KO7Benchmark/SchemaTests/GCollapseBarrier.lean",
+        "KO7Benchmark/SchemaTests/AnswerKey.lean",
+        "KO7Benchmark/SANSTests/SANSKernel.lean",
+        "KO7Benchmark/SANSTests/LinearWitness.lean",
+        "KO7Benchmark/SANSTests/PathOrderSupport.lean",
+        "KO7Benchmark/SANSTests/KBOStyleSupport.lean",
+        "KO7Benchmark/SANSTests/DependencyPairsWitness.lean",
+        "KO7Benchmark/SANSTests/AnswerKey.lean",
+        "KO7Benchmark/KO7Kernel.lean",
+        "KO7Benchmark/KO7DependencyPairs.lean",
+        "KO7Benchmark/Test02_NatLex_AnswerKey.lean",
+        "KO7Benchmark/Test03_Ordinal_AnswerKey.lean",
+        "KO7Benchmark/Test04_MeasureVerificationCounterexample.lean",
+        "KO7Benchmark/Test05_CandidateClassCounterexamples.lean",
+        "KO7Benchmark/Test06_BranchRealismCounterexample.lean",
+        "KO7Benchmark/BenchmarkContract.lean",
+        "KO7Benchmark/AnswerKeyExport.lean",
+        "KO7Benchmark/BenchmarkedPrimitiveRecursionFamily.lean",
+        "KO7Benchmark/BoundaryFactorization.lean",
+        "KO7Benchmark/CertificateBridge.lean",
+        "KO7Benchmark/MetaHaltWitnessBridge.lean",
+        "KO7Benchmark/OperationalIncompleteness.lean",
+        "KO7Benchmark/PaperB.lean",
+        "KO7Benchmark/PaperB/Basic.lean",
+        "KO7Benchmark/PaperB/BenchmarkContractWitnessOrderBridge.lean",
+        "KO7Benchmark/PaperB/Bottleneck.lean",
+        "KO7Benchmark/PaperB/BoundaryWitness.lean",
+        "KO7Benchmark/PaperB/ClaimLedger.lean",
+        "KO7Benchmark/PaperB/SchemaAdditiveObstruction.lean",
+        "KO7Benchmark/PaperB/SchemaPartition.lean",
+        "KO7Benchmark/PaperB/SchemaWitnessTower.lean",
+        "KO7Benchmark/PseudoWitness.lean",
+        "KO7Benchmark/RenameInvariance.lean",
+        "KO7Benchmark/SovereigntyAndMetaHalt.lean",
+        "KO7Benchmark/WitnessOrder.lean",
+        "KO7BenchmarkTheory.lean",
+        "KO7Benchmark.lean",
+        "KO7Benchmark/README.md",
+        "KO7Benchmark/SchemaTests/README.md",
+        "KO7Benchmark/SANSTests/README.md",
+        "KO7Benchmark/PaperB/README.md"
+      ],
+      "policy": "locked answer-evidence lane plus separate theory lane when KO7BenchmarkTheory.lean exists in the source tree",
+      "theory_lane_enabled": true,
+      "theory_files": [
+        "KO7Benchmark/BenchmarkedPrimitiveRecursionFamily.lean",
+        "KO7Benchmark/BoundaryFactorization.lean",
+        "KO7Benchmark/CertificateBridge.lean",
+        "KO7Benchmark/MetaHaltWitnessBridge.lean",
+        "KO7Benchmark/OperationalIncompleteness.lean",
+        "KO7Benchmark/PaperB.lean",
+        "KO7Benchmark/PaperB/Basic.lean",
+        "KO7Benchmark/PaperB/BenchmarkContractWitnessOrderBridge.lean",
+        "KO7Benchmark/PaperB/Bottleneck.lean",
+        "KO7Benchmark/PaperB/BoundaryWitness.lean",
+        "KO7Benchmark/PaperB/ClaimLedger.lean",
+        "KO7Benchmark/PaperB/SchemaAdditiveObstruction.lean",
+        "KO7Benchmark/PaperB/SchemaPartition.lean",
+        "KO7Benchmark/PaperB/SchemaWitnessTower.lean",
+        "KO7Benchmark/PseudoWitness.lean",
+        "KO7Benchmark/RenameInvariance.lean",
+        "KO7Benchmark/SovereigntyAndMetaHalt.lean",
+        "KO7Benchmark/WitnessOrder.lean",
+        "KO7BenchmarkTheory.lean"
+      ],
+      "post_copy": {
+        "operatorko7_source": null,
+        "operatorko7_git_url": null,
+        "operatorko7_revision": null,
+        "generated_files": [
+          ".gitignore"
+        ],
+        "rewritten_files": [
+          "lakefile.lean",
+          "lake-manifest.json",
+          "README.md"
+        ]
+      },
+      "answer_key_lock": {
+        "path": "<workspace>\\data_master_consolidation\\raw_consolidations_data\\answer_key_lean_lock.json",
+        "locked_file_count": 25
+      }
+    },
+    "4.TTT2-Artifacts": {
+      "source": "<workspace>\\Artifacts",
+      "destination": "4.TTT2-Artifacts",
+      "mode": "curated-answer-ttt2-copy",
+      "included_directories": [
+        "ttt2/schema",
+        "ttt2/schema-new-system",
+        "ttt2/ko7"
+      ],
+      "files": [
+        "ttt2/schema/README.md",
+        "ttt2/schema/Schema_CeTA_certification.txt",
+        "ttt2/schema/Schema_COMP.cpf",
+        "ttt2/schema/Schema_FAST.cpf",
+        "ttt2/schema/Schema_HYDRA.cpf",
+        "ttt2/schema/Schema_KBO.cpf",
+        "ttt2/schema/Schema_LPO.cpf",
+        "ttt2/schema/Schema_MAT2.cpf",
+        "ttt2/schema/Schema_MAT3.cpf",
+        "ttt2/schema/Schema_POLY.cpf",
+        "ttt2/schema/Schema_TTT2_results_COMP.txt",
+        "ttt2/schema/Schema_TTT2_results_FAST.txt",
+        "ttt2/schema/Schema_TTT2_results_HYDRA.txt",
+        "ttt2/schema/Schema_TTT2_results_KBO.txt",
+        "ttt2/schema/Schema_TTT2_results_LPO.txt",
+        "ttt2/schema/Schema_TTT2_results_MAT2.txt",
+        "ttt2/schema/Schema_TTT2_results_MAT3.txt",
+        "ttt2/schema/Schema_TTT2_results_POLY.txt",
+        "ttt2/schema/Test-07-Schema-Kernel.trs",
+        "ttt2/schema-new-system/README.md",
+        "ttt2/schema-new-system/Schema-Test-A-New-System.trs",
+        "ttt2/schema-new-system/schema_new_system_certification_summary.json",
+        "ttt2/schema-new-system/Schema_New_System_CeTA_certification.txt",
+        "ttt2/schema-new-system/Schema_New_System_COMP.cpf",
+        "ttt2/schema-new-system/Schema_New_System_FAST.cpf",
+        "ttt2/schema-new-system/Schema_New_System_HYDRA.cpf",
+        "ttt2/schema-new-system/Schema_New_System_KBO.cpf",
+        "ttt2/schema-new-system/Schema_New_System_LPO.cpf",
+        "ttt2/schema-new-system/Schema_New_System_MAT2.cpf",
+        "ttt2/schema-new-system/Schema_New_System_MAT3.cpf",
+        "ttt2/schema-new-system/Schema_New_System_POLY.cpf",
+        "ttt2/schema-new-system/Schema_New_System_TTT2_results_COMP.txt",
+        "ttt2/schema-new-system/Schema_New_System_TTT2_results_FAST.txt",
+        "ttt2/schema-new-system/Schema_New_System_TTT2_results_HYDRA.txt",
+        "ttt2/schema-new-system/Schema_New_System_TTT2_results_KBO.txt",
+        "ttt2/schema-new-system/Schema_New_System_TTT2_results_LPO.txt",
+        "ttt2/schema-new-system/Schema_New_System_TTT2_results_MAT2.txt",
+        "ttt2/schema-new-system/Schema_New_System_TTT2_results_MAT3.txt",
+        "ttt2/schema-new-system/Schema_New_System_TTT2_results_POLY.txt",
+        "ttt2/ko7/KO7_CeTA_certification.txt",
+        "ttt2/ko7/KO7_COMP.cpf",
+        "ttt2/ko7/KO7_FAST.cpf",
+        "ttt2/ko7/KO7_full_step.trs",
+        "ttt2/ko7/KO7_full_step_TTT2_results_FAST.txt",
+        "ttt2/ko7/KO7_full_step_TTT2_results_POLY.txt",
+        "ttt2/ko7/KO7_KBO.cpf",
+        "ttt2/ko7/KO7_LPO.cpf",
+        "ttt2/ko7/KO7_MAT2.cpf",
+        "ttt2/ko7/KO7_MAT3.cpf",
+        "ttt2/ko7/KO7_POLY.cpf",
+        "ttt2/ko7/README.md",
+        "README.md",
+        "ttt2/README.md"
+      ]
+    },
+    "5.test-sessions": {
+      "source": [
+        "<workspace>\\schema-test-A-new-system-tests",
+        "<workspace>\\schema-test-A-tests",
+        "<workspace>\\schema-test-B-tests",
+        "<workspace>\\test-01-kernel-tests",
+        "<workspace>\\test-02-completion-tests-nat-lex",
+        "<workspace>\\test-03-completion-tests-ordinal",
+        "<workspace>\\test-04-measure-verification-tests",
+        "<workspace>\\test-05-candidate-class-reasoning-tests",
+        "<workspace>\\test-06-branch-realism-tests"
+      ],
+      "destination": "5.test-sessions",
+      "mode": "flattened-test-session-bundle",
+      "datasets": {
+        "schema-test-A-new-system-tests": {
+          "source": "<workspace>\\schema-test-A-new-system-tests",
+          "destination": "5.test-sessions/schema-test-A-new-system-tests",
+          "mode": "flattened-test-sessions",
+          "root_files": [
+            "sessions_index.json"
+          ],
+          "support_directories": [],
+          "flattened_from": "<workspace>\\schema-test-A-new-system-tests\\4.test-sessions",
+          "flattened_session_count": 108,
+          "session_root_files": [],
+          "excluded_root_dirs": [
+            "1.analytics",
+            "2.plots",
+            "3.extraction",
+            "__pycache__",
+            "archive"
+          ]
+        },
+        "schema-test-A-tests": {
+          "source": "<workspace>\\schema-test-A-tests",
+          "destination": "5.test-sessions/schema-test-A-tests",
+          "mode": "flattened-test-sessions",
+          "root_files": [
+            "sessions_index.json"
+          ],
+          "support_directories": [],
+          "flattened_from": "<workspace>\\schema-test-A-tests\\4.test-sessions",
+          "flattened_session_count": 108,
+          "session_root_files": [],
+          "excluded_root_dirs": [
+            "1.analytics",
+            "2.plots",
+            "3.extraction",
+            "__pycache__",
+            "archive"
+          ]
+        },
+        "schema-test-B-tests": {
+          "source": "<workspace>\\schema-test-B-tests",
+          "destination": "5.test-sessions/schema-test-B-tests",
+          "mode": "flattened-test-sessions",
+          "root_files": [
+            "sessions_index.json"
+          ],
+          "support_directories": [],
+          "flattened_from": "<workspace>\\schema-test-B-tests\\4.test-sessions",
+          "flattened_session_count": 108,
+          "session_root_files": [],
+          "excluded_root_dirs": [
+            "1.analytics",
+            "2.plots",
+            "3.extraction",
+            "__pycache__",
+            "archive"
+          ]
+        },
+        "test-01-kernel-tests": {
+          "source": "<workspace>\\test-01-kernel-tests",
+          "destination": "5.test-sessions/test-01-kernel-tests",
+          "mode": "flattened-test-sessions",
+          "root_files": [
+            "sessions_index.json"
+          ],
+          "support_directories": [],
+          "flattened_from": "<workspace>\\test-01-kernel-tests\\4.test-sessions",
+          "flattened_session_count": 324,
+          "session_root_files": [],
+          "excluded_root_dirs": [
+            "1.analytics",
+            "2.plots",
+            "3.extraction",
+            "__pycache__",
+            "archive"
+          ]
+        },
+        "test-02-completion-tests-nat-lex": {
+          "source": "<workspace>\\test-02-completion-tests-nat-lex",
+          "destination": "5.test-sessions/test-02-completion-tests-nat-lex",
+          "mode": "flattened-test-sessions",
+          "root_files": [
+            "sessions_index.json"
+          ],
+          "support_directories": [],
+          "flattened_from": "<workspace>\\test-02-completion-tests-nat-lex\\4.test-sessions",
+          "flattened_session_count": 108,
+          "session_root_files": [],
+          "excluded_root_dirs": [
+            "1.analytics",
+            "2.plots",
+            "3.extraction",
+            "__pycache__",
+            "archive"
+          ]
+        },
+        "test-03-completion-tests-ordinal": {
+          "source": "<workspace>\\test-03-completion-tests-ordinal",
+          "destination": "5.test-sessions/test-03-completion-tests-ordinal",
+          "mode": "flattened-test-sessions",
+          "root_files": [],
+          "support_directories": [],
+          "flattened_from": "<workspace>\\test-03-completion-tests-ordinal\\4.test-sessions",
+          "flattened_session_count": 108,
+          "session_root_files": [
+            "sessions_index.json"
+          ],
+          "excluded_root_dirs": [
+            "1.analytics",
+            "2.plots",
+            "3.extraction",
+            "__pycache__",
+            "archive"
+          ]
+        },
+        "test-04-measure-verification-tests": {
+          "source": "<workspace>\\test-04-measure-verification-tests",
+          "destination": "5.test-sessions/test-04-measure-verification-tests",
+          "mode": "flattened-test-sessions",
+          "root_files": [
+            "sessions_index.json"
+          ],
+          "support_directories": [],
+          "flattened_from": "<workspace>\\test-04-measure-verification-tests\\4.test-sessions",
+          "flattened_session_count": 108,
+          "session_root_files": [],
+          "excluded_root_dirs": [
+            "1.analytics",
+            "2.plots",
+            "3.extraction",
+            "__pycache__",
+            "archive"
+          ]
+        },
+        "test-05-candidate-class-reasoning-tests": {
+          "source": "<workspace>\\test-05-candidate-class-reasoning-tests",
+          "destination": "5.test-sessions/test-05-candidate-class-reasoning-tests",
+          "mode": "flattened-test-sessions",
+          "root_files": [
+            "sessions_index.json"
+          ],
+          "support_directories": [],
+          "flattened_from": "<workspace>\\test-05-candidate-class-reasoning-tests\\4.test-sessions",
+          "flattened_session_count": 108,
+          "session_root_files": [],
+          "excluded_root_dirs": [
+            "1.analytics",
+            "2.plots",
+            "3.extraction",
+            "__pycache__",
+            "archive"
+          ]
+        },
+        "test-06-branch-realism-tests": {
+          "source": "<workspace>\\test-06-branch-realism-tests",
+          "destination": "5.test-sessions/test-06-branch-realism-tests",
+          "mode": "flattened-test-sessions",
+          "root_files": [
+            "sessions_index.json"
+          ],
+          "support_directories": [],
+          "flattened_from": "<workspace>\\test-06-branch-realism-tests\\4.test-sessions",
+          "flattened_session_count": 108,
+          "session_root_files": [],
+          "excluded_root_dirs": [
+            "1.analytics",
+            "2.plots",
+            "3.extraction",
+            "__pycache__",
+            "archive"
+          ]
+        }
+      }
+    },
+    "7.scoring": {
+      "source": "<workspace>\\data_master_consolidation\\scripts\\answer_verdict_derivation",
+      "destination": "7.scoring",
+      "mode": "public-scoring-scripts",
+      "files": {
+        "_answer_key.py": "data_master_consolidation\\scripts\\answer_verdict_derivation\\_answer_key.py",
+        "add_schema_a_answer_verdict_columns.py": "data_master_consolidation\\scripts\\answer_verdict_derivation\\add_schema_a_answer_verdict_columns.py",
+        "add_schema_a_new_system_answer_verdict_columns.py": "data_master_consolidation\\scripts\\answer_verdict_derivation\\add_schema_a_new_system_answer_verdict_columns.py",
+        "add_schema_b_answer_verdict_columns.py": "data_master_consolidation\\scripts\\answer_verdict_derivation\\add_schema_b_answer_verdict_columns.py",
+        "add_test01_answer_verdict_columns.py": "data_master_consolidation\\scripts\\answer_verdict_derivation\\add_test01_answer_verdict_columns.py",
+        "add_test02_answer_verdict_columns.py": "data_master_consolidation\\scripts\\answer_verdict_derivation\\add_test02_answer_verdict_columns.py",
+        "add_test03_answer_verdict_columns.py": "data_master_consolidation\\scripts\\answer_verdict_derivation\\add_test03_answer_verdict_columns.py",
+        "add_test04_answer_verdict_columns.py": "data_master_consolidation\\scripts\\answer_verdict_derivation\\add_test04_answer_verdict_columns.py",
+        "add_test05_answer_verdict_columns.py": "data_master_consolidation\\scripts\\answer_verdict_derivation\\add_test05_answer_verdict_columns.py",
+        "add_test06_answer_verdict_columns.py": "data_master_consolidation\\scripts\\answer_verdict_derivation\\add_test06_answer_verdict_columns.py"
+      },
+      "theory_checks": {
+        "check_paper_b_theory.py": "data_master_consolidation\\scripts\\theory_checks\\check_paper_b_theory.py",
+        "paper_b_theory_check_report.json": "data_master_consolidation\\scripts\\theory_checks\\paper_b_theory_check_report.json",
+        "paper_b_theory_check_report.md": "data_master_consolidation\\scripts\\theory_checks\\paper_b_theory_check_report.md"
+      },
+      "generated_readmes": [
+        "README.md",
+        "answer-key/README.md",
+        "pipeline_reports/README.md",
+        "theory_checks/README.md"
+      ]
+    },
+    "6.extracted-data": {
+      "source": "<workspace>\\data_master_consolidation",
+      "destination": "6.extracted-data",
+      "mode": "extracted-data-bundle",
+      "files": {
+        "DATA_DICTIONARY.md": "generated public data dictionary",
+        "csv/schema-test-A-new-system-tests.csv": "raw_consolidations_data\\final_SCHEMA_A_NEW_SYSTEM_consolidation.csv",
+        "csv/schema-test-A-tests.csv": "raw_consolidations_data\\final_SCHEMA_A_consolidation.csv",
+        "csv/schema-test-B-tests.csv": "raw_consolidations_data\\final_SCHEMA_B_consolidation.normalized.csv",
+        "csv/test-01-kernel-tests.csv": "raw_consolidations_data\\final_TEST01_consolidation.csv",
+        "csv/test-02-completion-tests-nat-lex.csv": "raw_consolidations_data\\final_TEST02_consolidation.csv",
+        "csv/test-03-completion-tests-ordinal.csv": "raw_consolidations_data\\final_TEST03_consolidation.csv",
+        "csv/test-04-measure-verification-tests.csv": "raw_consolidations_data\\final_TEST04_consolidation.csv",
+        "csv/test-05-candidate-class-reasoning-tests.csv": "raw_consolidations_data\\final_TEST05_consolidation.csv",
+        "csv/test-06-branch-realism-tests.csv": "raw_consolidations_data\\final_TEST06_consolidation.csv",
+        "schemas/ALL_TESTS_schema.md": "raw_consolidations_data\\MASTER_SCHEMAS\\ALL_TESTS_MASTER_SCHEMA.md",
+        "schemas/schema-test-A-new-system-tests_schema.md": "raw_consolidations_data\\MASTER_SCHEMAS\\schema-test-A-new-system-tests_MASTER_SCHEMA.md",
+        "schemas/schema-test-A-tests_schema.md": "raw_consolidations_data\\MASTER_SCHEMAS\\schema-test-A-tests_MASTER_SCHEMA.md",
+        "schemas/schema-test-B-tests_schema.md": "raw_consolidations_data\\MASTER_SCHEMAS\\schema-test-B-tests_MASTER_SCHEMA.md",
+        "schemas/test-01-kernel-tests_schema.md": "raw_consolidations_data\\MASTER_SCHEMAS\\test-01-kernel-tests_MASTER_SCHEMA.md",
+        "schemas/test-02-completion-tests-nat-lex_schema.md": "raw_consolidations_data\\MASTER_SCHEMAS\\test-02-completion-tests-nat-lex_MASTER_SCHEMA.md",
+        "schemas/test-03-completion-tests-ordinal_schema.md": "raw_consolidations_data\\MASTER_SCHEMAS\\test-03-completion-tests-ordinal_MASTER_SCHEMA.md",
+        "schemas/test-04-measure-verification-tests_schema.md": "raw_consolidations_data\\MASTER_SCHEMAS\\test-04-measure-verification-tests_MASTER_SCHEMA.md",
+        "schemas/test-05-candidate-class-reasoning-tests_schema.md": "raw_consolidations_data\\MASTER_SCHEMAS\\test-05-candidate-class-reasoning-tests_MASTER_SCHEMA.md",
+        "schemas/test-06-branch-realism-tests_schema.md": "raw_consolidations_data\\MASTER_SCHEMAS\\test-06-branch-realism-tests_MASTER_SCHEMA.md"
+      },
+      "answer_key_files": {
+        "answer-key/answer_key.json": "raw_consolidations_data/answer_key.json",
+        "answer-key/answer_keys.md": "raw_consolidations_data/answer_keys.md",
+        "answer-key/answer_keys_simplified.md": "raw_consolidations_data/answer_keys_simplified.md",
+        "answer-key/answer_key_audit_notes.md": "raw_consolidations_data/answer_key_audit_notes.md"
+      },
+      "directories": {
+        "normalization": {
+          "source": "<workspace>\\data_master_consolidation\\normalization",
+          "mode": "live-normalization-folder-copy",
+          "copied_docs": [
+            "method-maps\\fruit_primary_method.csv",
+            "method-maps\\method_labels.csv",
+            "method-maps\\method_renames.csv",
+            "method-maps\\methods_decision.md",
+            "README.md",
+            "guides\\SCHEMA_A_NEW_SYSTEM_NORMALIZATION_GUIDE.md",
+            "guides\\SCHEMA_A_NORMALIZATION_GUIDE.md",
+            "guides\\SCHEMA_B_NORMALIZATION_GUIDE.md",
+            "guides\\TEST01_NORMALIZATION_GUIDE.md",
+            "guides\\TEST04_NORMALIZATION_GUIDE.md",
+            "overrides\\schema_a_method_review_overrides.csv"
+          ],
+          "provenance_sources": [
+            "<workspace>\\data_master_consolidation\\raw_consolidations_data\\schema_a_method_review_overrides.csv"
+          ],
+          "copied_provenance_ledgers": [
+            "overrides/schema_a_method_review_overrides.csv"
+          ]
+        }
+      }
+    },
+    "8.analytics": {
+      "source": "<workspace>\\data_master_consolidation\\raw_consolidations_data\\paper_scripts",
+      "destination": "8.analytics",
+      "mode": "paper-number-regeneration-scripts",
+      "files": {
+        "_common.py": "raw_consolidations_data\\paper_scripts\\_common.py",
+        "cross_test_method_consistency.py": "raw_consolidations_data\\paper_scripts\\cross_test_method_consistency.py",
+        "funnel.py": "raw_consolidations_data\\paper_scripts\\funnel.py",
+        "headline_results.py": "raw_consolidations_data\\paper_scripts\\headline_results.py",
+        "instability.py": "raw_consolidations_data\\paper_scripts\\instability.py",
+        "method_class_and_verdict_frequencies.py": "raw_consolidations_data\\paper_scripts\\method_class_and_verdict_frequencies.py",
+        "schema_a.py": "raw_consolidations_data\\paper_scripts\\schema_a.py",
+        "schema_a_new_system.py": "raw_consolidations_data\\paper_scripts\\schema_a_new_system.py",
+        "schema_b.py": "raw_consolidations_data\\paper_scripts\\schema_b.py",
+        "test01.py": "raw_consolidations_data\\paper_scripts\\test01.py",
+        "test02.py": "raw_consolidations_data\\paper_scripts\\test02.py",
+        "test03.py": "raw_consolidations_data\\paper_scripts\\test03.py",
+        "test04.py": "raw_consolidations_data\\paper_scripts\\test04.py",
+        "test05.py": "raw_consolidations_data\\paper_scripts\\test05.py",
+        "test06.py": "raw_consolidations_data\\paper_scripts\\test06.py",
+        "within_test_method_consistency.py": "raw_consolidations_data\\paper_scripts\\within_test_method_consistency.py"
+      },
+      "generated_markdown": [
+        "cross_test_method_consistency.md",
+        "funnel.md",
+        "headline_results.md",
+        "instability.md",
+        "method_class_and_verdict_frequencies.md",
+        "schema_a.md",
+        "schema_a_new_system.md",
+        "schema_b.md",
+        "test01.md",
+        "test02.md",
+        "test03.md",
+        "test04.md",
+        "test05.md",
+        "test06.md",
+        "within_test_method_consistency.md"
+      ],
+      "paired_basenames": [
+        "cross_test_method_consistency",
+        "funnel",
+        "headline_results",
+        "instability",
+        "method_class_and_verdict_frequencies",
+        "schema_a",
+        "schema_a_new_system",
+        "schema_b",
+        "test01",
+        "test02",
+        "test03",
+        "test04",
+        "test05",
+        "test06",
+        "within_test_method_consistency"
+      ]
+    }
+  },
+  "croissant": {
+    "source": "<workspace>",
+    "destination": "croissant.json + side artifacts + docs/index.html",
+    "mode": "croissant-build",
+    "warnings": [],
+    "side_artifacts": [
+      {
+        "template": "LICENSE.template",
+        "destination": "LICENSE",
+        "action": "wrote"
+      },
+      {
+        "template": "DATASHEET.md.template",
+        "destination": "DATASHEET.md",
+        "action": "wrote"
+      },
+      {
+        "template": "DATA_STATEMENT.md.template",
+        "destination": "DATA_STATEMENT.md",
+        "action": "wrote"
+      },
+      {
+        "template": "CITATION.cff.template",
+        "destination": "CITATION.cff",
+        "action": "wrote"
+      },
+      {
+        "template": "CHANGELOG.md.template",
+        "destination": "CHANGELOG.md",
+        "action": "wrote"
+      },
+      {
+        "destination": "docs/index.html",
+        "action": "wrote"
+      }
+    ],
+    "record_set_count": 11,
+    "distribution_count": 40,
+    "validation": {
+      "status": "passed",
+      "validator_output_excerpt": "W0503 21:31:29.921108 182548 rdf.py:89] WARNING: The JSON-LD `@context` is not standard. Refer to the official @context (e.g., from the example datasets in https://github.com/mlcommons/croissant/tree/main/datasets/1.0). The different keys are: {'equivalentProperty', 'samplingRate'}\nI0503 21:31:30.472688 182548 validate.py:53] Done."
+    }
+  }
+}

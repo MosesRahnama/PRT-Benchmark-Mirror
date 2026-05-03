@@ -1,0 +1,46 @@
+Now I can see the structure of this Lean 4 file. It's a strong normalization proof for a first-order rewrite calculus with 7 term constructors (void, delta, integrate, merge, app, recDelta, eqW) and 8 reduction rules.
+
+The proof uses a lexicographic measure combining:
+1. `kappa`: recursion depth (increases only when recDelta's third argument is delta-wrapped)  
+2. `mu`: weighted structural size (with specific weights for each constructor)
+
+Looking at the cases:
+
+**PROVED (3 cases):**
+1. `R_merge_void_left`: merge void t → t (kappa ties, mu drops by 2)
+2. `R_merge_void_right`: merge t void → t (kappa ties, mu drops by 2) 
+3. `R_merge_cancel`: merge t t → t (kappa ties, mu drops by 2 + mu(t))
+
+**REMAINING (5 cases with sorry):**
+1. `R_int_delta`: integrate (delta t) → void
+2. `R_rec_zero`: recDelta b s void → b  
+3. `R_rec_succ`: recDelta b s (delta n) → app s (recDelta b s n)
+4. `R_eq_refl`: eqW a a → void
+5. `R_eq_diff`: eqW a b → integrate (merge a b)
+
+Let me analyze each case to provide a proof skeleton:
+
+**Case 1: integrate (delta t) → void**
+- Left side: kappa = kappa(t), mu = 1 + mu(t)  
+- Right side: kappa = 0, mu = 0
+- If kappa(t) > 0, then kappa drops → use drop_left
+- If kappa(t) = 0, then kappa ties but mu still drops → use drop_right
+  
+**Case 2: recDelta b s void → b**
+- The left side has kappa = max(kappa(b), kappa(s)) and mu = 3 + mu(b) + mu(s), while the right side is just b
+- Since kappa can only decrease or remain equal and mu drops by at least 3 + mu(s), this follows from drop_right
+
+**Case 3: recDelta b s (delta n) → app s (recDelta b s n)**
+- Here kappa actually decreases by 1 because the delta-wrapped third argument adds 1 to the left side's kappa
+- The right side loses that +1 contribution, so kappa drops exactly 1 → use drop_left
+
+**Case 4: eqW a a → void**
+- Left: kappa = kappa(a), mu = 4 + 2*mu(a)
+- Right: kappa = 0, mu = 0
+- When kappa(a) > 0, kappa drops; otherwise kappa ties but mu decreases significantly → use drop_left or drop_right accordingly
+
+**Case 5: eqW a b → integrate (merge a b)**
+- The left side has kappa = max(kappa(a), kappa(b)) and the right side wraps the merge in integrate, which doesn't increase kappa
+- The measure should decrease through the structural reduction
+
+, so kappa ties but mu drops by 1 → drop_right

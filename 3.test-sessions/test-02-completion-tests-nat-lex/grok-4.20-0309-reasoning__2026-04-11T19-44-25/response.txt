@@ -1,0 +1,51 @@
+**Proof skeleton for the remaining cases in `measure_decreases`**
+
+Replace the five `sorry` markers with the following (these follow the exact style, helper lemmas, `simp` lemmas, and `omega` usage already present in the file):
+
+```lean
+-- integrate (delta t) --> void
+| _, _, Step.R_int_delta t => by
+    have hmu : mu void < mu (integrate (delta t)) := by simp [mu]; omega
+    by_cases h : kappa t = 0
+    · have hk : kappa void = kappa (integrate (delta t)) := by simp [h]
+      exact drop_right hmu hk
+    · have hk : kappa void < kappa (integrate (delta t)) := by simp [h]; omega
+      exact drop_left hk
+
+-- recDelta b s void --> b
+| _, _, Step.R_rec_zero b s => by
+    have hmu : mu b < mu (recDelta b s void) := by simp [mu]; omega
+    by_cases h : kappa b < kappa (recDelta b s void)
+    · exact drop_left h
+    · have hk : kappa b = kappa (recDelta b s void) := by simp only [kappa] at *; omega
+      exact drop_right hmu hk
+
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+      simp only [kappa, kappa_rec_delta]; omega
+    exact drop_left hk
+
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    have hmu : mu void < mu (eqW a a) := by simp [mu]; omega
+    by_cases h : kappa a = 0
+    · have hk : kappa void = kappa (eqW a a) := by simp [h]
+      exact drop_right hmu hk
+    · have hk : kappa void < kappa (eqW a a) := by simp [h]; omega
+      exact drop_left hk
+
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by simp [mu]; omega
+    have hk  : kappa (integrate (merge a b)) = kappa (eqW a b) := by simp [kappa]
+    exact drop_right hmu hk
+```
+
+These cases are exhaustive for the lexicographic measure `(kappa, mu)`:
+- Strict drop in `kappa` uses `drop_left`.
+- Equal `kappa` + strict drop in `mu` uses `drop_right`.
+- All inequalities are discharged by the provided `@[simp]` lemmas plus `omega` (as done in the three already-proved cases).
+- No new lemmas or definitions are introduced.
+
+The resulting `measure_decreases` theorem will then allow `strong_normalization` to close without further changes.

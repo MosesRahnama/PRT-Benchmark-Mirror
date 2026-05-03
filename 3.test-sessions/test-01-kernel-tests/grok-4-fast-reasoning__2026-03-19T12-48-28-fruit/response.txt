@@ -1,0 +1,6 @@
+Yes, strong normalization can be established from the presented calculus alone. The rewrite rules form a terminating first-order term rewrite system, as reductions either strictly decrease term size (e.g., mango/grape, peach cases, banana/plum, cherry refl) or temporarily increase it in bounded ways (cherry diff adds one layer; banana/grape unwraps grapes while adding pears, but nesting depth limits steps) without cycles or infinite chains, provable via structural induction on traces using Lean's inductive definitions and the accessible predicate on the step relation.
+
+**Short proof roadmap:**
+1. Define the one-step reduction `→` as the reflexive-transitive closure of `Step`, and normal forms as terms with no `Step` successor.
+2. Prove by complete induction on trace structure that every trace is accessible w.r.t. `→` (i.e., ∀ t, Acc (· → ·) t), using case analysis: base (plum) trivial; induct on constructors, showing each rule leads to an accessible subterm (e.g., for cherry diff, mango(peach a b) reduces further if applicable, else halts; for banana/grape, pear s recurses on accessible inner banana b s n).
+3. Conclude SN: no infinite reductions, every sequence terminates. No extra axioms needed beyond Prop reasoning and induction schema derivable from the inductive Trace/Step.

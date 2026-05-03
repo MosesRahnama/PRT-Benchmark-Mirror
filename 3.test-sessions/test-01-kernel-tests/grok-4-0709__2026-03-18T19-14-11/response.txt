@@ -1,0 +1,3 @@
+Yes, strong normalization can be established.
+
+**Proof roadmap:** Use the dependency pair method for first-order TRS. The DPs are RECΔ(b, s, δ n) ⇒ RECΔ(b, s, n) from R_rec_succ, and EQW(a, b) ⇒ INTEGRATE(merge a b), EQW(a, b) ⇒ MERGE(a, b) from R_eq_diff. No other DPs exist, and no cycles form. Chains from the recursive recΔ DP are finite because the third argument strictly decreases under a natural embedding (δ x > x). The eqW DPs are non-recursive and terminate trivially. Thus, no infinite DP chains exist, implying termination (SN).

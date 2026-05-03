@@ -1,0 +1,21 @@
+**Examining Lean 4 File**
+
+I'm currently focused on the Lean 4 file, `Test-01-Kernel.lean`. My initial step is file parsing. I want to build an understanding of the calculus defined within. I need to identify the key definitions and structures to determine if strong normalization is provable.
+
+
+**Parsing File Content**
+
+Now I'm diving deeper into the file content. I've begun to extract and categorize the core rewrite rules. It seems like the calculus's complexity is contained within a limited set of term rewriting constructs. The goal is to see if these can be ordered so that a decreasing argument can be formed. I am currently considering the application of a basic reduction ordering for the rewrite rules.
+**Reviewing Lean Code**
+
+I'm currently reviewing the Lean code file, `Test-01-Kernel.lean`. So far, I've noted a `Trace` type and a `Step` relation based on rewrite rules. The inductive definition of the `Trace` type is next on my list.
+
+
+**Dissecting Rewrite Rules**
+
+I've examined the rewrite rules within `Test-01-Kernel.lean` more closely. I see that the `Step` relation dictates how `Trace` terms are simplified. The rewrite rules appear to manage the `void`, `delta`, and `merge` constructors. The recursion is defined through `recΔ`. Specifically, rules like `R_int_delta` and `R_merge_cancel` offer valuable insights into the intended semantics. I'm now verifying these rules for consistency.
+
+
+**Considering Strong Normalization**
+
+Having analyzed the rewrite rules, I am now focused on strong normalization. I'm considering potential strategies to demonstrate this property. Initial thoughts involve examining the structure of terms and how rewrite rules reduce their complexity. The aim is to prove that every reduction sequence terminates.

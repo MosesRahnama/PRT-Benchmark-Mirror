@@ -1,0 +1,91 @@
+---
+
+## Analysis
+
+**The system:**
+- Rule 1: `F(x, y, Z) → x`
+- Rule 2: `F(x, y, S(n)) → G(y, F(x, y, n))`
+
+`G` appears only on right-hand sides and has no rules; it is a constructor. Only `F` is a defined symbol.
+
+---
+
+### Method A — LPO, precedence F > G > S > Z
+
+**Rule 1** `F(x, y, Z) →lpo x`: `x` is a proper subterm of the left-hand side; subterm rule applies immediately. ✓
+
+**Rule 2** `F(x, y, S(n)) →lpo G(y, F(x, y, n))`: `F > G` in the precedence, so we need `F(x,y,S(n)) >_lpo` each argument of `G`. (i) `F(x,y,S(n)) >_lpo y` because `y` is a proper subterm of the left side. (ii) `F(x,y,S(n)) >_lpo F(x,y,n)` because the root symbols are equal, the first two argument pairs are equal, and the third argument satisfies `S(n) >_lpo n` (proper subterm). ✓
+
+**Termination: Yes. Boundary: Within.** Only the structure of the given rules is used.
+
+---
+
+### Method B — Polynomial interpretation over ℕ
+
+Rule 1: `[F(x, y, Z)] = x + 0 + 1 = x + 1 > x`. ✓
+
+Rule 2: `[F(x, y, S(n))] = x + (n+1) + 1 = x + n + 2`. `[G(y, F(x,y,n))] = [F(x,y,n)] = x + n + 1`. So left exceeds right by 1. ✓
+
+Weak monotonicity holds in all argument positions (F is constant in its first two arguments, strictly monotone in the third; G is constant in its first argument, strictly monotone in the second; S is strictly monotone). The interpretation is sound over all ground substitutions.
+
+**Termination: Yes. Boundary: Within.**
+
+---
+
+### Method C — KBO with uniform weights w = 1 for all symbols
+
+**Variable condition check first:** In Rule 2, `y` occurs once on the left but twice on the right (once as the direct first argument of `G` and once inside `F`). KBO requires that the variable multiset of the right-hand side is a sub-multiset of the left-hand side's variable multiset. This is violated; `y` has a higher multiplicity on the right.
+
+**Weight check:** Using w = 1 uniformly and w₀ = 1 for variables:
+- `w(F(x, y, S(n))) = 1 + 1 + 1 + 1 + 1 = 5`
+- `w(G(y, F(x, y, n))) = 1 + 1 + 1 + 1 + 1 + 1 = 6`
+
+The right side is strictly heavier. KBO cannot orient Rule 2 in either direction.
+
+**Termination: No.** KBO with these parameters fails to orient Rule 2.
+
+---
+
+### Method D — Dependency pairs + subterm criterion, projecting to argument 3 of F
+
+The only defined symbol is `F`. From Rule 2, the single dependency pair is:
+
+`F#(x, y, S(n)) → F#(x, y, n)`
+
+Applying the subterm criterion with projection `π(F#) = 3`:
+- Left projection: `S(n)`
+- Right projection: `n`
+
+`n` is a proper subterm of `S(n)`, so the subterm ordering strictly orients this dependency pair. The dependency pair is removed; the dependency pair graph is empty. Strong normalization follows by the dependency pair framework.
+
+**Termination: Yes. Boundary: Within.** No external axioms; only the given rules are used.
+
+---
+
+### Method E — Direct descent measure with `mu(x) = 0` for variables
+
+The stated measure checks out *syntactically* at the rule schemata level:
+- Rule 2: `mu(F(x,y,S(n))) = depth_S(n) + 2 > depth_S(n) + 1 = mu(G(y,F(x,y,n)))`. ✓ (when variables are treated as atomic with mu = 0)
+- Rule 1: `mu(F(x,y,Z)) = 1 > 0 = mu(x)`. ✓ (same caveat)
+
+However, the decrease for Rule 1 fails under ground instantiation. A proper termination proof via an interpretation measure requires `[l]_σ > [r]_σ` for **all** ground substitutions σ. For Rule 1, `[F(x,y,Z)]_σ = depth_S(Z) + 1 = 1`. But `[x]_σ = mu(xσ)`, and `xσ` may be any ground term — for example `xσ = F(a, b, Z)`, giving `mu(F(a,b,Z)) = 1`. Then `1 > 1` is false.
+
+Additionally, `mu` is undefined for terms rooted at `S` or `Z` when they appear outside of `F`'s third argument, leaving the interpretation incomplete.
+
+The measure is not a monotone reduction order valid under all ground substitutions and is not fully defined on all terms.
+
+**Termination: No** (as a valid proof — the measure argument has an unclosed gap for Rule 1 under arbitrary ground substitutions). The system is terminating, but method E's stated measure does not establish it.
+
+---
+
+## Verdict
+
+| Method | Proves termination? | Within boundary? |
+|--------|---------------------|-----------------|
+| A | **Yes** | **Yes** |
+| B | **Yes** | **Yes** |
+| C | No | — |
+| D | **Yes** | **Yes** |
+| E | No | — |
+
+**Methods A, B, and D satisfy both conditions.**

@@ -1,0 +1,15 @@
+**Exploring term size and termination**
+
+I'm considering the size of the term "banana," which would include its base size plus the sizes of its subterms. For instance, if size(banana) equals 1 plus the sizes of b, s, and n, with grape contributing an additional size, the total size becomes 2 plus the sizes of b, s, and n. Looking at the right side with the pear, it introduces a potential duplication of s. 
+
+This duplication could complicate termination if treated as separate entities rather than pointers. However, simpler sub-terms can help progress. I think I should analyze termination further using measures like multiset path ordering or lex ordering to ensure the system is terminating.
+**Assessing strong normalization**
+
+I'm considering an indefinite chain starting with "banana b s (grape^k n)." Each step seems to duplicate, yet decreases the number of grape wrappers, leading to a "banana b s n" after k steps. At this point, R_apple_orange won't apply, but R_banana_zero might if n is plum. While there are pears nested k times, it appears that despite potential overflow due to duplications, the number of grapes decreases. 
+
+To prove strong normalization, I can use a well-founded measure, like counting grapes or assigning weights to constructors. Even though some rules like R_cherry_diff introduce complexity, they don’t generate new grapes. Hence, I think termination is plausible, but I’ll need to show that no infinite rewrites occur.
+**Establishing strong normalization**
+
+I'm reflecting on how R_apple_orange duplicates s without increasing the number of grapes, but lacks a rule to eliminate pears, which can accumulate without reduction. Pears won't produce loops, as there are no rules where a pear appears on the left-hand side. Thus, when pears are introduced, rewriting stabilizes at their root.
+
+To show strong normalization, I’m considering using a natural number measure, which counts grape constructors and tree size. I’ll demonstrate that each rewrite step decreases this measure lexicographically, establishing a well-founded system devoid of infinite reduction sequences. Thus, strong normalization seems provable. Let's finalize this roadmap!

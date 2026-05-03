@@ -1,0 +1,88 @@
+in `Test-03-Completion-Ordinal.lean`.
+
+### `Step.R_rec_succ`
+
+For the `recDelta` successor case, the left-hand side's `mu` value has an exponent containing `omega^5 * (mu n + 1)`, which is an exponential tower. This term dominates the right-hand side, where the largest corresponding term is `omega^2 * omega^(mu n + mu s + 6)`. The proof relies on the fact that for ordinals `a > b`, `omega^a` is much larger than `omega^b`.
+
+```lean
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- We need to show:
+    --   omega^3 * (mu s + 1) + omega^2 * (omega^(mu n + mu s + 6) + omega * (mu b + 1) + 2) + 1
+    --   < omega^(omega^5 * (mu n + 1) + mu s + 7) + omega * (mu b + 1) + 1
+    -- This holds because the exponent on the right is much larger.
+    -- Let's analyze the exponents.
+    -- Exponent on RHS: omega^5 * (mu n + 1) + mu s + 7
+    -- Largest exponent term on LHS (from mu(recDelta)): mu n + mu s + 6
+    have h_exp_gt : mu n + mu s + 6 < omega0 ^ (5 : Ordinal) * (mu n + 1) + mu s + 7 := by
+      -- omega^5 * (mu n + 1) is the dominant term.
+      -- Since mu n is an ordinal, mu n + 1 >= 1.
+      -- So omega^5 * (mu n + 1) >= omega^5.
+      -- omega^5 is much larger than mu n + mu s + 6.
+      apply lt_add_of_lt_of_le
+      · have : mu n + mu s + 6 < omega0 ^ (5 : Ordinal) := by
+          -- This is because omega^5 is a limit ordinal larger than any sum of smaller powers.
+          -- A full proof would use properties of ordinal exponentiation and CNF.
+          sorry
+        exact this
+      · exact le_mul_right _ (add_pos_of_pos_of_nonneg (Ordinal.pos_iff_ne_zero.mpr one_ne_zero) (zero_le _))
+
+    -- Now we can use the exponent inequality to show the full inequality.
+    -- The term with the larger exponent will dominate.
+    -- A full proof would require expanding and comparing Cantor Normal Forms.
+    sorry
+```
+
+### `Step.R_eq_refl`
+
+This case is straightforward. The `mu` value for `eqW a a` is `omega^(2 * mu a + 9) + 1`. Since `omega` is greater than 1 and the exponent is non-negative, this value is strictly greater than 1, and therefore greater than `mu(void)`, which is 0.
+
+```lean
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- We need to show: 0 < omega^(mu a + mu a + 9) + 1
+    -- This is true because omega > 1, so omega^x >= 1 for any x.
+    -- Adding 1 makes it strictly positive.
+    have h_pow_pos : 0 < omega0 ^ (mu a + mu a + 9) := by
+      apply opow_pos
+      · exact Ordinal.add_pos_of_nonneg_of_pos (zero_le _) (Ordinal.pos_iff_ne_zero.mpr (by simp))
+      · exact omega0_pos
+    exact add_pos_of_pos_of_pos h_pow_pos one_pos
+```
+
+### `Step.R_eq_diff`
+
+For the `eqW` difference case, we compare `mu(integrate (merge a b))` with `mu(eqW a b)`. The `mu` of `eqW a b` has an exponent of `mu a + mu b + 9`. The `mu` of the other side is a polynomial in `omega` with the highest power being `omega^4 * omega^3 = omega^7`. Since `mu a + mu b + 9` is at least 9, the exponent on the right-hand side is larger, ensuring the inequality holds.
+
+```lean
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- We need to show:
+    --   omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 2) + 1
+    --   < omega^(mu a + mu b + 9) + 1
+    -- This is equivalent to showing:
+    --   omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 2)
+    --   < omega^(mu a + mu b + 9)
+    apply lt_of_add_lt_add_right
+    -- Let's expand the LHS.
+    -- LHS = omega^7 * (mu a + 1) + omega^6 * (mu b + 1) + omega^4 * 2
+    -- The dominant term on the LHS is omega^7 * (mu a + 1).
+    -- The exponent on the RHS is mu a + mu b + 9.
+    -- Since mu b >= 0, the exponent is at least mu a + 9.
+    -- We need to show that omega^7 * (mu a + 1) < omega^(mu a + 9).
+    -- This holds because for limit ordinal 'a', a * o < a if o is small enough.
+    -- More simply, we can compare exponents. 7 < mu a + 9 for any mu a.
+    have h_exp_lt : 7 < mu a + mu b + 9 := by
+      apply lt_add_of_le_of_pos
+      · exact zero_le _
+      · apply lt_add_of_le_of_pos
+        · exact zero_le _
+        · exact Ordinal.pos_iff_ne_zero.mpr (by simp)
+
+    -- Because the exponent on the right is larger, the inequality holds.
+    -- A full proof would involve comparing the Cantor Normal Forms.
+    sorry
+```

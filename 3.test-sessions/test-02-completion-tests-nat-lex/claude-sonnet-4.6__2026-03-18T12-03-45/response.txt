@@ -1,0 +1,128 @@
+Here is a complete analysis of the five `sorry`'d cases with proof skeletons. Four are provable with the current measure; one has a fundamental gap that I will explain precisely.
+
+---
+
+## Cases provable with the current `(κ, μ)` measure
+
+### `R_int_delta` — `integrate (delta t) ↝ void`
+
+After unfolding simp lemmas: `κ(src) = κ t`, `κ(void) = 0`, `μ(src) = 1 + μ t`, `μ(void) = 0`.
+
+- If `κ t = 0`: κ ties at 0 → μ drops by `1 + μ t` → `drop_right`
+- If `κ t > 0`: κ drops from `κ t` to `0` → `drop_left`
+
+```lean
+| _, _, Step.R_int_delta t => by
+    rcases Nat.eq_zero_or_pos (kappa t) with hk | hk
+    · apply drop_right
+      · show mu void < mu (integrate (delta t)); simp; omega
+      · show kappa void = kappa (integrate (delta t)); simp [hk]
+    · apply drop_left
+      show kappa void < kappa (integrate (delta t))
+      simpa using hk
+```
+
+---
+
+### `R_rec_zero` — `recDelta b s void ↝ b`
+
+Key auxiliary fact: the wildcard branch of `kappa` gives
+`κ(recDelta b s void) = Nat.max (Nat.max (κ b) (κ s)) (κ void) = Nat.max (κ b) (κ s)`.
+
+- If `κ s ≤ κ b`: `Nat.max (κ b)(κ s) = κ b` → κ ties → μ drops (by `3 + μ b + μ s > 0`) → `drop_right`
+- If `κ b < κ s`: κ drops from `κ s` to `κ b` → `drop_left`
+
+```lean
+| _, _, Step.R_rec_zero b s => by
+    have hk_src : kappa (recDelta b s void) = Nat.max (kappa b) (kappa s) := by
+      show Nat.max (Nat.max (kappa b) (kappa s)) (kappa void) = Nat.max (kappa b) (kappa s)
+      simp
+    have hmu_src : mu (recDelta b s void) = 3 + mu b + mu s := by simp
+    rcases le_or_lt (kappa s) (kappa b) with h | h
+    · -- κ s ≤ κ b ⟹ max = κ b, so kappa ties; mu drops
+      apply drop_right
+      · rw [hmu_src]; omega
+      · rw [hk_src]; omega
+    · -- κ b < κ s ⟹ kappa b < max (kappa b) (kappa s) = kappa src
+      apply drop_left
+      rw [hk_src]; omega
+```
+
+---
+
+### `R_eq_refl` — `eqW a a ↝ void`
+
+`κ(eqW a a) = Nat.max (κ a)(κ a) = κ a`, `κ(void) = 0`, `μ(eqW a a) = 4 + 2·μ a`.
+
+Same case structure as `R_int_delta`:
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    rcases Nat.eq_zero_or_pos (kappa a) with hk | hk
+    · apply drop_right
+      · show mu void < mu (eqW a a); simp; omega
+      · show kappa void = kappa (eqW a a); simp [hk]
+    · apply drop_left
+      show kappa void < kappa (eqW a a)
+      simpa using hk
+```
+
+---
+
+### `R_eq_diff` — `eqW a b ↝ integrate (merge a b)`
+
+`κ(integrate(merge a b)) = κ(merge a b) = Nat.max (κ a)(κ b) = κ(eqW a b)` — **kappa ties exactly**.
+
+`μ(eqW a b) = 4 + μ a + μ b`,  `μ(integrate(merge a b)) = 1 + (2 + μ a + μ b) = 3 + μ a + μ b` — **μ drops by 1**.
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    apply drop_right
+    · show mu (integrate (merge a b)) < mu (eqW a b); simp; omega
+    · show kappa (integrate (merge a b)) = kappa (eqW a b); simp
+```
+
+---
+
+## `R_rec_succ` — the measure is insufficient
+
+`recDelta b s (delta n) ↝ app s (recDelta b s n)`
+
+**The current `(κ, μ)` measure does not strictly decrease for this rule.** Here is a concrete counterexample:
+
+| | Term | κ | μ |
+|---|---|---|---|
+| Input | `recDelta void void (delta (delta void))` | 1 | 3 |
+| Output | `app void (recDelta void void (delta void))` | 1 | 4 |
+
+Proof: `κ(input) = Nat.max 0 0 + 1 = 1`. For the output, `κ(recDelta void void (delta void)) = 1` (third arg is still `delta`-headed), and `κ(app void ·) = Nat.max 0 1 = 1`. So **κ ties at 1**. Meanwhile `μ(input) = 3 + 0 + 0 + 0 = 3` and `μ(output) = 1 + 0 + (3 + 0 + 0 + 0) = 4`. The measure **increases** in lex order.
+
+### Root cause
+
+`κ` adds `+1` for a single `recDelta _ _ (delta _)`, but when `n` is itself `delta`-headed the reduct `recDelta b s n` still matches the `+1` branch. The depth +1 is **not consumed** by one step; it is transferred to the inner sub-term and reappears under `app`.
+
+### What would fix it
+
+Replace `kappa` with a measure that counts the **total recursive delta-nesting depth** of all recDelta third-arguments throughout the whole term, for example by replacing the single `+1` with `1 + kappa n` (making depth additive rather than flat):
+
+```lean
+-- Revised kappa (fragment):
+| .recDelta b s (.delta n) =>
+    Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1 + kappa n
+```
+
+or by introducing a separate structural counter that is strictly sub-additive under the `R_rec_succ` step. With that change the `drop_left` argument goes through uniformly, because the outer `+1` is not reproduced inside `recDelta b s n` when `n = delta m`:
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    apply drop_left
+    show kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))
+    -- With the revised kappa this becomes:
+    --   Nat.max (kappa s) (kappa (recDelta b s n))
+    --   < Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1 + kappa n
+    -- which holds by omega once the simp lemmas are applied.
+    simp [kappa_rec_delta, kappa_app]; omega
+    -- (requires the revised kappa_rec_delta providing a strict bound)
+```
+
+Until `kappa` (or `mu`) is adjusted so that the `R_rec_succ` step also becomes a strict decrease, the case cannot be closed.

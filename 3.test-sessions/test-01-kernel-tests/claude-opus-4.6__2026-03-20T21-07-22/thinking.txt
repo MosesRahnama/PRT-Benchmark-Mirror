@@ -1,0 +1,64 @@
+The file is short — just 22 lines. Let me analyze the system carefully.
+
+## The System
+
+**Syntax (terms/traces):**
+- `void` — a constant
+- `delta t` — unary constructor
+- `integrate t` — unary constructor
+- `merge t u` — binary constructor
+- `app t u` — binary constructor
+- `recΔ t u v` — ternary constructor
+- `eqW t u` — binary constructor
+
+**Rewrite rules (Step relation):**
+1. `integrate (delta t) → void`
+2. `merge void t → t`
+
+
+3. `merge t void → t`
+4. `merge t t → t` (idempotency)
+5. `recΔ b s void → b`
+6. `recΔ b s (delta n) → app s (recΔ b s n)`
+7. `eqW a a → void`
+8. `eqW a b → integrate (merge a b)`
+
+Now I'm looking at whether strong normalization holds for this system. There's an immediate tension between rules 7 and 8 — rule 7 reduces equal terms to void directly, while rule 8 creates a merge of distinct terms wrapped in integrate. This suggests the rules might be in conflict or that I need to understand their interaction more carefully.
+
+The real concern is rule 6, which recursively peels off delta layers. If the argument to recΔ isn't a delta or void, the recursion gets stuck unless that argument can reduce further. The question becomes whether every term eventually reaches a form where rule 6 can fire or the recursion bottoms out at void.
+
+Actually, I'm realizing the Step relation only rewrites at the root — there are no congruence rules allowing rewrites inside subterms. This severely restricts what can reduce. So a term like `recΔ b s (merge x y)` is stuck unless `merge x y` itself reduces at the root, which it won't unless the conditions for rules 7 or 8 are met. This means the system might have normal forms that aren't fully reduced, and I need to check whether infinite reduction chains are actually possible given this constraint. the root. No rule has `app` on the LHS, so that result is already in normal form. But after rule 2 fires, the resulting term `t` could itself have a root that matches another rule — for instance, `merge void (integrate (delta x))` reduces to `integrate (delta x)`, which then reduces to `void`. So I can get chains of reductions, but I need to check whether these chains can be infinite. The possible rule heads are `integrate`, `merge`, `eqW`, and `recΔ`, so I'm looking for whether any sequence of these reductions could loop back on itself.
+
+Rule 8 produces `integrate (merge a b)`, which only triggers rule 1 if `merge a b` is literally `delta t` — but since `merge` and `delta` are different constructors, that's impossible, so rule 8 always terminates. For the other rules that return subterms, since terms are finite structures, repeatedly extracting subterms can't create an infinite chain. Rules 2, 3, 4, and 5 can expose new redexes by returning proper subterms, but since each step strictly decreases term size, any reduction chain through them is bounded. Rules 1, 6, 7, and 8 all produce normal forms where no further root reduction is possible, so they always terminate the chain. This means strong normalization holds for the root reduction relation.
+
+Now I need to check what the user is actually asking about — whether they want SN for just the `Step` relation as defined, or if there's some closure I'm missing in the file. which is purely root reduction. And since rules 1 and 7 produce `void`, rules 6 produce `app ...`, and rule 8 produces `integrate (merge ...)` — all terminal — while rules 2-5 return strict subterms, any reduction sequence alternates between size-decreasing steps and terminal steps, so all sequences must be finite.
+
+Actually, let me reconsider whether a rule 2-5 step could produce something that then triggers rule 6, 7, or 8, which then produces further reductions. But those terminal rules' outputs are indeed normal forms, and any subterm produced by rules 2-5 could fire any rule again, though each such step reduces term size, so the chain terminates.
+
+So yes, strong normalization holds via a straightforward size measure: every root reduction either strictly decreases structural size or reaches a normal form, and since size is a natural number, all reduction sequences are finite. Let me verify that rules 6 and 8 actually produce normal forms and not terms that could reduce further. proof. SN holds trivially for the root-step relation.
+
+But there's a subtlety here. The question is whether we're talking about root-level rewriting only, or the compatible closure where we can rewrite anywhere in a term. If it's just root steps, strong normalization is immediate. But if we're considering the full rewrite system with context, I need to check whether rewriting under context preserves termination.
+
+The user asked about "strong normalization of this system," which in term rewriting typically means the compatible closure. But the Lean file only defines root steps, so I'm not sure if they're asking what can be established from what's given, or whether they want the full picture. Let me think through the compatible closure case, since that's the standard interpretation.
+
+With compatible closure, we can rewrite inside subterms. The critical rule to examine is Rule 6...
+
+Actually, looking at how Rule 6 works: when we fire it, we get `app s (recΔ b s n)`, and then we can keep reducing `recΔ b s n` further if `n` is another `delta`. This peels off layers of `delta` until we hit `void`, which terminates cleanly.
+
+The trickier part is how `eqW` interacts with everything else. Rules 7 and 8 overlap when the arguments are syntactically equal, but under compatible closure, we could reduce one of those arguments inside the `eqW` call, making them no longer identical and changing which rule applies.
+
+The real concern is whether we can create cycles or infinite chains. Rule 8 produces `integrate (merge a b)`, and depending on what `a` and `b` are, `merge` might reduce further or get stuck. If `a` equals `b`, we get `integrate a`, which terminates if `a` is `delta _` (via rule 1), but otherwise stays stuck. The danger would be if `app` could somehow feed back into the recursion in a way that grows unboundedly, but since `app` has no reduction rules, that seems unlikely.
+
+The real problem is rule 6: `recΔ b s (delta n) → app s (recΔ b s n)`. This rule duplicates `s` — it appears once on the left side but twice on the right (once as the first argument to `app` and once inside the recursive call). Since duplication is the classic threat to strong normalization, if `s` contains internal redexes, those redexes now need to be reduced in two places, potentially creating a cascade of further duplications.
+
+Let me test whether this can actually cause non-termination by constructing a problematic term. If I nest `recΔ` calls with `s` containing another `recΔ`, the duplications might feed back into themselves and create an infinite reduction chain. I'm wondering if there's actually a termination issue here. Let me try using recursive path ordering to prove strong normalization—I need to set up a precedence on the function symbols and check whether RPO can orient all the rules. For rule 6, I need `recΔ(b, s, delta(n))` to be larger than `app(s, recΔ(b, s, n))`, which should work if I give `recΔ` higher precedence than `app`.
+
+Now I'm verifying the argument comparisons: `s` is a proper subterm so that's fine, and for the third argument, `delta(n)` is strictly larger than `n` by the subterm property. For rule 1, I just need `integrate(delta(t))` to dominate `void`, which holds as long as `integrate` has sufficient precedence. I'm working through the remaining rules to see if this precedence assignment is consistent across all of them. Now I'm verifying rule 8 more carefully with RPO: since `eqW > integrate` in precedence, I need `eqW(a, b) >_RPO merge(a, b)`, which follows from `eqW > merge` and the subterm property for both arguments. For rule 6, `recΔ(b, s, delta(n)) >_RPO app(s, recΔ(b, s, n))` holds because `recΔ > app` and the lexicographic comparison on arguments works out. So the precedence constraints I need are: `eqW > integrate > void`, `eqW > merge`, `recΔ > app`, with `merge > void` as a helpful addition, and I should verify whether `recΔ > delta` is also required.
+
+Looking at the rules individually, rule 6 only needs `recΔ > app` and the lexicographic argument comparison, so `recΔ > delta` isn't strictly necessary. Setting a full precedence of `eqW > recΔ > {integrate, merge, delta, app} > void` handles all eight rules: the subterm property covers rules 2-5, the precedence constraints handle rules 1 and 7, and the combination of precedence and lexicographic comparison validates rules 6 and 8.
+
+The system has overlapping rules when `a = a`, but that's fine for strong normalization since RPO proves each individual rule reduces the measure, and any reduction sequence will monotonically decrease the RPO value. Since RPO is a simplification ordering, it's closed under the compatible closure, so this works for rewriting anywhere in the term, not just at the root.
+
+Now I'm checking whether non-left-linear rules like `merge(t, t) → t` and `eqW(a, a) → void` cause problems. RPO handles these fine because it's stable under substitution — if `l >_RPO r` holds, then `lσ >_RPO rσ` for any substitution σ, which is exactly what we need for the SN argument to go through.
+
+There's an interesting wrinkle though: both rule 7 (`eqW(a, a) → void`) and rule 8 (`eqW(a, b) → integrate(merge(a, b))`) can apply to the same term `eqW t t`, creating non-determinism. But since RPO shows both reductions strictly decrease the measure, both paths terminate regardless of which rule fires. The system is strongly normalizing, and the proof stays entirely within the first-order term rewriting framework without needing extra axioms or side-conditions.

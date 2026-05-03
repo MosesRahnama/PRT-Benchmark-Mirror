@@ -1,0 +1,19 @@
+**Yes**, strong normalization holds for this root-rewriting system.
+
+**Short proof roadmap (by induction on term size):**
+
+Define `SN(t)`: every `t`-starting reduction sequence terminates.
+
+- **NF terms**: Trivial (no steps).
+- **IH**: `SN(s)` for all `size(s) < size(t)`.
+
+For non-NF `t` matching a rule `t → u`:
+
+**Peeling rules** (`R_int_delta`, `R_merge_*`, `R_rec_zero`): `size(u) < size(t)` (target is proper subterm/arg), so `SN(u)` by IH.
+
+**One-shot rules**:
+- `R_rec_succ`: `u = app s (recΔ b s n)` has root `app` (no matching rule) → NF.
+- `R_eq_refl`: `u = void` → NF.
+- `R_eq_diff`: `u = integrate (merge a b)` has root `integrate`, arg `merge a b ≠ delta _` (head mismatch, `DecidableEq`) → NF.
+
+Thus, every sequence from `t` is finite. Uses only `inductive` cases/recursion, `size` (definable structurally), rules, `DecidableEq`.

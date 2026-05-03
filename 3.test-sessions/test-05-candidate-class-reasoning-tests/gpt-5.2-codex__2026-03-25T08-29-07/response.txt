@@ -1,0 +1,57 @@
+## Assessment 🧭
+
+I reviewed the file
+and checked each rewrite rule against each proposed measure. All three measures decrease on every rule *except* `R_rec_succ`. That single rule breaks each candidate.
+
+### Key rule that fails all three
+`R_rec_succ : recDelta b s (delta n) → app s (recDelta b s n)`
+
+- **For `mu1`**  
+  - LHS: $2 + \mu_1 b + \mu_1 s + \mu_1 n$  
+  - RHS: $2 + \mu_1 b + 2\mu_1 s + \mu_1 n$  
+  - So RHS = LHS $+ \mu_1 s$.  
+  - If $s \neq \text{void}$ then $\mu_1$ *increases*; if $s = \text{void}$ it is *equal*.  
+  ✅ **Conclusion:** not strictly decreasing → **fails**.
+
+- **For `mu2`**  
+  - LHS: $6 + \mu_2 b + \mu_2 s + \mu_2 n$  
+  - RHS: $6 + \mu_2 b + 2\mu_2 s + \mu_2 n$  
+  - So RHS = LHS $+ \mu_2 s$.  
+  - Same problem as `mu1`.  
+  ✅ **Conclusion:** not strictly decreasing → **fails**.
+
+- **For `mu3`**  
+  - LHS: $2 + \mu_3 b + \mu_3 s + \mu_3 n$  
+  - RHS: $3 + \mu_3 b + 2\mu_3 s + \mu_3 n$  
+  - So RHS = LHS $+ (1 + \mu_3 s)$.  
+  - This is *always* strictly larger.  
+  ✅ **Conclusion:** strictly **increases** → **fails** even more strongly.
+
+### Concrete counterexample (minimal)
+Let $b = s = n = \text{void}$:
+
+- `recDelta void void (delta void) → app void (recDelta void void void)`
+
+Then:
+- `mu1`: LHS = 2, RHS = 2 (no decrease)  
+- `mu2`: LHS = 6, RHS = 6 (no decrease)  
+- `mu3`: LHS = 2, RHS = 3 (increase)
+
+### Summary
+- **`mu1` fails** due to `R_rec_succ` (non-decreasing; sometimes increasing).  
+- **`mu2` fails** for the same reason.  
+- **`mu3` fails** even when $s = \text{void}$; it strictly increases.  
+
+All other rules strictly decrease for all three measures. The sole blocker is `R_rec_succ`.
+
+---
+
+## ✅ Updated todo list
+
+- 1. Review rewrite rules and measures — **completed**
+- 2. Check decrease for mu1 — **completed**
+- 3. Check decrease for mu2 — **completed**
+- 4. Check decrease for mu3 — **completed**
+- 5. Summarize assessment — **completed**
+
+If you want, I can suggest a modified measure that *does* decrease on `R_rec_succ` while preserving the other rules.

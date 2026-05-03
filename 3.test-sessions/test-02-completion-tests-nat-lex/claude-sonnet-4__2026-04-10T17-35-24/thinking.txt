@@ -1,0 +1,56 @@
+The user wants me to analyze a specific Lean 4 file that contains a partial strong normalization proof for a first-order rewrite calculus. They mention that 3 out of 8 rule cases are proved and 5 are marked with `sorry`. They want me to provide a proof skeleton for completing the remaining cases.
+
+The key constraints are:
+1. Do not modify the file 
+2. Do not run the compiler
+3. Do not read any other files in the workspace 
+4. Do not search the web
+
+I need to read the specific file they mentioned to understand the current state of the proof and then provide guidance on how to complete the remaining cases.
+
+Let me read the file first.
+Now I can see the structure of the file. This is a strong normalization proof for a first-order rewrite calculus with 7 constructors (void, delta, integrate, merge, app, recDelta, eqW) and 8 reduction rules.
+
+The proof uses lexicographic ordering on two measures:
+1. `kappa`: recursion depth (adds +1 only when recDelta's third argument is delta-wrapped)
+2. `mu`: weighted structural size (delta is transparent, each constructor has a fixed weight)
+
+Looking at the cases:
+
+**Already proved (3 cases):**
+1. `R_merge_void_left`: merge void t → t 
+2. `R_merge_void_right`: merge t void → t
+3. `R_merge_cancel`: merge t t → t
+
+**Remaining cases to prove (5 cases):**
+1. `R_int_delta`: integrate (delta t) → void
+2. `R_rec_zero`: recDelta b s void → b  
+3. `R_rec_succ`: recDelta b s (delta n) → app s (recDelta b s n)
+4. `R_eq_refl`: eqW a a → void
+5. `R_eq_diff`: eqW a b → integrate (merge a b)
+
+For each case, I need to analyze how both `kappa` and `mu` behave and show that the lexicographic measure decreases.
+
+Let me think through each case:
+
+1. **R_int_delta**: integrate (delta t) → void
+   - LHS: kappa = kappa(t), mu = 1 + mu(t)  
+   - RHS: kappa = 0, mu = 0
+   - If kappa(t) > 0, then kappa drops → left case
+   - If kappa(t) = 0, then mu drops from 1+mu(t) to 0 → right case
+   
+2. **R_rec_zero**: recDelta b s void → b
+   - The left side has kappa = max(kappa(b), kappa(s)) and mu = 3 + mu(b) + mu(s), while the right side reduces to just kappa(b) and mu(b). Since kappa(b) is at most the maximum of the two input kappas, and mu(b) is strictly less than the weighted sum on the left, the measure decreases in the lexicographic ordering.
+
+3. **R_rec_succ**: recDelta b s (delta n) → app s (recDelta b s n)
+   - On the left, kappa becomes max(kappa(b), kappa(s), kappa(n)) + 1 with mu = 3 + mu(b) + mu(s) + mu(n). The right side applies s to a recursive call, giving kappa = max(kappa(b), kappa(s), kappa(n)) and mu = 1 + mu(s) + 3 + mu(b) + mu(s) + mu(n). The kappa decreases by 1 while mu increases slightly, but the kappa decrease dominates in the ordering.
+
+4. **R_eq_refl**: eqW a a → void
+   - When both sides are identical, the left has kappa = kappa(a) and mu = 4 + 2*mu(a), while the right is void with kappa = 0 and mu = 0. If kappa(a) is positive, the kappa strictly decreases. Otherwise, when kappa(a) = 0, the measure drops from 4 + 2*mu(a) to 0, which is the right case.
+
+5. **R_eq_diff**: eqW a b → integrate (merge a b)
+   - The left side has kappa = max(kappa(a), kappa(
+
+b)) and mu = 4 + mu(a) + mu(b). The right side has the same kappa but mu becomes 3 + mu(a) + mu(b), so the measure decreases by 1 while kappa remains unchanged.
+
+Now I can construct the proof skeleton.

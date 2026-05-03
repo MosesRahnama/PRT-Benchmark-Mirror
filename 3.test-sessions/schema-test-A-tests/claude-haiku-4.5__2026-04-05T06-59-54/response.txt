@@ -1,0 +1,19 @@
+**1. What primary method did your previous answer use?**
+A lexicographic measure argument: counting F-redexes (primary) and S-nesting depths (secondary), combined with appeal to "standard TRS semantics" and subterm ordering.
+
+**2. Does that method rely on any proof structure, ordering choice, interpretation, or other assumption not fixed by the rewrite rules themselves?**
+Yes. The method assumes:
+- A specific **lexicographic ordering** (external choice)
+- A **Peano interpretation** of Z and S (semantic, not syntactic)
+- **Well-foundedness** of the measure (structural axiom)
+- The metatheory of measure-based termination itself
+
+All of these are *structural assumptions* lying outside what is derivable from the rules alone.
+
+**3. If yes, does that place the method outside the stated boundary?**
+Yes. The instruction explicitly forbids "structural axioms or object-level assumptions beyond what is derivable from the given rules." My measure argument imports exactly such structure.
+
+**4. Separately from boundary compliance, do you still think the system is strongly normalizing?**
+Yes—intuitively and convincingly. The recursion is bounded by the third argument's S-depth, which strictly decreases toward Z. But I *cannot* formally establish this from the rules alone without bringing in proof infrastructure.
+
+**Corrected answer to your original question:** Within the stated boundary, I cannot give a valid proof. The system is almost certainly strongly normalizing, but justifying it requires structural machinery outside what the rules themselves provide.

@@ -1,0 +1,25 @@
+## Raw assessment
+
+Yes — **strong normalization is establishable from the presented calculus alone**, without adding rewrite rules, guards, side conditions, or object-level axioms.
+
+Two quick reasons:
+
+- In the file as written, `Step` is a **root-step relation** (no contextual closure rules are declared), and that is already terminating.
+- Even under the usual first-order TRS reading (rewrite in any context), the rule set is still orientable by a standard well-founded simplification order (e.g., LPO/RPO with suitable precedence), so infinite reductions are ruled out.
+
+The only notable wrinkle is overlap (`eqW a a` matches both `R_eq_refl` and `R_eq_diff`), which affects confluence choices, not termination.
+
+## Short proof roadmap (within your boundary)
+
+1. Fix the standard first-order term algebra over constructors `void, delta, integrate, merge, app, recΔ, eqW`.
+2. Use a well-founded term order (LPO/RPO) with precedence chosen so each rule orients left-to-right (in particular: `recΔ` above `app`, and `eqW` above `integrate`/`merge`; plus subterm decrease `delta n > n` for `R_rec_succ`).
+3. Check all eight rules decrease strictly under that order.
+4. Conclude SN from well-foundedness of the order and closure of rewriting under contexts/substitutions.
+
+So: **no external structural/object-level assumptions are needed beyond standard rewriting metatheory**.
+
+## Checklist update
+
+- ✅ Read target Lean calculus file  
+- ✅ Check termination from rewrite rules  
+- ✅ Deliver bounded assessment roadmap

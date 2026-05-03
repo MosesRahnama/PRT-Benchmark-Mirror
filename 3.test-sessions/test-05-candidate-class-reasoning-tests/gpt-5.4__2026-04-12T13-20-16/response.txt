@@ -1,0 +1,35 @@
+I’ve isolated the key check: each candidate only works if every rewrite rule strictly decreases the measure. The recursive successor rule is the decisive one, so I’m comparing left and right sides symbolically for all three measures.All three candidates fail as global termination measures for the rewrite relation in KO7-LLM-Benchmark/test-files/Test-05-Candidate-Class-Reasoning.lean.
+
+The decisive obstruction is the recursive step KO7-LLM-Benchmark/test-files/Test-05-Candidate-Class-Reasoning.lean:
+`recDelta b s (delta n) -> app s (recDelta b s n)`
+
+This rule keeps the old `s` inside `recDelta` and also adds a new outer occurrence of `s` as an argument to `app`, so the right-hand side contains one extra copy of `s`. Since all three `mu` functions are additive and assign nonnegative weight to subterms, that extra copy is exactly where they break.
+
+For the three candidates:
+
+1. `mu1` is not valid.
+`mu1(lhs) = 2 + mu1 b + mu1 s + mu1 n`
+`mu1(rhs) = 2 + mu1 b + 2 * mu1 s + mu1 n`
+So `mu1(rhs) - mu1(lhs) = mu1 s`.
+If `s = void`, the measure is equal, not strictly smaller.
+If `s` is nontrivial, the measure increases.
+
+2. `mu2` is not valid.
+`mu2(lhs) = 6 + mu2 b + mu2 s + mu2 n`
+`mu2(rhs) = 6 + mu2 b + 2 * mu2 s + mu2 n`
+Again `mu2(rhs) - mu2(lhs) = mu2 s`.
+So it has the same failure mode as `mu1`: equality when `s = void`, increase otherwise.
+
+3. `mu3` is not valid, and it fails more strongly.
+`mu3(lhs) = 2 + mu3 b + mu3 s + mu3 n`
+`mu3(rhs) = 3 + mu3 b + 2 * mu3 s + mu3 n`
+So `mu3(rhs) - mu3(lhs) = 1 + mu3 s`, which is always positive.
+This rule strictly increases `mu3` on every instance of `R_rec_succ`.
+
+Aside from that recursive rule, each candidate does decrease on the other rules, including `R_int_delta`, both `merge void` rules, `R_merge_cancel`, `R_rec_zero`, `R_eq_refl`, and `R_eq_diff`. So the assessment is:
+
+- `mu1`: rejected
+- `mu2`: rejected
+- `mu3`: rejected, with the strongest counterexample behavior
+
+The root issue is structural, not numerical tuning: any simple additive size measure of this form is unlikely to work for `R_rec_succ` because the rule duplicates `s` on the right-hand side. If you want, I can next explain what kind of non-additive or lexicographic measure would have a chance of succeeding, still without modifying the file.

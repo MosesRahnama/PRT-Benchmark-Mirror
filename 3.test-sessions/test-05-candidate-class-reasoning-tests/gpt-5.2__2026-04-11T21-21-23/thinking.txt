@@ -1,0 +1,3 @@
+**Computing formula comparisons**
+
+I’m computing this formula step by step. So for the left-hand side, mu3(lhs) results in 2 plus some components. On the right-hand side, mu3(rhs) gives 3 plus components. The difference is greater than zero, indicating it strictly increases. If I plug in a simple example, like using s=void, it yields +1. This leads to my conclusion that it isn't a decreasing termination measure, unlike other rules. I could organize this with a summary and details for clarity.

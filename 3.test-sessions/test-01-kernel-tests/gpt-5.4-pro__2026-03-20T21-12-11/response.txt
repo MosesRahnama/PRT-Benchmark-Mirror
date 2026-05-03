@@ -1,0 +1,29 @@
+**Raw assessment:** **Yes.** Strong normalization can be established from
+alone, with no extra rewrite rules, guards, or object-level axioms.
+
+A direct proof works by a **polynomial interpretation** into $\mathbb N$ that strictly decreases on every rule. For example:
+
+$$
+\begin{aligned}
+|void|&=0 \\
+|\delta(t)|&=|t|+1 \\
+|integrate(t)|&=|t|+1 \\
+|merge(x,y)|&=|x|+|y|+1 \\
+|app(x,y)|&=|x|+|y| \\
+|rec\Delta(b,s,n)|&=(|n|+1)(|s|+1)+|b| \\
+|eqW(a,b)|&=|a|+|b|+3
+\end{aligned}
+$$
+
+Then each rewrite decreases strictly, e.g.
+
+- $|integrate(\delta t)| = |t|+2 > 0 = |void|$
+- $|merge(void,t)| = |t|+1 > |t|$
+- $|merge(t,t)| = 2|t|+1 > |t|$
+- $|rec\Delta(b,s,void)| = |s|+|b|+1 > |b|$
+- $|rec\Delta(b,s,\delta n)| = (|n|+2)(|s|+1)+|b| > |s| + (|n|+1)(|s|+1)+|b| = |app(s,rec\Delta(b,s,n))|$
+- $|eqW(a,b)| = |a|+|b|+3 > |a|+|b|+2 = |integrate(merge(a,b))|$
+
+Because the interpretation is monotone in every argument, the decrease is stable under standard first-order rewriting in contexts. So no infinite reduction sequence exists.
+
+**Short roadmap:** prove termination by this interpretation, then conclude strong normalization for all finite `Trace` terms. The overlap at `eqW a a` is not an obstacle for normalization; both possible rewrites still decrease.

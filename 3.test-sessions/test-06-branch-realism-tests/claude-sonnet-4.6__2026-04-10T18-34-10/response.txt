@@ -1,0 +1,66 @@
+## Assessment
+
+The helper strategy is **unsound**. Both theorems are false, and the same family of inputs refutes each.
+
+---
+
+### The `kappa` definition's critical clause
+
+```lean
+| .recDelta b s (.delta n) => Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1
+| .recDelta b s n           => Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)
+```
+
+The only structural difference is `+1` when the third argument is wrapped in exactly one `delta`. Crucially, `kappa (delta t) = kappa t` — `kappa` strips `delta` transparently everywhere else.
+
+---
+
+### `kappa_rec_delta_step` is false
+
+The claim is: `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1` for all `n`.
+
+Let $M = \text{Nat.max}(\text{Nat.max}(\kappa\,b,\,\kappa\,s),\,\kappa\,n)$.
+
+**LHS** (by the `kappa_rec_delta` simp lemma):
+
+$$\text{LHS} = M + 1$$
+
+**RHS** requires computing `kappa (recDelta b s n)`. When $n = \delta\,n'$ (i.e. `n = delta n'`):
+
+- $\kappa\,n = \kappa\,(\delta n') = \kappa\,n'$, so $M = \text{Nat.max}(\text{Nat.max}(\kappa b, \kappa s), \kappa n')$
+- `kappa (recDelta b s (delta n'))` hits the first branch: $= M + 1$
+
+So $\text{RHS} = (M + 1) + 1 = M + 2 \neq M + 1 = \text{LHS}$.
+
+**Concrete counterexample** — `b = void`, `s = void`, `n = delta void`:
+
+| Expression | Value |
+|---|---|
+| `kappa b`, `kappa s`, `kappa void`, `kappa (delta void)` | 0, 0, 0, 0 |
+| LHS = `kappa (recDelta void void (delta (delta void)))` | $\text{max}(\text{max}(0,0), 0) + 1 = 1$ |
+| `kappa (recDelta void void (delta void))` | $\text{max}(\text{max}(0,0), 0) + 1 = 1$ |
+| RHS = `kappa (recDelta void void (delta void)) + 1` | $1 + 1 = 2$ |
+
+$1 = 2$ is false.
+
+---
+
+### `kappa_rec_succ_drop` is false (independently)
+
+The claim is: `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))` for all `n`.
+
+**Same counterexample** — `b = void`, `s = void`, `n = delta void`:
+
+$$\text{RHS} = \kappa(\text{recDelta void void } (\delta(\delta\,\text{void}))) = \text{max}(\text{max}(0,0), 0) + 1 = 1$$
+
+$$\text{LHS} = \kappa(\text{app void } (\text{recDelta void void } (\delta\,\text{void})))$$
+$$= \text{Nat.max}(0,\; \kappa(\text{recDelta void void } (\delta\,\text{void})))$$
+$$= \text{Nat.max}(0,\; 1) = 1$$
+
+$1 < 1$ is false. The inequality is not strict; it reduces to $\leq$ in the worst case.
+
+---
+
+### Root cause
+
+The measure `kappa (delta t) = kappa t` erases the depth of `delta`-nesting uniformly. This makes `kappa (recDelta b s (delta n))` sensitive to the shape of `n`: if `n` is itself `delta`-headed, the

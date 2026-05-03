@@ -1,0 +1,56 @@
+Based on the file content, here is my raw assessment:
+
+## The Calculus
+
+The system defines:
+- **Terms**: `void`, `delta`, `integrate`, `merge`, `app`, `recΔ`, `eqW`
+- **8 Rewrite Rules** (root-level only, no congruence rules for reduction under constructors)
+
+## Assessment: **Yes, Strong Normalization Holds**
+
+The system is **strongly normalizing**. Here's why:
+
+### Key Structural Observation
+
+The `Step` relation is defined **root-only**—there are no congruence rules permitting reduction under constructors. Each rule matches a specific pattern at the term's root:
+
+| Term form | Can reduce? |
+|-----------|------------|
+| `void` | No |
+| `delta t` | No |
+| `integrate t` | Only if `t = delta s` |
+| `merge t₁ t₂` | Only if `t₁ = void` ∨ `t₂ = void` ∨ `t₁ = t₂` |
+| `app t₁ t₂` | No |
+| `recΔ b s n` | Only if `n = void` ∨ `n = delta m` |
+| `eqW a b` | Always (two choices when `a = b`) |
+
+### Why Termination is Immediate
+
+1. **`R_rec_succ`**: `recΔ b s (delta n) → app s (recΔ b s n)`  
+   The result `app s (recΔ b s n)` is a **normal form**—`app` has no rewrite rules, and the inner `recΔ` is trapped under a constructor.
+
+2. **`R_rec_zero`**: `recΔ b s void → b`  
+   The result `b` is a subterm; by structural induction, it has finite reduction depth.
+
+3. **`R_eq_diff`**: `eqW a b → integrate (merge a b)`  
+   The result can only reduce if `merge a b = delta t`, which requires `a = b = delta t'`. Otherwise it's a normal form.
+
+4. **All other rules** produce `void` or a direct subterm—immediate normal forms.
+
+### Maximum Reduction Depth
+
+Every term has reduction depth ≤ 2:
+- `eqW (delta t) (delta t)` can take 2 steps via `R_eq_diff`:  
+  `eqW (delta t) (delta t) → integrate (merge (delta t) (delta t)) → integrate (delta t) → void`
+
+### Proof Roadmap (Within Stated Boundaries)
+
+1. Define `size(t)` as constructor count
+2. Show each rule either:
+   - Produces a normal form directly, or
+   - Produces a subterm (strictly smaller)
+3. For `recΔ b s void → b`: induct on `size(b)`
+4. For `recΔ b s (delta n) → app s (recΔ b s n)`: the result is a normal form
+5. Conclude: every reduction sequence has bounded length ≤ `size(t)`
+
+**No external axioms, guards, or side conditions required.** The calculus as presented is sufficient.

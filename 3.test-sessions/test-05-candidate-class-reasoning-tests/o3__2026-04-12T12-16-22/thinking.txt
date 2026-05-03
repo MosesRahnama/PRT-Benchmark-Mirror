@@ -1,0 +1,5 @@
+**Assessing measure candidates**
+
+I’m working on an explanation about why the measure must decrease, but it fails since mu(s) is counted once on the left-hand side and twice on the right, causing an increase by mu(s) + 1 for rule R_rec_succ. 
+
+I see that mu1 and mu2 obviously fail, while mu3 might be fixable by lowering the weight on the application. However, there’s still the issue of duplication. The solution might involve discounting the contribution of s or n or using a paired measure. I'll analyze all three candidates and highlight their failures. No need for additional tools since I have the necessary analysis!

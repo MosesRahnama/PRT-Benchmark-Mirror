@@ -1,0 +1,18 @@
+Yes, strong normalization of this system can be established from the presented
+rewrite system alone.
+
+### Reasoning:
+
+The term-rewriting system is defined by the following rules:
+1.  `F(x, y, Z) -> x`
+2.  `F(x, y, S(n)) -> G(F(x, y, n))`
+
+Strong normalization means that every possible sequence of rewrites must terminate. We can demonstrate this by observing the behavior of the function `F`.
+
+1.  **Recursive Argument:** The recursion in the system occurs in the second rule: `F(x, y, S(n)) -> G(F(x, y, n))`. The recursive call to `F` is on the term `n`, which is a subterm of the third argument `S(n)` from the left-hand side.
+
+2.  **Well-Founded Ordering:** The third argument of `F` acts as a counter that is reduced with each application of the second rule. We can define a well-founded ordering on the terms. Specifically, for any term `t = F(t1, t2, t3)`, the value of `t3` decreases with each recursive step. The structure of `S(n)` and `Z` suggests they represent natural numbers (Peano arithmetic style), where `Z` is zero and `S` is the successor function. Each application of rule 2 replaces `S(n)` with `n`, effectively decrementing the number.
+
+3.  **Termination:** The recursion terminates when the third argument becomes `Z`, at which point rule 1 is applied, and the term `F(x, y, Z)` is replaced by `x`. Since the third argument is always a subterm of its previous state and the base case `Z` is eventually reached, no infinite reduction sequence involving `F` is possible. The function `G` does not introduce any new recursion.
+
+Therefore, any sequence of rewrites must be finite, which proves that the system is strongly normalizing.

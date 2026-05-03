@@ -1,0 +1,23 @@
+**Analysis of each method:**
+
+**(A) LPO with F > G > S > Z**  
+1. Yes, succeeds: LPO orients both rules (F > vars and F > G), and LPO is a well-founded reduction ordering.  
+2. No: Relies on arbitrary precedence choices (e.g., F > G > S > Z) not fixed by the rules.
+
+**(B) Polynomial interpretation**  
+1. Yes, succeeds: Both rules strictly decrease under the interpretation ([F(x,y,n)] = x + n + 1 > x; x + n + 2 > x + n + 1), with monotonicity and well-foundedness on ℕ.  
+2. No: Specific polynomial choices (e.g., X₁ + X₃ + 1) import non-derivable structural interpretations mixing arguments.
+
+**(C) KBO with uniform weights**  
+1. No: Rule 2 has equal weight (2 = 2); without specified precedence F > G, does not reliably orient lhs > rhs.  
+2. N/A (fails #1).
+
+**(D) Dependency pairs with subterm criterion, projecting to third argument of F**  
+1. Yes, succeeds: Only DP is F(x,y,S(n)) → F(x,y,n); rhs is strict subterm of lhs (S(n) ⊃ n), graph acyclic.  
+2. Yes: Subterm decrease on the recursive third argument directly follows from rule structure.
+
+**(E) Direct descent measure on third argument**  
+1. Yes, succeeds: μ(F(x,y,n)) = depth_S(n) + 1; rules decrease (1 > 0; depth_S(n) + 2 > depth_S(n) + 1); μ(G(a,b)) = μ(b) propagates; well-founded on ℕ.  
+2. Yes: Measure exploits the evident structural descent S(n) → n fixed by the rules.
+
+**Methods satisfying both: D and E.**

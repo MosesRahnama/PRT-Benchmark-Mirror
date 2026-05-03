@@ -1,0 +1,35 @@
+## Raw assessment
+
+Yes — **strong normalization is provable from this calculus alone** (as written in
+), without adding extra rewrite rules, guards, side conditions, or object-level axioms.
+
+## Minimal roadmap (within your boundary)
+
+A clean way is a **natural-number interpretation** (polynomial interpretation) of `Trace` terms:
+
+\[
+\begin{aligned}
+\mu(\texttt{plum}) &= 0 \\
+\mu(\texttt{grape}\ t) &= \mu(t)+1 \\
+\mu(\texttt{mango}\ t) &= \mu(t)+1 \\
+\mu(\texttt{peach}\ a\ b) &= \mu(a)+\mu(b)+1 \\
+\mu(\texttt{banana}\ b\ s\ n) &= \mu(b)+\mu(n)+1 \\
+\mu(\texttt{pear}\ s\ x) &= \mu(x) \\
+\mu(\texttt{cherry}\ a\ b) &= \mu(a)+\mu(b)+3
+\end{aligned}
+\]
+
+Then check each rule decreases strictly:
+
+- `mango (grape t) → plum`: \(\mu\) drops by at least 2.
+- `peach plum t → t`, `peach t plum → t`, `peach t t → t`: strict drop.
+- `banana b s plum → b`: \((\mu(b)+1) > \mu(b)\).
+- `banana b s (grape n) → pear s (banana b s n)`:
+  LHS \(= \mu(b)+\mu(n)+2\), RHS \(= \mu(b)+\mu(n)+1\).
+- `cherry a a → plum`: strict drop.
+- `cherry a b → mango (peach a b)`:
+  LHS \(= \mu(a)+\mu(b)+3\), RHS \(= \mu(a)+\mu(b)+2\).
+
+So every step strictly decreases a value in \(\mathbb{N}\). Hence no infinite rewrite chain exists.
+
+If you interpret `Step` literally as written (root-only rules), termination is immediate from the same measure. If you take standard contextual rewriting, this interpretation is still weakly monotone in all arguments, so the argument still goes through.

@@ -1,0 +1,215 @@
+## What I found
+
+I only inspected
+, as requested.
+
+The three unfinished cases are exactly:
+
+- `Step.R_rec_succ`
+- `Step.R_eq_refl`
+- `Step.R_eq_diff`
+
+One small note: in the `R_rec_succ` comment block, the “LHS/RHS” descriptions are reversed relative to the actual goal. The goal after `simp [mu]` is
+
+$$
+\mu(\text{app } s\,(\text{recDelta } b\, s\, n)) < \mu(\text{recDelta } b\, s\, (\text{delta } n)).
+$$
+
+So the `app` expression is the smaller side, and the `recDelta ... (delta n)` expression is the larger side.
+
+## Proof skeletons
+
+Below is a Lean-shaped skeleton for each missing case. I have not compiled this, so a couple of lemma names around monotonicity of ordinal exponentiation may need slight adjustment—but the proof structure is the right one.
+
+### `R_eq_refl`
+
+This one is the easy sibling of `R_int_delta`: just prove positivity of `omega^... + 1`.
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    exact Ordinal.pos_iff_ne_zero.mpr (by
+      apply ne_of_gt
+      exact add_pos_right _ one_pos)
+```
+
+If you want it even shorter, this case should also collapse with a `simpa [mu] using ...` style positivity proof.
+
+### `R_rec_succ`
+
+This is the main technical case. The clean way is:
+
+1. show the exponent in the recursive-counter side strictly increases when replacing `n` by `delta n`;
+2. lift that strict inequality through `omega0 ^ (...)`;
+3. show the whole `app`-measure is absorbed by that much larger leading `omega`-power;
+4. then finish by adding the positive tail `+ omega0 * (mu b + 1) + 1`.
+
+Skeleton:
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- Goal:
+    -- ω^3 * (mu s + 1)
+    --   + ω^2 * (ω^(mu n + mu s + 6) + ω * (mu b + 1) + 1 + 1) + 1
+    --   < ω^(ω^5 * (mu n + 1) + 1 + mu s + 6) + ω * (mu b + 1) + 1
+
+    -- Step 1: the exponent jumps because `mu (delta n)` is huge.
+    have hExp :
+        mu n + mu s + (6 : Ordinal)
+          < omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal) := by
+      -- Suggested route:
+      --   have h1 : mu n < mu n + 1 := lt_add_one (mu n)
+      --   have h2 : mu n + 1 ≤ omega0 ^ (5 : Ordinal) * (mu n + 1) :=
+      --     le_mul_right _ (opow_pos 5 omega0_pos)
+      --   have h3 : mu n < omega0 ^ (5 : Ordinal) * (mu n + 1) := lt_of_lt_of_le h1 h2
+      --   then add the common suffix `+ 1 + mu s + 6`.
+      --
+      -- Depending on the available lemmas, this is usually finished with
+      -- repeated `add_lt_add_right` / `Ordinal.add_lt_add_right`.
+      sorry
+
+    -- Step 2: lift exponent strictness through ω^(-).
+    have hPow :
+        omega0 ^ (mu n + mu s + (6 : Ordinal))
+          < omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal)) := by
+      -- Use strict monotonicity of ordinal exponentiation in the exponent.
+      -- The exact lemma name may be one of:
+      --   `opow_lt_opow_right`, `opow_lt_opow`, or a close variant.
+      sorry
+
+    -- Step 3: absorb the lower-rank `ω^3` and `ω^2` terms under the larger leading ω-power.
+    have hAppHead :
+        omega0 ^ (3 : Ordinal) * (mu s + 1) +
+            omega0 ^ (2 : Ordinal) *
+              (omega0 ^ (mu n + mu s + (6 : Ordinal)) + omega0 * (mu b + 1) + 1 + 1) + 1
+          < omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal)) := by
+      -- This is the place for the ordinal-CNF comparison.
+      --
+      -- Conceptually:
+      -- * `ω^3 * (mu s + 1)` is far below any term of the form `ω^γ`
+      --   once `γ` contains the giant `ω^5 * (mu n + 1)` prefix.
+      -- * `ω^2 * ω^(mu n + mu s + 6)` is still below
+      --   `ω^(omega^5 * (mu n + 1) + 1 + mu s + 6)` because `hPow`
+      --   shows the exponent on the RHS is strictly larger.
+      --
+      -- A nice way to finish this in a real file is to prove a helper lemma
+      -- that any sum with top CNF ranks 3 and 2 is absorbed by a strictly larger
+      -- single `ω^(...)` term.
+      sorry
+
+    calc
+      omega0 ^ (3 : Ordinal) * (mu s + 1) +
+          omega0 ^ (2 : Ordinal) *
+            (omega0 ^ (mu n + mu s + (6 : Ordinal)) + omega0 * (mu b + 1) + 1 + 1) + 1
+          < omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal)) := hAppHead
+      _ ≤ omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal))
+            + omega0 * (mu b + 1) := by
+            exact le_add_right _ _
+      _ ≤ omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal))
+            + omega0 * (mu b + 1) + 1 := by
+            exact le_add_right _ _
+```
+
+### `R_eq_diff`
+
+This case has the same overall shape as `R_rec_succ`, but simpler: the RHS is a single enormous `omega`-power, and the LHS is only `omega^4 * (...) + 1`.
+
+A good proof pattern is:
+
+1. bound the `merge` body by a single `omega`-power of lower rank;
+2. multiply by `omega^4`;
+3. compare with `omega^(mu a + mu b + 9)`.
+
+Skeleton:
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- Goal:
+    -- ω^4 * (ω^3 * (mu a + 1) + ω^2 * (mu b + 1) + 1 + 1) + 1
+    --   < ω^(mu a + mu b + 9) + 1
+
+    -- Step 1: compress the `merge` body under one ω-power.
+    have hMergeBody :
+        omega0 ^ (3 : Ordinal) * (mu a + 1) +
+            omega0 ^ (2 : Ordinal) * (mu b + 1) + 1 + 1
+          < omega0 ^ (mu a + mu b + (5 : Ordinal)) := by
+      -- Idea:
+      --   the body is a CNF sum with top exponents 3 and 2,
+      --   so it is below a single `ω^(mu a + mu b + 5)`.
+      --
+      -- In a polished proof, this is another good helper lemma.
+      sorry
+
+    -- Step 2: multiplying by ω^4 keeps the whole left side below ω^(mu a + mu b + 9).
+    have hIntCore :
+        omega0 ^ (4 : Ordinal) *
+            (omega0 ^ (3 : Ordinal) * (mu a + 1) +
+              omega0 ^ (2 : Ordinal) * (mu b + 1) + 1 + 1)
+          < omega0 ^ (mu a + mu b + (9 : Ordinal)) := by
+      -- Use `hMergeBody`, monotonicity of multiplication, and
+      -- the ordinal law `ω^4 * ω^γ = ω^(4 + γ)` / comparison with that form.
+      --
+      -- Since `γ = mu a + mu b + 5`, the target exponent becomes `... + 9`.
+      sorry
+
+    -- Step 3: add `+ 1` on both sides.
+    -- The exact lemma name may vary (`add_lt_add_right`, etc.).
+    have hFinal :
+        omega0 ^ (4 : Ordinal) *
+            (omega0 ^ (3 : Ordinal) * (mu a + 1) +
+              omega0 ^ (2 : Ordinal) * (mu b + 1) + 1 + 1) + 1
+          < omega0 ^ (mu a + mu b + (9 : Ordinal)) + 1 := by
+      -- monotonicity of addition on the right
+      sorry
+
+    exact hFinal
+```
+
+## A cleaner way to finish the hard two
+
+If this were my next pass, I would not try to brute-force `R_rec_succ` and `R_eq_diff` inline. I’d first prove one or two helper lemmas of the form:
+
+```lean
+lemma small_cnf_lt_big_opow
+  {α β : Ordinal} :
+  omega0 ^ (3 : Ordinal) * (α + 1) + omega0 ^ (2 : Ordinal) * (β + 1) + 1
+    < omega0 ^ (α + β + (5 : Ordinal)) := by
+  sorry
+```
+
+and possibly
+
+```lean
+lemma app_measure_lt_rec_succ_head
+  (b s n : Trace) :
+  mu (app s (recDelta b s n))
+    < omega0 ^ (mu (delta n) + mu s + (6 : Ordinal)) := by
+  sorry
+```
+
+Then:
+
+- `R_eq_diff` becomes one helper invocation plus `+ 1`;
+- `R_rec_succ` becomes one exponent-growth lemma plus one helper invocation.
+
+That usually makes Lean much less grumpy. Ordinals are majestic, but they do enjoy paperwork.
+
+## Practical notes
+
+- `R_eq_refl` should be straightforward and probably compiles almost exactly as written above.
+- The two hard cases hinge on:
+  - strict monotonicity of `omega0 ^ _` in the exponent;
+  - monotonicity of ordinal addition/multiplication;
+  - one “absorption” lemma comparing a low-rank CNF sum against a much larger single `omega`-power.
+
+Because I did **not** compile or search other files, I’d expect only minor lemma-name adjustments, not a change in proof strategy.
+
+## Checklist
+
+- [x] Read
+- [x] Analyze the three remaining `sorry` cases
+- [x] Draft proof skeletons for completing them
+
+In short: `R_eq_refl` can be closed immediately with the same positivity trick as `R_int_delta`, while `R_rec_succ` and `R_eq_diff` are best finished by factoring out one CNF-absorption lemma and one exponent-monotonicity step.

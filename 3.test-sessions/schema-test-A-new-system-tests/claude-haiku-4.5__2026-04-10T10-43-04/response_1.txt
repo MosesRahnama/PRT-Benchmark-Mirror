@@ -1,0 +1,19 @@
+**Raw Assessment: YES, strong normalization can be established from this rewrite system alone.**
+
+**Reasoning:**
+
+This is a simple first-order TRS with a clear termination structure:
+
+1. **Termination measure**: Define a measure on terms as the *depth of S-nesting* in the third argument of F. For any term `F(x, y, t)`, the measure is the number of nested S symbols in `t`.
+
+2. **Decreasing application**:
+   - Rule 1: `F(x, y, Z) -> x` terminates immediately (base case)
+   - Rule 2: `F(x, y, S(n)) -> G(F(x, y, n))` strictly reduces the S-depth from `S(n)` to `n`
+   
+3. **Well-foundedness**: Since S-depth is a natural number that strictly decreases with each Rule 2 application, and eventually reaches Z (which triggers Rule 1 or normal form), the reduction order is well-founded.
+
+4. **No cyclic dependency**: The right-hand side of Rule 2 produces `G(F(...))`, which cannot re-match the left-hand side `F(x, y, S(m))`. This eliminates any possibility of hidden circularity.
+
+The absence of rewrite rules for `G` is **not a problem**—it simply means reduction terminates when encountering G-applications, which is consistent with SN. All reduction sequences terminate because no infinite descending chains can exist in a well-founded order.
+
+**Conclusion**: Strong normalization holds and can be proven using recursive path order or a simple lexicographic measure without additional structural axioms.

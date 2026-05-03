@@ -1,0 +1,19 @@
+## Raw Assessment
+
+**YES** — Strong normalization can be established from these rules alone.
+
+## Proof Roadmap
+
+1. **Define a measure**: For each F-term, assign the structural depth of its third argument when that argument has the form S^k(Z).
+
+2. **Observe rule behavior**:
+   - Rule 1 eliminates F entirely (strictly decreasing)
+   - Rule 2 performs structural descent: F(x, y, S(n)) → G(y, F(x, y, n)), where the recursive F has third argument n instead of S(n)
+
+3. **Well-founded ordering**: The third argument of F is drawn from terms built by Z and S. Under the subterm ordering, S(n) ⊐ n, which is well-founded.
+
+4. **Key invariant**: No rule creates an F-term with a third argument structurally larger than its parent F-term. Rule 2 strictly decreases the third argument; rule 1 removes F; G is inert.
+
+5. **Termination**: Every reduction sequence on an F-term with third argument S^k(Z) terminates in at most k+1 steps (k applications of rule 2, then 1 of rule 1). Terms with non-matching third arguments (e.g., F(x, y, G(...))) are already irreducible.
+
+6. **Global SN**: Since local F-reductions terminate and no rule introduces new F-terms with larger arguments, the entire system is strongly normalizing by well-founded induction on the multiset of F third-arguments.

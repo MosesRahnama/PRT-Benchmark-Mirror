@@ -1,0 +1,4 @@
+1. Dependency pairs method.
+2. Yes; it relies on the meta-level dependency pairs framework (including chain analysis) and the well-foundedness of the strict subterm relation, neither of which is derivable solely from the given rules.
+3. Yes, as those elements import structural assumptions about terms and well-foundedness not fixed by the rules themselves.
+4. Yes.

@@ -1,0 +1,84 @@
+Quick progress update: I’ve identified the right lexicographic tactic for each missing rule (two split cases, one strict-left, two strict-right); I’ll now mark the checklist complete and give you paste-ready skeletons.
+Great target file choice — I inspected only
+, made no edits, and didn’t run anything.
+
+## Proof skeleton for the 5 remaining cases
+
+You can replace each `sorry` with the following skeletons.
+
+```lean
+-- integrate (delta t) --> void
+| _, _, Step.R_int_delta t => by
+    have hmu : mu void < mu (integrate (delta t)) := by
+      simp [mu]
+    -- If kappa t is positive, use strict left drop; otherwise tie on kappa and use mu-drop.
+    by_cases hpos : 0 < kappa t
+    · have hk : kappa void < kappa (integrate (delta t)) := by
+        simpa [kappa] using hpos
+      exact drop_left hk
+    · have hzero : kappa t = 0 := Nat.eq_zero_of_not_pos hpos
+      have hk : kappa void = kappa (integrate (delta t)) := by
+        simp [kappa, hzero]
+      exact drop_right hmu hk
+
+-- recDelta b s void --> b
+| _, _, Step.R_rec_zero b s => by
+    -- kappa(recDelta b s void) = max (kappa b) (kappa s)
+    by_cases hs_le : kappa s ≤ kappa b
+    · have hmu : mu b < mu (recDelta b s void) := by
+        simp [mu]  -- if needed: omega
+      have hk : kappa b = kappa (recDelta b s void) := by
+        simp [kappa, Nat.max_eq_left hs_le]
+      exact drop_right hmu hk
+    · have hs_gt : kappa b < kappa s := lt_of_not_ge hs_le
+      have hk : kappa b < kappa (recDelta b s void) := by
+        -- kb < ks ≤ max kb ks
+        simpa [kappa] using
+          (lt_of_lt_of_le hs_gt (Nat.le_max_right (kappa b) (kappa s)))
+      exact drop_left hk
+
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    let m := Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)
+    have hs_le_m : kappa s ≤ m := by
+      dsimp [m]
+      exact le_trans (Nat.le_max_right (kappa b) (kappa s)) (Nat.le_max_left _ _)
+    have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+      -- LHS kappa = max (kappa s) m = m, RHS kappa = m + 1
+      simp [kappa, m, Nat.max_eq_right hs_le_m]
+    exact drop_left hk
+
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    have hmu : mu void < mu (eqW a a) := by
+      simp [mu]
+    by_cases hpos : 0 < kappa a
+    · have hk : kappa void < kappa (eqW a a) := by
+        simpa [kappa] using hpos
+      exact drop_left hk
+    · have hzero : kappa a = 0 := Nat.eq_zero_of_not_pos hpos
+      have hk : kappa void = kappa (eqW a a) := by
+        simp [kappa, hzero]
+      exact drop_right hmu hk
+
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by
+      simp [mu]  -- if simp doesn't close, use: omega
+    have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by
+      simp [kappa]
+    exact drop_right hmu hk
+```
+
+### Why this shape works
+
+- `R_rec_succ` is the clean one: kappa strictly drops from $m+1$ to $m$.
+- `R_eq_diff` is clean tie-on-kappa + strict mu-drop.
+- `R_int_delta`, `R_rec_zero`, `R_eq_refl` are mixed: sometimes strict kappa drop, sometimes kappa tie, so a `by_cases` split is the robust skeleton.
+
+## Updated checklist
+
+- ✅ Read target Lean file  
+- ✅ Classify each missing rule case  
+- ✅ Draft proof skeleton per case  
+- ✅ Provide final checklist update

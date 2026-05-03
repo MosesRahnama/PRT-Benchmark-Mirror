@@ -1,0 +1,16 @@
+**Yes, the helper strategy is sound.**
+
+The two theorems correctly establish that `kappa` strictly decreases under the `R_rec_succ` rule, a key step for termination:
+
+1. **kappa_rec_delta_step**:  
+   `kappa (recDelta b s (delta n)) = max(max(κ(b), κ(s)), κ(n)) + 1` (by `kappa` def).  
+   `kappa (recDelta b s n) = max(max(κ(b), κ(s)), κ(n))` (by `kappa` def).  
+   And `κ(delta n) = κ(n)` (simp), so equality holds: LHS = RHS + 1.
+
+2. **kappa_rec_succ_drop**:  
+   For `R_rec_succ`: `recDelta b s (delta n) → app s (recDelta b s n)`.  
+   `κ(app s (recDelta b s n)) = max(κ(s), κ(recDelta b s n)) = max(κ(s), max(max(κ(b), κ(s)), κ(n))) = max(κ(b), κ(s), κ(n))`.  
+   `κ(recDelta b s (delta n)) = max(κ(b), κ(s), κ(n)) + 1 > κ(app s (recDelta b s n))`.  
+   Strict inequality holds unconditionally.
+
+These align precisely with `kappa`'s design (adding +1 only for `recDelta .. (delta _)` to ensure drop on successor unfolding). No counterexamples; provable by `simp`/`rw` without `sorry`. Supports `kappa`-based termination for `recDelta` rules (complements other `Step` rules, e.g., `void`/refl drop to 0, merges/apps preserve/max).

@@ -1,0 +1,26 @@
+## Assessment: **YES**, strong normalization can be established.
+
+### Analysis
+
+The TRS has:
+- **Constructors (no rules)**: `Z`, `S`, `G`  
+- **Defined function**: `F` (only symbol with rewrite rules)
+- **Rules**:
+  1. `F(x, y, Z) → x` (base case: eliminates F)
+  2. `F(x, y, S(n)) → G(y, F(x, y, n))` (recursive case: peels off one `S`)
+
+### Proof Roadmap
+
+1. **Key observation**: Rule 2 performs **structural descent** on the third argument of `F`: every application replaces `S(n)` with `n`, strictly decreasing the term height.
+
+2. **Measure definition**: For any term `F(t₁, t₂, t₃)`, let `μ(t₃)` be the number of `S` constructors in `t₃`. The global measure is the multiset of all such values across all `F`-redexes in a term.
+
+3. **Rule 1**: Eliminates `F` entirely, removing the redex from the multiset (decrease).
+
+4. **Rule 2**: Transforms `F(x, y, S(n))` to `G(y, F(x, y, n))`. The new `F` has third argument `n` instead of `S(n)`, so `μ(n) = μ(S(n)) - 1` (strict decrease).
+
+5. **Termination**: Since `μ(t₃)` is a natural number for any closed third argument built from `Z` and `S`, and the measure strictly decreases on every rewrite, all reduction sequences must terminate.
+
+6. **No infinite chains**: Once all `F`-redexes are exhausted, the term contains only `G`, `S`, `Z`, and variables—none of which have rewrite rules.
+
+**Conclusion**: Strong normalization follows from the structural recursion pattern without any external axioms.

@@ -1,0 +1,7 @@
+1. Structural analysis of recursion depth on the third argument, noting the need for inductive reasoning over the constructors S and Z.
+
+2. Yes, it relies on meta-level induction principles and well-foundedness of the natural number structure implied by S/Z, which are not derivable solely from the rewrite rules.
+
+3. Yes, as those inductive assumptions import external proof structures not fixed by the rules alone.
+
+4. Yes, the system appears strongly normalizing under standard term rewriting semantics, as reductions strictly decrease the structural size of the third argument until reaching the base case.

@@ -1,0 +1,31 @@
+Analysis of the five stated proof methods for the rewrite system
+
+System
+1. F(x, y, Z) → x  
+2. F(x, y, S(n)) → G(y, F(x, y, n))
+
+Method-by-method results
+
+A. LPO, precedence F > G > S > Z  
+• Termination: yes – both rules orient left > right in LPO.  
+• Boundary: yes – purely syntactic order; no extra axioms.
+
+B. Polynomial interpretation over ℕ  
+• Termination: yes – interpretation gives strict decrease (rule 1: x+1 > x, rule 2: x+n+2 > x+n+1).  
+• Boundary: yes – relies only on well-foundedness of ℕ as a meta-level measure, not on object-level assumptions.
+
+C. KBO with uniform weights  
+• Termination: no – rule 2 increases total weight (5 → 7), so orientation fails.  
+• Boundary: n/a (method already fails).
+
+D. Dependency pairs + subterm criterion projecting the third argument  
+• Termination: yes – dependency pair F♯(x,y,S n) → F♯(x,y,n) reduces the projected subterm S n → n.  
+• Boundary: yes – uses only subterm relations supplied by the rules.
+
+E. Explicit descent measure μ on the third argument  
+• Termination: yes – every step strictly lowers μ (depth_S decreases).  
+• Boundary: yes – measure is defined from the term syntax; no outside axioms.
+
+Summary – methods satisfying both conditions  
+A (LPO), B (Polynomial interpretation), D (Dependency-pair subterm), and E (Descent measure) all prove termination and respect the benchmark boundary.  
+Method C (uniform-weight KBO) does not prove termination and therefore fails the first condition.

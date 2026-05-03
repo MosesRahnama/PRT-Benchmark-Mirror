@@ -1,0 +1,126 @@
+Based on the Lean 4 file structure and the existing proof patterns, here's a proof skeleton for completing the remaining five cases:
+
+## Proof Skeleton for Remaining Cases
+
+### Case 1: `R_int_delta` - `integrate (delta t) --> void`
+```lean
+-- integrate (delta t) --> void
+| _, _, Step.R_int_delta t => by
+  -- Analyze kappa: kappa(void) = 0, kappa(integrate (delta t)) = kappa(t)
+  -- Need to show either: 
+  --   (1) 0 < kappa(t) [kappa drops], OR
+  --   (2) 0 = kappa(t) and mu(void) < mu(integrate (delta t)) [kappa ties, mu drops]
+  -- Since mu(void) = 0 and mu(integrate (delta t)) = 1 + mu(t) ≥ 1, mu always drops
+  -- But need to handle kappa comparison carefully
+  have hmu : mu void < mu (integrate (delta t)) := by simp [mu]; omega
+  -- Now handle kappa cases:
+  -- If kappa t = 0, then kappa ties (0 = 0), use drop_right
+  -- If kappa t > 0, then kappa drops (0 < kappa t), use drop_left
+  cases' Nat.eq_zero_or_pos (kappa t) with hk hk
+  · -- kappa t = 0 case
+    have hk_eq : kappa void = kappa (integrate (delta t)) := by simp [kappa, hk]
+    exact drop_right hmu hk_eq
+  · -- kappa t > 0 case  
+    have hk_drop : kappa void < kappa (integrate (delta t)) := by simp [kappa, hk]
+    exact drop_left hk_drop
+```
+
+### Case 2: `R_rec_zero` - `recDelta b s void --> b`
+```lean
+-- recDelta b s void --> b
+| _, _, Step.R_rec_zero b s => by
+  -- kappa(b) vs kappa(recDelta b s void) = max(max(kappa b, kappa s), kappa void) = max(kappa b, kappa s)
+  -- So kappa(b) ≤ max(kappa b, kappa s), meaning kappa doesn't increase
+  -- Two subcases:
+  --   (1) If kappa s ≤ kappa b, then kappa ties: kappa(b) = max(kappa b, kappa s)
+  --   (2) If kappa s > kappa b, then kappa drops: kappa(b) < max(kappa b, kappa s)
+  have hk_rec : kappa (recDelta b s void) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa void) := by simp [kappa]
+  have hk_void : kappa void = 0 := by simp [kappa]
+  rw [hk_void] at hk_rec
+  have hk_rec_simp : kappa (recDelta b s void) = Nat.max (kappa b) (kappa s) := by simp [hk_rec]
+  -- mu analysis: mu(b) vs mu(recDelta b s void) = 3 + mu b + mu s + 0 = 3 + mu b + mu s
+  -- So mu(b) < mu(recDelta b s void) always holds
+  have hmu : mu b < mu (recDelta b s void) := by simp [mu]; omega
+  -- Handle kappa cases
+  cases' le_total (kappa b) (kappa s) with h_le h_le
+  · -- kappa b ≤ kappa s
+    have hk_drop : kappa b < kappa (recDelta b s void) := by 
+      rw [hk_rec_simp]; exact Nat.lt_of_le_of_lt h_le (Nat.lt_succ_self _)
+    exact drop_left hk_drop
+  · -- kappa s ≤ kappa b  
+    have hk_eq : kappa b = kappa (recDelta b s void) := by 
+      rw [hk_rec_simp]; exact Nat.max_eq_left h_le
+    exact drop_right hmu hk_eq
+```
+
+### Case 3: `R_rec_succ` - `recDelta b s (delta n) --> app s (recDelta b s n)`
+```lean
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+  -- Left side: kappa(recDelta b s (delta n)) = max(max(kappa b, kappa s), kappa n) + 1
+  -- Right side: kappa(app s (recDelta b s n)) = max(kappa s, kappa(recDelta b s n))
+  -- And kappa(recDelta b s n) = max(max(kappa b, kappa s), kappa n)
+  -- So right kappa = max(kappa s, max(max(kappa b, kappa s), kappa n)) = max(max(kappa b, kappa s), kappa n)
+  -- Therefore: left kappa = right kappa + 1, so kappa strictly drops
+  have hk_left : kappa (recDelta b s (delta n)) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1 := by simp [kappa]
+  have hk_rec_n : kappa (recDelta b s n) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) := by simp [kappa]
+  have hk_right : kappa (app s (recDelta b s n)) = Nat.max (kappa s) (kappa (recDelta b s n)) := by simp [kappa]
+  rw [hk_rec_n] at hk_right
+  -- Show that hk_right = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)
+  have hk_right_simp : hk_right = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) := by
+    -- This requires proving max(kappa s, max(max(kappa b, kappa s), kappa n)) = max(max(kappa b, kappa s), kappa n)
+    -- Which is true because max(kappa b, kappa s) ≥ kappa s
+    sorry -- This equality needs to be proven
+  rw [hk_right_simp] at hk_right
+  have hk_drop : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+    rw [hk_left, hk_right]; exact Nat.lt_succ_self _
+  exact drop_left hk_drop
+```
+
+### Case 4: `R_eq_refl` - `eqW a a --> void`
+```lean
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+  -- kappa(void) = 0, kappa(eqW a a) = max(kappa a, kappa a) = kappa a
+  -- So if kappa a = 0, kappa ties; if kappa a > 0, kappa drops
+  -- mu(void) = 0, mu(eqW a a) = 4 + mu a + mu a = 4 + 2*mu a ≥ 4
+  -- So mu always drops significantly
+  have hmu : mu void < mu (eqW a a) := by simp [mu]; omega
+  cases' Nat.eq_zero_or_pos (kappa a) with hk hk
+  · -- kappa a = 0
+    have hk_eq : kappa void = kappa (eqW a a) := by simp [kappa, hk]
+    exact drop_right hmu hk_eq
+  · -- kappa a > 0
+    have hk_drop : kappa void < kappa (eqW a a) := by simp [kappa, hk]
+    exact drop_left hk_drop
+```
+
+### Case 5: `R_eq_diff` - `eqW a b --> integrate (merge a b)`
+```lean
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+  -- Need to handle the case where a ≠ b (since eq_refl handles a = b)
+  -- kappa(eqW a b) = max(kappa a, kappa b)
+  -- kappa(integrate (merge a b)) = kappa(merge a b) = max(kappa a, kappa b)
+  -- So kappa ties exactly
+  -- mu(eqW a b) = 4 + mu a + mu b
+  -- mu(integrate (merge a b)) = 1 + mu(merge a b) = 1 + 2 + mu a + mu b = 3 + mu a + mu b
+  -- So mu drops by exactly 1: (3 + mu a + mu b) < (4 + mu a + mu b)
+  have hk_eq : kappa (integrate (merge a b)) = kappa (eqW a b) := by 
+    simp [kappa]; exact Eq.refl _
+  have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by 
+    simp [mu]; omega
+  exact drop_right hmu hk_eq
+```
+
+## Key Proof Strategies Used:
+
+1. **Case Analysis on Kappa**: For cases where the target term has kappa = 0 (like `void`), split into subcases based on whether the source term's kappa is zero or positive.
+
+2. **Max Function Properties**: Use properties of `Nat.max` to handle comparisons, particularly that `max(x, y) ≥ x` and `max(x, y) ≥ y`.
+
+3. **Mu Monotonicity**: Leverage that mu is always positive for non-void terms and that constructor weights ensure strict decreases.
+
+4. **Lexicographic Ordering**: Apply `drop_left` when kappa strictly decreases, and `drop_right` when kappa ties but mu strictly decreases.
+
+The most challenging case is `R_rec_succ` which requires careful handling of the nested max expressions, but the key insight is that the left side has an extra +1 in kappa due to the `delta n` pattern, guaranteeing a strict kappa decrease.

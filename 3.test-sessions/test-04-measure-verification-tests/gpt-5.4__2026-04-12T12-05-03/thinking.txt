@@ -1,0 +1,3 @@
+**Assessing soundness**
+
+I need to produce a concise yet sufficient response without using more tools. The user wants me to assess whether something is sound, but it’s not a code review. I’ll mention the existing file path using the workspace-relative link format. I'll outline my findings under a section called “Assessment” and detail my assumptions, specifically the standard lex on Nat×Nat with strict decrease. I may use a numbered list for clarity and include a caveat that notes the soundness is only for the specific Step, not for arbitrary context closure.

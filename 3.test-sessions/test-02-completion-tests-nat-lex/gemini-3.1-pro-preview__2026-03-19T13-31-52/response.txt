@@ -1,0 +1,53 @@
+Here are the proof skeletons for the remaining 5 cases. 
+
+Mathematically, the steps strictly decrease the lexicographic measure `(kappa, mu)`. 
+- For `R_rec_succ`, `kappa` strictly drops.
+- For `R_eq_diff`, `kappa` remains exactly the same while `mu` strictly drops.
+- For `R_int_delta`, `R_rec_zero`, and `R_eq_refl`, `kappa` could either drop strictly or remain the same (e.g., if it was already 0). Thus, taking a `by_cases` split effectively unwraps the lexicographic requirement without assuming properties that aren't strictly true in every sub-case.
+
+```lean
+-- integrate (delta t) --> void
+| _, _, Step.R_int_delta t => by
+    unfold measure LexOrder
+    by_cases h : 0 = kappa t
+    · rw [h]
+      apply Prod.Lex.right
+      simp [mu]
+    · apply Prod.Lex.left
+      simp [kappa] at *
+      omega
+
+-- recDelta b s void --> b
+| _, _, Step.R_rec_zero b s => by
+    unfold measure LexOrder
+    by_cases h : kappa b = kappa (recDelta b s void)
+    · rw [h]
+      apply Prod.Lex.right
+      simp [mu]; omega
+    · apply Prod.Lex.left
+      simp [kappa] at *
+      omega
+
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    apply drop_left
+    simp [kappa]
+    omega
+
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    unfold measure LexOrder
+    by_cases h : 0 = kappa (eqW a a)
+    · rw [h]
+      apply Prod.Lex.right
+      simp [mu]; omega
+    · apply Prod.Lex.left
+      simp [kappa] at *
+      omega
+
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    apply drop_right
+    · simp [mu]; omega
+    · simp [kappa]
+```

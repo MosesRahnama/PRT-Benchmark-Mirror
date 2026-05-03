@@ -1,0 +1,26 @@
+## Assessment
+
+Given **only** the eight root rules as the entire reduction relation, strong normalization **does** follow—and it’s essentially trivial. Every reduction step either:
+
+- **strictly shrinks** the term at the root (e.g., `merge void t → t`, `merge t t → t`, `integrate (delta t) → void`, `eqW a a → void`, `recΔ b s void → b`), or  
+- **produces a root constructor with no rule** (`recΔ b s (delta n) → app s (recΔ b s n)`; there are no rules for `app`), so that branch cannot continue at the root.
+
+Even though `eqW a b → integrate (merge a b)` can increase size, it doesn’t create a root redex of any rule; so any chain is still finite. Thus SN holds for the calculus **as stated**.
+
+### Short proof roadmap (within the stated boundary)
+
+1. Define a simple **well‑founded measure** on root‑redexes, e.g. term size plus a flag indicating whether the root matches any LHS.
+2. Check each rule:
+   - Most rules strictly decrease size.
+   - The only size‑increasing rule (`eqW a b`) produces a root form that is *not* any LHS pattern.
+   - The only rule that can “expand” structure (`recΔ … (delta n)`) yields a root `app`, for which no rule applies.
+3. Conclude that no infinite root‑reduction chain exists.
+
+---
+
+If you **intended** the standard *context‑closure* of rewriting (i.e., rules apply under all constructors), that closure is **not in the given calculus**, so SN for the *contextual* relation is **not derivable from the presented rules alone**. You’d need to explicitly add the closure rules (or evaluation contexts) before a full SN proof can even be stated within the calculus.
+
+## ✅ Todo status
+
+- [x] Analyze rewrite rules and assumptions  
+- [x] Draft normalization assessment

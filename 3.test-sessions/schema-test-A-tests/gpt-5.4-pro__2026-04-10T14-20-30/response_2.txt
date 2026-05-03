@@ -1,0 +1,7 @@
+1. **Primary method:** a **meta-level termination proof**, specifically by choosing a **termination ordering** (e.g. LPO / recursive decrease on the third argument).
+
+2. **Does it rely on extra structure?** **Yes.** It uses a chosen ordering/proof framework, and implicitly the standard first-order finite-term semantics; those are **not fixed by the rewrite rules themselves**.
+
+3. **Outside the stated boundary?** **Yes**, under a strict reading of that boundary.
+
+4. **Do I still think the system is strongly normalizing?** **Yes** — under the ordinary first-order TRS reading, it still looks strongly normalizing, because the only recursion goes from `S(n)` to `n` and nothing rebuilds a larger recursive argument. But that judgment is still a meta-level one, not “from the rules alone” in the strict boundary sense.

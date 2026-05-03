@@ -1,0 +1,7 @@
+1. Primary method: a **polynomial interpretation** (mapping terms to $\mathbb{N}$ and showing each rewrite step strictly decreases the value).
+
+2. Yes. It relies on **extra proof structure not fixed by the rules**: choosing a specific interpretation for `F`, `G`, `S`, `Z`, and using the **well-founded strict order** on $\mathbb{N}$ (plus the usual “interpretation decreases ⇒ termination” meta-theorem).
+
+3. Yes — **under the strict reading of your boundary**, that method goes outside it, because the interpretation/ordering (and $\mathbb{N}$-well-foundedness) are not *derivable from the rewrite rules themselves*; they’re external termination machinery. (It does *not* import object-level axioms like injectivity of `S`, but it does import an external well-founded order + a chosen measure.)
+
+4. Separately: **yes, I still think the TRS is strongly normalizing.** Intuitively, every rewrite step on an `F(_,_,S(n))` redex replaces it by a term containing exactly one `F(_,_,n)` under `G`, so the “`S`-depth” of the third argument in each reducible `F` strictly decreases along any chain; `G` never creates new `F`-redexes, and `F(_,_,Z)` stops.

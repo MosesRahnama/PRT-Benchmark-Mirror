@@ -1,0 +1,22 @@
+The proposed measure
+
+• phase : Trace → ℕ, where phase t = 1 exactly when t has the shape recDelta _ _ (delta _) and 0 otherwise  
+• cost : Trace → ℕ, a size‐like counter  
+• measure t = (phase t, cost t) ordered lexicographically
+
+is NOT sound: some rewrite steps can increase the first component.
+
+Counter-example 1 (R_merge_void_left).  
+Let u := recDelta b s (delta n) for arbitrary b s n.  
+Step: merge void u  →  u.  
+measure(merge void u) = (0, 1+cost u)  
+measure(u)            = (1, cost u)  (first component rises from 0 to 1)
+
+Counter-example 2 (R_merge_cancel).  
+merge u u → u with the same choice of u produces the same increase.
+
+Counter-example 3 (R_rec_zero).  
+recDelta b s void → b.  
+If b itself is of the form recDelta _ _ (delta _), phase jumps from 0 to 1.
+
+Because the lexicographic order requires the first coordinate to decrease (or stay equal with a decrease in the second), these steps violate the intended monotonicity. Other rules (R_int_delta, R_rec_succ, R_eq_refl, R_eq_diff) do decrease the measure, but the above counter-examples are sufficient to show the measure is not a global well-founded ranking.

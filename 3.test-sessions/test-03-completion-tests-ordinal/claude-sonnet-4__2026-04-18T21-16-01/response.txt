@@ -1,0 +1,109 @@
+Based on my analysis of this Lean 4 file, I can see it's a strong normalization proof for a first-order rewrite calculus using an ordinal-valued measure. The file has 5 of 8 rule cases proved, with 3 remaining cases marked as `sorry`.
+
+Here's a proof skeleton for completing the remaining three cases:
+
+## Case 1: `Step.R_rec_succ` (recDelta b s (delta n) → app s (recDelta b s n))
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- Need: mu(app s (recDelta b s n)) < mu(recDelta b s (delta n))
+    -- 
+    -- LHS = omega^3 * (mu(s) + 1) + omega^2 * (mu(recDelta b s n) + 1) + 1
+    --     = omega^3 * (mu(s) + 1) + omega^2 * (omega^(mu(n) + mu(s) + 6) + omega * (mu(b) + 1) + 1 + 1) + 1
+    --
+    -- RHS = omega^(mu(delta n) + mu(s) + 6) + omega * (mu(b) + 1) + 1  
+    --     = omega^(omega^5 * (mu(n) + 1) + 1 + mu(s) + 6) + omega * (mu(b) + 1) + 1
+    --
+    -- Key insight: The RHS exponent omega^5 * (mu(n) + 1) + 1 + mu(s) + 6 
+    -- is much larger than any exponent appearing in the LHS expansion
+    
+    -- Step 1: Establish that omega^5 * (mu(n) + 1) dominates mu(n) + mu(s) + 6
+    have h1 : mu n + mu s + 6 < omega0 ^ (5 : Ordinal) * (mu n + 1) := by
+      -- omega^5 * (mu(n) + 1) ≥ omega^5 > mu(n) + mu(s) + 6 for any finite terms
+      sorry
+    
+    -- Step 2: Show the RHS dominates the LHS using exponential comparison
+    have h2 : omega0 ^ (mu n + mu s + (6 : Ordinal)) < 
+              omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal)) := by
+      apply opow_lt_opow_of_lt omega0_pos
+      exact add_lt_add_right (add_lt_add_right h1) _
+    
+    -- Step 3: Complete the comparison by showing LHS < RHS
+    calc mu (app s (recDelta b s n))
+      _ = omega0 ^ (3 : Ordinal) * (mu s + 1) + omega0 ^ (2 : Ordinal) * (mu (recDelta b s n) + 1) + 1 := rfl
+      _ < omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal)) := by
+        -- The dominant term omega^(omega^5 * (mu(n) + 1) + ...) overwhelms all LHS terms
+        sorry
+      _ ≤ omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal)) + omega0 * (mu b + 1) + 1 := 
+        le_add_right _ _
+```
+
+## Case 2: `Step.R_eq_refl` (eqW a a → void)
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- Need: 0 < omega^(mu(a) + mu(a) + 9) + 1 = omega^(2*mu(a) + 9) + 1
+    -- This is straightforward positivity since omega^k + 1 > 0 for any k
+    
+    have h1 : (0 : Ordinal) < omega0 ^ (mu a + mu a + (9 : Ordinal)) := by
+      exact opow_pos _ omega0_pos
+      
+    exact lt_add_of_pos_left _ h1
+```
+
+## Case 3: `Step.R_eq_diff` (eqW a b → integrate (merge a b))
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- Need: mu(integrate (merge a b)) < mu(eqW a b)
+    -- 
+    -- LHS = omega^4 * (mu(merge a b) + 1) + 1
+    --     = omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 1 + 1) + 1
+    --     = omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 2) + 1
+    --
+    -- RHS = omega^(mu a + mu b + 9) + 1
+    --
+    -- Key: Need mu a + mu b + 9 > 4 to ensure exponential dominance
+    
+    -- Step 1: Show the exponent comparison
+    have h1 : (4 : Ordinal) < mu a + mu b + (9 : Ordinal) := by
+      -- Since mu a, mu b ≥ 0, we have mu a + mu b + 9 ≥ 9 > 4
+      calc (4 : Ordinal)
+        _ < (9 : Ordinal) := by norm_num
+        _ ≤ mu a + mu b + (9 : Ordinal) := by
+          rw [← zero_add (9 : Ordinal)]
+          exact add_le_add_right (add_nonneg (Ordinal.zero_le _) (Ordinal.zero_le _)) _
+    
+    -- Step 2: Use exponential comparison to show RHS dominates LHS
+    have h2 : omega0 ^ (4 : Ordinal) * (omega0 ^ (3 : Ordinal) * (mu a + 1) + omega0 ^ (2 : Ordinal) * (mu b + 1) + 2) 
+              < omega0 ^ (mu a + mu b + (9 : Ordinal)) := by
+      -- The RHS exponent is larger, and omega^k dominates omega^j * (any finite coefficient)
+      -- when k > j
+      sorry -- Requires detailed ordinal arithmetic inequalities
+    
+    -- Step 3: Complete the proof
+    calc mu (integrate (merge a b))
+      _ = omega0 ^ (4 : Ordinal) * (mu (merge a b) + 1) + 1 := rfl
+      _ = omega0 ^ (4 : Ordinal) * (omega0 ^ (3 : Ordinal) * (mu a + 1) + omega0 ^ (2 : Ordinal) * (mu b + 1) + 1 + 1) + 1 := by
+        simp [mu]
+      _ < omega0 ^ (mu a + mu b + (9 : Ordinal)) := h2
+      _ < omega0 ^ (mu a + mu b + (9 : Ordinal)) + 1 := lt_add_one _
+```
+
+## Key Proof Strategy
+
+The proof strategy relies on the careful design of the ordinal measure `mu`:
+
+1. **Exponential Hierarchy**: The measure uses different powers of `omega0` to create a strict hierarchy
+2. **Dominance Arguments**: Higher-order exponentials dominate lower-order terms with any finite coefficients  
+3. **Recursion Control**: The `recDelta` constructor uses exponents depending on subterm measures to ensure termination
+
+The remaining `sorry` placeholders would need detailed ordinal arithmetic lemmas from Mathlib, particularly around:
+- Exponential comparisons (`opow_lt_opow_of_lt`)
+- Multiplication and addition properties in ordinal arithmetic
+- Dominance of exponential terms over polynomial terms
+
+This proof skeleton provides the structural approach needed to complete the strong normalization theorem.

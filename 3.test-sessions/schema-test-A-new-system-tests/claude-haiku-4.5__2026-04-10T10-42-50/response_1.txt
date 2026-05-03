@@ -1,0 +1,11 @@
+**Assessment: Strong normalization CANNOT be established from this system alone.**
+
+**Reasoning:**
+
+1. **Incomplete specification**: The rewrite system defines `F` with two rules but introduces the symbol `G` in the second rule without providing any reduction rules for it. The second rule `F(x, y, S(n)) -> G(F(x, y, n))` produces terms headed by `G`, but `G` is irreducible.
+
+2. **Termination vs. Normalization**: While the `F` rules themselves exhibit termination (the third argument strictly decreases from `S(n)` toward `Z`), the system as a whole gets stuck. After applying the rules to `F`, reduction halts at terms containing `G(...)` which cannot be reduced further.
+
+3. **Missing dependency**: The system depends on rules for `G` that aren't provided. Without those rules, we cannot prove all terms reduce to a normal form—we can only prove that the `F` reduction process terminates, leaving unreducible `G` applications in the term.
+
+**Conclusion**: As presented, this is an incomplete rewrite system. Strong normalization requires either (a) rules for `G`, or (b) an external axiom stating that `G` terms are already in normal form. Neither is derivable from what is shown.

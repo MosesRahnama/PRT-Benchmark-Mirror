@@ -1,0 +1,15 @@
+**Assessment:** Strong normalization **does hold** for the presented rewrite system.
+
+**Reasoning**
+
+The system contains only the two rules  
+
+1. `F(x, y, Z) → x`  
+2. `F(x, y, S(n)) → G(y, F(x, y, n))`
+
+* The only reducible term is a `F`‑application whose third argument is either `Z` or a successor term `S(n)`.  
+* Rule 2 strictly decreases the “size” of the third argument: the outermost `S` is removed and the recursive call is on the smaller term `n`.  
+* The recursion therefore proceeds by peeling off one `S` at each step. Since the only base case for the third argument is `Z`, after a finite number of applications of rule 2 we reach a term of the form `F(..., Z)`, which is then reduced by rule 1 to `x`.  
+* The right‑hand side of rule 2 introduces a `G` term, but there are **no rules** that rewrite `G`. Hence `G` is a normal form and does not contribute to further reductions.
+
+Consequently every rewrite sequence starting from any ground term built from `F`, `S`, and `Z` terminates after a finite number of steps (either to `x` or to a term containing `G`). No additional structural axioms or object‑level assumptions are required to prove this property.

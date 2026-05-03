@@ -1,0 +1,61 @@
+I'll provide a proof skeleton for completing the three remaining cases in the Lean 4 file. Let me analyze each of the `sorry` cases and outline the key steps needed to complete them.
+
+## Case 1: `R_rec_succ` - Recursive step case
+
+For `recDelta b s (delta n) --> app s (recDelta b s n)`, we need to show:
+- LHS measure: `mu (app s (recDelta b s n))`
+- RHS measure: `mu (recDelta b s (delta n))`
+
+The key insight is that `mu (delta n) = omega^5 * (mu n + 1) + 1`, which creates a much larger ordinal than appears in the `app` constructor's measure.
+
+**Proof skeleton:**
+```lean
+-- Use simp to expand both sides
+-- Show that omega^(mu(delta n) + mu(s) + 6) dominates omega^3 * (mu s + 1) + omega^2 * (mu(recDelta b s n) + 1)
+-- Key lemmas needed:
+-- 1. opow_le_opow_right omega0_pos (show mu(delta n) + mu(s) + 6 > 3)
+-- 2. omega^5 * (mu n + 1) + 1 + mu s + 6 > mu n + mu s + 6 (for the recursive call)
+-- 3. Use transitivity of < with intermediate bounds
+```
+
+## Case 2: `R_eq_refl` - Reflexive equality case
+
+For `eqW a a --> void`, we need to show `0 < omega^(2 * mu a + 9) + 1`.
+
+**Proof skeleton:**
+```lean
+-- This is straightforward positivity
+-- Use: Ordinal.zero_lt_opow (show 2 * mu a + 9 ≠ 0)
+-- Since mu a ≥ 0, we have 2 * mu a + 9 ≥ 9 > 0
+-- Then add_pos_right to handle the +1
+```
+
+## Case 3: `R_eq_diff` - Inequality case
+
+For `eqW a b --> integrate (merge a b)`, we need to show:
+- LHS: `mu (integrate (merge a b)) = omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 2) + 1`
+- RHS: `mu (eqW a b) = omega^(mu a + mu b + 9) + 1`
+
+**Proof skeleton:**
+```lean
+-- Key insight: mu a + mu b + 9 is much larger than the polynomial terms in LHS
+-- Show that mu a + mu b + 9 > 4 + max(mu a, mu b) + constants
+-- Use: opow_le_opow_right omega0_pos (show mu a + mu b + 9 > 4)
+-- Then show omega^(mu a + mu b + 9) > omega^4 * (complicated polynomial)
+-- Use distributive properties and monotonicity of ordinal multiplication
+-- May need lemmas about: 
+--   omega^α > omega^β * γ when α > β and γ is a polynomial in smaller ordinals
+```
+
+## General strategy for all cases:
+
+1. **Expand definitions**: Use `simp [mu]` to unfold the measure function
+2. **Establish intermediate inequalities**: Break down complex ordinal comparisons into simpler steps
+3. **Use ordinal arithmetic lemmas**: Leverage Mathlib's ordinal library:
+   - `opow_pos`, `opow_le_opow_right`, `opow_lt_opow_right`
+   - `mul_le_mul_left`, `add_le_add_left`, etc.
+   - Properties of `omega0` as the first infinite ordinal
+4. **Handle polynomial vs exponential**: Remember that `omega^α` dominates any polynomial in smaller ordinals when `α` is sufficiently large
+5. **Use transitivity**: Chain multiple `<` relations through intermediate ordinals
+
+The most challenging case will be `R_rec_succ` due to the nested recursive structure, but the key is recognizing that the `delta` constructor's `omega^5` base creates an ordinal large enough to dominate all the polynomial combinations in the `app` constructor's measure.

@@ -1,0 +1,57 @@
+**Proof Skeletons for the Remaining `mu_decreases` Cases**
+
+Replace the three `sorry` placeholders with the following (these follow the exact style, naming, and `calc` patterns already used in the five proved cases; they rely only on lemmas already imported via `Mathlib.SetTheory.Ordinal.*` and the definitions present in the file).
+
+```lean
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- mu(recDelta b s (delta n)) = ω^(μ(δ n) + μ(s) + 6) + ω·(μ(b)+1) + 1
+    --                           = ω^(ω^5·(μ(n)+1) + 1 + μ(s) + 6) + …
+    -- μ(app s (recDelta b s n)) < ω^3·(μ(s)+1) + ω^2·(μ(recDelta b s n)+2) + 1
+    -- The dominant term on the left has an exponent containing an ω^5 factor;
+    -- this strictly exceeds any finite sum of lower ω-powers on the right.
+    have h_exp : omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6 >
+        mu n + mu s + 6 := by
+      apply add_lt_add_right
+      apply add_lt_add_left
+      exact Ordinal.mul_lt_omega0_opow (by decide) (Ordinal.pos_iff_ne_zero.mpr _)
+    calc
+      mu (app s (recDelta b s n)) < omega0 ^ (mu n + mu s + 6) + 1 :=
+        lt_add_of_le_of_pos (by simp [mu]; apply le_add_right) (by positivity)
+      _ ≤ omega0 ^ (mu n + mu s + 6) + omega0 * (mu b + 1) + 1 := le_add_right _ _
+      _ < omega0 ^ (omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6) :=
+        Ordinal.opow_lt_opow_left (Ordinal.one_le_opow _ (by positivity)) h_exp
+      _ ≤ mu (recDelta b s (delta n)) := by simp [mu]; apply le_add_right
+
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- 0 < ω^(μ(a) + μ(a) + 9) + 1 is immediate from positivity of ordinal
+    -- exponentiation (base ω > 1, exponent ≥ 9).
+    exact Ordinal.pos_iff_ne_zero.mpr (by
+      apply ne_of_gt
+      exact Ordinal.opow_pos (mu a + mu a + 9) Ordinal.omega0_pos)
+
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- μ(integrate (merge a b)) = ω^4·(μ(merge a b)+1) + 1
+    --                         = ω^4·(ω^3·(μ(a)+1) + ω^2·(μ(b)+1) + 2) + 1
+    -- μ(eqW a b)               = ω^(μ(a) + μ(b) + 9) + 1
+    --
+    -- The right-hand side has a strictly larger exponent (μ(a)+μ(b)+9)
+    -- than any term reachable by the left-hand side's ω^4 multiplier.
+    have h_base : 1 < omega0 ^ (mu a + mu b + 9) := Ordinal.one_lt_opow _
+    have h_lhs_lt : omega0 ^ 4 * _ < omega0 ^ (mu a + mu b + 9) := by
+      apply Ordinal.mul_lt_opow_of_lt
+      · exact Ordinal.opow_pos _ Ordinal.omega0_pos
+      · exact Ordinal.add_lt_omega0_opow (by decide) (by positivity)
+    calc
+      mu (integrate (merge a b)) < omega0 ^ 4 * (omega0 ^ 3 * (mu a + 1) +
+          omega0 ^ 2 * (mu b + 1) + 2) + 1 := by simp [mu]; rfl
+      _ < omega0 ^ (mu a + mu b + 9) := h_lhs_lt
+      _ ≤ mu (eqW a b) := by simp [mu]; apply le_add_right
+```
+
+These skeletons close the `mu_decreases` theorem. The final `strong_normalization` proof (already present) will then succeed because `mu` supplies a strictly decreasing measure for every `Step` constructor, yielding well-foundedness via `InvImage.wf`. No other changes to the file are required.

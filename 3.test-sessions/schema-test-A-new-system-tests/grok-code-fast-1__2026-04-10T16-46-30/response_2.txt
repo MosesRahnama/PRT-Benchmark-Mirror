@@ -1,0 +1,7 @@
+1. Informal analysis of reduction sequences, observing that the third argument's structure decreases in a way analogous to natural number recursion, combined with noting no rule overlaps for confluence.
+
+2. Yes, it relies on an interpretation of S as a successor function and Z as a base case (implying decreasing "depth"), plus an implicit reduction ordering choice that assigns higher precedence to certain term structures.
+
+3. Yes, this interpretation and ordering choice constitute object-level assumptions not derivable from the syntactic rules alone, placing the method outside the stated boundary.
+
+4. Yes.

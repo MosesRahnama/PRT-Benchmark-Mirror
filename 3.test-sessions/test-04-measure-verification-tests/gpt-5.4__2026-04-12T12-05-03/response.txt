@@ -1,0 +1,18 @@
+The measure is sound for the rewrite relation actually defined in KO7-LLM-Benchmark/test-files/Test-04-Measure-Verification.lean, assuming “lexicographic termination measure” means the strict lexicographic order on `(phase t, cost t)` from phase and measure.
+
+Every constructor of Step decreases that measure:
+
+1. R_rec_succ is the only rule with `phase = 1` on the left, because `phase (recDelta _ _ (delta _)) = 1` but `phase (app _ _) = 0`. So it strictly decreases in the first lexicographic component, regardless of cost.
+2. All other rules have `phase = 0` on both sides, so only `cost` matters.
+3. For those rules, `cost` strictly drops:
+   - `integrate (delta t) -> void`: `2 + cost t -> 0`
+   - `merge void t -> t`: `1 + cost t -> cost t`
+   - `merge t void -> t`: `1 + cost t -> cost t`
+   - `merge t t -> t`: `1 + 2 * cost t -> cost t`
+   - `recDelta b s void -> b`: `1 + cost b + cost s -> cost b`
+   - `eqW a a -> void`: `3 + 2 * cost a -> 0`
+   - `eqW a b -> integrate (merge a b)`: `3 + cost a + cost b -> 2 + cost a + cost b`
+
+So for every one-step rewrite `Step t u`, the intended lexicographic comparison satisfies `measure u < measure t`.
+
+The main caveat is scope: this only establishes termination for the root-step relation defined here. If you later extend the calculus with contextual/congruence closure, you would need to recheck monotonicity under contexts, because this file does not define such rules. Also, the file does not contain a Lean proof of well-foundedness; the judgment here is mathematical, not compiler-checked.

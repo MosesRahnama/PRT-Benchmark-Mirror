@@ -1,0 +1,57 @@
+, the proposed termination measure is:
+
+- `measure t : Nat × Nat := (phase t, cost t)`
+- `phase t = 1` **only** when `t` has the *top-level* shape `recDelta _ _ (delta _)`; otherwise `phase t = 0`.
+- `cost` is a size-like function.
+
+If we interpret “lexicographic termination measure” in the standard way (i.e. show that for every rewrite step `Step t t'`, we have `measure t' <_lex measure t` with the usual `<` on `Nat` and lex order on pairs), then several rules **can increase** the first component `phase`, so the measure does **not** uniformly decrease.
+
+### Concrete counterexample (one-step increase)
+
+Let
+
+- `x := recDelta void void (delta void)`.
+
+Then:
+
+- `phase x = 1` (it matches `recDelta _ _ (delta _)`)
+- `cost x = 1 + cost void + cost void + cost (delta void) = 1 + 0 + 0 + (1 + 0) = 2`
+
+Now consider the term:
+
+- `u := merge void x`
+
+By rule `R_merge_void_left`, we have `Step u x`.
+
+But:
+
+- `phase u = 0` (it’s a `merge`, not a `recDelta ... (delta ...)`)
+- `cost u = 1 + cost void + cost x = 1 + 0 + 2 = 3`
+
+So:
+
+- `measure u = (0, 3)`
+- `measure x = (1, 2)`
+
+Under standard lex order, `(1, 2) < (0, 3)` is **false** because the first component increased from `0` to `1`. Therefore this step does **not** decrease the measure, so the measure cannot serve as a sound global termination argument for `Step`.
+
+### Why this happens (pattern-level explanation)
+
+Any rule of the form “strip a wrapper and return a subterm” can expose a subterm whose `phase` is `1`, even if the wrapped term had `phase = 0`. In this file, the problematic rules include:
+
+- `R_merge_void_left  : Step (merge void t) t`
+- `R_merge_void_right : Step (merge t void) t`
+- `R_merge_cancel     : Step (merge t t) t`
+- `R_rec_zero         : Step (recDelta b s void) b`
+
+For each of these, you can pick `t` (or `b`) to be a `recDelta _ _ (delta _)`, making `phase` jump `0 → 1`.
+
+By contrast, `R_rec_succ` was clearly the motivation for `phase`: it makes `phase` drop `1 → 0` (even though `cost` can increase). That part is fine, but it doesn’t rescue the other rules.
+
+## Updated todo list
+
+1. Read the Lean rewrite calculus file — completed  
+2. Extract proposed termination measure — completed  
+3. Check measure well-foundedness — completed  
+4. Verify decrease for each rewrite rule — completed  
+5. Conclude soundness or find counterexample — completed

@@ -1,0 +1,23 @@
+**Defining Transformations**
+
+I'm making good headway. I've now defined the core transformations for cases 1, 2, and 3, mapping `Step.R_int_delta t`, `Step.R_rec_zero b s`, and `Step.R_rec_succ b s n`. The first one integrates `delta t`, the second removes a `b`, and the third uses `app` to recursively apply.
+
+
+**Elaborating Transformations**
+
+I'm refining the transformations for all five cases. I've worked out the Lean code skeletons, including the `drop_right` calls. Currently, I'm debugging the kappa calculations for the recursive zero case, and realizing that `kappa b <= Nat.max (kappa b) (kappa s)` is true, though not strictly equal. I'm also ensuring the `mu` calculations respect the ordering. I have a hunch the recursion is going to be complicated.
+
+
+**Constructing Proof Skeletons**
+
+I'm making progress, creating the proof skeletons. I've successfully written the structure for the `R_int_delta` and `R_rec_zero` cases, noting the kappa and mu relationships. Now, I'm adapting the skeleton for case 3 and beyond. It seems `drop_left` won't be sufficient and I will have to unfold the `measure` and `LexOrder` definitions or use lemmas.
+
+
+**Formulating Proofs**
+
+I've got the five cases down and am now attempting to build out the proof structures within each `sorry` block. My initial attempts use `simp` and `omega`, but I've hit a small snag with `kappa` values, and I'm re-evaluating whether simple equality holds. Currently, I'm adapting the skeleton for cases 4 and 5. I will rewrite the `sorry` statements, but the key is maintaining the measure and kappa relations.
+
+
+**Providing Proof Skeletons**
+
+I've got the five cases outlined now: `R_int_delta`, `R_rec_zero`, `R_rec_succ`, `R_eq_refl`, and `R_eq_diff`. I'm starting on the proof skeletons, and I'm leaning towards unfolding `measure` and `LexOrder` or using related lemmas rather than relying on `drop_left` and `drop_right`. The key is preserving the measure and kappa relations. I'm providing proof skeletons with inline comments, and making decisions based on the prompt instructions.

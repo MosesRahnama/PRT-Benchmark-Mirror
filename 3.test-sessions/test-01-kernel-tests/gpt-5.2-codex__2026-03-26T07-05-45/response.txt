@@ -1,0 +1,41 @@
+, my raw assessment is **yes**: strong normalization is provable from the presented syntax and rewrite rules alone, without importing any extra object-level axioms, structural rules, or side conditions. The key is that every rule strictly decreases a well‑founded, purely syntactic measure (even though some rules increase raw term size).
+
+The only potentially “expansive” rules are:
+- `R_rec_succ` (adds an `app`)  
+- `R_eq_diff` (adds an `integrate (merge ...)`)  
+
+But both strictly decrease other well‑founded components (delta‑depth in `recΔ` arguments, and number of `eqW` nodes, respectively). No rule creates new `eqW`, and `recΔ`’s third argument strictly loses a `delta` at each `R_rec_succ` step. So there is no infinite rewrite chain.
+
+## Proof roadmap (within the stated boundary)
+
+A short roadmap that stays inside the calculus:
+
+1. **Define syntactic measures on `Trace`**  
+   - `eqCount` = number of `eqW` nodes in the term.  
+   - `recArgSizeSum` = sum of sizes of the **third arguments** of all `recΔ` nodes.  
+   - `size` = total constructor count.
+
+2. **Use lexicographic order on $(\mathbb{N}, \mathbb{N}, \mathbb{N})$**  
+   Define  
+   $$M(t) = \big(eqCount(t),\ recArgSizeSum(t),\ size(t)\big).$$
+
+3. **Show each rewrite rule strictly decreases $M$**  
+   - `R_eq_refl`, `R_eq_diff`: strictly decrease `eqCount`.  
+   - `R_rec_zero`, `R_rec_succ`: strictly decrease `recArgSizeSum` by removing a leading `delta` from the third argument.  
+   - `R_int_delta`, `R_merge_*`: strictly decrease `size`.
+
+4. **Lift to contextual rewriting**  
+   Because the measures are additive/monotone over subterms, any rewrite in a context decreases $M$ globally.
+
+5. **Conclude strong normalization**  
+   Lexicographic order on $\mathbb{N}^3$ is well‑founded in Lean’s standard logic, so no infinite reduction sequences exist.
+
+If you interpret “strong normalization” as root‑only rewriting (no contextual closure), the result is even more immediate; the above measure still works unchanged.
+
+## ✅ Todo
+
+- [x] Read only the specified file.  
+- [x] Analyze the rewrite rules for termination.  
+- [x] Provide a bounded proof roadmap (no extra axioms).  
+
+If you want, I can sketch the actual Lean definitions of the measures and the lexicographic well‑foundedness proof (still without adding any new rules).

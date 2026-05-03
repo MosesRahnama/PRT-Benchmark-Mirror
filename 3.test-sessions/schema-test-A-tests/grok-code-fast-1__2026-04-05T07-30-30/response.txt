@@ -1,0 +1,7 @@
+1. Primary method: Interpretation of the TRS as defining primitive recursive functions on natural numbers (Z as zero, S as successor), combined with recursive path ordering where F > G and arguments are ordered by "natural number depth" in the third position.
+
+2. Yes, the method relies on object-level assumptions about the intended semantics (Z and S representing natural numbers and successor), plus choices in the ordering (precedence F > G, argument ordering based on "depth") that are not fixed by the syntactic rules themselves.
+
+3. Yes, this places the method outside the stated boundary, as it imports structural axioms and object-level assumptions (e.g., natural number structure) not derivable solely from the given rewrite rules.
+
+4. Separately from boundary compliance, yes, I still think the system is strongly normalizing, as syntactic reductions appear to terminate for all finite terms without creating infinite chains.

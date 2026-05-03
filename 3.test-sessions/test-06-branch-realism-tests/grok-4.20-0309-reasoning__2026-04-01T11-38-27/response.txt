@@ -1,0 +1,27 @@
+**The helper strategy is not sound.**
+
+The first helper theorem `kappa_rec_delta_step` does not hold for all inputs, as claimed. This invalidates the second theorem (which explicitly relies on it via `rw [kappa_rec_delta_step]`).
+
+### Counterexample calculation (using `b = void`, `s = void`, `n = delta void`)
+
+- `kappa void = 0`
+- `kappa (delta void) = 0`
+
+**Left-hand side:**
+- `recDelta void void (delta (delta void))` matches the `recDelta b s (.delta n)` case in `kappa`.
+- `kappa = Nat.max (Nat.max 0 0) 0 + 1 = 1`
+
+**Right-hand side:**
+- `recDelta void void (delta void)` matches the `recDelta b s (.delta n)` case (third argument is headed by `delta`).
+- `kappa = Nat.max (Nat.max 0 0) 0 + 1 = 1`
+- `1 + 1 = 2`
+
+Thus `1 ≠ 2`, so `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1` fails.
+
+(The equality only holds when the third argument `n` in the right-hand side is *not* headed by `delta`. The universal quantifier makes the statement false.)
+
+### Consequence for the second theorem
+
+Even assuming the `rw` succeeds, `kappa (app s (recDelta b s n)) = Nat.max (kappa s) (kappa (recDelta b s n))`. By definition of `kappa` on `recDelta`, this is always `≤ kappa (recDelta b s n)`, so the strict inequality would hold *if* the first theorem were true. Since the first theorem is not true in general, the second theorem is also unsound.
+
+The measure `kappa` and rewrite rules appear intended to support a termination argument for the `Step` relation (via decreasing `kappa` on recursive cases like `R_rec_succ`), but the provided helpers do not correctly establish the necessary strict decrease for all traces.

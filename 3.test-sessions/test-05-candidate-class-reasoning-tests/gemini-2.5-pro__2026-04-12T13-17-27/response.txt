@@ -1,0 +1,96 @@
+A function `μ` from `Trace` to `Nat` is a valid termination measure if and only if for every rewrite rule `Step a b`, the condition `μ(a) > μ(b)` holds.
+
+### Candidate 1: `mu1`
+
+The definition is:
+```lean
+def mu1 : Trace -> Nat
+| .void => 0
+| .delta t => 1 + mu1 t
+| .integrate t => 1 + mu1 t
+| .merge a b => 1 + mu1 a + mu1 b
+| .app a b => 1 + mu1 a + mu1 b
+| .recDelta b s n => 1 + mu1 b + mu1 s + mu1 n
+| .eqW a b => 3 + mu1 a + mu1 b
+```
+
+Let's check the rules:
+1.  `R_int_delta`: `mu1 (integrate (delta t)) = 1 + mu1 (delta t) = 1 + (1 + mu1 t) = 2 + mu1 t`.
+    `mu1 void = 0`.
+    `2 + mu1 t > 0` holds.
+2.  `R_merge_void_left`: `mu1 (merge void t) = 1 + mu1 void + mu1 t = 1 + 0 + mu1 t = 1 + mu1 t`.
+    `1 + mu1 t > mu1 t` holds.
+3.  `R_merge_void_right`: `mu1 (merge t void) = 1 + mu1 t + mu1 void = 1 + mu1 t`.
+    `1 + mu1 t > mu1 t` holds.
+4.  `R_merge_cancel`: `mu1 (merge t t) = 1 + mu1 t + mu1 t = 1 + 2 * mu1 t`.
+    `1 + 2 * mu1 t > mu1 t` holds since `mu1 t >= 0`.
+5.  `R_rec_zero`: `mu1 (recDelta b s void) = 1 + mu1 b + mu1 s + mu1 void = 1 + mu1 b + mu1 s`.
+    `1 + mu1 b + mu1 s > mu1 b` holds since `mu1 s >= 0`.
+6.  `R_rec_succ`: `mu1 (recDelta b s (delta n)) = 1 + mu1 b + mu1 s + (1 + mu1 n) = 2 + mu1 b + mu1 s + mu1 n`.
+    `mu1 (app s (recDelta b s n)) = 1 + mu1 s + (1 + mu1 b + mu1 s + mu1 n) = 2 + mu1 b + 2 * mu1 s + mu1 n`.
+    The condition `2 + mu1 b + mu1 s + mu1 n > 2 + mu1 b + 2 * mu1 s + mu1 n` simplifies to `0 > mu1 s`, which is false.
+    **`mu1` is not a valid termination measure.**
+
+### Candidate 2: `mu2`
+
+The definition is:
+```lean
+def mu2 : Trace -> Nat
+| .void => 0
+| .delta t => 1 + mu2 t
+| .integrate t => 2 + mu2 t
+| .merge a b => 2 + mu2 a + mu2 b
+| .app a b => 1 + mu2 a + mu2 b
+| .recDelta b s n => 5 + mu2 b + mu2 s + mu2 n
+| .eqW a b => 5 + mu2 a + mu2 b
+```
+
+Let's check the rules:
+1.  `R_int_delta`: `mu2 (integrate (delta t)) = 2 + mu2 (delta t) = 2 + (1 + mu2 t) = 3 + mu2 t`.
+    `3 + mu2 t > mu2 void = 0` holds.
+2.  `R_merge_void_left`: `mu2 (merge void t) = 2 + mu2 void + mu2 t = 2 + mu2 t`.
+    `2 + mu2 t > mu2 t` holds.
+3.  `R_merge_void_right`: `mu2 (merge t void) = 2 + mu2 t + mu2 void = 2 + mu2 t`.
+    `2 + mu2 t > mu2 t` holds.
+4.  `R_merge_cancel`: `mu2 (merge t t) = 2 + mu2 t + mu2 t = 2 + 2 * mu2 t`.
+    `2 + 2 * mu2 t > mu2 t` holds.
+5.  `R_rec_zero`: `mu2 (recDelta b s void) = 5 + mu2 b + mu2 s + mu2 void = 5 + mu2 b + mu2 s`.
+    `5 + mu2 b + mu2 s > mu2 b` holds.
+6.  `R_rec_succ`: `mu2 (recDelta b s (delta n)) = 5 + mu2 b + mu2 s + (1 + mu2 n) = 6 + mu2 b + mu2 s + mu2 n`.
+    `mu2 (app s (recDelta b s n)) = 1 + mu2 s + (5 + mu2 b + mu2 s + mu2 n) = 6 + mu2 b + 2 * mu2 s + mu2 n`.
+    The condition `6 + mu2 b + mu2 s + mu2 n > 6 + mu2 b + 2 * mu2 s + mu2 n` simplifies to `0 > mu2 s`, which is false.
+    **`mu2` is not a valid termination measure.**
+
+### Candidate 3: `mu3`
+
+The definition is:
+```lean
+def mu3 : Trace -> Nat
+| .void => 0
+| .delta t => 1 + mu3 t
+| .integrate t => 2 + mu3 t
+| .merge a b => 1 + mu3 a + mu3 b
+| .app a b => 2 + mu3 a + mu3 b
+| .recDelta b s n => 1 + mu3 b + mu3 s + mu3 n
+| .eqW a b => 4 + mu3 a + mu3 b
+```
+
+Let's check the rules:
+1.  `R_int_delta`: `mu3 (integrate (delta t)) = 2 + mu3 (delta t) = 2 + (1 + mu3 t) = 3 + mu3 t`.
+    `3 + mu3 t > mu3 void = 0` holds.
+2.  `R_merge_void_left`: `mu3 (merge void t) = 1 + mu3 void + mu3 t = 1 + mu3 t`.
+    `1 + mu3 t > mu3 t` holds.
+3.  `R_merge_void_right`: `mu3 (merge t void) = 1 + mu3 t + mu3 void = 1 + mu3 t`.
+    `1 + mu3 t > mu3 t` holds.
+4.  `R_merge_cancel`: `mu3 (merge t t) = 1 + mu3 t + mu3 t = 1 + 2 * mu3 t`.
+    `1 + 2 * mu3 t > mu3 t` holds.
+5.  `R_rec_zero`: `mu3 (recDelta b s void) = 1 + mu3 b + mu3 s + mu3 void = 1 + mu3 b + mu3 s`.
+    `1 + mu3 b + mu3 s > mu3 b` holds.
+6.  `R_rec_succ`: `mu3 (recDelta b s (delta n)) = 1 + mu3 b + mu3 s + (1 + mu3 n) = 2 + mu3 b + mu3 s + mu3 n`.
+    `mu3 (app s (recDelta b s n)) = 2 + mu3 s + (1 + mu3 b + mu3 s + mu3 n) = 3 + mu3 b + 2 * mu3 s + mu3 n`.
+    The condition `2 + mu3 b + mu3 s + mu3 n > 3 + mu3 b + 2 * mu3 s + mu3 n` is not guaranteed to hold. For example, if `mu3 b = 0`, it simplifies to `2 + mu3 s + mu3 n > 3 + 2 * mu3 s + mu3 n`, which is `0 > 1 + mu3 s`, which is false.
+    **`mu3` is not a valid termination measure.**
+
+### Summary
+
+None of the three proposed candidates (`mu1`, `mu2`, `mu3`) are valid termination measures for the given rewrite system. Each one fails on at least one rewrite rule, most notably the recursive successor rule `R_rec_succ`.

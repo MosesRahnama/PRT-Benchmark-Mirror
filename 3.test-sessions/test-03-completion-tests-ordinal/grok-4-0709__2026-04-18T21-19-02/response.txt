@@ -1,0 +1,76 @@
+Below is a proof skeleton for each of the remaining cases in the `mu_decreases` theorem (i.e., the cases currently marked with `sorry`). These skeletons outline the key steps using `calc` blocks, ordinal arithmetic properties (e.g., dominance of exponents, strict inequalities from addition/multiplication), and relevant lemmas from Mathlib (e.g., `Ordinal.lt_add_one`, `Ordinal.add_lt_add_left`, `Ordinal.mul_lt_mul_of_pos`). They are designed to fit directly into the pattern-matching structure of the theorem without modifying the existing code. Each skeleton includes comments explaining the reasoning and why the strict decrease holds.
+
+### Case: `R_rec_succ b s n` (recDelta b s (delta n) --> app s (recDelta b s n))
+```
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]  -- Expand mu definitions for LHS and RHS
+    -- LHS: omega^(mu (delta n) + mu s + 6) + omega * (mu b + 1) + 1
+    --      = omega^(omega^5 * (mu n + 1) + 1 + mu s + 6) + omega * (mu b + 1) + 1 (dominates due to omega^5 tower)
+    -- RHS: omega^3 * (mu s + 1) + omega^2 * (mu (recDelta b s n) + 1) + 1
+    --      = omega^3 * (mu s + 1) + omega^2 * (omega^(mu n + mu s + 6) + omega * (mu b + 1) + 2) + 1
+    -- Key: The LHS exponent (with omega^5 * (mu n + 1)) dominates the RHS's omega^(mu n + mu s + 6) term
+    --      because omega^5 * (mu n + 1) + (mu s + 7) >> mu n + mu s + 6 for any mu n, mu s (use opow_add, opow_mul)
+    have h_exp_dom : mu n + mu s + 6 < omega0 ^ (5 : Ordinal) * (mu n + 1) + (mu s + 7) := by
+      -- Prove exponent dominance: omega^5 * (mu n + 1) grows faster than mu n + mu s + 6
+      -- Use Ordinal.mul_lt_mul_of_pos, Ordinal.add_lt_add_left, and assume mu n >= mu s wlog (or case split)
+      sorry  -- Fill with ordinal inequality chain
+    have h_lhs_gt_rhs_base : omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + (mu s + 7)) > omega0 ^ (mu n + mu s + 6) := by
+      -- Follows from h_exp_dom and Ordinal.opow_lt_opow_left_of_lt (exponents strictly increase)
+      apply Ordinal.opow_lt_opow_left_of_lt omega0_pos h_exp_dom
+    -- Now bound RHS terms below LHS's main term
+    calc
+      omega0 ^ (3 : Ordinal) * (mu s + 1) + omega0 ^ (2 : Ordinal) * (omega0 ^ (mu n + mu s + 6) + omega0 * (mu b + 1) + 2) + 1
+        < omega0 ^ (3 : Ordinal) * (mu s + 1) + omega0 ^ (2 : Ordinal) * (omega0 ^ (mu n + mu s + 6) * 2) + 1 := by
+          -- Bound inner + omega * (mu b + 1) + 2 < omega^(mu n + mu s + 6) * 2 (if mu n + mu s + 6 >= 1, else trivial)
+          sorry  -- Use Ordinal.add_lt_mul_of_lt (dominance of higher exponents)
+      _ < omega0 ^ (3 : Ordinal) * (mu s + 1) + omega0 ^ (mu n + mu s + 6) * (omega0 ^ (2 : Ordinal) * 2) + 1 := by
+          -- Rewrite mul distrib: omega^2 * (omega^exp * 2) = omega^(exp + 2) * 2 < omega^(exp + 3) (absorb constant)
+          rw [← Ordinal.opow_add]; apply add_lt_add_left; sorry
+      _ < omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + (mu s + 7)) := by
+          -- All RHS terms < omega^(large exp) from h_lhs_gt_rhs_base (bound omega^3 * anything < omega^large)
+          sorry  -- Sum of smaller opow/mul terms < single larger opow (Ordinal.add_lt_opow_self)
+      _ ≤ omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + (mu s + 7)) + omega0 * (mu b + 1) + 1 := by
+          apply le_add_right; apply le_add_right; exact le_rfl
+      _ = mu (recDelta b s (delta n)) := by rfl  -- Matches LHS after simp
+```
+
+### Case: `R_eq_refl a` (eqW a a --> void)
+```
+| _, _, Step.R_eq_refl a => by
+    simp [mu]  -- LHS: 0; RHS: omega^(mu a + mu a + 9) + 1 = omega^(2 * mu a + 9) + 1
+    -- Show 0 < omega^(2 * mu a + 9) + 1 (routine positivity: any opow + 1 > 0)
+    calc
+      0 < 1 := zero_lt_one
+      _ ≤ omega0 ^ (2 * mu a + 9) + 1 := le_add_left 1 _
+```
+
+### Case: `R_eq_diff a b` (eqW a b --> integrate (merge a b))
+```
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]  -- LHS: omega^4 * (mu (merge a b) + 1) + 1
+               --      = omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 1 + 1) + 1
+               -- RHS: omega^(mu a + mu b + 9) + 1
+    -- Key: RHS exponent (mu a + mu b + 9) dominates LHS's effective exponent ~7 (after distrib)
+    --      Assume wlog mu a >= mu b; bound mu (merge) < omega^3 * (mu a + mu b + 3) or similar
+    have h_merge_bound : mu (merge a b) < omega0 ^ (3 : Ordinal) * (mu a + mu b + 3) := by
+      -- Bound omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 1 < omega^3 * (mu a + mu b + 3)
+      -- Use Ordinal.add_lt_mul_of_lt if mu b + 1 < omega^3 * (mu b + 2), etc.
+      sorry  -- Case split on sizes of mu a, mu b
+    have h_exp_dom : 7 < mu a + mu b + 9 := by
+      -- Trivial if mu a + mu b >= 0; strict since +9 > 7 - (mu a + mu b) even if small
+      apply lt_add_of_pos_right; simp; exact zero_lt_one  -- Refine for small cases
+    calc
+      omega0 ^ (4 : Ordinal) * (mu (merge a b) + 1) + 1
+        < omega0 ^ (4 : Ordinal) * (omega0 ^ (3 : Ordinal) * (mu a + mu b + 3) + 1) + 1 := by
+          -- Apply h_merge_bound and monotonicity of mul/add
+          apply add_lt_add_right; apply mul_lt_mul_left' (opow_pos 4 omega0_pos); sorry
+      _ = omega0 ^ (7 : Ordinal) * (mu a + mu b + 3) + omega0 ^ (4 : Ordinal) + 1 := by
+          -- Distribute mul over add: omega^4 * (omega^3 * k + 1) = omega^7 * k + omega^4
+          rw [Ordinal.mul_add]; rfl
+      _ < omega0 ^ (mu a + mu b + 9) := by
+          -- omega^7 * (mu a + mu b + 3) + omega^4 + 1 < omega^(mu a + mu b + 9)
+          -- Since exp 7 < exp (mu a + mu b + 9) by h_exp_dom, and opow dominates lower terms
+          apply lt_of_lt_of_le _ (Ordinal.opow_le_opow_left_of_le omega0_pos (le_of_lt h_exp_dom))
+          sorry  -- Bound as omega^7 * (mu a + mu b + 3) < omega^(mu a + mu b + 8), etc.
+      _ ≤ omega0 ^ (mu a + mu b + 9) + 1 := le_add_right _ _
+```

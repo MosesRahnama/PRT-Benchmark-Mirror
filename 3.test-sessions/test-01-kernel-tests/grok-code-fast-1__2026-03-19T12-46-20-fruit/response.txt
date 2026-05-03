@@ -1,0 +1,3 @@
+The system appears strongly normalizing based on the given calculus alone. Each rule reduces term complexity in a way that prevents infinite chains, as reductions either remove constructors, simplify subterms, or transform in a controlled manner without creating cycles or unbounded growth.
+
+**Proof roadmap:** Define a well-founded ordering on terms using a combination of constructor precedence (e.g., banana > cherry > pear > peach > mango > grape > plum) and lexicographic subterm ordering. Verify that each reduction rule decreases this ordering, ensuring termination via induction on the ordering. No additional axioms or assumptions needed.

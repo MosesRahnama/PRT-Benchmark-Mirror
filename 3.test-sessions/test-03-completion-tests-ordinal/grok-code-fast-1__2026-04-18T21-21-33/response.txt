@@ -1,0 +1,49 @@
+The Lean 4 file defines an ordinal-valued measure `mu` for terms in a first-order rewrite calculus and proves that each reduction step decreases this measure, establishing strong normalization. Five cases are fully proved (`R_int_delta`, `R_merge_void_left`, `R_merge_void_right`, `R_merge_cancel`, `R_rec_zero`), while three remain incomplete (`R_rec_succ`, `R_eq_refl`, `R_eq_diff`). Below is a proof skeleton for each of the three incomplete cases, based on the ordinal arithmetic and comments in the file. These skeletons outline the key steps and inequalities needed to complete the proofs, leveraging properties of ordinal exponents and addition.
+
+### Case: `R_rec_succ` (recDelta b s (delta n) --> app s (recDelta b s n))
+**Goal:** Show `mu (app s (recDelta b s n)) < mu (recDelta b s (delta n))`.
+
+**Key insight from the file:** The exponent in the left-hand side (LHS) includes `omega^5 * (mu n + 1)`, which dominates the exponents in the right-hand side (RHS) due to the large base.
+
+**Proof skeleton:**
+1. Expand `mu` for both sides:
+   - LHS: `mu (app s (recDelta b s n)) = omega^3 * (mu s + 1) + omega^2 * (mu (recDelta b s n) + 1) + 1`
+   - RHS: `mu (recDelta b s (delta n)) = omega^(mu (delta n) + mu s + 6) + omega * (mu b + 1) + 1`
+   - Substitute `mu (delta n) = omega^5 * (mu n + 1) + 1`, so RHS exponent becomes `omega^5 * (mu n + 1) + 1 + mu s + 6`.
+
+2. Show that the RHS exponent `omega^5 * (mu n + 1) + mu s + 7` dominates all terms in the LHS:
+   - The LHS has exponents up to `omega^3` and `omega^2`, while the RHS has `omega^(omega^5 * (mu n + 1) + ...)`.
+   - Use ordinal properties: `omega^5 * (mu n + 1) > mu n + mu s + 7` (since `omega^5` grows faster than any finite addition).
+   - Conclude that `omega^(omega^5 * (mu n + 1) + ...) > omega^3 * (mu s + 1) + omega^2 * (omega^(mu n + mu s + 6) + ...) + ...`.
+
+3. Establish strict inequality by showing the LHS is less than the RHS's dominant term, using lemmas like `Ordinal.lt_opow_of_lt` or direct exponent comparison.
+
+### Case: `R_eq_refl` (eqW a a --> void)
+**Goal:** Show `mu void < mu (eqW a a)`, i.e., `0 < omega^(mu a + mu a + 9) + 1`.
+
+**Key insight from the file:** This is a straightforward positivity check, as the ordinal is clearly greater than zero.
+
+**Proof skeleton:**
+1. Simplify: `mu (eqW a a) = omega^(2 * mu a + 9) + 1`.
+2. Show positivity: `omega^(2 * mu a + 9) + 1 > 0`.
+   - `omega^(2 * mu a + 9)` is a positive ordinal (exponentiation of omega by a positive ordinal).
+   - Adding 1 preserves positivity.
+3. Use basic ordinal lemmas: `Ordinal.pos_of_opow` and `Ordinal.lt_add_one` to confirm `0 < omega^(...) + 1`.
+
+### Case: `R_eq_diff` (eqW a b --> integrate (merge a b))
+**Goal:** Show `mu (integrate (merge a b)) < mu (eqW a b)`.
+
+**Key insight from the file:** The RHS has a much larger exponent (`mu a + mu b + 9`) than the LHS terms, which are dominated by `omega^4`.
+
+**Proof skeleton:**
+1. Expand `mu` for both sides:
+   - LHS: `mu (integrate (merge a b)) = omega^4 * (mu (merge a b) + 1) + 1`
+   - Substitute `mu (merge a b) = omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 1`, so LHS becomes `omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 2) + 1`.
+   - RHS: `mu (eqW a b) = omega^(mu a + mu b + 9) + 1`.
+
+2. Show that `omega^(mu a + mu b + 9)` dominates the LHS:
+   - The LHS has exponents up to `omega^4`, while the RHS has `omega^(mu a + mu b + 9)`.
+   - Use ordinal exponent dominance: `mu a + mu b + 9 > 4` (since ordinals can be arbitrarily large), so `omega^(mu a + mu b + 9) > omega^4 * (...)`.
+   - Conclude that `omega^4 * (...) + 1 < omega^(mu a + mu b + 9) + 1`.
+
+3. Establish strict inequality using properties of ordinal addition and exponentiation, such as `Ordinal.lt_opow_add` or direct comparison of exponents.

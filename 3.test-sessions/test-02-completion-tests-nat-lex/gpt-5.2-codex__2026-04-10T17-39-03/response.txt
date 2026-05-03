@@ -1,0 +1,61 @@
+Here is a proof skeleton for the five remaining cases in
+. It mirrors the style of the completed cases and only uses local lemmas (`drop_left`, `drop_right`) plus `simp`/`omega` where appropriate. You can paste each block in place of the corresponding `sorry` without changing any other code.
+
+```lean
+-- integrate (delta t) --> void
+| _, _, Step.R_int_delta t => by
+    -- kappa ties (both 0), mu strictly drops
+    have hmu : mu void < mu (integrate (delta t)) := by
+      simp [mu]
+    have hk : kappa void = kappa (integrate (delta t)) := by
+      simp [kappa]
+    exact drop_right hmu hk
+```
+
+```lean
+-- recDelta b s void --> b
+| _, _, Step.R_rec_zero b s => by
+    -- kappa ties (max-max with 0), mu drops by 3 + mu s
+    have hmu : mu b < mu (recDelta b s void) := by
+      simp [mu]; omega
+    have hk : kappa b = kappa (recDelta b s void) := by
+      simp [kappa]
+    exact drop_right hmu hk
+```
+
+```lean
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    -- kappa strictly drops: +1 on LHS
+    have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+      -- reduce both sides to max expressions; then use Nat.lt_succ_self
+      simp [kappa]
+      -- goal becomes: max (kappa s) (max (max (kappa b) (kappa s)) (kappa n))
+      --        < max (max (kappa b) (kappa s)) (kappa n) + 1
+      exact Nat.lt_succ_self _
+    exact drop_left hk
+```
+
+```lean
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    -- kappa ties (max k k = k), mu drops by 4 + mu a
+    have hmu : mu void < mu (eqW a a) := by
+      simp [mu]; omega
+    have hk : kappa void = kappa (eqW a a) := by
+      simp [kappa]
+    exact drop_right hmu hk
+```
+
+```lean
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    -- kappa ties (integrate/merge do not change kappa), mu drops by 1
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by
+      simp [mu]; omega
+    have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by
+      simp [kappa]
+    exact drop_right hmu hk
+```
+
+If you want, I can also provide a version that avoids `omega` by using `Nat.succ_lt_succ` and basic arithmetic lemmas.

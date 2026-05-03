@@ -1,0 +1,1 @@
+Methods D and E satisfy both conditions (succeed in proving termination and stay within the specified benchmark boundary).

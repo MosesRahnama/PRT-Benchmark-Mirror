@@ -1,0 +1,65 @@
+Good, I have the full rewrite calculus. Let me analyze this carefully:
+
+**Syntax (constructors):**
+- `void` : base/identity element
+- `delta t` : successor/increment operator
+- `integrate t` : integration/reversal operator  
+- `merge t1 t2` : merge/union operator
+- `app t1 t2` : application/composition
+- `recΔ b s n` : recursion with base `b`, step function `s`, and counter `n`
+- `eqW a b` : equality check operator
+
+**Rewrite Rules:**
+1. `integrate (delta t) → void` : integration undoes delta
+2. `merge void t → t` : void is left identity for merge
+3. `merge t void → t` : void is right identity for merge
+4. `merge t t → t` : idempotence of merge
+5. `recΔ b s void → b` : recursive base case
+6. `recΔ b s (delta n) → app s (recΔ b s n)` : recursive step
+7. `eqW a a → void` : reflexivity
+8. `eqW a b → integrate (merge a b)` : symmetric difference
+
+Now, I need to assess whether **strong normalization** can be proven from this alone.
+
+**Initial Assessment:**
+
+Let me think about potential issues:
+
+1. **The `recΔ` rule is problematic**: Rule 6 says `recΔ b s (delta n) → app s (recΔ b s n)`. This creates a new `app` term in the RHS. The question is: can `app` reduce further? Looking at the rules, `app` doesn't have any reduction rule! It's stuck (a normal form).
+
+2. **The `app` operator has no reduction rule**: This is suspicious. In typical recursion, if `s` is some computation and we apply it to something, we'd expect it to reduce. 
+
+But here, `app s (recΔ b s n)` will just sit there. The `app` constructor never reduces, which means `recΔ` generates terms that can't be simplified further. This creates a chain where each recursive step adds another layer of `app` without any way to eliminate it. Since `app` has no reduction rule, these nested applications accumulate indefinitely, suggesting the system might not terminate.
+
+However, looking at the structure more carefully: each invocation of rule 6 strictly decreases the nesting depth of `delta` constructors in the third argument. Eventually we reach `recΔ b s void`, which reduces to `b` by rule 5. At that point we have something like `app s (app s (... (app s b)...))` — a fully reduced term with no further reductions possible. The recursion is actually well-founded because it's structural recursion on the `delta` nesting depth.
+
+The real problem emerges when considering what `app` actually does in the broader system. + size(b) + size(s) + 2`
+   - RHS: `size(b)`
+   - ✓ Decreasing
+
+6. `recΔ b s (delta n) → s (recΔ b s n)`:
+   - LHS: `1 + size(b) + size(s) + (1 + size(n)) = 2 + size(b) + size(s) + size(n)`
+   - RHS: `1 + size(s) + (1 + size(b) + size(s) + size(n)) = 2 + size(b) + 2·size(s) + size(n)`
+   - This doesn't decrease! The RHS has an extra `size(s)` term.
+
+So this rule is problematic for strong normalization. The recursion rule can increase the total size of the term because `s` gets duplicated in the recursive call. This means we could potentially have infinite reduction sequences if `s` itself reduces infinitely.
+
+Each reduction rule either shrinks the term or duplicates a subterm that might reduce further. The `recΔ` rule specifically duplicates the step function `s`, which could lead to non-termination if reductions can happen inside `s` indefinitely. To guarantee strong normalization, we'd need additional constraints—like requiring `s` to be in normal form, or using a more sophisticated measure that accounts for the structure of duplicated terms. reduction sequences by repeatedly applying rule 8.
+
+Let me test this with a concrete example. Take `t₀ = eqW (eqW void void) void`. Rule 7 reduces `eqW void void → void`, so `t₀` reduces to `eqW void void`, which then reduces to `void` by rule 7 again. This terminates.
+
+The real concern is whether rule 8 can cycle. For `eqW a b` with `a ≠ b`, we get `integrate (merge a b)`, which then gets stuck at a normal form since no rules apply. So while rule 8 increases size, the resulting term can't be reduced further, preventing infinite loops. The system appears to be weakly normalizing despite the size-increasing rule. ected system where reductions could theoretically flow in multiple directions, creating cycles. But the standard interpretation treats these as directed rewrite rules applied left-to-right.
+
+The core issue is that rule 8 increases term size while potentially creating new redexes, which undermines simple termination arguments. Strong normalization would require more sophisticated proof techniques—like multiset path ordering or lexicographic measure combinations—rather than basic size arguments alone.
+
+However, I should reconsider whether strong normalization actually fails. Even if rule 8 grows the term, I can use a lexicographic ordering: count `eqW` nodes first (which should decrease), then use size as a secondary measure. Rule 8 eliminates one `eqW` node and replaces it with `integrate` and `merge` operations—no new `eqW` nodes are introduced. Rule 7 similarly removes `eqW` nodes entirely. This suggests a decreasing measure exists if I prioritize `eqW` elimination over size considerations. , and only if tied, compare the second. The issue is that when we're not applying an eqW rule, the eqW-count stays the same while term-size might grow. But rule 8 itself removes eqW constructors whenever `a ≠ b`, so every reduction involving eqW eliminates it. Since other rules don't introduce eqW nodes, the count only decreases or stays constant. The tricky part is handling cases where rule 8 applies to nested eqW terms—I need to verify that the lexicographic ordering actually prevents infinite chains.
+
+Using eqW node count as the primary measure and term size as secondary should work in principle, except rule 8 increases size, making the secondary measure unhelpful. A better approach uses well-founded recursion on the eqW count first, then on structural properties. The key insight is that rule 7 and 8 always remove eqW constructors, while non-eqW rules only apply to eqW-free subterms, so the total eqW count strictly decreases with each reduction step.
+
+Once all eqW nodes are eliminated, I need to verify that rules 1-6 terminate. Rule 1 reduces `integrate (delta t)` to `void`, rule 2 and 3 handle `merge` with `void` arguments by returning the other term, and rule 4 collapses `merge t t` to `t`—all of these shrink the term. Rule 5 involves `recΔ`
+
+'s base case. But rule 6 is where termination becomes tricky: `recΔ b s (delta n) → app s (recΔ b s n)` doesn't obviously decrease size since `s` gets duplicated. The key insight is that while the overall term size might not shrink, the nesting depth of `delta` constructors in the third argument strictly decreases with each application.
+
+I can formalize this by tracking `depth(recΔ b s n)` as the maximum nesting of `delta` in `n`. Rule 6 transforms `delta n` into just `n`, lowering this depth. Since depth is bounded and strictly decreasing, rule 6 can only fire finitely many times before all `recΔ` terms have `void` as their third argument, at which point only the base case applies. Then rules 7 and 8 only fire when no other rules apply, so they're safe to include in the well-founded order. By lexicographic ordering on delta-count then size, every reduction step makes progress on at least one component, guaranteeing termination. For rules 2-4, they don't introduce deltas and only match specific patterns, so I can analyze the delta-count of their subterms directly.
+
+The key insight is to define a measure based on the total count of `delta` constructors in a term. Under rule 6, `recΔ b s (delta n) → app s (recΔ b s n)` eliminates one delta. Rule 1, `integrate (delta t) → void`, also removes a delta. Both rules strictly decrease this count. Once all deltas are eliminated through repeated application of these two rules, the remaining rules either reduce term size or remove other constructs, ensuring termination.

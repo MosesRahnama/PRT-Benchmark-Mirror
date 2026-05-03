@@ -1,0 +1,18 @@
+**The proposed measure `(phase t, cost t)` (with lexicographic order) is not sound.**
+
+### Summary of Issues
+- The `phase` function distinguishes a single special case (`recDelta _ _ (delta _)`) with value `1`; everything else is `0`.
+- The `cost` function is a straightforward structural size measure that decreases in all rules.
+- All 8 `Step` rules were checked. The `rec_succ` rule correctly drops phase from `1` to `0`. The other rules that stay within phase `0` also decrease cost.
+- **Critical failure**: Several rules can map a phase-`0` term to a phase-`1` term:
+  - `R_merge_void_left`: `merge void t → t`
+  - `R_merge_void_right`: `merge t void → t`
+  - `R_merge_cancel`: `merge t t → t`
+  - `R_rec_zero`: `recDelta b s void → b`
+
+If the right-hand side is a `recDelta _ _ (delta _)` (phase = 1), the left-hand side has phase = 0. In lexicographic order on `(Nat × Nat)`, `(0, c₁) ≯ (1, c₂)` for any costs `c₁`, `c₂`. The measure can *increase*, so it does not prove termination.
+
+### Why This Matters
+The rewrite relation defined by `Step` is therefore not shown to be well-founded by this measure. A sound measure would need to ensure *strict decrease* on *every* rule (or the inductive definition of `Step` would need to be restricted so that phase-1 terms cannot be produced from phase-0 terms).
+
+No other files were consulted, no edits were made, and no external tools or compilation were used, per the constraints.

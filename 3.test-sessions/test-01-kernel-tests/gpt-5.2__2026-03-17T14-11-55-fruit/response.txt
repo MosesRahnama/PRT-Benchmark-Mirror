@@ -1,0 +1,100 @@
+Yes — **strong normalization can be established from the presented calculus alone**, without importing any structural axioms or extra object-level assumptions, by a standard **well-founded interpretation** (a.k.a. a simple termination measure / polynomial interpretation) defined purely by recursion on the given syntax.
+
+The only “meta” ingredient you need is the well-foundedness of $<$ on $\mathbb{N}$, which is not an object-level axiom about `Trace`; it’s the ambient logic needed for *any* termination argument.
+
+## Why SN looks provable here (raw assessment)
+
+There is exactly one rule that “grows” a term syntactically:
+
+- `R_apple_orange : banana b s (grape n) → pear s (banana b s n)`
+
+but it also **removes one outer `grape`** from the third argument of that `banana`. Since **no rule ever creates a `grape` at the root** of any term (indeed no RHS has outer constructor `grape`), repeated use of `R_apple_orange` is intrinsically bounded by how many leading `grape`s were already present.
+
+Everything else is clearly collapsing:
+- `peach` rules project to a subterm,
+- `mango(grape t)` collapses to `plum`,
+- `banana ... plum` collapses to `b`,
+- `cherry` always rewrites to something without `cherry` at the root (and no rule reintroduces `cherry`).
+
+So there’s no obvious route to a cycle, and you can make that rigorous with a decreasing $\mathbb{N}$-measure.
+
+## Short proof roadmap (stays within your boundary)
+
+### 1) Define a measure $\mu : \texttt{Trace} \to \mathbb{N}$ by recursion
+
+One working choice (there are many) is:
+
+\[
+\begin{aligned}
+\mu(\texttt{plum}) &:= 0\\
+\mu(\texttt{grape}\ t) &:= \mu(t) + 1\\
+\mu(\texttt{mango}\ t) &:= \mu(t) + 1\\
+\mu(\texttt{peach}\ a\ b) &:= \mu(a) + \mu(b) + 1\\
+\mu(\texttt{pear}\ a\ b) &:= \mu(b)\\
+\mu(\texttt{banana}\ b\ s\ n) &:= \mu(b) + \mu(n) + 1\\
+\mu(\texttt{cherry}\ a\ b) &:= \mu(a) + \mu(b) + 3
+\end{aligned}
+\]
+
+Key design choices:
+- `pear` ignores its left argument (still monotone), which makes the “growth” in `R_apple_orange` harmless.
+- `banana` ignores `s` (still monotone), so duplicating `s` structurally on the RHS of `R_apple_orange` doesn’t break decrease.
+
+### 2) Prove strict decrease for each rewrite rule
+
+For each constructor rule `Step L R`, show $\mu(R) < \mu(L)$ uniformly (the `a ≠ b` premise is irrelevant for termination since the inequality holds even without it):
+
+- `mango (grape t) → plum`:
+  \[
+  \mu(\texttt{mango}(\texttt{grape}\ t))=\mu(t)+2>0=\mu(\texttt{plum})
+  \]
+- `peach plum t → t` and `peach t plum → t`:
+  \[
+  \mu(\texttt{peach}\ \texttt{plum}\ t)=\mu(t)+1>\mu(t)
+  \]
+- `peach t t → t`:
+  \[
+  \mu(\texttt{peach}\ t\ t)=2\mu(t)+1>\mu(t)
+  \]
+- `banana b s plum → b`:
+  \[
+  \mu(\texttt{banana}\ b\ s\ \texttt{plum})=\mu(b)+1>\mu(b)
+  \]
+- `banana b s (grape n) → pear s (banana b s n)`:
+  \[
+  \mu(\text{LHS})=\mu(b)+(\mu(n)+1)+1=\mu(b)+\mu(n)+2
+  \]
+  \[
+  \mu(\text{RHS})=\mu(\texttt{pear}\ s\ (\texttt{banana}\ b\ s\ n))=\mu(\texttt{banana}\ b\ s\ n)=\mu(b)+\mu(n)+1
+  \]
+  so LHS is exactly 1 larger.
+- `cherry a a → plum`:
+  \[
+  \mu(\texttt{cherry}\ a\ a)=2\mu(a)+3>0
+  \]
+- `cherry a b → mango (peach a b)`:
+  \[
+  \mu(\texttt{cherry}\ a\ b)=\mu(a)+\mu(b)+3
+  \]
+  \[
+  \mu(\texttt{mango}(\texttt{peach}\ a\ b))=\mu(a)+\mu(b)+2
+  \]
+  strict decrease by 1.
+
+### 3) Lift to “rewrite anywhere” (if that’s your intended reduction)
+
+If your full reduction is the contextual closure of these root rules, you use that every constructor interpretation above is **monotone in each argument it depends on** (and constant in the ignored ones), so replacing a subterm by a strictly smaller-measure subterm strictly decreases the whole-term measure.
+
+### 4) Conclude strong normalization
+
+An infinite reduction sequence would yield an infinite strictly descending chain in $\mathbb{N}$ under $<$, impossible. Hence SN.
+
+## Status checklist
+
+- [x] Scan rules for loops  
+- [x] Pick a termination measure  
+- [x] Check each rule decreases  
+- [x] Lift decrease to contexts  
+- [x] Conclude strong normalization  
+
+If you tell me whether your intended reduction is **root-only `Step`** or the **standard contextual closure**, I can tailor the roadmap to exactly that definition (the measure above works for either, but the lifting lemma differs).

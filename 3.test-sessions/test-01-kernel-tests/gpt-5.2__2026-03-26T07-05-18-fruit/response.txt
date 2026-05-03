@@ -1,0 +1,64 @@
+From
+**as presented**, strong normalization *can* be established **from the calculus alone** (i.e., using only the given syntax + the listed `Step` rules, with no extra rewrite rules/guards/axioms about `Trace`). A standard termination argument works.
+
+Two slightly different readings both terminate:
+
+1. **Literal reading of the file:** `Step` only rewrites at the root (no contextual closure rules are defined). Then termination is already quite direct.
+2. **Usual “first-order rewriting” reading:** if you *also* consider the contextual closure of these rules (rewriting in any subterm), termination still follows by the same kind of measure argument, provided the measure actually “sees” every subterm.
+
+## Why it terminates (core idea)
+
+You can orient all rules by a **well‑founded lexicographic measure** on terms defined purely from the syntax.
+
+A robust choice (works even if you later take contextual closure) is the triple
+\[
+\mu(t) := \big(\#\text{cherry}(t),\ \#\text{grape}(t),\ \text{size}(t)\big)
+\]
+ordered lexicographically on $\mathbb{N}^3$.
+
+Define these structurally (primitive recursion on `Trace`):
+
+- `#cherry(t)`: number of `cherry` nodes occurring anywhere in `t`
+- `#grape(t)`: number of `grape` nodes occurring anywhere in `t`
+- `size(t)`: total number of constructors in `t` (each node counts as 1 + sizes of children)
+
+### Check each rewrite rule decreases \(\mu\)
+
+- `R_cherry_refl : cherry a a → plum`  
+  Decreases `#cherry` by 1 (so lex decreases immediately).
+
+- `R_cherry_diff : cherry a b → mango (peach a b)`  
+  Also decreases `#cherry` by 1 (even though `size` goes *up* by 1, lex order doesn’t care once the first component drops).
+
+- `R_apple_orange : banana b s (grape n) → pear s (banana b s n)`  
+  Decreases `#grape` by 1 (the outer `grape` disappears). `size` increases, but lex order decreases at the second component.
+
+- `R_mango_grape : mango (grape t) → plum`  
+  Decreases `#grape` by 1 (and size drops too).
+
+- `R_peach_plum_left/right/cancel` and `R_banana_zero`  
+  Preserve `#cherry` and `#grape`, but **strictly decrease `size`** (they drop at least one constructor node and don’t introduce any new ones).
+
+So every one-step rewrite strictly decreases \(\mu\) in lex order. Since lex on \(\mathbb{N}^3\) is well-founded, there cannot be an infinite reduction sequence.
+
+## Short proof roadmap (stays within the given system)
+
+- Define functions on `Trace`:
+  - `countCherry : Trace → Nat`
+  - `countGrape : Trace → Nat`
+  - `size : Trace → Nat`
+- Let `mu t := (countCherry t, countGrape t, size t)` and use lex order on triples of `Nat`.
+- Prove lemma: for any `h : Step t u`, we have `mu u <lex mu t` by cases on `h` (one case per constructor of `Step`).
+- Conclude **strong normalization**: any reduction sequence yields a strictly descending chain in a well-founded order, impossible.
+
+That argument uses only:
+- structural recursion on the given inductive syntax
+- case analysis on the given inductive rewrite rules
+- well-foundedness of lex order on `Nat` tuples (meta-theoretic, not an extra object-level axiom about `Trace`)
+
+## Updated todo list
+
+- [x] Read
+and extract the exact rewrite rules.
+- [x] Determine whether strong normalization can be proved without adding rules/axioms.
+- [x] Provide an in-boundary proof roadmap (lexicographic syntactic measure decreasing on every rewrite).

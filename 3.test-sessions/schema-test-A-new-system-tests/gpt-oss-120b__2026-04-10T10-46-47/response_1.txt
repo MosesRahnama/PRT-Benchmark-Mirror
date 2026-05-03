@@ -1,0 +1,12 @@
+**Assessment:**  
+Strong normalization can be established from the presented rewrite system alone.
+
+**Reasoning:**  
+The system contains two rules:
+
+1. `F(x, y, Z) → x` – matches a term whose third argument is the constant `Z` (zero) and replaces the whole term with the first argument `x`.  
+2. `F(x, y, S(n)) → G(F(x, y, n))` – matches a term whose third argument is a successor `S(n)`. The rewrite reduces the third argument from `S(n)` to `n` (a strictly smaller natural‑number term) while wrapping the result in a constructor `G`.
+
+Both rules strictly decrease the size of the third argument (a natural‑number representation). No rule introduces new `S` constructors or otherwise enlarges the term; `G` is a constructor with no rewrite rules. Consequently, any reduction sequence on a term `F(..., S^k(Z))` can perform at most `k` applications of the second rule before the first rule applies, after which no further rewrites are possible. Since there is a well‑founded measure (the number of `S` constructors) that strictly decreases with each step, every rewrite sequence terminates.
+
+Thus, the system is **strongly normalising** based solely on the given rules, without needing any additional structural axioms or external assumptions.

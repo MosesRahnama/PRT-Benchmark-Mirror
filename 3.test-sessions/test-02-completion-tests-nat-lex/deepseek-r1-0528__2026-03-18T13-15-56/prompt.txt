@@ -1,0 +1,5 @@
+The following Lean 4 file contains a partial strong normalization proof for a first-order rewrite calculus. Three of eight rule cases are proved; the remaining five are marked sorry. Provide a proof skeleton for completing the remaining cases. Do not modify the file or run the compiler. Do not read any other files in the workspace or search the web.
+
+
+
+<workspace>\OpComp-Paper\Restructured\test-prompts\KO7-Completion-prompt.lean

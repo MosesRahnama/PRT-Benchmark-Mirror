@@ -1,0 +1,52 @@
+### Proof Skeleton for Remaining Cases
+
+The remaining cases with `sorry` are `R_rec_succ`, `R_eq_refl`, and `R_eq_diff`. Below is a skeleton for each, using ordinal arithmetic properties from Mathlib (e.g., `opow_lt`, `add_lt_add`, `mul_lt_mul`). These assume the measure `mu` decreases strictly; complete by filling in the gaps with specific inequalities derived from ordinal positivity and monotonicity.
+
+#### Case: `R_rec_succ` (recDelta b s (delta n) → app s (recDelta b s n))
+```lean
+| _, _, Step.R_rec_succ b s n => by
+  simp [mu]
+  -- Goal: ω^{ω⁵ ⋅ (μ n + 1) + 1 + μ s + 6} + ω ⋅ (μ b + 1) + 1 < 
+  --       ω³ ⋅ (μ s + 1) + ω² ⋅ (ω^{μ n + μ s + 6} + ω ⋅ (μ b + 1) + 2) + 1
+  -- Key: The exponent on LHS (ω⁵ ⋅ (μ n + 1) + μ s + 7) >> μ n + μ s + 6 (RHS subterm)
+  --      Use ω^{α} < ω^{β} if α < β for limit ordinals, then add/mul positivity.
+  have h_exp : ω⁵ ⋅ (μ n + 1) + 1 + μ s + 6 > μ n + μ s + 6 := by
+    -- Prove ω⁵ ⋅ (μ n + 1) + 1 > μ n (dominance of ω⁵)
+    sorry  -- Fill: opow_pos, mul_pos, add_lt_add_left
+  have h_lhs_base : ω^{ω⁵ ⋅ (μ n + 1) + 1 + μ s + 6} > ω^{μ n + μ s + 6} := opow_lt opow_two_le omega0_pos h_exp
+  -- Then show LHS base > entire RHS via add_lt_add, mul_lt_mul (since coefficients ω³, ω² < ω^{large exp})
+  calc _ < _ := sorry  -- Chain using h_lhs_base and positivity of added terms
+```
+
+#### Case: `R_eq_refl` (eqW a a → void)
+```lean
+| _, _, Step.R_eq_refl a => by
+  simp [mu]
+  -- Goal: 0 < ω^{2 ⋅ μ a + 9} + 1
+  -- Trivial positivity: ω^{α} ≥ 1 for α ≥ 0, and +1 > 0
+  exact Ordinal.lt_of_lt_of_le zero_lt_one (by
+    apply add_pos_of_nonneg_of_pos
+    · exact opow_le_of_le (by exact add_nonneg (add_nonneg (zero_le μ a) (zero_le μ a)) (by exact Nat.cast_nonneg 9))
+      (Ordinal.one_le omega0)
+    · exact one_pos)
+```
+
+#### Case: `R_eq_diff` (eqW a b → integrate (merge a b))
+```lean
+| _, _, Step.R_eq_diff a b => by
+  simp [mu]
+  -- Goal: ω⁴ ⋅ (ω³ ⋅ (μ a + 1) + ω² ⋅ (μ b + 1) + 2) + 1 < ω^{μ a + μ b + 9} + 1
+  -- Key: Exponent μ a + μ b + 9 >> 4 (LHS base), so ω^{large} dominates ω⁴ ⋅ poly(ω³, ω²)
+  have h_exp_large : μ a + μ b + 9 > 4 := by
+    -- Since μ ≥ 0, +9 > 4
+    exact add_lt_add_of_le_of_lt (add_nonneg (zero_le μ a) (zero_le μ b)) (by exact Nat.cast_lt.mpr (by norm_num))
+  have h_base : ω^{μ a + μ b + 9} > ω⁴ := opow_lt opow_two_le omega0_pos h_exp_large
+  -- LHS ≤ ω⁴ ⋅ (ω³ ⋅ (μ a + 1) + ω² ⋅ (μ b + 1) + 2) + 1 < ω⁴ ⋅ ω³ ⋅ (μ a + 1 + μ b + 1) + ω⁴ ⋅ 2 + 1 (bound poly)
+  -- But ω⁴ ⋅ ω³ = ω^{7}, still < ω^{μ a + μ b + 9} by h_base and mul_lt_mul
+  have h_lhs_bound : ω⁴ ⋅ (ω³ ⋅ (μ a + 1) + ω² ⋅ (μ b + 1) + 2) + 1 < ω^{μ a + μ b + 9} := by
+    -- Use mul_add < opow if exponents differ greatly
+    sorry  -- Fill: Expand, use opow_add, mul_lt_opow for dominance
+  exact add_lt_add h_lhs_bound (zero_le _)
+```
+
+These skeletons leverage the measure's design where higher constructors (e.g., `eqW`) have exponents that absorb expansions in reductions. Verify with `simp` and `calc` chains; test ordinal inequalities using `omega0_pos` and `opow_pos`. The earlier cases (e.g., `R_merge_cancel`, `R_rec_zero`) have partial proofs that can be completed similarly if needed, but focus on the explicit `sorry`s.

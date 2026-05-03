@@ -1,0 +1,4 @@
+1. Structural induction on successor-depth of the third argument (bounded by finite term structure).  
+2. Yes (well-founded ordering on S-nesting and meta-level finiteness of terms).  
+3. Yes (outside the boundary).  
+4. Yes.

@@ -1,0 +1,115 @@
+## Verdict
+
+For the rewrite relation **actually defined in this file**, the proposed measure
+
+$$
+\mathrm{measure}(t) = (\mathrm{phase}(t), \mathrm{cost}(t))
+$$
+
+is **sound under the standard lexicographic order on $\mathbb{N} \times \mathbb{N}$**.
+
+In plain English: if you compare pairs by first looking at `phase`, and only if those are equal looking at `cost`, then **every constructor rule in `Step` strictly decreases the measure**.
+
+One important nuance: the file defines only the function `measure`, not the proof obligation or the order relation itself. So the right reading is:
+
+- **Yes**: this is a valid termination measure for `Step`, assuming the intended order is lexicographic.
+- **Not yet formalized**: the file does not itself prove that fact.
+
+## Why it works
+
+Let $c(t)$ be `cost t` and $\phi(t)$ be `phase t`.
+
+The only term with `phase = 1` is:
+
+- `recDelta b s (delta n)`
+
+Everything else has `phase = 0`.
+
+So the lexicographic strategy is clearly trying to make the recursive unrolling rule drop the phase first, then use `cost` for the remaining rules.
+
+### Rule-by-rule check
+
+- `integrate (delta t) → void`  
+  $$
+  (0,\;2 + c(t)) \to (0,\;0)
+  $$
+  Strictly smaller.
+
+- `merge void t → t`  
+  $$
+  (0,\;1 + c(t)) \to (0,\;c(t))
+  $$
+  Strictly smaller.
+
+- `merge t void → t`  
+  same decrease.
+
+- `merge t t → t`  
+  $$
+  (0,\;1 + 2c(t)) \to (0,\;c(t))
+  $$
+  Strictly smaller.
+
+- `recDelta b s void → b`  
+  $$
+  (0,\;1 + c(b) + c(s)) \to (0,\;c(b))
+  $$
+  Strictly smaller.
+
+- `recDelta b s (delta n) → app s (recDelta b s n)`  
+  Left side:
+  $$
+  (1,\;2 + c(b) + c(s) + c(n))
+  $$
+  Right side:
+  $$
+  (0,\;2 + c(b) + 2c(s) + c(n))
+  $$
+  Here the **cost may increase** by $c(s)$, but the **phase drops from $1$ to $0$**, so the pair decreases lexicographically. This is the key nontrivial case.
+
+- `eqW a a → void`  
+  $$
+  (0,\;3 + 2c(a)) \to (0,\;0)
+  $$
+  Strictly smaller.
+
+- `eqW a b → integrate (merge a b)`  
+  Left:
+  $$
+  (0,\;3 + c(a) + c(b))
+  $$
+  Right:
+  $$
+  (0,\;2 + c(a) + c(b))
+  $$
+  Strictly smaller.
+
+So every rule decreases the pair.
+
+## The subtle point
+
+The measure is **not** sound for stronger notions like:
+
+- “both components must decrease”, or
+- componentwise product order,
+
+because `R_rec_succ` can increase `cost`.
+
+So the measure is sound **only because it is lexicographic with `phase` first**. That part is doing real work; it’s not decorative math wallpaper.
+
+## Bottom line
+
+My assessment is:
+
+- **Sound for `Step` as written:** yes.
+- **Critical caveat:** the proof depends on using **lexicographic order on `(phase, cost)`**, not a componentwise order.
+- **Most delicate rule:** `R_rec_succ`, where `cost` can grow, but `phase` drops and saves the day.
+
+## Progress check
+
+- [x] Read target Lean file
+- [x] Extract rewrite rules and measure
+- [x] Check decrease for each rule
+- [x] Judge soundness and explain
+
+If you want, I can next turn this into a compact proof sketch in Lean-style prose without touching the file.

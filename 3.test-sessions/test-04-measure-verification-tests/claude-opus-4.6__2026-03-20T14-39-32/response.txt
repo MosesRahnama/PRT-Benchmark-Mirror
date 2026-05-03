@@ -1,0 +1,43 @@
+## Soundness Assessment
+
+The proposed lexicographic measure `(phase t, cost t)` is **unsound**. It fails to decrease on 4 of the 8 rewrite rules.
+
+### The Measure
+
+- `phase` returns 1 only for `recDelta _ _ (delta _)`, and 0 for everything else.
+- `cost` is a straightforward structural size.
+- `measure(t) = (phase(t), cost(t))`, ordered lexicographically on $\mathbb{N} \times \mathbb{N}$.
+
+### Rule-by-Rule Analysis
+
+| Rule | LHS → RHS | phase | cost | Verdict |
+|------|-----------|-------|------|---------|
+| `R_int_delta` | `integrate (delta t) → void` | 0 → 0 | $(2 + c_t) → 0$ | **OK** |
+| `R_merge_void_left` | `merge void t → t` | 0 → ? | — | **FAIL** |
+| `R_merge_void_right` | `merge t void → t` | 0 → ? | — | **FAIL** |
+| `R_merge_cancel` | `merge t t → t` | 0 → ? | — | **FAIL** |
+| `R_rec_zero` | `recDelta b s void → b` | 0 → ? | — | **FAIL** |
+| `R_rec_succ` | `recDelta b s (delta n) → app s (recDelta b s n)` | 1 → 0 | — | **OK** |
+| `R_eq_refl` | `eqW a a → void` | 0 → 0 | $(3 + 2c_a) → 0$ | **OK** |
+| `R_eq_diff` | `eqW a b → integrate (merge a b)` | 0 → 0 | $(3 + c_a + c_b) → (2 + c_a + c_b)$ | **OK** |
+
+### The Core Bug
+
+The `phase` function inspects only the outermost constructor. The merge and `recDelta`-zero rules can *strip away a wrapper* and expose a subterm that matches the `recDelta _ _ (delta _)` pattern, **increasing** the phase from 0 to 1.
+
+**Concrete counterexample for `R_merge_void_left`:** Let $t = \texttt{recDelta}\;b\;s\;(\texttt{delta}\;n)$.
+
+$$\texttt{merge void}\;t \;\longrightarrow\; t$$
+
+- $\text{measure}(\texttt{merge void}\;t) = (0,\; 2 + c_b + c_s + c_{\delta n})$
+- $\text{measure}(t) = (1,\; 1 + c_b + c_s + c_{\delta n})$
+
+Since $(0, \ldots) < (1, \ldots)$ in the lexicographic order, the measure **increases**. The same class of counterexample applies to `R_merge_void_right`, `R_merge_cancel` (instantiate $t$ at the same term), and `R_rec_zero` (set $b = \texttt{recDelta}\;b'\;s'\;(\texttt{delta}\;n')$).
+
+### Why It Breaks
+
+The `phase` component was designed so that `R_rec_succ` — the only recursive unfolding rule — strictly decreases the first component $(1 \to 0)$, allowing the cost to grow from the `app` wrapper. That part works. But the four "simplification" rules can uncover a phase-1 term hidden inside a phase-0 wrapper, and nothing in the measure accounts for this.
+
+### What a Fix Would Require
+
+A sound measure would need `phase` (or an analogous first component) to account for phase-1 subterms anywhere in the term, not just at the root. For example, counting the total number of `recDelta _ _ (delta _)` nodes in the entire term, or using a recursive measure that sums phase contributions across all subterms.

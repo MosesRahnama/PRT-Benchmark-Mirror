@@ -1,0 +1,82 @@
+In
+, **none** of `mu1`, `mu2`, or `mu3` is a valid strict termination measure for `Step`.
+
+| Candidate | Verdict | Failing rule |
+|---|---|---|
+| `mu1` | invalid | `R_rec_succ` |
+| `mu2` | invalid | `R_rec_succ` |
+| `mu3` | invalid | `R_rec_succ` |
+
+The obstruction is always the same: `R_rec_succ` duplicates the `s` argument.
+
+For `R_rec_succ`:
+```lean
+Step (recDelta b s (delta n)) (app s (recDelta b s n))
+```
+
+### `mu1`
+$$
+\mu_1(\text{lhs}) = 2 + \mu_1(b) + \mu_1(s) + \mu_1(n)
+$$
+$$
+\mu_1(\text{rhs}) = 2 + \mu_1(b) + 2\mu_1(s) + \mu_1(n)
+$$
+
+So
+$$
+\mu_1(\text{rhs}) - \mu_1(\text{lhs}) = \mu_1(s).
+$$
+
+Thus it is:
+- equal when `s = void`,
+- larger when `s` has positive measure.
+
+So `mu1` is not strictly decreasing.
+
+### `mu2`
+$$
+\mu_2(\text{lhs}) = 6 + \mu_2(b) + \mu_2(s) + \mu_2(n)
+$$
+$$
+\mu_2(\text{rhs}) = 6 + \mu_2(b) + 2\mu_2(s) + \mu_2(n)
+$$
+
+Hence
+$$
+\mu_2(\text{rhs}) - \mu_2(\text{lhs}) = \mu_2(s).
+$$
+
+Same failure as `mu1`.
+
+### `mu3`
+$$
+\mu_3(\text{lhs}) = 2 + \mu_3(b) + \mu_3(s) + \mu_3(n)
+$$
+$$
+\mu_3(\text{rhs}) = 3 + \mu_3(b) + 2\mu_3(s) + \mu_3(n)
+$$
+
+Hence
+$$
+\mu_3(\text{rhs}) - \mu_3(\text{lhs}) = 1 + \mu_3(s),
+$$
+so it **always increases** on `R_rec_succ`.
+
+### Concrete counterexample
+Take `b = void`, `s = delta void`, `n = void`.
+
+Then:
+- `mu1`: `3 -> 4`
+- `mu2`: `7 -> 8`
+- `mu3`: `3 -> 5`
+
+### Overall assessment
+- All three measures do decrease on the other seven rules.
+- But a single non-decreasing rule is enough to invalidate a ranking function.
+- So the correct classification is:
+
+**`mu1`: reject.**  
+**`mu2`: reject.**  
+**`mu3`: reject.**
+
+If useful, I can next explain what kind of measure *could* handle `R_rec_succ`.

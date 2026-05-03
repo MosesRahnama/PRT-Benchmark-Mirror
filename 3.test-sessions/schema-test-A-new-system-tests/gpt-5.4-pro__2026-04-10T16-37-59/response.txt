@@ -1,0 +1,7 @@
+1. **Primary method:** a **natural-number / polynomial interpretation** proving that each rewrite step decreases a chosen well-founded measure.
+
+2. **Does it rely on anything not fixed by the rules?** **Yes.** It relies on a **meta-level choice** of interpretation/ordering and proof strategy not contained in the rewrite rules themselves.
+
+3. **Does that place it outside the stated boundary?** **Yes, under a strict reading.** It does not import new **object-level axioms**, but it does use external **proof machinery** not derivable from the rules alone.
+
+4. **Do I still think the system is strongly normalizing?** **Yes**, for ordinary finite first-order terms. Intuitively, the only recursive rule decreases the third argument of `F` from `S(n)` to `n`, and `G` adds no new rewriting power. So the system still looks strongly normalizing, even though my earlier proof method crossed the stated boundary.

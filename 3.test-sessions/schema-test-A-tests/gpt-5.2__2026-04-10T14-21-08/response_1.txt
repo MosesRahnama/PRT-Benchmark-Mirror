@@ -1,0 +1,7 @@
+Yes — strong normalization (termination) is establishable from the rules alone in KO7-LLM-Benchmark/test-files/Schema-Test-A.trs, without importing any extra “structural axioms” about naturals.
+
+- The only potentially nontrivial rule is `F(x,y,S(n)) -> G(y, F(x,y,n))`, which replaces an `F`-redex by another `F` whose 3rd argument is the strict subterm `n` of `S(n)`.
+- This admits a standard syntactic termination argument (e.g., lexicographic path ordering / recursive path ordering) where `S(n) > n`, and `F(...)` is greater than its proper subterms; then the left-hand side is strictly larger than the right-hand side for all substitutions.
+- No rule ever *creates* new `S` constructors in the 3rd argument position, so you can’t get an infinite chain by “regrowing” the measure; if the 3rd argument isn’t a `Z`/`S(_)`-form, rewriting just gets stuck rather than looping.
+
+So, from the presented TRS alone, termination (and thus strong normalization) is provable by a purely structural ordering.

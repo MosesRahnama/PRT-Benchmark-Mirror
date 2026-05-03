@@ -1,0 +1,38 @@
+Yes.  Strong normalization can be proved using only the eight rules that appear in
+; no extra axioms or side-conditions are needed.
+
+Outline of a direct proof
+
+1.  Define three simple syntactic measures on a term `t`:
+    • δ(t) = number of occurrences of the constructor `delta`.
+    • ε(t) = number of occurrences of the constructor `eqW`.
+    • σ(t) = total number of remaining constructor nodes  
+      (`void`, `integrate`, `merge`, `app`, `recΔ`) counted in the usual way.
+
+   Order terms by the lexicographic product  
+   (δ, ε, σ) ∈ ℕ × ℕ × ℕ with the usual “<” on each component.  
+   Because ℕ×ℕ×ℕ with lexicographic order is well-founded, any strictly
+   decreasing sequence in this order is finite.
+
+2.  Check that every rewrite step strictly decreases this measure.
+
+   • `R_int_delta` and `R_rec_succ` each remove one outer `delta`,
+     so δ strictly decreases.
+
+   • `R_eq_refl` and `R_eq_diff` each eliminate an outer `eqW`;
+     hence ε strictly decreases (δ may stay the same).
+
+   • The four `merge`/`recΔ` base cases never change δ or ε,
+     but they delete at least one constructor at the root,
+     so σ strictly decreases.
+
+   In every case at least one component of (δ, ε, σ) drops
+   while all earlier components in the lexicographic order stay unchanged,
+   so the overall measure decreases.
+
+3.  Because the measure is well-founded, no infinite chain of
+   rewrite steps can exist.  Thus every term is strongly normalizing.
+
+No structural rules, guards, or external principles have been added;
+the argument relies only on counting surface constructors and on the
+rules exactly as given.

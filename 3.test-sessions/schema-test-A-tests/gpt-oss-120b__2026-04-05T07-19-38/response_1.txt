@@ -1,0 +1,24 @@
+**Assessment**  
+Strong normalization (termination of every rewrite sequence) can be proved directly from the two rules shown; no external axioms or object‑level assumptions are needed.
+
+**Proof roadmap**
+
+1. **Measure** – For any term of the form `F(x, y, t)` define  
+   \[
+   \mu(F(x,y,t)) = \text{the number of occurrences of the constructor `S` in } t.
+   \]  
+   (If `t` is the constant `Z`, then \(\mu = 0\). For all other symbols (`G`, variables, etc.) set \(\mu = 0\).)
+
+2. **Decrease on each rewrite**  
+   *Rule 1*: `F(x, y, Z) → x`. Here the left‑hand side has \(\mu = 0\) and the right‑hand side has \(\mu = 0\); the rewrite eliminates the `F`‑redex entirely, so no further `F`‑steps can be applied to that subterm.  
+   *Rule 2*: `F(x, y, S(n)) → G(y, F(x, y, n))`. The left‑hand side has \(\mu = 1 + \mu(F(x,y,n))\); the right‑hand side contains the subterm `F(x, y, n)` whose measure is exactly \(\mu(F(x,y,n))\). Hence the overall measure strictly decreases by 1.
+
+3. **Well‑foundedness** – The natural numbers (the count of `S` constructors) are well‑founded; there is no infinite descending chain \(k > k-1 > k-2 > \dots\).
+
+4. **Termination of all sequences** – Any reduction sequence must apply a rule to a `F`‑redex. Each application reduces the measure \(\mu\) by at least 1, and the measure cannot become negative. Consequently, after finitely many steps no `F`‑redex remains, and the term is in normal form (a variable, a constant, or a `G`‑term whose arguments are already normal).
+
+5. **Strong normalization** – Because the measure decreases on *every* possible rewrite step, *all* reduction paths are finite. Hence the system is strongly normalising.
+
+**Conclusion**  
+Strong normalization follows solely from the two rewrite rules given in
+. No additional structural axioms or external assumptions are required.

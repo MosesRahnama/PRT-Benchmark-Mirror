@@ -1,0 +1,31 @@
+**Raw assessment:** **Yes — for the calculus literally presented in**
+, **strong normalization is establishable from that file alone.**
+
+The key point is that `Step` is defined only as the displayed root-step relation. There are **no congruence/context rules** in the file, so rewriting does **not** propagate under constructors unless one adds that separately.
+
+### Short roadmap
+Prove that every `Step`-reduction either:
+
+1. **terminates immediately in a root-normal form**, or  
+2. **returns a proper subterm**.
+
+Concretely:
+
+- Immediate stop at the root:
+  - `mango (grape t) -> plum`
+  - `banana b s (grape n) -> pear s (banana b s n)`  
+    (`pear ...` has no root rule)
+  - `cherry a a -> plum`
+  - `cherry a b -> mango (peach a b)` for `a ≠ b`  
+    (`mango (peach a b)` has no root rule)
+
+- Proper-subterm contraction:
+  - `peach plum t -> t`
+  - `peach t plum -> t`
+  - `peach t t -> t`
+  - `banana b s plum -> b`
+
+So an infinite reduction would require infinitely many proper-subterm descents, impossible on finite inductive terms. Hence the displayed `Step` relation is strongly normalizing.
+
+### Boundary note
+If one silently strengthens this into **full contextual rewriting**, that would be an extra structural assumption not present in the file. The positive answer above is for the calculus **as written**.

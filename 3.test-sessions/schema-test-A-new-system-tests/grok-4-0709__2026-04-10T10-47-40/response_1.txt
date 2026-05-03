@@ -1,0 +1,3 @@
+Yes, strong normalization can be established from the presented rewrite system alone.
+
+Reasoning: The TRS is orthogonal (non-overlapping left-hand sides) and non-duplicating, with reductions strictly decreasing a well-founded measure: the multiset of term sizes of third arguments across all F subterms. Each rule application replaces a larger size with a smaller one (or removes it in the base case), ensuring no infinite reduction sequences using only the given rules and standard term algebra.

@@ -1,0 +1,3 @@
+**Finalizing lexicographic order explanation**
+
+I'm summarizing the lexicographic order on natural number pairs with a per-rule check, highlighting that only one rule reduces the phase while others strictly decrease cost, ensuring termination. I'll update the todo list accordingly.

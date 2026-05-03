@@ -1,0 +1,30 @@
+**Assessment:** **Yes** — under the standard finite-term reading of first-order rewriting, strong normalization can be established from this rewrite system alone.
+
+**Reasoning:**  
+The only recursive rule is
+
+$$
+F(x,y,S(n)) \to G(F(x,y,n)),
+$$
+
+so the recursive call strictly decreases the third argument from $S(n)$ to $n$. There are no rewrite rules for `G`, `S`, or `Z`, so the added `G` does not create a new loop. The other rule
+
+$$
+F(x,y,Z) \to x
+$$
+
+is the base case and removes the `F` altogether.
+
+A direct termination proof is given by a polynomial interpretation over $\mathbb{N}$, for example:
+
+- $\llbracket Z \rrbracket = 0$
+- $\llbracket S(t) \rrbracket = \llbracket t \rrbracket + 1$
+- $\llbracket G(t) \rrbracket = \llbracket t \rrbracket$
+- $\llbracket F(x,y,z) \rrbracket = x + y + z + 1$
+
+Then:
+
+- $\llbracket F(x,y,Z) \rrbracket = x+y+1 > x = \llbracket x \rrbracket$
+- $\llbracket F(x,y,S(n)) \rrbracket = x+y+n+2 > x+y+n+1 = \llbracket G(F(x,y,n)) \rrbracket$
+
+So every rewrite step strictly decreases a well-founded measure. Hence there is no infinite reduction sequence, and no extra structural axioms or object-level assumptions are needed.

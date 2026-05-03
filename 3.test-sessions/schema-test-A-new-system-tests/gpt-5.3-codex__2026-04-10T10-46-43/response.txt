@@ -1,0 +1,7 @@
+1. **Primary method used:** an informal **decreasing-measure argument** (the recursion in `F(x,y,S(n)) -> G(F(x,y,n))` strictly reduces the `S`-depth of the third argument until `Z`).
+
+2. **Does it rely on extra structure/assumptions?** Yes. It uses a chosen proof structure (a well-founded measure) plus standard TRS meta-assumptions (finite terms, well-foundedness of natural-number depth, standard rewrite semantics).
+
+3. **Outside the stated boundary?** Under a strict reading, yes: that method is not literally “contained in the rules alone,” since the well-foundedness/measure framework is imported as meta-theory.
+
+4. **Separate from boundary compliance, is it strongly normalizing?** Yes, I still assess it as strongly normalizing under standard first-order finite-term TRS semantics.

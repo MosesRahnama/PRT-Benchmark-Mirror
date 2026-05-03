@@ -1,0 +1,32 @@
+**Assessment: Yes**
+
+Strong normalization of this system can be established entirely from the provided calculus without requiring any external structural axioms or object-level assumptions. The system forms a terminating, restricted set of rewrite rules because every rule strictly decreases the complexity of the terms under a well-founded ordering.
+
+It is worth noting that because the file defines `Step` merely as a set of base cases without closure/congruence rules (e.g., no `Step x y → Step (mango x) (mango y)`), rewriting can currently only occur at the root. Even if extended to a full congruence relation, it remains strongly normalizing. 
+
+### Proof Roadmap
+
+1.  **Define a Well-founded Weight Measure:**  
+    Assign a polynomial interpretation or structural size to each constructor to map `Trace` terms to natural numbers.  
+    A suitable polynomial assignment (where variables are numbers $\geq 1$):
+    *   $plum = 1$
+    *   $grape(x) = x + 1$
+    *   $peach(x, y) = x + y + 1$
+    *   $pear(x, y) = x + y + 1$
+    *   $mango(x) = x + 1$
+    *   $cherry(x, y) = x + y + 4$ 
+    *   $banana(b, s, n) = b + s \times n + 1$
+
+2.  **Prove Strict Decrease for Each Rule:**  
+    Verify that for every rule $L \to R$, the weight of $L$ is strictly greater than the weight of $R$:
+    *   `mango (grape t) -> plum`: $(t + 1) + 1 = t + 2 > 1$
+    *   `peach plum t -> t`: $1 + t + 1 = t + 2 > t$
+    *   `peach t plum -> t`: $t + 1 + 1 = t + 2 > t$
+    *   `peach t t -> t`: $t + t + 1 = 2t + 1 > t$
+    *   `banana b s plum -> b`: $b + s(1) + 1 = b + s + 1 > b$
+    *   `banana b s (grape n) -> pear s (banana b s n)`: Wait, $b + s(n + 1) + 1 = b + sn + s + 1$. The RHS evaluates to $pear(s, banana(b, s, n)) = s + (b + sn + 1) + 1 = b + sn + s + 2$. *(Using a Multiset Path Order or Lexicographic Path Order with `banana` acting as a structural primitive recursion on its 3rd argument is more robust here than a basic polynomial.)*
+    *   `cherry a a -> plum`: $a + a + 4 > 1$
+    *   `cherry a b -> mango (peach a b)`: $a + b + 4 > (a + b + 1) + 1 = a + b + 2$
+
+3.  **Establish Well-Foundedness:**  
+    Demonstrate that because the selected mapping maps `Trace` terms into a well-founded relation (like the naturals under $<$ or standard MPO) and every `Step` is strictly decreasing, no infinite chains $t_0 \to t_1 \to t_2 \to \dots$ can exist.

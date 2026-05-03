@@ -1,0 +1,15 @@
+**Yes**, strong normalization can be established purely from the given syntax and rewrite rules.
+
+**Short proof roadmap** (in Lean):
+
+Define `inductive Acc (r : Trace → Trace → Prop) : Trace → Prop | acc (a) (h : ∀ b, r a b → Acc r b) : Acc r a.`
+
+Prove `∀ t, Acc Step t` by `induction t using Trace.rec` (structural induction):
+
+- `plum`, `grape t`, `pear t u`: No `Step` rules match root constructor → vacuously `Acc`.
+- `mango t` (IH: `Acc t`): Only reduces if `t = grape s` to `plum` (`Acc plum` holds).
+- `peach t u` (IHs: `Acc t`, `Acc u`): Reduces to `t` or `u` → `Acc` by IH.
+- `banana b s v` (IHs: `Acc b`, `Acc s`, `Acc v`): To `b` (`Acc` by IH) or `pear s (banana b s n)` (vacuous `Acc`, no `pear`-root rules).
+- `cherry a b` (IHs: `Acc a`, `Acc b`): To `plum` or `mango (peach a b)` (both vacuous `Acc`, no matching rules).
+
+No extra axioms, guards, or closures needed (rules are root-only).

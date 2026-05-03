@@ -1,0 +1,17 @@
+**Assessment:**
+Yes, strong normalization of this system can be established entirely from the presented calculus without importing any structural axioms, extra rules, or external assumptions. 
+
+The system forms a uninterpreted First-Order Term Rewriting System (TRS) with no variable binding or higher-order evaluation (e.g., no $\beta$-reduction). 
+
+**Proof Roadmap:**
+1. **Model as a First-Order TRS:** Treat the inductive type `Trace` as a signature of first-order terms and the `Step` relations as rewrite rules. (Note: As written, the `Step` type only defines root reductions. If extended with standard congruence rules allowing reductions in any context, it remains a standard TRS).
+2. **Path Ordering:** Apply a Lexicographic Path Ordering (LPO) or Multiset Path Ordering (MPO), which are standard, self-contained methods for proving termination of TRSs.
+3. **Symbol Precedence:** Establish a strict partial order on the signature:
+   * `eqW > integrate > merge`
+   * `recΔ > app` (and `recΔ > delta`)
+4. **Rule Verification:** 
+   * `R_int_delta`, `R_merge_void_left`, `R_merge_void_right`, `R_merge_cancel`, `R_rec_zero`, and `R_eq_refl` are trivially terminating as their right-hand sides are strict subterms or the `void` constant.
+   * `R_eq_diff` ($\text{eqW } a\ b \to \text{integrate } (\text{merge } a\ b)$) strictly decreases under LPO because the head symbol `eqW` is greater than `integrate` and `merge`, and $a, b$ are proper subterms of the LHS.
+   * `R_rec_succ` ($\text{recΔ } b\ s\ (\text{delta } n) \to \text{app } s\ (\text{recΔ } b\ s\ n)$) decreases under LPO because `recΔ` dominates `app`, the duplicated term $s$ is a proper subterm of the LHS, and the active recursive argument drops the `delta` constructor ($n$ is a strict subterm of $\text{delta } n$).
+
+Since every rule strictly decreases with respect to a well-founded LPO, the system is strongly normalizing.

@@ -1,0 +1,13 @@
+Using only the TRS in
+and treating strong normalization as termination of **all** terms over the given signature:
+
+| Method | Proves termination as stated? | Stays within benchmark boundary? | Short reason |
+|---|---|---:|---|
+| **A** | **Yes** | **Yes** | A standard LPO/RPO-style argument works syntactically. `F(x,y,Z) -> x` is by subterm, and `F(x,y,S(n)) -> G(y,F(x,y,n))` is oriented since `F > G` and `S(n) > n`. |
+| **B** | **No** | **Yes** | The interpretation decreases the two rules at the root, but as stated it is **not** a global reduction order for arbitrary rewriting, because `[G(a,b)] = b` ignores the first argument. For example, `G(F(u,v,Z), b) -> G(u,b)` does **not** strictly decrease. |
+| **C** | **No** | **Yes** | KBO fails here. In rule 2, `y` occurs once on the left and twice on the right, violating the KBO variable condition; with these weights the rhs is also heavier. |
+| **D** | **Yes** | **Yes** | The only recursive dependency pair is `F#(x,y,S(n)) -> F#(x,y,n)`. Projecting to the 3rd argument gives `S(n) > n`, so the subterm criterion closes the cycle. |
+| **E** | **No** | **Yes** | As stated, the measure is not strictly decreasing for **every** rewrite step. It ignores reductions in positions like the first argument of `G` or the first two arguments of `F`; e.g. `G(F(u,v,Z), b) -> G(u,b)` leaves `\mu` unchanged. |
+
+## Methods satisfying both conditions
+**A and D**.

@@ -1,0 +1,106 @@
+Here is the analysis of the system and each method.
+
+**The system:**
+
+```
+F(x, y, Z)    -> x
+F(x, y, S(n)) -> G(y, F(x, y, n))
+```
+
+Key observations: The recursion peels off one `S` from the third argument each step. The right-hand side of Rule 2 wraps the result in `G(y, ...)`, where `y` is a variable (can be any term). The system is terminating — the third argument of `F` strictly decreases in every recursive call.
+
+---
+
+## Method A — LPO with precedence F > G > S > Z
+
+**Does it prove termination?** No.
+
+For Rule 2: `F(x, y, S(n)) -> G(y, F(x, y, n))`, LPO requires `F(x, y, S(n)) >_lpo G(y, F(x, y, n))`. Since `F > G`, we need `F(x, y, S(n)) >_lpo` each argument of `G`. For the first argument `y`: the variable `y` must be embeddable in `F(x, y, S(n))` — it is (subterm), so that's fine. For the second argument `F(x, y, n)`: since the root symbols are both `F`, LPO compares arguments lexicographically. The first two arguments `x, y` are identical; the third compares `S(n)` vs `n`, and `S(n) >_lpo n` by subterm. So `F(x, y, S(n)) >_lpo F(x, y, n)`, and thus also `>_lpo G(y, F(x, y, n))`.
+
+Rule 1: `F(x, y, Z) -> x`. The variable `x` is a subterm argument of `F(x, y, Z)`, so `F(x, y, Z) >_lpo x` by the subterm property.
+
+**Verdict: Succeeds.** LPO with this precedence orients both rules.
+
+**Within boundary?** Yes — LPO is a purely syntactic ordering defined on the term structure of the given rules. No external axioms are imported.
+
+---
+
+## Method B — Polynomial interpretation
+
+`[F(x,y,n)] = x + n + 1`, `[S(n)] = n + 1`, `[G(a,b)] = b`, `[Z] = 0`.
+
+**Does it prove termination?** Check both rules over $\mathbb{N}$:
+
+- Rule 1: `[F(x, y, Z)] = x + 0 + 1 = x + 1 > x = [x]`. Strict decrease. ✓
+- Rule 2: `[F(x, y, S(n))] = x + (n+1) + 1 = x + n + 2`. RHS: `[G(y, F(x, y, n))] = [F(x, y, n)] = x + n + 1`. So $x + n + 2 > x + n + 1$. Strict decrease. ✓
+
+All interpretations map to $\mathbb{N}$ (non-negative for all inputs), and both rules are strictly decreasing.
+
+**Verdict: Succeeds.**
+
+**Within boundary?** Yes — polynomial interpretations over $\mathbb{N}$ are a standard term rewriting termination method that operates entirely on the syntactic structure of the rules.
+
+---
+
+## Method C — KBO with uniform weights w = 1
+
+**Does it prove termination?** KBO requires that for every rule `l -> r`, the weight of `l` is ≥ the weight of `r`, and every variable in `r` occurs at least as many times in `l`.
+
+Rule 2: `F(x, y, S(n)) -> G(y, F(x, y, n))`
+
+- Weight of LHS: $w(F) + w(x) + w(y) + w(S) + w(n)$. With $w_0 = 1$ for variables: $1 + 1 + 1 + 1 + 1 = 5$.
+- Weight of RHS: $w(G) + w(y) + w(F) + w(x) + w(y) + w(n) = 1 + 1 + 1 + 1 + 1 + 1 = 6$.
+
+The RHS is **heavier** than the LHS (6 > 5). This is because `y` appears once on the left but twice on the right.
+
+**Verdict: Fails.** The variable `y` is duplicated in the right-hand side of Rule 2, violating the KBO weight condition.
+
+**Within boundary?** Moot (method fails), but KBO itself would be within boundary.
+
+---
+
+## Method D — Dependency pairs with subterm criterion, projecting to the third argument of F
+
+**Does it prove termination?** The only dependency pair from rule 2 is:
+
+`F#(x, y, S(n)) -> F#(x, y, n)`
+
+(There is no DP from rule 1 since `x` is a variable.) Projecting to the third argument gives `S(n)` vs `n`. Since `n` is a proper subterm of `S(n)`, the subterm criterion is satisfied, and the DP problem is finite.
+
+**Verdict: Succeeds.**
+
+**Within boundary?** Yes — dependency pairs and the subterm criterion are purely syntactic methods applied to the given rules.
+
+---
+
+## Method E — Direct descent measure on the third argument
+
+$\mu(F(x,y,n)) = \text{depth}_S(n) + 1$, $\mu(G(a,b)) = \mu(b)$, $\mu(x) = 0$ for variables.
+
+**Does it prove termination?** The claim is that every rewrite step strictly decreases $\mu$.
+
+Rule 2: `F(x, y, S(n)) -> G(y, F(x, y, n))`. LHS: $\mu = \text{depth}_S(S(n)) + 1$. RHS: $\mu(G(y, F(x, y, n))) = \mu(F(x, y, n)) = \text{depth}_S(n) + 1$. Since $\text{depth}_S(S(n)) = \text{depth}_S(n) + 1$, the LHS measure is $\text{depth}_S(n) + 2$ and the RHS measure is $\text{depth}_S(n) + 1$. Strict decrease. ✓
+
+Rule 1: `F(x, y, Z) -> x`. LHS: $\mu = \text{depth}_S(Z) + 1 = 0 + 1 = 1$. RHS: $\mu(x) = 0$. Strict decrease. ✓
+
+However, the measure must be well-defined on **all** reachable terms, not just on the initial `F`-rooted terms. After rule 2 fires, the result is `G(y, F(x, y, n))` — a `G`-rooted term. If `y` is itself an `F`-term or a `G`-term, rewriting can happen inside `y`. The measure $\mu$ is defined on `G(a,b)` as $\mu(b)$, which ignores the first argument entirely. A rewrite step inside the first argument of `G` would not be captured by any decrease in $\mu$.
+
+Concretely: if `y = F(a, b, S(Z))`, then the full term `G(F(a, b, S(Z)), F(x, y, n))` can rewrite in the first argument. The measure $\mu(G(\ldots)) = \mu(F(x,y,n))$ does not change, so the step is not strictly decreasing.
+
+**Verdict: Fails.** The measure does not account for rewrites inside the first argument of `G`, so it does not prove strong normalization of all reduction sequences.
+
+**Within boundary?** Moot (method fails), but the measure itself is syntactically defined on the given rules, so it would be within boundary.
+
+---
+
+## Summary
+
+| Method | Proves termination? | Within boundary? | Both? |
+|--------|---|---|---|
+| A (LPO) | **Yes** | **Yes** | **Yes** |
+| B (Polynomial) | **Yes** | **Yes** | **Yes** |
+| C (KBO) | No | Yes | No |
+| D (Dependency pairs) | **Yes** | **Yes** | **Yes** |
+| E (Descent measure) | No | Yes | No |
+
+**Methods A, B, and D satisfy both conditions.**

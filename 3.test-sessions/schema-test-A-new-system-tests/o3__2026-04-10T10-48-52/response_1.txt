@@ -1,0 +1,17 @@
+Yes — strong normalization follows directly from the two rules themselves.  
+
+Reasoning in outline:
+
+1. Define a well-founded measure μ on any ground term t:  
+ μ(t) = total number of occurrences of the constructor S in the third argument of every F appearing in t.  
+ (Z contributes 0.)
+
+2. Rule 1 removes the outer F completely, leaving no new F, so μ strictly decreases.
+
+3. Rule 2 rewrites F(…, S n) to G(F(…, n)).  
+ – The nested F now carries the strictly smaller argument n, so μ decreases by 1.  
+ – The fresh wrapper G contains no rule, so it never creates new Fs or S’s and cannot increase μ.
+
+4. No other rule can increase μ or recreate an F with a larger third argument, so every rewrite step strictly lowers μ. Because μ ranges over ℕ with the usual well-founded order, infinite descending chains are impossible.
+
+Hence every reduction sequence is finite; the system is strongly normalizing without any extra structural axioms or assumptions.

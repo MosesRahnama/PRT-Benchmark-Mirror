@@ -1,0 +1,56 @@
+To complete the remaining cases of the `mu_decreases` theorem in KO7-LLM-Benchmark/test-files/Test-03-Completion-Ordinal.lean, you need to leverage the fact that $\omega$ powers with higher exponents dominate those with lower exponents, and that $\omega^n$ dominates any polynomial-like combination of smaller powers.
+
+Here is a proof skeleton for the three remaining cases:
+
+### 1. The `R_rec_succ` Case
+This case is the most complex because of the nested `mu` calls. The strategy is to show that the exponent on the Left-Hand Side (LHS) contains a term ($\omega^5$) that grows much faster than the linear sums in the Right-Hand Side (RHS) exponents.
+
+```lean4
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- 1. Identify LHS exponent: exp_LHS = (omega^5 * (mu n + 1) + 1) + mu s + 6
+    -- 2. Identify RHS terms: 
+    --    Term1: omega^3 * (mu s + 1)
+    --    Term2: omega^2 * (omega^(mu n + mu s + 6) + omega * (mu b + 1) + 2)
+    -- 3. Use the property: omega^5 * (mu n + 1) > mu n + mu s + 8 (for any mu s)
+    -- 4. Conclude: omega^(exp_LHS) dominates the sum of the smaller powers in the RHS.
+    sorry
+```
+
+### 2. The `R_eq_refl` Case
+This is a straightforward positivity proof. Since the measure of any term is at least 0, the $\omega$ power is at least $\omega^9$.
+
+```lean4
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- 1. Show omega^(2 * mu a + 9) >= omega^9
+    -- 2. Since omega^9 > 0, then omega^(2 * mu a + 9) + 1 > 0
+    -- 3. mu void = 0, so 0 < mu (eqW a a)
+    apply Ordinal.pos_iff_ne_zero.mpr
+    apply ne_of_gt
+    exact add_pos_right _ one_pos
+```
+
+### 3. The `R_eq_diff` Case
+The goal here is to show that the constant `9` in the `eqW` exponent is large enough to absorb the coefficients and the `+4` power shift in the `integrate-merge` expansion.
+
+```lean4
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- LHS: omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 2) + 1
+    -- RHS: omega^(mu a + mu b + 9) + 1
+    -- 1. Distribute omega^4: omega^7 * (mu a + 1) + omega^6 * (mu b + 1) + omega^4 * 2 + 1
+    -- 2. Observe that mu a + mu b + 9 is strictly greater than the exponents 7, 6, and 4
+    -- 3. Since omega^(mu a + mu b + 9) dominates any sum of omega^k where k < exponent,
+    --    the inequality holds strictly.
+    sorry
+```
+
+### Key Ordinal Lemmas level
+To turn this skeleton into a formal proof, you will likely need:
+- `Ordinal.opow_lt_opow_iff_exp`: To compare $\omega^x < \omega^y$ via $x < y$.
+- `Ordinal.add_lt_opow_of_lt`: To show that $a + b < \omega^n$ if both are small.
+- `Ordinal.mul_opow`: To handle the distribution of $\omega^4$ over the `merge` terms.

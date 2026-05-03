@@ -1,0 +1,155 @@
+I inspected only
+, and the short verdict is: **none of the three candidates is a valid strict termination measure for `Step`**.
+
+## What I checked
+
+A direct termination measure for this `Step` relation should satisfy:
+
+$$
+\text{if } Step\ x\ y,\ \text{then } \mu(x) > \mu(y).
+$$
+
+One important nuance: as written, `Step` has **only root rules**—there are no context/congruence rules for rewriting inside subterms. So the right way to assess each `muᵢ` here is simply to check every constructor of `Step` one by one.
+
+## Verdict on the three candidates
+
+### `mu1`
+
+`mu1` works for every rule **except** `R_rec_succ`.
+
+For that rule:
+
+$$
+\mu_1(\text{recDelta } b\ s\ (\delta n))
+= 1 + \mu_1(b) + \mu_1(s) + (1 + \mu_1(n))
+= 2 + \mu_1(b) + \mu_1(s) + \mu_1(n)
+$$
+
+but
+
+$$
+\mu_1(\text{app } s\ (\text{recDelta } b\ s\ n))
+= 1 + \mu_1(s) + (1 + \mu_1(b) + \mu_1(s) + \mu_1(n))
+= 2 + \mu_1(b) + 2\mu_1(s) + \mu_1(n).
+$$
+
+So the difference is
+
+$$
+\mu_1(\text{LHS}) - \mu_1(\text{RHS}) = -\mu_1(s).
+$$
+
+That means:
+
+- if `s = void`, the measure is **equal**
+- if `s ≠ void`, the measure actually **increases**
+
+So `mu1` is **not** a valid strict ranking function.
+
+### `mu2`
+
+Same story: `mu2` also fails **exactly** at `R_rec_succ`.
+
+$$
+\mu_2(\text{recDelta } b\ s\ (\delta n))
+= 5 + \mu_2(b) + \mu_2(s) + (1 + \mu_2(n))
+= 6 + \mu_2(b) + \mu_2(s) + \mu_2(n)
+$$
+
+and
+
+$$
+\mu_2(\text{app } s\ (\text{recDelta } b\ s\ n))
+= 1 + \mu_2(s) + (5 + \mu_2(b) + \mu_2(s) + \mu_2(n))
+= 6 + \mu_2(b) + 2\mu_2(s) + \mu_2(n).
+$$
+
+Again,
+
+$$
+\mu_2(\text{LHS}) - \mu_2(\text{RHS}) = -\mu_2(s).
+$$
+
+So `mu2` is also **not** a valid strict termination measure.
+
+A nice way to say it: **the bigger constants in `mu2` do not fix the structural problem**. The troublesome extra copy of `s` on the right-hand side is still there, and the constants cancel out.
+
+### `mu3`
+
+`mu3` also fails at `R_rec_succ`, and it fails **more strongly**:
+
+$$
+\mu_3(\text{recDelta } b\ s\ (\delta n))
+= 1 + \mu_3(b) + \mu_3(s) + (1 + \mu_3(n))
+= 2 + \mu_3(b) + \mu_3(s) + \mu_3(n)
+$$
+
+while
+
+$$
+\mu_3(\text{app } s\ (\text{recDelta } b\ s\ n))
+= 2 + \mu_3(s) + (1 + \mu_3(b) + \mu_3(s) + \mu_3(n))
+= 3 + \mu_3(b) + 2\mu_3(s) + \mu_3(n).
+$$
+
+So
+
+$$
+\mu_3(\text{LHS}) - \mu_3(\text{RHS}) = -1 - \mu_3(s),
+$$
+
+which is **always negative**.
+
+So `mu3` is definitely not a termination measure; `R_rec_succ` always makes it go up.
+
+## Why all three fail
+
+The root issue is the rule
+
+```lean
+Step (recDelta b s (delta n)) (app s (recDelta b s n))
+```
+
+The right-hand side contains:
+
+- one copy of `s` as the first argument of `app`
+- another copy of `s` inside `recDelta b s n`
+
+So any simple additive “size” measure of the current form gets hit by **an extra occurrence of `s`** on the right.
+
+That is why:
+
+- `mu1` and `mu2` fail by exactly `\mu(s)`
+- `mu3` fails even harder, because `app` is weighted more heavily there
+
+## Bottom line
+
+If the question is “which of these prove termination of `Step` as written?” then the answer is:
+
+- **`mu1`: invalid**
+- **`mu2`: invalid**
+- **`mu3`: invalid, and worse than the first two**
+
+If you want a ranking among them:
+
+1. **`mu1` and `mu2` tie** — both fail in the same structural way
+2. **`mu3` is the weakest** — it strictly increases on `R_rec_succ` for every `s`
+
+## A brief note on what would be needed instead
+
+A plain additive size measure is the wrong shape for `R_rec_succ`, because that rule duplicates `s`. A successful argument would likely need something like:
+
+- a **lexicographic** measure, or
+- a **multiset/path ordering**, or
+- a measure that focuses on the **third argument of `recDelta`** rather than raw additive size
+
+In other words: the recursion is really decreasing in `n`, but these three `mu`s are too blunt to capture that.
+
+## Checklist
+
+- [x] Read only the requested Lean file
+- [x] Assessed all three candidate measures against the rewrite rules
+- [x] Identified the failing rule and the exact reason
+- [x] Ranked the candidates by strength and summarized the outcome
+
+If you want, I can also turn this into a compact “proof-audit” style writeup, rule by rule, in the style of a Lean termination review—still without reading anything else.

@@ -1,0 +1,35 @@
+I’ve finished the file analysis and will now mark the checklist complete before giving you a concise rule-by-rule verdict.
+## Verdict
+
+The proposed measure `measure t := (phase t, cost t)` is **not sound** as a global lexicographic termination measure for `Step`.
+
+## Why it fails
+
+A termination measure must strictly decrease on **every** rewrite step.  
+Here, some rules can **increase** the first lexicographic component `phase`.
+
+Concrete counterexample (using `R_merge_void_left`):
+
+- Let  
+  $t := \text{recDelta void void (delta void)}$
+- Then `phase t = 1`.
+- The rule gives:
+  `Step (merge void t) t`.
+
+Now compare measures:
+
+- `measure (merge void t) = (0, 1 + cost t)`
+- `measure t = (1, cost t)`
+
+Under standard lexicographic order on `Nat × Nat` (first compare `phase`, then `cost`), this is an **increase** from first component `0` to `1`, not a decrease.
+
+So the measure cannot justify termination of all `Step` rules.
+
+(Indeed, similar issue appears with `R_merge_void_right`, `R_merge_cancel`, and `R_rec_zero` whenever the projected term has `phase = 1`.)
+
+## Updated checklist
+
+- [x] Read target Lean file fully  
+- [x] Extract rewrite rules and measure  
+- [x] Assess soundness with counterexamples  
+- [x] Deliver verdict with reasoning

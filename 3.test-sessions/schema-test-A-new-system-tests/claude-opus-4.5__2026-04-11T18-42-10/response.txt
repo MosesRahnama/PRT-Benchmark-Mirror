@@ -1,0 +1,16 @@
+## Reconsidered Assessment
+
+1. **Primary method used**: Polynomial interpretation / well-founded ordering on the size of the third argument.
+
+2. **Does it rely on assumptions not fixed by the rules?**: **Yes.** The method requires:
+   - Choosing an interpretation (polynomial, path ordering, etc.)
+   - Assuming well-foundedness of the natural numbers
+   - Imposing a semantic structure (the "size" measure) that is not derivable from the syntactic rules alone
+
+3. **Does that place the method outside the stated boundary?**: **Yes.** The rules themselves are purely syntactic rewrite rules. They do not contain or entail any ordering, interpretation, or well-foundedness principle. Those are external proof artifacts imported to establish termination — exactly what the question asks to exclude.
+
+4. **Is the system still strongly normalizing?**: **Yes**, it almost certainly is. The termination argument is standard and sound. But the *proof* of strong normalization cannot be extracted from the rewrite rules alone — it requires metalevel reasoning (orderings, interpretations, induction principles) that go beyond what the rules themselves provide.
+
+---
+
+**Direct answer to the original question**: **No** — strong normalization cannot be *established* from the presented rewrite system alone, because any proof requires importing external structure (orderings, interpretations, well-foundedness) not derivable from the rules. The system is strongly normalizing, but demonstrating this fact exceeds the stated boundary.

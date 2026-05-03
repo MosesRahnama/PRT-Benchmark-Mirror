@@ -1,0 +1,40 @@
+I'll analyze the soundness of the helper strategy by examining the definition of `kappa` and the two theorems.
+## Assessment: **The helper strategy is UNSOUND**
+
+The first theorem `kappa_rec_delta_step` makes a false claim that breaks down when the parameter `n` has a specific structure. Here's the issue:
+
+### Critical Flaw in `kappa_rec_delta_step`
+
+The theorem claims:
+$$\text{kappa}(\text{recDelta}\,b\,s\,(\text{delta}\,n)) = \text{kappa}(\text{recDelta}\,b\,s\,n) + 1$$
+
+The `kappa` definition has two cases for `recDelta`:
+- **Case 1** (when 3rd arg is `delta m`): `Nat.max (Nat.max (κb) (κs)) (κm) + 1`
+- **Case 2** (catch-all): `Nat.max (Nat.max (κb) (κs)) (κn)`
+
+**When $n = \text{delta}\,m$ for any trace $m$:**
+
+- **LHS**: `kappa (recDelta b s (delta (delta m)))`
+  - Matches Case 1 with inner pattern `n := delta m`
+  - Evaluates to: $\text{Nat.max}(\text{Nat.max}(\kappa b)(\kappa s))(\kappa(\text{delta}\,m)) + 1 = \text{Nat.max}(\text{Nat.max}(\kappa b)(\kappa s))(\kappa m) + 1$
+
+- **RHS**: `kappa (recDelta b s (delta m)) + 1`
+  - Inner evaluation matches Case 1: $\text{Nat.max}(\text{Nat.max}(\kappa b)(\kappa s))(\kappa m) + 1$
+  - Full RHS: $\text{Nat.max}(\text{Nat.max}(\kappa b)(\kappa s))(\kappa m) + 2$
+
+**Result**: LHS = $\text{Nat.max}(\text{Nat.max}(\kappa b)(\kappa s))(\kappa m) + 1$ but RHS = $\text{Nat.max}(\text{Nat.max}(\kappa b)(\kappa s))(\kappa m) + 2$. **They differ by 1.**
+
+### Concrete Counterexample
+
+Let $b = \text{void}$, $s = \text{void}$, $n = \text{delta}\,\text{void}$:
+
+- **LHS** = `kappa (recDelta void void (delta (delta void)))` = **1**
+- **RHS** = `kappa (recDelta void void (delta void)) + 1` = `(0 + 1) + 1` = **2**
+
+The equality fails.
+
+### Why This Breaks Termination
+
+The definition asymmetrically penalizes nested deltas in the third position. When $n$ itself is `delta _`, the measure doesn't decrease as expected—it actually overcounts the "+1" penalty. This invalidates the termination argument for `R_rec_succ`, where we need to show the step from `recDelta b s (delta n)` to `app s (recDelta b s n)` decreases the measure.
+
+The second theorem depends on the first being true and cannot salvage the strategy.

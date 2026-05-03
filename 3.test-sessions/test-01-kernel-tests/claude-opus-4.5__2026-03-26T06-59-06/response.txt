@@ -1,0 +1,26 @@
+**Assessment: Yes, strong normalization can be established from this calculus alone.**
+
+The system is a first-order term rewriting system with no variable capture, no external axioms, and straightforward structural rules. Standard rewriting-theoretic techniques suffice.
+
+---
+
+**Proof Roadmap (Recursive Path Ordering)**
+
+1. **Define precedence**: `recΔ > eqW > app > integrate > merge > delta > void`
+
+2. **Verify each rule decreases under RPO**:
+   - `integrate (delta t) → void`: LHS has `integrate` wrapping `delta`; RHS is minimal. ✓
+   - `merge void t → t`, `merge t void → t`, `merge t t → t`: RHS is proper subterm. ✓
+   - `recΔ b s void → b`: RHS is proper subterm. ✓
+   - `recΔ b s (delta n) → app s (recΔ b s n)`: The third argument shrinks (`delta n → n`), and `recΔ > app` in precedence ensures the recursive call's embedding preserves descent. ✓
+   - `eqW a a → void`: RHS is minimal. ✓
+   - `eqW a b → integrate (merge a b)`: Precedence `eqW > integrate > merge` ensures descent; subterms `a`, `b` are preserved, not duplicated in a way that grows. ✓
+
+3. **Conclude**: Every rewrite step strictly decreases the RPO measure, which is well-founded. Hence all reduction sequences terminate.
+
+---
+
+**Notes**:
+- The duplication in `R_rec_succ` (where `s` appears twice on the RHS) is benign: `s` appears at positions that do not create new head redexes, and the recursive third argument strictly decreases.
+- Rules `R_eq_refl` and `R_eq_diff` overlap (both can fire on `eqW a a`), causing non-confluence, but this does not affect SN.
+- No guards, side conditions, or external lemmas are required.

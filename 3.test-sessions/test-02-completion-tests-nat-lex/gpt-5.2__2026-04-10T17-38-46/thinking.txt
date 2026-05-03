@@ -1,0 +1,10 @@
+**Crafting proof skeletons**
+
+I'm working on constructing the proof skeleton for the user. For `R_rec_zero`, I need to show how the max in kappa functions, especially in terms of comparing values between b and s. The goal is to simplify the process by leveraging inequalities while acknowledging potential cases for ≤ or <. 
+
+I can also create skeletons for `R_rec_succ`, emphasizing a helper lemma and maintaining placeholders for necessary sublemmas. While I want to be thorough, I should avoid using "sorry" in the final output. Instead, I can keep some pseudocode comments. This should help the user fill in details later!
+**Providing proof skeletons**
+
+I'll craft proof skeletons for each case with clear placeholders, marking where user needs to add their own lemmas and tactics. I'm avoiding "sorry" in my final skeletons, although I might need to reference it in some areas like `R_rec_succ` for conceptual gaps.
+
+I'll emphasize the importance of handling cases appropriately, especially for delta inputs, and note that assumptions may be required. The skeletons will align with the user's request while ensuring they can fill in placeholders as needed. Let's include five code blocks, clearly indicating steps without restating the entire theorem.

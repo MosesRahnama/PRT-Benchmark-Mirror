@@ -1,0 +1,58 @@
+## Raw Assessment
+
+**Yes — strong normalization is derivable from the two given rules alone**, with no imported axioms.
+
+---
+
+### The System
+
+```
+(VAR x y n)
+F(x, y, Z)    -> x
+F(x, y, S(n)) -> G(y, F(x, y, n))
+```
+
+`G` is **defined nowhere** on the LHS — it is an uninterpreted constructor-like symbol. Both rules reduce `F`; `G` never reduces.
+
+---
+
+### The Only Concern: Variable Duplication
+
+Rule 2 copies `y` **twice** on the RHS — once in `G(y, ...)` and once inside the recursive `F(x, y, n)`. Naive size arguments fail under substitution when `y` is large. This must be handled by a **closed-under-substitution** order.
+
+---
+
+### Proof Roadmap (LPO)
+
+**Step 1 — Precedence.** Set $F >_{\mathcal{F}} G$.  (`S`, `Z` rank below both; their order is irrelevant.)
+
+**Step 2 — Orient Rule 1.**
+$$F(x,\, y,\, Z) >_{\mathsf{LPO}} x$$
+Holds by the **subterm case** of LPO: $x$ is a direct argument of $F(\cdots)$.
+
+**Step 3 — Orient Rule 2.**
+$$F(x,\, y,\, S(n)) >_{\mathsf{LPO}} G(y,\, F(x,\, y,\, n))$$
+
+Apply the **precedence case** ($F >_{\mathcal{F}} G$); must show the LHS dominates each argument of the RHS:
+
+| RHS argument | Why LHS dominates |
+|---|---|
+| $y$ | $y$ is a direct argument of the LHS $F(\cdots)$, so LHS $>_{\mathsf{LPO}}$ $y$ by the subterm case |
+| $F(x, y, n)$ | Same root $F$; compare lex: first two args equal, third: $S(n) >_{\mathsf{LPO}} n$ (subterm); also need LHS $>_{\mathsf{LPO}}$ each argument of the inner $F$: $x$, $y$ are arguments of the outer $F$ ✓; $n$ is reachable via $S(n)$ ✓ |
+
+All checks pass.
+
+**Step 4 — Conclude SN.**  
+LPO is a well-founded reduction order closed under substitution and contexts. Since both rules are strictly oriented by the same LPO instance, the standard LPO termination theorem gives **strong normalization** of the TRS.
+
+---
+
+### Summary
+
+The key structural facts used are entirely internal to the two rules:
+
+1. The third argument of `F` is peeled by exactly one `S` per recursive step.
+2. `G` has no rules, so it acts as a "sink."
+3. LPO with $F > G$ absorbs the `y`-duplication symbolically.
+
+No external axioms, structural properties, or object-level assumptions are required.

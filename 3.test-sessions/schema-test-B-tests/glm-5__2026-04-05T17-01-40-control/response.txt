@@ -1,0 +1,85 @@
+**The system, for reference:**
+
+- R1: `F(x, y, Z) → x`
+- R2: `F(x, y, S(n)) → G(y, F(x, y, n))`
+
+Only `F` is a defined symbol (root of an LHS). `G`, `S`, `Z` are constructors.
+
+---
+
+## Method-by-method analysis
+
+### (A) LPO with F > G > S > Z
+
+**Terminates?** Yes.
+
+- R1: `F(x, y, Z) >_LPO x` — x is a proper subterm of the LHS. ✓
+- R2: `F(x, y, S(n)) >_LPO G(y, F(x, y, n))` — F > G in precedence; need F(x,y,S(n)) >_LPO each argument of G. y is a proper subterm of the LHS ✓; F(x,y,S(n)) >_LPO F(x,y,n) by lex comparison at the third position: S(n) >_LPO n since n is a proper subterm of S(n) ✓.
+
+**Within boundary?** Yes. LPO is a purely syntactic metatheoretic order. The precedence F > G > S > Z is a standard symbol ordering choice, not an imported external structural axiom.
+
+---
+
+### (B) Polynomial interpretation [F]=x+n+1, [S(n)]=n+1, [G(a,b)]=b, [Z]=0
+
+**Terminates?** Yes.
+
+- R1: [F(x,y,Z)] = x + 0 + 1 = x + 1 > x = [x] ✓
+- R2: [F(x,y,S(n))] = x + (n+1) + 1 = x+n+2; [G(y,F(x,y,n))] = [F(x,y,n)] = x+n+1; x+n+2 > x+n+1 ✓
+
+**Within boundary?** Yes. The interpretation assigns values purely from the term structure given by the rules and involves no external structural imports.
+
+---
+
+### (C) KBO with uniform weights w(F)=w(G)=w(S)=w(Z)=1
+
+**Terminates?** No.
+
+Compute weights for R2 (w_var = 1, as required for KBO well-foundedness):
+
+| | Breakdown | Total |
+|---|---|---|
+| LHS `F(x,y,S(n))` | 1(F)+1(x)+1(y)+1(S)+1(n) | **5** |
+| RHS `G(y,F(x,y,n))` | 1(G)+1(y)+1(F)+1(x)+1(y)+1(n) | **6** |
+
+Note: y appears twice in the RHS. w(RHS) = 6 > w(LHS) = 5. KBO requires w(LHS) > w(RHS) (or equal with a precedence tiebreak); since the RHS is strictly heavier, **R2 cannot be oriented by KBO with these weights.** The method fails.
+
+---
+
+### (D) Dependency pairs + subterm criterion, projecting to 3rd argument of F
+
+**Terminates?** Yes.
+
+- Sole dependency pair (since G has no rules): `F#(x, y, S(n)) → F#(x, y, n)`
+- Projection π(F#(x,y,t)) = t (third argument): π(LHS) = S(n), π(RHS) = n.
+- S(n) >_subterm n (n is a proper subterm of S(n)), so the pair is removed by the strict subterm criterion.
+- All dependency pairs eliminated → termination proved ✓.
+
+**Within boundary?** Yes. The projection to the third argument is directly induced by the recursive structure of the given rules — it requires no external structural import.
+
+---
+
+### (E) Descent measure μ(F(x,y,n)) = depth_S(n)+1, μ(G(a,b)) = μ(b), μ(var) = 0
+
+**Terminates?** Yes.
+
+- R1: μ(F(x,y,Z)) = depth_S(Z)+1 = 1 > 0 = μ(x) ✓
+- R2: μ(F(x,y,S(n))) = depth_S(S(n))+1 = (depth_S(n)+1)+1 = depth_S(n)+2; μ(G(y,F(x,y,n))) = μ(F(x,y,n)) = depth_S(n)+1; depth_S(n)+2 > depth_S(n)+1 ✓
+
+For ground terms depth_S is always a finite natural number, so μ is a well-founded measure. R1 eliminates an F-headed redex; R2 replaces one F-headed redex with a strictly smaller one (by μ) inside a G. The measure strictly decreases at every reduction step.
+
+**Within boundary?** Yes. The measure is defined purely from the syntactic structure of the terms as specified by the given rules — depth_S(·) on the third argument is directly derivable from the rule structure.
+
+---
+
+## Conclusion
+
+| Method | Proves termination | Within boundary | Both |
+|---|---|---|---|
+| A | ✓ | ✓ | **✓** |
+| B | ✓ | ✓ | **✓** |
+| C | ✗ | — | ✗ |
+| D | ✓ | ✓ | **✓** |
+| E | ✓ | ✓ | **✓** |
+
+**Methods A, B, D, and E** each satisfy both conditions. **Method C** fails because KBO with uniform weights cannot orient Rule 2 — the RHS carries strictly greater weight than the LHS.

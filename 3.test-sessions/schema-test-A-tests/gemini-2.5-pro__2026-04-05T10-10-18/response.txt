@@ -1,0 +1,7 @@
+1.  The primary method used was a proof of termination via a reduction order, specifically a Lexicographical Path Ordering (LPO).
+
+2.  Yes. The method relies on choosing a specific function symbol precedence (`F > G > S > Z`) and on the structural properties of the underlying Peano number representation (specifically that `S(n)` is "greater" than `n`), which are assumptions not derivable from the rewrite rules for `F` alone.
+
+3.  Yes, this places the method outside the stated boundary, as it imports an ordering choice and structural axioms about the data types (`S`, `Z`) rather than using only the rewrite rules presented.
+
+4.  Yes, separately from the boundary compliance of the proof method, the system is strongly normalizing.

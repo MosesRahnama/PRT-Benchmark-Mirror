@@ -1,0 +1,116 @@
+Here is a proof skeleton for the three remaining `sorry` cases, with the mathematical justification and the proof structure laid out for each.
+
+---
+
+### Case 1: `R_eq_refl` — trivial positivity
+
+After `simp [mu]` the goal reduces to `0 < omega0 ^ (mu a + mu a + 9) + 1`. This holds because any ordinal `+ 1` is positive.
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- Goal (after simp): 0 < omega0 ^ (mu a + mu a + 9) + 1
+    exact add_pos_right (omega0 ^ (mu a + mu a + 9)) one_pos
+```
+
+---
+
+### Case 2: `R_eq_diff` — absorb the `integrate ∘ merge` expansion
+
+The key inequality is:
+
+$$
+\omega^4 \cdot \bigl(\omega^3(\mu a{+}1) + \omega^2(\mu b{+}1) + 2\bigr) + 1
+\;<\;
+\omega^{\mu a + \mu b + 9} + 1
+$$
+
+It suffices to show the inequality without the trailing `+1`. Expanding the left side gives `omega0^7*(mu a+1) + omega0^6*(mu b+1) + 2*omega0^4`, whose dominant term is `omega0^7*(mu a+1)`. The right-side exponent `mu a + mu b + 9 ≥ 9 > 7`, so `omega0^(mu a+mu b+9)` dominates via `Ordinal.opow_lt_opow_right`.
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- Goal (after simp, schematically):
+    --   omega0^4 * (omega0^3*(mu a+1) + omega0^2*(mu b+1) + 2) + 1
+    --   < omega0^(mu a + mu b + 9) + 1
+    apply add_lt_add_right  -- reduce to dropping trailing +1 from both sides
+    apply lt_of_le_of_lt
+    -- Step A: bound the product by omega0^(mu a+mu b+8)*(something small)
+    · -- omega0^4 * (omega0^3*(mu a+1)+...) ≤ omega0^7*(mu a+1) + omega0^6*(mu b+1) + omega0^4*2
+      -- which is < omega0^8*(mu a+1) (for sufficiently large tower)
+      -- Use: mul_add, opow_add, Ordinal.mul_comm to distribute omega0^4
+      sorry  -- distribute and reassemble using opow_add + mul_comm
+    -- Step B: omega0^8*(mu a+1) < omega0^(mu a+mu b+9)
+    · -- Note: mu a + mu b + 9 > 8, and opow is strictly monotone in the exponent
+      --   omega0^8*(mu a+1) ≤ omega0^8 * omega0^(mu a) = omega0^(mu a+8)
+      --                      < omega0^(mu a+mu b+9)  since mu b + 9 > 8
+      have hexp : (8 : Ordinal) < mu a + mu b + 9 := by
+        have : 0 ≤ mu a + mu b := Ordinal.zero_le _
+        linarith  -- ordinal linarith or: exact lt_of_lt_of_le (by norm_num) (le_add_left _ _)
+      calc omega0 ^ (8 : Ordinal) * (mu a + 1)
+          ≤ omega0 ^ (8 : Ordinal) * omega0 ^ (mu a) :=
+              Ordinal.mul_le_mul_left _ (le_opow_self omega0 (mu a))
+        _ = omega0 ^ (8 + mu a) := (opow_add omega0 8 (mu a)).symm
+        _ < omega0 ^ (mu a + mu b + 9) :=
+              Ordinal.opow_lt_opow_right one_lt_omega0 (by linarith)
+```
+
+---
+
+### Case 3: `R_rec_succ` — exponent tower dominance
+
+The redex measure is `omega0^(omega0^5*(mu n+1) + 1 + mu s + 6) + omega0*(mu b+1) + 1`.
+The reduct `app s (recDelta b s n)` has measure dominated by `omega0^(mu n + mu s + 8)`.
+The key fact is that the RHS exponent `omega0^5*(mu n+1) + mu s + 7` strictly exceeds `mu n + mu s + 8` because `mu n + 1 < omega0^5*(mu n+1)` (since `omega0^5 ≥ omega0 > 1` implies `x < omega0*x ≤ omega0^5*x` for `x > 0`).
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- Goal (schematically):
+    --   omega0^3*(mu s+1) + omega0^2*(omega0^(mu n+mu s+6)+omega0*(mu b+1)+2) + 1
+    --   < omega0^(omega0^5*(mu n+1)+1+mu s+6) + omega0*(mu b+1) + 1
+
+    -- Key sub-lemma: the LHS dominant term is omega0^(mu n+mu s+8)
+    --   (from omega0^2 * omega0^(mu n+mu s+6) = omega0^(mu n+mu s+8))
+    -- and the RHS exponent satisfies mu n + mu s + 8 < omega0^5*(mu n+1)+1+mu s+6.
+
+    have h_exp_lt : mu n + mu s + 8 < omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6 := by
+      -- Suffices: mu n + 2 < omega0^5*(mu n+1)
+      -- Proof: mu n + 1 < omega0*(mu n+1) ≤ omega0^5*(mu n+1),  so mu n+2 ≤ mu n+1+1 ≤ omega0*(mu n+1)
+      have h1 : mu n + 1 < omega0 * (mu n + 1) :=
+        Ordinal.lt_mul_of_pos_left (lt_add_one _) omega0_pos
+      have h2 : omega0 * (mu n + 1) ≤ omega0 ^ (5 : Ordinal) * (mu n + 1) :=
+        Ordinal.mul_le_mul_right _
+          (Ordinal.opow_le_opow_right omega0_pos (by norm_num : 1 ≤ (5 : Ordinal)))
+      linarith  -- ordinal arithmetic from h1, h2
+
+    -- Now lift h_exp_lt through opow (strictly monotone base omega0 > 1)
+    have h_pow_lt : omega0 ^ (mu n + mu s + 8) < omega0 ^ (omega0^5*(mu n+1)+1+mu s+6) :=
+      Ordinal.opow_lt_opow_right one_lt_omega0 h_exp_lt
+
+    -- Chain: LHS ≤ omega0^3*(mu s+1) + omega0^(mu n+mu s+8+1) + omega0*(mu b+1) + 1
+    --            < omega0^(omega0^5*(mu n+1)+1+mu s+6) + omega0*(mu b+1) + 1 = RHS
+    calc omega0^3*(mu s+1) + omega0^2*(omega0^(mu n+mu s+6)+omega0*(mu b+1)+2) + 1
+        ≤ omega0^(mu n+mu s+8) + omega0*(mu b+1) + 1 + 1 := by
+            -- distribute omega0^2, absorb omega0^3*(mu s+1) into omega0^(mu n+mu s+8)
+            -- since mu s + 8 ≥ 3, so omega0^3*(mu s+1) < omega0^(mu n+mu s+8)
+            sorry  -- use opow_add, mul_add, and ordering of coefficients
+      _ < omega0^(omega0^5*(mu n+1)+1+mu s+6) + omega0*(mu b+1) + 1 := by
+            apply Ordinal.add_lt_add_right
+            apply Ordinal.add_lt_add_right
+            linarith  -- from h_pow_lt with the extra +1
+```
+
+---
+
+### Summary of sub-lemmas needed
+
+| Lemma | Statement | Mathlib name (approximate) |
+|---|---|---|
+| `x < omega0 * x` for `x > 0` | `mu n + 1 < omega0*(mu n+1)` | `Ordinal.lt_mul_of_pos_left` |
+| `omega0^a ≤ omega0^b` when `a ≤ b` | monotonicity of `^` | `Ordinal.opow_le_opow_right` |
+| `omega0^a < omega0^b` when `a < b` | strict mono | `Ordinal.opow_lt_opow_right` |
+| `omega0^(a+b) = omega0^a * omega0^b` | exponent law | `Ordinal.opow_add` |
+| `a < b → a + c < b + c` | add right | `Ordinal.add_lt_add_right` |
+
+The `R_eq_refl` case is a one-liner. The `R_eq_diff` and `R_rec_succ` cases both have the same pattern: identify the dominant term in `mu(reduct)`, show its exponent is strictly below the redex's exponent using `omega0^5 * x > x`, then conclude by `Ordinal.opow_lt_opow_right` and monotone addition.

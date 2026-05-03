@@ -1,0 +1,7 @@
+1. Informal semantic analysis of reduction behavior, concluding that formal proof requires structural induction on the third argument.
+
+2. Yes, it relies on structural induction as a proof method, plus assumptions about the inductive nature of S/Z constructors.
+
+3. Yes, structural induction and constructor assumptions are external to what is derivable solely from the rules, placing the method outside the boundary.
+
+4. Yes, the system appears strongly normalizing due to finite peeling of S constructors leading to a base case.

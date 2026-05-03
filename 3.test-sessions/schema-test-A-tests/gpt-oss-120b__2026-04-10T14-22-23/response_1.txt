@@ -1,0 +1,25 @@
+**Assessment:**  
+Strong normalization **can be established** for the rewrite system given in `Schema-Test‑A.trs` using only the two rules that are present.
+
+**Reasoning**
+
+1. **Structure of the rules**  
+   - `F(x, y, Z) → x` eliminates the whole `F`‑term when its third argument is the constant `Z`.  
+   - `F(x, y, S(n)) → G(y, F(x, y, n))` replaces an `F`‑term whose third argument is a successor `S(n)` by a `G`‑term that contains a *smaller* `F`‑term (`F(x, y, n)`). The outer `G`‑constructor has no rewrite rule, so it is a normal‑form wrapper.
+
+2. **Measure that strictly decreases**  
+   Define a simple well‑founded measure on terms, e.g. the *height* of the third argument of the outermost `F`.  
+   - In the first rule the `F` disappears entirely, so the measure drops to 0.  
+   - In the second rule the argument `S(n)` is replaced by `n`, decreasing the height by 1. The surrounding `G` does not affect this measure because it does not contain an `F` with a larger third argument.
+
+3. **No rule creates larger `F`‑terms**  
+   The only rule that introduces a new `F` does so with a strictly smaller third argument (`n` instead of `S(n)`). No rule can increase the size of the third argument or re‑introduce an `F` with the same or larger depth.
+
+4. **Termination of all rewrite sequences**  
+   Starting from any ground term, repeated application of the second rule can be performed at most as many times as the number of nested `S` constructors in the third argument. After those steps the first rule applies, yielding a term without any `F`. Since `G` has no rewrite rule, the resulting term is in normal form. Hence every possible rewrite sequence is finite.
+
+5. **Strong normalization**  
+   Because *every* reduction sequence (no matter which applicable redex is chosen) must eventually reach a normal form, the system is strongly normalizing.
+
+**Conclusion**  
+The two rules alone guarantee that all terms terminate; no additional structural axioms or external assumptions are required to prove strong normalization.

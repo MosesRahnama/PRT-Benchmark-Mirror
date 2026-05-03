@@ -1,0 +1,14 @@
+**Assessment: Yes, strong normalization can be established from this system alone.**
+
+**Reasoning:**
+
+This system exhibits the structure of a primitive recursive definition. The key property is that rule 2 contains a recursive call to `F(x, y, n)` where the third argument strictly decreases structurally: the argument `S(n)` is replaced with just `n`. 
+
+The only redex is `F(x, y, S(n))`, which reduces to `G(y, F(x, y, n))`. The third argument of `F` must eventually reach the base case `Z` (since we're working with finite ground terms), at which point rule 1 applies and terminates: `F(x, y, Z) → x`.
+
+We can establish strong normalization via a simple lexicographic measure on the third argument of `F`:
+- Each application of rule 2 replaces `F(x, y, S(n))` with a term containing `F(x, y, n)`, strictly decreasing the nesting depth of `S` constructors.
+- No circular dependencies or infinite chains are possible.
+- Function `G` is not defined and does not introduce further reductions.
+
+This is essentially a primitive recursive pattern where recursion is strictly on a structurally smaller term, guaranteeing termination.

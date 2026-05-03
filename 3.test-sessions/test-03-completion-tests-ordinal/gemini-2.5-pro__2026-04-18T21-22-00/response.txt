@@ -1,0 +1,122 @@
+Here is a proof skeleton for the three remaining `sorry` cases in the Lean file.
+### `Step.R_rec_succ`
+
+This case requires showing that the ordinal measure decreases for the recursion rule `recDelta b s (delta n) --> app s (recDelta b s n)`.
+
+**Goal:** `mu (app s (recDelta b s n)) < mu (recDelta b s (delta n))`
+
+**LHS (Right-hand side of reduction):**
+`mu(app s (recDelta b s n))`
+`= omega0^3 * (mu s + 1) + omega0^2 * (mu(recDelta b s n) + 1) + 1`
+`= omega0^3 * (mu s + 1) + omega0^2 * ( (omega0^(mu n + mu s + 6) + omega0 * (mu b + 1) + 1) + 1) + 1`
+`= omega0^3 * (mu s + 1) + omega0^2 * (omega0^(mu n + mu s + 6) + omega0 * (mu b + 1) + 2) + 1`
+
+Using properties of ordinal arithmetic, the dominant term is `omega0^2 * omega0^(mu n + mu s + 6)`, which simplifies to `omega0^(mu n + mu s + 8)`.
+
+**RHS (Left-hand side of reduction):**
+`mu(recDelta b s (delta n))`
+`= omega0^(mu(delta n) + mu s + 6) + omega0 * (mu b + 1) + 1`
+`= omega0^((omega0^5 * (mu n + 1) + 1) + mu s + 6) + omega0 * (mu b + 1) + 1`
+`= omega0^(omega0^5 * (mu n + 1) + mu s + 7) + omega0 * (mu b + 1) + 1`
+
+**Proof Strategy:**
+The exponent on the RHS, `omega0^5 * (mu n + 1) + mu s + 7`, is significantly larger than the exponent on the LHS, `mu n + mu s + 8`. The proof relies on showing this inequality between the exponents, which makes the overall ordinal inequality hold.
+
+```lean
+-- | _, _, Step.R_rec_succ b s n => by
+--     simp [mu]
+--     -- We need to show:
+--     -- omega0^3 * (mu s + 1) + omega0^2 * (omega0^(mu n + mu s + 6) + omega0 * (mu b + 1) + 2) + 1
+--     -- < omega0^(omega0^5 * (mu n + 1) + mu s + 7) + omega0 * (mu b + 1) + 1
+--
+--     -- 1. Show that the LHS is less than a simpler dominant term.
+--     -- The dominant part of the LHS is omega0^2 * omega0^(mu n + mu s + 6) = omega0^(mu n + mu s + 8).
+--     have h_lhs_lt : mu (app s (recDelta b s n)) < omega0 ^ (mu n + mu s + 9) := by
+--       -- This requires showing that all terms in the expansion of mu(app...)
+--       -- are absorbed by omega0^(mu n + mu s + 9).
+--       sorry
+--
+--     -- 2. Show that the exponent of the dominant term on the LHS is smaller than the exponent on the RHS.
+--     have h_exp_lt : mu n + mu s + 9 < omega0^5 * (mu n + 1) + mu s + 7 := by
+--       -- This holds because omega0^5 * (mu n + 1) dominates mu n.
+--       -- Use properties of ordinal addition and multiplication.
+--       sorry
+--
+--     -- 3. Combine these facts to prove the main goal.
+--     calc
+--       mu (app s (recDelta b s n))
+--       _ < omega0 ^ (mu n + mu s + 9) := h_lhs_lt
+--       _ < omega0 ^ (omega0^5 * (mu n + 1) + mu s + 7) := Ordinal.opow_lt_opow_iff_right omega0_gt_one.mpr h_exp_lt
+--       _ ≤ mu (recDelta b s (delta n)) := le_add_right _ _
+```
+
+### `Step.R_eq_refl`
+
+This case handles the reduction `eqW a a --> void`.
+
+**Goal:** `mu void < mu (eqW a a)`
+
+**LHS:** `mu void = 0`
+**RHS:** `mu (eqW a a) = omega0^(mu a + mu a + 9) + 1 = omega0^(2 * mu a + 9) + 1`
+
+**Proof Strategy:**
+The proof is a straightforward positivity argument. Since `omega0 > 1`, any power of `omega0` is positive. Adding 1 ensures the result is strictly greater than 0.
+
+```lean
+-- | _, _, Step.R_eq_refl a => by
+--     simp [mu]
+--     -- We need to show: 0 < omega0^(2 * mu a + 9) + 1
+--     -- This follows from basic properties of ordinals.
+--     have h_pow_pos : 0 < omega0 ^ (2 * mu a + 9) :=
+--       Ordinal.opow_pos (2 * mu a + 9) omega0_pos
+--     exact Ordinal.add_pos_right _ h_pow_pos
+```
+
+### `Step.R_eq_diff`
+
+This case proves the decrease for `eqW a b --> integrate (merge a b)`.
+
+**Goal:** `mu (integrate (merge a b)) < mu (eqW a b)`
+
+**LHS:**
+`mu(integrate (merge a b))`
+`= omega0^4 * (mu(merge a b) + 1) + 1`
+`= omega0^4 * ( (omega0^3 * (mu a + 1) + omega0^2 * (mu b + 1) + 1) + 1) + 1`
+`= omega0^4 * (omega0^3 * (mu a + 1) + omega0^2 * (mu b + 1) + 2) + 1`
+
+The dominant term is `omega0^4 * omega0^3 * (mu a + 1)`, which is bounded by `omega0^8` if we consider `mu a` to be small.
+
+**RHS:**
+`mu(eqW a b) = omega0^(mu a + mu b + 9) + 1`
+
+**Proof Strategy:**
+The exponent on the RHS, `mu a + mu b + 9`, is larger than the exponents of the expanded terms on the LHS (which are at most 7). The proof involves showing that the entire LHS expression is bounded by `omega0^(mu a + mu b + 8)`, which is in turn less than the RHS.
+
+```lean
+-- | _, _, Step.R_eq_diff a b => by
+--     simp [mu]
+--     -- We need to show:
+--     -- omega0^4 * (omega0^3 * (mu a + 1) + omega0^2 * (mu b + 1) + 2) + 1
+--     -- < omega0^(mu a + mu b + 9) + 1
+--
+--     -- We can prove this by showing the inequality without the final '+ 1' on both sides.
+--     apply Ordinal.add_lt_add_iff_right.mpr
+--
+--     -- 1. Find an upper bound for the LHS expression.
+--     -- The dominant term is roughly omega0^4 * omega0^3 * mu a = omega0^7 * mu a.
+--     -- A loose but sufficient bound is omega0^(mu a + mu b + 8).
+--     have h_lhs_lt : omega0^4 * (omega0^3 * (mu a + 1) + omega0^2 * (mu b + 1) + 2) < omega0 ^ (mu a + mu b + 8) := by
+--       -- This requires expanding the LHS and showing each term is absorbed by the RHS bound.
+--       -- For example, omega0^4 * omega0^3 * (mu a + 1) = omega0^7 * (mu a + 1) < omega0^(mu a + 8).
+--       sorry
+--
+--     -- 2. Show that this upper bound is less than the RHS.
+--     have h_bound_lt_rhs : omega0 ^ (mu a + mu b + 8) < omega0 ^ (mu a + mu b + 9) := by
+--       apply Ordinal.opow_lt_opow_iff_right.mpr
+--       exact omega0_gt_one
+--       apply Ordinal.add_lt_add_iff_left.mpr
+--       exact Ordinal.lt_succ_self 8
+--
+--     -- 3. Chain the inequalities.
+--     exact lt_trans h_lhs_lt h_bound_lt_rhs
+```

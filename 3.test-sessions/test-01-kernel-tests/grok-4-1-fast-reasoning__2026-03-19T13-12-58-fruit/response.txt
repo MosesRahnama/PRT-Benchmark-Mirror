@@ -1,0 +1,11 @@
+**Yes**, strong normalization can be established purely from the given syntax and rewrite rules.
+
+**Short proof roadmap** (in Lean: prove `∀ t, Acc Step t` by structural induction on `t`):
+
+- **plum/grape t/pear s u**: No matching rules → `Acc`.
+- **mango t**: Reduces only if `t = grape u` (structural `=`) → `plum` (`Acc`); else `Acc`.
+- **peach t₁ t₂**: Case on `t₁ = plum ∨ t₂ = plum ∨ t₁ = t₂` (decidable `=`) → reduct `tᵢ` (`Acc` by IH); else `Acc`.
+- **cherry a b**: If `a = b` → `plum`; else → `mango (peach a b)` (no further `Step` since `peach ≠ grape` head; `Acc`).
+- **banana b s u**: If `u = plum` → `b` (`Acc` IH). If `u = grape n` → `pear s (banana b s n)` (`Acc` as `pear` irred., `Acc s`/`Acc (banana b s n)` by IH: structurally smaller since `size(banana b s n) < size(banana b s (grape n))`). Else `Acc`.
+
+Uses only constructor injectivity, decidable `=`, structural size from `Inductive`. No extra axioms/rules.

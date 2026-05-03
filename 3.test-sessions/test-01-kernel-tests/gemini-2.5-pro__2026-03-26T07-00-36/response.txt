@@ -1,0 +1,11 @@
+Based on the provided Lean 4 file, establishing strong normalization for this rewrite calculus *cannot
+* be done from the presented rules alone.
+
+The primary obstacle is the `R_eq_diff` rule:
+`R_eq_diff : ∀ a b, Step (eqW a b) (integrate (merge a b))`
+
+This rule introduces term growth without a corresponding decrease in a well-founded measure of term complexity. A reduction sequence can be constructed where a term is rewritten by `R_eq_diff`, and its subterms `a` and `b` can be reintroduced into a new `eqW` context, potentially leading to non-terminating rewrite chains. The system lacks a mechanism (like type-based restrictions or a strictly decreasing metric across all rules) to prevent such cycles.
+
+For example, one could construct a scenario where the output of one `R_eq_diff` reduction becomes the input for another, without any guarantee of termination. The presence of the `R_rec_succ` rule, while seemingly primitive recursive, could potentially be exploited in combination with `R_eq_diff` to create complex, non-terminating reductions.
+
+Therefore, without strengthening the system with additional structural axioms, type constraints, or modifying the rewrite rules to ensure a well-founded ordering, strong normalization cannot be guaranteed.

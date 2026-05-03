@@ -1,0 +1,19 @@
+The helper strategy is not sound as written; both helper theorems fail when `n` is itself a `delta`. The definition of `kappa` treats `recDelta b s (delta n)` specially, but `kappa_rec_delta_step` assumes the “+1” case never reappears on the right-hand side, which is false when `n = delta n'`. See the definition at KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean and the theorems at KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean.
+
+Calculations showing the failure:
+
+- Let `n = delta n'`. Then:
+  - LHS of `kappa_rec_delta_step`:
+    $$\kappa(\mathrm{recDelta}\ b\ s\ (\delta n)) = \max(\max(\kappa b)(\kappa s))(\kappa n) + 1 = \max(\max(\kappa b)(\kappa s))(\kappa n') + 1.$$
+  - RHS uses `kappa (recDelta b s n)` with `n = delta n'`, so it again hits the “+1” clause:
+    $$\kappa(\mathrm{recDelta}\ b\ s\ n) + 1 = \big(\max(\max(\kappa b)(\kappa s))(\kappa n') + 1\big) + 1.$$
+  - So RHS = LHS + 1, contradicting the claimed equality.
+
+- For `kappa_rec_succ_drop`, take the same `n = delta n'`. Then:
+  - RHS:
+    $$\kappa(\mathrm{recDelta}\ b\ s\ (\delta n)) = \max(\max(\kappa b)(\kappa s))(\kappa n') + 1.$$
+  - LHS:
+    $$\kappa(\mathrm{app}\ s\ (\mathrm{recDelta}\ b\ s\ n)) = \max(\kappa s)\big(\kappa(\mathrm{recDelta}\ b\ s\ (\delta n'))\big) = \max(\max(\kappa b)(\kappa s))(\kappa n') + 1.$$
+  - Thus LHS = RHS, so the strict inequality fails.
+
+Conclusion: the helper lemmas only work if you assume `n` is **not** a `delta` (or otherwise refine the measure/statement). As stated, they are false, so the termination argument based on them is unsound.

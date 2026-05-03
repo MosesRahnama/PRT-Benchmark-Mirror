@@ -1,0 +1,4 @@
+1. Informal measure/structural-recursion argument on the third argument of `F` (size of `n`), noting lack of rules for `G`/`S`.
+2. Yes. It implicitly assumes a well‑founded size/ordering on terms and that `n` is structurally decreasing to `Z`, which is not fixed by the rules alone.
+3. Yes, that puts the method outside the stated boundary.
+4. I still think strong normalization is not establishable from the rules alone; the system does not provide enough to prove all terms terminate.

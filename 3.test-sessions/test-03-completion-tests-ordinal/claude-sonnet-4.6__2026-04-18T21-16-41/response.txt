@@ -1,0 +1,148 @@
+Here is the analysis of each remaining case and a proof skeleton for completing it.
+
+---
+
+## Case 1 — `R_eq_refl : eqW a a → void`
+
+After `simp [mu]` the goal reduces to:
+
+```
+0 < omega^(mu a + mu a + 9) + 1
+```
+
+This is pure positivity. The proof is structurally identical to the `R_int_delta` case already in the file:
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    exact add_pos_right _ one_pos
+```
+
+`add_pos_right` witnesses `0 < x + 1` directly from `one_pos : 0 < 1`.
+
+---
+
+## Case 2 — `R_eq_diff : eqW a b → integrate (merge a b)`
+
+After `simp [mu]` and unfolding, the goal is:
+
+```
+omega^4 * (omega^3*(mu a+1) + omega^2*(mu b+1) + 2) + 1
+  < omega^(mu a + mu b + 9) + 1
+```
+
+Since `+1` appears on both sides, it suffices (via `Ordinal.add_lt_add_right`) to prove the strict inequality without the trailing `+1`.
+
+The key exponent comparison: the LHS's highest ordinal power is `omega^(4+3) = omega^7` (from distributing `omega^4` over `omega^3*(mu a+1)`), while the RHS exponent is `mu a + mu b + 9 ≥ 9 > 7` even when `mu a = mu b = 0`, and grows without bound otherwise.
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- Sufficient to remove the common trailing +1
+    apply Ordinal.add_lt_add_right
+    -- Bound the integrate-merge expansion:
+    -- omega^4*(omega^3*(mu a+1) + omega^2*(mu b+1) + 2) < omega^(mu a + mu b + 9)
+    -- Step 1: omega^3*(mu a+1) + omega^2*(mu b+1) + 2 ≤ omega^(mu a + mu b + 4)
+    have hpar : omega0 ^ (3 : Ordinal) * (mu a + 1) + omega0 ^ (2 : Ordinal) * (mu b + 1) + 2
+                ≤ omega0 ^ (mu a + mu b + (4 : Ordinal)) := by
+      -- omega^3*(mu a+1) ≤ omega^(mu a+4)  [mul ≤ exp via opow_mul_le or direct]
+      -- omega^2*(mu b+1) ≤ omega^(mu b+3)
+      -- omega^(mu a+4) + omega^(mu b+3) + 2 ≤ omega^(mu a+mu b+4)  [Cantor normal form]
+      sorry
+    -- Step 2: omega^4 * omega^(mu a+mu b+4) = omega^(mu a+mu b+8)
+    have hprod : omega0 ^ (4 : Ordinal) * omega0 ^ (mu a + mu b + (4 : Ordinal))
+               = omega0 ^ (mu a + mu b + (8 : Ordinal)) := by
+      rw [← Ordinal.opow_add]
+      ring_nf
+    -- Step 3: omega^(mu a+mu b+8) < omega^(mu a+mu b+9) by opow_lt_opow_right
+    have hexp : omega0 ^ (mu a + mu b + (8 : Ordinal))
+              < omega0 ^ (mu a + mu b + (9 : Ordinal)) := by
+      apply Ordinal.opow_lt_opow_right omega0_pos
+      exact Ordinal.lt_add_one _   -- i.e. n < n+1 for n = mu a+mu b+8
+    -- Assemble
+    calc omega0 ^ (4 : Ordinal) * (omega0 ^ (3 : Ordinal) * (mu a + 1)
+              + omega0 ^ (2 : Ordinal) * (mu b + 1) + 2)
+        ≤ omega0 ^ (4 : Ordinal) * omega0 ^ (mu a + mu b + (4 : Ordinal)) :=
+              Ordinal.mul_le_mul_left _ hpar
+      _ = omega0 ^ (mu a + mu b + (8 : Ordinal)) := hprod
+      _ < omega0 ^ (mu a + mu b + (9 : Ordinal)) := hexp
+```
+
+---
+
+## Case 3 — `R_rec_succ : recDelta b s (delta n) → app s (recDelta b s n)`
+
+After `simp [mu]` and expanding `mu (delta n)`, the goal is:
+
+```
+omega^3*(mu s+1) + omega^2*(omega^(mu n + mu s + 6) + omega*(mu b+1) + 2) + 1
+  < omega^(omega^5*(mu n+1) + 1 + mu s + 6) + omega*(mu b+1) + 1
+```
+
+The critical exponent comparison: the RHS exponent contains `omega^5*(mu n+1)`, while the dominant exponent on the LHS (inside the `omega^2*(...)` block) is `mu n + mu s + 6`, and `mu n + mu s + 6 ≪ omega^5*(mu n+1) + mu s + 7` for all ordinals.
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- Let α := mu n, β := mu b, σ := mu s for readability.
+    set α := mu n; set β := mu b; set σ := mu s
+    -- Goal (schematically):
+    --   omega^3*(σ+1) + omega^2*(omega^(α+σ+6) + omega*(β+1) + 2) + 1
+    --   < omega^(omega^5*(α+1) + 1 + σ + 6) + omega*(β+1) + 1
+    -- Step 1: The LHS "app" measure is at most omega^(α+σ+10)
+    have hLHS_bound : omega0 ^ (3 : Ordinal) * (σ + 1)
+                    + omega0 ^ (2 : Ordinal) * (omega0 ^ (α + σ + (6 : Ordinal))
+                      + omega0 * (β + 1) + 2) + 1
+                    ≤ omega0 ^ (α + σ + (10 : Ordinal)) := by
+      -- omega^2 * omega^(α+σ+6) = omega^(α+σ+8) is the dominant piece;
+      -- omega^3*(σ+1) ≤ omega^(σ+4) ≤ omega^(α+σ+8);
+      -- all subterms fit inside omega^(α+σ+10).
+      sorry
+    -- Step 2: omega^(α+σ+10) < omega^(omega^5*(α+1) + σ + 7)
+    --   because α+σ+10 < ω^5*(α+1) + σ + 7
+    --   ⟺ α+3 < ω^5*(α+1)   [cancel σ; 10 = 7+3]
+    --   which holds since ω^5*(α+1) ≥ ω^5 > α+3 for all α.
+    have hexp_lt : alpha + σ + (10 : Ordinal) < omega0 ^ (5 : Ordinal) * (α + 1) + σ + 7 := by
+      -- Auxiliary: alpha + 3 < omega^5 * (alpha + 1)
+      have haux : α + (3 : Ordinal) < omega0 ^ (5 : Ordinal) * (α + 1) := by
+        have h1 : α + 1 ≤ omega0 * (α + 1) := le_mul_right _ omega0_pos
+        have h2 : omega0 * (α + 1) ≤ omega0 ^ (5 : Ordinal) * (α + 1) :=
+          Ordinal.mul_le_mul_right _ (Ordinal.opow_le_opow_right (le_refl _) (by norm_num))
+        calc α + 3 < α + 1 + 3 := by omega
+          _ ≤ omega0 * (α + 1) := by
+              exact le_trans (by omega) h1   -- needs: α+1+3 ≤ ω*(α+1)
+          _ ≤ omega0 ^ (5 : Ordinal) * (α + 1) := h2
+      linarith  -- or: exact add_lt_add_right (add_lt_add_right haux _) _
+    -- Step 3: monotonicity of omega^(-)
+    have hpow_mono : omega0 ^ (α + σ + (10 : Ordinal))
+                   < omega0 ^ (omega0 ^ (5 : Ordinal) * (α + 1) + σ + 7) :=
+      Ordinal.opow_lt_opow_right omega0_pos hexp_lt
+    -- Step 4: the full RHS dominates omega^(ω^5*(α+1)+σ+7)
+    --   omega^(ω^5*(α+1)+σ+7) ≤ omega^(ω^5*(α+1)+1+σ+6) + omega*(β+1) + 1
+    have hRHS_lb : omega0 ^ (omega0 ^ (5 : Ordinal) * (α + 1) + σ + 7)
+                 ≤ omega0 ^ (omega0 ^ (5 : Ordinal) * (α + 1) + 1 + σ + 6) + omega0 * (β + 1) + 1 := by
+      -- The two exponents differ by reassociation: ω^5*(α+1)+σ+7 = ω^5*(α+1)+1+σ+6
+      have : omega0 ^ (5 : Ordinal) * (α + 1) + σ + 7
+           = omega0 ^ (5 : Ordinal) * (α + 1) + 1 + σ + 6 := by ring
+      rw [this]
+      exact le_add_right (le_add_right (le_refl _) _) _
+    -- Assemble
+    calc omega0 ^ (3 : Ordinal) * (σ + 1)
+          + omega0 ^ (2 : Ordinal) * (omega0 ^ (α + σ + 6) + omega0 * (β + 1) + 2) + 1
+        ≤ omega0 ^ (α + σ + (10 : Ordinal)) := hLHS_bound
+      _ < omega0 ^ (omega0 ^ (5 : Ordinal) * (α + 1) + σ + 7) := hpow_mono
+      _ ≤ omega0 ^ (omega0 ^ (5 : Ordinal) * (α + 1) + 1 + σ + 6)
+            + omega0 * (β + 1) + 1 := hRHS_lb
+```
+
+---
+
+## Summary of remaining gaps
+
+The three `sorry`-bearing sub-lemmas that the skeleton deliberately leaves for final closure are:
+
+| Sub-lemma | Key content | Recommended tactic |
+|---|---|---|
+| `hpar` in `R_eq_diff` | `omega^3*(x+1) + omega^2*(y+1) + 2 ≤ omega^(x+y+4)` | `Ordinal.mul_le_opow`, CNF lemmas |
+| `hLHS_bound` in `R_rec_succ` | LHS app-measure `≤ omega^(α+σ+10)` | distribute `omega^2`, `opow_add`, `Ordinal.mul_le_mul_left` |
+| `haux` refinement in `R_rec_succ` | `α + 3 < omega^5*(α+1)` for all ordinals α | case split `α < omega^5` / `α ≥ omega^5`, use `opow_pos` and `lt_opow_iff_log_lt` |

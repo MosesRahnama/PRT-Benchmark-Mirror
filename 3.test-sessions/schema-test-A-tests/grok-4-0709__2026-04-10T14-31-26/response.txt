@@ -1,0 +1,7 @@
+1. Informal reasoning about the need for structural induction over the third argument, assuming it models natural numbers.
+
+2. Yes, it relies on assumptions about the semantics of S/Z (e.g., as successor/zero in naturals) and the necessity of induction/well-foundedness, which are not derivable solely from the rules.
+
+3. Yes, those imported assumptions place the method outside the boundary.
+
+4. Yes, I still think it is strongly normalizing (it resembles a primitive recursive function that decrements a natural number-like argument until zero).

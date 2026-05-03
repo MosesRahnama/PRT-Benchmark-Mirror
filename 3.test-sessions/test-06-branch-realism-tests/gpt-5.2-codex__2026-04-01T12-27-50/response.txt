@@ -1,0 +1,22 @@
+The helper strategy is not sound as written. The key issue is that `kappa_rec_delta_step` is false when `n` itself is a `delta` term, and the second lemma depends on that equality.
+
+- Counterexample to `kappa_rec_delta_step` at
+: take `n = delta m`.  
+  Then by the definition of `kappa` at
+,
+  - Left side:
+    $$\kappa(\mathrm{recDelta}\ b\ s\ (\delta n)) = \max(\max(\kappa b)(\kappa s))(\kappa n) + 1.$$
+    With $n=\delta m$ and $\kappa(\delta m)=\kappa m$, this is $\max(\max(\kappa b)(\kappa s))(\kappa m)+1$.
+  - Right side:
+    $$\kappa(\mathrm{recDelta}\ b\ s\ n)+1 = \kappa(\mathrm{recDelta}\ b\ s\ (\delta m))+1,$$
+    which equals $\max(\max(\kappa b)(\kappa s))(\kappa m)+1+1$.
+  - So the right side is **one larger** than the left side.
+
+- This also breaks `kappa_rec_succ_drop` at
+for the same `n = delta m`:  
+  Let $M=\max(\max(\kappa b)(\kappa s))(\kappa m)$. Then
+  - Right side: $\kappa(\mathrm{recDelta}\ b\ s\ (\delta n)) = M+1$.
+  - Left side: $\kappa(\mathrm{app}\ s\ (\mathrm{recDelta}\ b\ s\ n)) = \max(\kappa s,\kappa(\mathrm{recDelta}\ b\ s\ (\delta m))) = \max(\kappa s, M+1) \ge M+1$.
+  - So the claimed strict inequality fails.
+
+Conclusion: the helper strategy is unsound unless `kappa_rec_delta_step` is weakened to require `n` not to be a `delta` term (or otherwise refined). If you want, I can suggest a corrected statement or alternative measure.

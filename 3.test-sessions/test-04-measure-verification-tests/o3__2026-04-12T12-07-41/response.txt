@@ -1,0 +1,27 @@
+The pair‐valued measure  
+
+ measure t = (phase t, cost t) ∈ ℕ × ℕ  
+
+is intended to be compared with the usual lexicographic order  
+(a₁,b₁) < (a₂,b₂)  iff  a₁ < a₂ ∨ (a₁ = a₂ ∧ b₁ < b₂).
+
+Under that order it is **not** a monotone descent along every inference of `Step`, so it is not a sound termination criterion.
+
+Counter-example (violating rule `R_merge_void_left`)  
+take any trace n and set  
+
+ t₁ = merge void (recDelta b s (delta n))  
+ t₂ = recDelta b s (delta n)
+
+`Step` relates t₁ ⟶ t₂.  
+But
+
+ phase t₁ = 0  (cost t₁ = 1 + cost t₂)  
+ phase t₂ = 1
+
+Hence  measure t₁ = (0, …)  while  measure t₂ = (1, …),  
+so  measure t₁ < measure t₂ fails—the first component increases.
+
+The same problem appears in `R_merge_void_right`.
+
+Therefore the lexicographic measure `(phase, cost)` is unsound: it can increase along legal rewrite steps, so it cannot certify termination of the calculus.

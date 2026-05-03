@@ -1,0 +1,43 @@
+I will start by reading the contents of the Lean 4 file
+to understand the definition of the rewrite calculus, the measure `kappa`, and the helper theorems.
+The helper strategy defined in <workspace>\test-files\Test-06-Branch-Realism.lean is **unsound** as written. The definition of the structural measure `kappa` and the subsequent theorems contain a logical contradiction.
+
+### Analysis of the Soundness Gap
+
+The definition of `kappa` for `recDelta` is split into two cases:
+1.  **Case `(delta n)`**: `kappa (recDelta b s (.delta n)) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1`
+2.  **General Case `n`**: `kappa (recDelta b s n) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)`
+
+#### 1. Failure of `kappa_rec_delta_step`
+The theorem `kappa_rec_delta_step` asserts:
+`kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`
+
+Let's calculate both sides using the definitions:
+*   **LHS**: `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1` (by the first case of `kappa`).
+*   **RHS**: `kappa (recDelta b s n) + 1`. 
+
+If $n = \text{delta } m$, then by the first case:
+`RHS = (Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1) + 1`
+
+Since `kappa (delta m) = kappa m`, the LHS reduces to:
+`LHS = Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1`
+
+Thus, `LHS ≠ RHS` because $K + 1 \neq K + 2$. The theorem only holds if $n$ is not a `delta` term, but it is stated universally for all `n`.
+
+#### 2. Failure of `kappa_rec_succ_drop`
+This theorem is intended to show termination for the `R_rec_succ` step:
+`Step (recDelta b s (delta n)) (app s (recDelta b s n))`
+
+Let $K = \text{Nat.max (kappa b) (kappa s) (kappa n)}$.
+*   **Measure of Redex**: `kappa (recDelta b s (delta n)) = K + 1`.
+*   **Measure of Contractum**: `kappa (app s (recDelta b s n))`.
+    By definition: `kappa (app s (...)) = Nat.max (kappa s) (kappa (recDelta b s n))`.
+    
+If $n = \text{delta } m$, then `kappa (recDelta b s n) = K' + 1` (where $K' = \text{max}(b, s, m)$).
+Because `kappa n = kappa m`, $K = K'$.
+Therefore, `kappa (contractum) = Nat.max (kappa s) (K + 1) = K + 1`.
+
+The theorem asserts `K + 1 < K + 1`, which is a contradiction.
+
+### Conclusion
+The helper strategy is **unsound**. The measure `kappa` fails to strictly decrease during the recursive step `R_rec_succ` when the index $n$ is itself a `delta` term. The structural definition of `kappa` effectively "flattens" the nesting of `delta` constructors, preventing the $+1$ increment from behaving as a proper termination height.

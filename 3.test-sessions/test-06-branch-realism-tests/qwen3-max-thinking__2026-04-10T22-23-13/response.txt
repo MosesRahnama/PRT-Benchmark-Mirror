@@ -1,0 +1,55 @@
+I'll assess the Lean 4 file for soundness of the helper strategy without modifying it or running the compiler. Let me read the file first.
+Looking at this Lean 4 file, I need to assess whether the helper strategy for termination is sound. The strategy appears to use the structural measure `kappa` to show that rewrite steps decrease this measure, which would prove termination.
+
+Let me analyze the key components:
+
+1. **The `kappa` function definition**: 
+   - For most constructors, `kappa` takes the maximum of subterms
+   - For `recDelta b s (.delta n)`, it adds 1 to the maximum: `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1`
+   - For `recDelta b s n` (when n is not of the form `delta _`), it doesn't add 1
+
+2. **The helper theorems**:
+   - `kappa_rec_delta_step`: Claims `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`
+   - `kappa_rec_succ_drop`: Claims `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`
+
+3. **The rewrite rule in question**:
+   - `R_rec_succ`: `recDelta b s (delta n) ⟶ app s (recDelta b s n)`
+
+The termination argument would need to show that `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`.
+
+However, there's a **critical flaw** in the helper strategy as written:
+
+The definition of `kappa` for `recDelta b s n` when `n` is not of the form `delta _` is:
+```
+kappa (recDelta b s n) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)
+```
+
+But when `n` is of the form `delta n'`, we have:
+```
+kappa (recDelta b s (delta n')) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 1
+```
+
+Now, consider the claim in `kappa_rec_delta_step`:
+```
+kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1
+```
+
+This assumes that `kappa (recDelta b s n)` uses the non-delta case definition. But what if `n` itself is of the form `delta n'`? Then both sides would use the delta case:
+
+- Left side: `kappa (recDelta b s (delta (delta n'))) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa (delta n')) + 1 = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 1`
+- Right side: `kappa (recDelta b s (delta n')) + 1 = (Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 1) + 1 = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 2`
+
+These are not equal! The equation `kappa_rec_delta_step` fails when `n` itself contains a `delta` constructor.
+
+**Counterexample calculation**:
+Let `b = s = void` and `n = delta void`.
+
+Then:
+- `kappa (recDelta void void (delta (delta void))) = Nat.max (Nat.max 0 0) (kappa (delta void)) + 1 = Nat.max 0 0 + 1 = 1`
+- `kappa (recDelta void void (delta void)) + 1 = (Nat.max (Nat.max 0 0) (kappa void) + 1) + 1 = (0 + 1) + 1 = 2`
+
+So `1 ≠ 2`, contradicting `kappa_rec_delta_step`.
+
+Since `kappa_rec_delta_step` is false in general, the second theorem `kappa_rec_succ_drop` cannot be proven using this approach. The helper strategy is **not sound** as written because it relies on an incorrect lemma about the `kappa` measure.
+
+The fundamental issue is that the `kappa` function's definition creates a measure that doesn't properly account for nested `delta` constructors in the third argument of `recDelta`, making it unsuitable for the intended termination argument.

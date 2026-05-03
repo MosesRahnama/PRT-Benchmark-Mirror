@@ -1,0 +1,39 @@
+Looking at this file, I need to analyze the rewrite system for strong normalization.
+
+## Raw Assessment
+
+**Yes, strong normalization can be established from the presented calculus alone.**
+
+### Key Structural Observations
+
+1. **No congruence rules**: The `Step` relation only matches at the term root. There are no rules permitting reduction under constructors (e.g., no `Step t t' → Step (grape t) (grape t')`). This severely constrains reduction sequences.
+
+2. **Each rule either:**
+   - Eliminates constructors (rules 1, 2, 3, 4, 5, 7)
+   - Transforms one constructor into others with strictly smaller structural potential (rules 6, 8)
+
+3. **Rule 6 analysis**: `banana b s (grape n) → pear s (banana b s n)`
+   - Consumes one `grape` from the third argument
+   - Creates a `pear` node, but `pear` never appears on any LHS — pear-terms are normal forms at the root
+   - The grape-count in banana's third argument strictly decreases
+
+4. **Rule 8 analysis**: `cherry a b → mango (peach a b)` (when `a ≠ b`)
+   - The side condition `a ≠ b` is decidable from syntax alone for this inductive type — no external axioms needed
+   - Produces `mango (peach a b)`, where `peach a b` is not of form `grape t`, so rule 1 cannot immediately fire
+   - The `cherry` constructor is eliminated
+
+### Proof Roadmap (Staying Within Bounds)
+
+Define a measure `μ : Trace → ℕ` as a lexicographic combination of:
+1. **Grape-depth in banana's third argument**: For each `banana b s t` subterm, count nested `grape` constructors in `t`
+2. **Count of "active" constructors**: `grape`, `banana`, `cherry` (constructors that can enable further reductions)
+
+**Each rule decreases μ:**
+- Rules 1, 5, 7: Eliminate an active constructor entirely
+- Rules 2, 3, 4: Produce a strict subterm of the original
+- Rule 6: Decreases grape-depth by 1; the new `pear` is inert
+- Rule 8: Eliminates `cherry`; the new `mango` and `peach` cannot immediately chain (peach's arguments are unchanged, and mango's argument is not `grape`)
+
+Since `μ` maps into `ℕ` with the standard well-order, and every step strictly decreases `μ`, all reduction sequences terminate.
+
+**Conclusion**: Strong normalization follows from the syntactic structure alone. No imported axioms, guards, or hidden assumptions are required — the decidability of `a ≠ b` for rule 8 is derivable from the inductive syntax.

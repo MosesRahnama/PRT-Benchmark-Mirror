@@ -1,0 +1,238 @@
+, and I didn’t modify anything or run Lean.
+
+The three unfinished cases are:
+
+- `Step.R_rec_succ`
+- `Step.R_eq_refl`
+- `Step.R_eq_diff`
+
+Here’s a clean skeleton for each, shaped to match the style already used in `mu_decreases`.
+
+### `R_eq_refl`
+
+This one is the easy appetizer:
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    exact Ordinal.pos_iff_ne_zero.mpr <| by
+      apply ne_of_gt
+      exact add_pos_right _ one_pos
+```
+
+The point is just that `ω^(mu a + mu a + 9) + 1 ≠ 0`, hence it is positive.
+
+---
+
+### `R_eq_diff`
+
+This case is best handled by isolating the real ordinal estimate into one local claim.
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    have hdom :
+        omega0 ^ (4 : Ordinal) *
+            (omega0 ^ (3 : Ordinal) * (mu a + 1) +
+              omega0 ^ (2 : Ordinal) * (mu b + 1) + 1 + 1)
+          <
+        omega0 ^ (mu a + mu b + (9 : Ordinal)) := by
+      /-
+      Main ordinal-arithmetic lemma.
+
+      Intended idea:
+      1. The inside term
+           ω^3 * (μ a + 1) + ω^2 * (μ b + 1) + 2
+         is far below a single power like ω^(μ a + μ b + 5).
+
+      2. Multiplying by ω^4 keeps the whole lhs below
+           ω^(μ a + μ b + 9).
+
+      3. Therefore adding 1 to both sides preserves strict inequality.
+      -/
+      sorry
+
+    exact add_lt_add_right hdom 1
+```
+
+If you want to make this more finishable, split `hdom` into two helper claims:
+
+```lean
+have hinner :
+    omega0 ^ (3 : Ordinal) * (mu a + 1) +
+      omega0 ^ (2 : Ordinal) * (mu b + 1) + 1 + 1
+    < omega0 ^ (mu a + mu b + (5 : Ordinal)) := by
+  sorry
+
+have hdom :
+    omega0 ^ (4 : Ordinal) *
+      (omega0 ^ (3 : Ordinal) * (mu a + 1) +
+        omega0 ^ (2 : Ordinal) * (mu b + 1) + 1 + 1)
+    < omega0 ^ (mu a + mu b + (9 : Ordinal)) := by
+  /- use hinner plus monotonicity of left-multiplication by ω^4
+     and the identity ω^4 * ω^(...) = ω^(4 + ...), or a suitable
+     inequality version thereof -/
+  sorry
+```
+
+The exact lemma names in Mathlib may need a nudge, but structurally this is the right shape.
+
+---
+
+### `R_rec_succ`
+
+This is the real boss fight. Also, your comment block currently labels the two sides backwards: after `simp [mu]`, the **left** side is `mu (app s (recDelta b s n))`, and the **right** side is `mu (recDelta b s (delta n))`.
+
+A good skeleton is:
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    have hdom :
+        omega0 ^ (3 : Ordinal) * (mu s + 1) +
+            omega0 ^ (2 : Ordinal) *
+              (omega0 ^ (mu n + mu s + (6 : Ordinal)) +
+                omega0 * (mu b + 1) + 1 + 1) + 1
+          <
+        omega0 ^
+          (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal)) := by
+      /-
+      Main domination lemma.
+
+      Heuristic:
+      - the lhs is built from finitely many terms with top growth coming from
+          ω^2 * ω^(μ n + μ s + 6)
+        together with lower-order polynomial-in-ω pieces;
+      - the rhs is a single principal term
+          ω^(ω^5 * (μ n + 1) + 1 + μ s + 6),
+        whose exponent contains the huge contribution
+          ω^5 * (μ n + 1),
+        dwarfing anything appearing on the lhs.
+
+      In practice, prove this by:
+      1. bounding the lhs by some intermediate ordinal;
+      2. showing that intermediate ordinal is below the rhs by exponent comparison.
+      -/
+      sorry
+
+    calc
+      omega0 ^ (3 : Ordinal) * (mu s + 1) +
+          omega0 ^ (2 : Ordinal) *
+            (omega0 ^ (mu n + mu s + (6 : Ordinal)) +
+              omega0 * (mu b + 1) + 1 + 1) + 1
+        <
+          omega0 ^
+            (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal)) := hdom
+      _ ≤
+          omega0 ^
+            (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal)) +
+            omega0 * (mu b + 1) + 1 := by
+            exact le_add_right _ _
+```
+
+If you want a slightly more modular version, break `hdom` into two internal lemmas:
+
+```lean
+have hbound_lhs :
+    omega0 ^ (3 : Ordinal) * (mu s + 1) +
+        omega0 ^ (2 : Ordinal) *
+          (omega0 ^ (mu n + mu s + (6 : Ordinal)) +
+            omega0 * (mu b + 1) + 1 + 1) + 1
+      <
+    omega0 ^ (mu n + mu s + (8 : Ordinal)) := by
+  /-
+  or some other convenient intermediate bound;
+  choose whatever exponent is easiest to establish.
+  -/
+  sorry
+
+have hexp :
+    mu n + mu s + (8 : Ordinal)
+      <
+    omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal) := by
+  /-
+  Here is where you use the fact that
+    ω^5 * (μ n + 1)
+  massively dominates the linear expression
+    μ n + μ s + 8.
+  -/
+  sorry
+
+have hdom :
+    omega0 ^ (3 : Ordinal) * (mu s + 1) +
+        omega0 ^ (2 : Ordinal) *
+          (omega0 ^ (mu n + mu s + (6 : Ordinal)) +
+            omega0 * (mu b + 1) + 1 + 1) + 1
+      <
+    omega0 ^
+      (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal)) := by
+  exact lt_of_lt_of_le
+    hbound_lhs
+    (by
+      /- monotonicity of ω^(-) in the exponent, using hexp -/
+      sorry)
+```
+
+That intermediate exponent `μ n + μ s + 8` is just a placeholder target. If it turns out awkward in Lean’s ordinal arithmetic library, pick any other upper bound that is easier to prove and still clearly below the giant rhs exponent. The mathematical strategy matters more than that exact number.
+
+---
+
+## What to isolate as helper lemmas
+
+If you want the completion to be less brittle, the best move is to pull the hard ordinal arithmetic into named lemmas just above `mu_decreases`. For example:
+
+```lean
+lemma eq_diff_bound (a b : Trace) :
+    omega0 ^ (4 : Ordinal) *
+        (omega0 ^ (3 : Ordinal) * (mu a + 1) +
+          omega0 ^ (2 : Ordinal) * (mu b + 1) + 1 + 1)
+      <
+    omega0 ^ (mu a + mu b + (9 : Ordinal)) := by
+  sorry
+
+lemma rec_succ_bound (b s n : Trace) :
+    omega0 ^ (3 : Ordinal) * (mu s + 1) +
+        omega0 ^ (2 : Ordinal) *
+          (omega0 ^ (mu n + mu s + (6 : Ordinal)) +
+            omega0 * (mu b + 1) + 1 + 1) + 1
+      <
+    omega0 ^
+      (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal)) := by
+  sorry
+```
+
+Then the two theorem cases become pleasantly short:
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    exact add_lt_add_right (eq_diff_bound a b) 1
+```
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    calc
+      _ < omega0 ^
+            (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal)) :=
+          rec_succ_bound b s n
+      _ ≤ _ := by
+          exact le_add_right _ _
+```
+
+That keeps the main proof readable and quarantines the gnarly ordinal algebra where it belongs.
+
+---
+
+## Practical note
+
+Because I didn’t run the compiler, I’d treat the lemma names like `add_lt_add_right`, `le_add_right`, and any future exponent-monotonicity lemma as *very likely right, but not sworn in under oath*. The skeletons are mathematically aligned with your measure design, and the remaining work is mainly about choosing the exact Mathlib ordinal lemmas that package those comparisons.
+
+## Todo status
+
+- [x] Read target Lean file
+- [x] Identify missing rule cases
+- [x] Draft proof skeletons
+- [x] Summarize completion strategy
+
+In short: `R_eq_refl` is a one-liner positivity argument, while `R_eq_diff` and especially `R_rec_succ` should be finished by proving one explicit domination lemma each, then closing with a short `calc`.

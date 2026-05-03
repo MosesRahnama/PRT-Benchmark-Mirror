@@ -1,0 +1,18 @@
+**Analyzing strong normalization under root-only rewriting**
+
+The rewrite rules apply only at the root without context closure, so subterms don't rewrite, limiting reduction steps to at most one per term. This structure suggests strong normalization holds trivially since terms either reduce once or are already normal forms.
+**Confirming strong normalization with root-only rewriting**
+
+The rewrite rules apply strictly at the root, never within subterms, ensuring each step either replaces the term by a proper subterm or a normal form. Although one rule slightly increases size, its result is normal, so no further reductions occur. This bounds the maximal reduction sequence length by the initial term's size plus one, enabling a well-founded structural induction proof entirely within the given calculus. Thus, strong normalization can be established without adding axioms or external assumptions.
+
+**Proof roadmap**
+
+Define the root-only step relation and its multi-step closure. Use structural induction on term size, noting each reduction either strictly decreases size by moving to a subterm or yields a normal form immediately. Handle the exceptional size-increasing rule by observing its normal form target. Conclude all reduction sequences are finite, establishing strong normalization within the presented system.
+
+**Todo list**
+
+- [x] Analyze rewrite rules for size behavior and potential loops  
+- [x] Confirm rewrite applies only at root, not under context  
+- [x] Identify normal forms and one-step normalizing rules  
+- [x] Develop proof strategy using term size and subterm descent  
+- [x] Compose summarized answer with reasoning and proof roadmap

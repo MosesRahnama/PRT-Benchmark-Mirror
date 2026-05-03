@@ -1,0 +1,15 @@
+**Yes, strong normalization can be established from the presented calculus alone.**
+
+The `Trace` inductive type defines a free algebra with no binders. The `Step` relation is a purely syntactic, top-level contraction relation with exactly the eight constructors shown; there are no congruence rules, no side conditions, no extra rewrite rules, and no external axioms.
+
+**Short proof roadmap (structural induction on `Trace`):**
+
+- Proceed by induction on the structure of a term `t : Trace`.
+- If `t` does not match any left-hand side of `Step`, it is already in normal form (0-length reduction).
+- Otherwise `t` matches one of the eight rules:
+  - `integrate (delta _)` → `void`, `eqW a a` → `void`, `recΔ _ _ (delta _)` → `app …` (top constructor `app` matches no rule), `integrate (merge _ _)` (produced by `eqW a b` when `a ≠ b`) all reduce in one step to an irreducible form.
+  - The merge rules and `recΔ _ _ void` reduce to one of their proper subterms (`t` or `b`).
+- In the subterm cases the inductive hypothesis directly gives that all continuations from the reduct are finite.
+- Because every reduction either terminates immediately or replaces the whole term by a strictly smaller subterm (in the inductive sense), no infinite chain can exist from any starting term.
+
+No measure on term size is needed (the recursor rule can increase naive size), no extra guards, and no object-level assumptions beyond the inductive definition of `Trace` and the given constructors of `Step`. The argument stays entirely inside the syntax and rules shown in the file.

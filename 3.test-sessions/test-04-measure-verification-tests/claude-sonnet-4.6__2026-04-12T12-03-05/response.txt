@@ -1,0 +1,39 @@
+**The measure is unsound.**
+
+---
+
+**What the measure does**
+
+`measure t = (phase t, cost t)` with lexicographic order, where:
+- `phase t = 1` iff `t = recDelta _ _ (delta _)`, else `0`
+- `cost t` is a structural size count
+
+The intent is that every `Step` either lowers `phase` or holds it constant while lowering `cost`.
+
+---
+
+**Where it fails**
+
+**`R_rec_succ`**: `recDelta b s (delta n)` rewrites to `app s (recDelta b s n)`
+
+- LHS: `phase = 1`, `cost = 1 + cost b + cost s + 1 + cost n = 2 + cost b + cost s + cost n`
+- RHS: `phase = 0` (since `app` never matches the `recDelta ... (delta _)` pattern), `cost = 1 + cost s + (1 + cost b + cost s + cost n) = 2 + cost b + 2·cost s + cost n`
+
+The phase drops from 1 to 0, so the lex comparison says the measure decreased — **but the RHS cost is strictly larger than the LHS cost** (by `cost s`). A decreasing measure requires the overall pair to decrease. After the drop in `phase`, the second component can be arbitrarily large, so there is no global well-founded bound on cost across a full reduction sequence.
+
+Concretely: firing `R_rec_succ` once drops `phase` to 0, and the resulting `recDelta b s n` (buried inside `app`) will eventually fire `R_rec_succ` again — at that point phase jumps **back up to 1** (when the inner `recDelta`'s `n` argument becomes `delta _`). The measure is not monotone: it can oscillate.
+
+**`R_eq_diff`**: `eqW a b` → `integrate (merge a b)`
+
+- LHS: `cost = 3 + cost a + cost b`
+- RHS: `cost = 1 + (1 + cost a + cost b) = 2 + cost a + cost b`
+
+Cost does decrease here, so this rule is locally fine — but it confirms the pattern: `phase` only watches one specific constructor shape, leaving most rules entirely unguarded.
+
+---
+
+**Root problem**
+
+`phase` only ever equals 0 or 1, so it provides no cumulative information about the depth of recursion. A sound termination measure for `R_rec_succ` must track the argument `n` structurally across nested calls — typically `cost n` alone — but this is not what `measure` does. The lexicographic pairing with `phase` is insufficient to prevent the measure from increasing when `R_rec_succ` duplicates `s`.
+
+**Conclusion: the measure is not sound as a termination certificate for this rewrite system.**

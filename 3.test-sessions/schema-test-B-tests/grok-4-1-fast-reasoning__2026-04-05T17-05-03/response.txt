@@ -1,0 +1,27 @@
+**Method A: Lexicographic Path Order (LPO) with precedence F > G > S > Z**  
+1. Yes, both rules decrease: `F(...) > x` (F > var) and `F(...) > G(...)` (F > G). LPO is a valid reduction ordering.  
+2. Yes, purely syntactic term ordering with no extra axioms or assumptions.
+
+**Method B: Polynomial interpretation over ℕ**  
+1. Yes:  
+   - Rule 1: `[F(x,y,Z)] = [x] + 0 + 1 > [x]`  
+   - Rule 2: `[F(x,y,S(n))] = [x] + ([n] + 1) + 1 > [G(y,F(x,y,n))] = [F(x,y,n)] = [x] + [n] + 1`  
+   Monotonic polynomials ensure compatibility.  
+2. Yes, standard syntactic interpretation technique.
+
+**Method C: Knuth-Bendix Order (KBO) with uniform weights**  
+1. No, second rule has equal weight (`2 + wt(n)` both sides); lexicographic tie-breaker on args fails (`(x, y, S(n)) ≯_lex (y, F(x,y,n))` since position 2: `y < F(...)`).  
+2. N/A (fails termination proof).
+
+**Method D: Dependency pairs with subterm criterion, projecting to third argument of F**  
+1. Yes, DPs: `<F(x,y,S(n)), G(y,F(x,y,n))>` and `<F(x,y,S(n)), F(x,y,n))>`; latter pruned by subterm criterion (`F(x,y,n)` proper subterm at arg 3); graph `F → G` acyclic (G has no outgoing). Projection aligns with arg 3 decrease.  
+2. Yes, standard syntactic dependency pair analysis.
+
+**Method E: Direct descent measure on third argument**  
+1. Yes:  
+   - Rule 1: `μ(F(x,y,Z)) = 0 + 1 = 1 > μ(x) = 0`  
+   - Rule 2: `μ(F(x,y,S(n))) = depth_S(S(n)) + 1 = depth_S(n) + 2 > μ(G(y,F(x,y,n))) = μ(F(x,y,n)) = depth_S(n) + 1`  
+   Well-founded on ℕ, compatible with contexts.  
+2. Yes, syntactic structural measure.
+
+**Methods satisfying both conditions: A, B, D, E**

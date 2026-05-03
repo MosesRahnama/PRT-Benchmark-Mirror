@@ -1,0 +1,55 @@
+**The helper strategy is not sound.**
+
+The `kappa` definition encodes a structural measure on `Trace` intended to support a termination argument for the rewrite relation `Step` (specifically to show strict decrease on the `R_rec_succ` rule, whose conclusion is exactly the term appearing in `kappa_rec_succ_drop`).
+
+### Key definitions (as written)
+```lean
+def kappa : Trace -> Nat
+| void => 0
+| delta t => kappa t
+| integrate t => kappa t
+| merge a b => max (kappa a) (kappa b)
+| app a b => max (kappa a) (kappa b)
+| recDelta b s (.delta n) => max (max (kappa b) (kappa s)) (kappa n) + 1
+| recDelta b s n => max (max (kappa b) (kappa s)) (kappa n)
+| eqW a b => max (kappa a) (kappa b)
+```
+
+(The `simp` lemmas confirm that `kappa (delta _)` and `kappa (integrate _)` erase the wrapper, and the `recDelta` case distinction is by pattern-matching on whether the third argument *literally* begins with a `delta` constructor.)
+
+Let `M ≜ max(kappa b, kappa s)` and `K ≜ kappa n` for brevity.
+
+### Analysis of `kappa_rec_delta_step`
+**Claim:** `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`
+
+- LHS (always): `max(M, K) + 1` (third argument matches the `(.delta _)` pattern).
+- RHS: depends on shape of `n`.
+  - If `n` does **not** match `delta _`, then `kappa(recDelta b s n) = max(M, K)`, so equality holds.
+  - If `n = delta m`, then `kappa(recDelta b s n) = max(M, kappa m) + 1`.  
+    LHS = `max(M, kappa (delta m)) + 1 = max(M, kappa m) + 1`.  
+    RHS = `(max(M, kappa m) + 1) + 1 = max(M, kappa m) + 2`.  
+    **LHS = RHS − 1**; equality fails.
+
+The claimed equality therefore does not hold for all `n : Trace`.
+
+### Analysis of `kappa_rec_succ_drop`
+**Claim:** `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`
+
+- RHS (always): `max(M, K) + 1`.
+- LHS = `max(kappa s, kappa(recDelta b s n))`.
+  - Case `n` does **not** match `delta _`: `kappa(recDelta b s n) = max(M, K)`.  
+    LHS = `max(≤M, max(M, K)) = max(M, K)`.  
+    `max(M, K) < max(M, K) + 1` holds.
+  - Case `n = delta m`: `kappa(recDelta b s n) = max(M, kappa m) + 1`.  
+    LHS = `max(≤M, max(M, kappa m) + 1) = max(M, kappa m) + 1`.  
+    RHS = `max(M, kappa (delta m)) + 1 = max(M, kappa m) + 1`.  
+    **LHS = RHS**; the *strict* inequality fails.
+
+### Conclusion for termination
+The `R_rec_succ` rule is:
+```lean
+R_rec_succ : ∀ b s n, Step (recDelta b s (delta n)) (app s (recDelta b s n))
+```
+A valid termination measure must satisfy `kappa rhs < kappa lhs` *for every* `n`. When the recursion argument contains nested `delta` constructors the measure is unchanged, so `kappa` is not a valid well-founded measure on `Step`. The two helper lemmas are therefore insufficient (and in fact false) as written; any termination proof relying on them would be unsound.
+
+No other files were read, no code was executed or modified, and no external resources were consulted. The above calculations follow directly from the provided `kappa` definition and pattern-matching semantics.

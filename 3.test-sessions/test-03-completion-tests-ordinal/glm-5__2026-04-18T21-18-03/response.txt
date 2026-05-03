@@ -1,0 +1,86 @@
+Looking at the three remaining `sorry` cases, here's a proof skeleton for each:
+
+---
+
+## Case 1: `R_rec_succ`
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- Key inequality: omega^(omega^5*(mu n + 1) + 1 + mu s + 6) dominates
+    -- omega^3*(mu s + 1) + omega^2*(omega^(mu n + mu s + 6) + ...)
+    --
+    -- Strategy: Show the LHS exponent omega^5*(mu n + 1) + mu s + 7
+    -- is strictly greater than mu n + mu s + 6 (the exponent inside RHS)
+    -- This follows because omega^5*(mu n + 1) >= omega^5 > mu n + mu s + 6
+    have h_exp : mu n + mu s + 6 < omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6 := by
+      have h1 : 0 < omega0 ^ (5 : Ordinal) * (mu n + 1) := mul_pos (opow_pos 5 omega0_pos) (by positivity)
+      calc mu n + mu s + 6
+        _ < mu n + mu s + 6 + 1 := lt_add_one _
+        _ ≤ mu n + mu s + 6 + omega0 ^ 5 * (mu n + 1) := le_add_left _ _
+        _ = omega0 ^ 5 * (mu n + 1) + mu n + mu s + 6 := by ring
+        _ < omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6 := by
+          have h2 : mu n < omega0 ^ 5 * (mu n + 1) := lt_mul_of_one_lt_left (mu n) (by
+            calc 1 < omega0 ^ 5 := by positivity
+            _ ≤ omega0 ^ 5 * (mu n + 1) := le_mul_right _ (opow_pos 5 omega0_pos))
+          omega
+    -- Now use that omega^alpha with larger alpha dominates any polynomial
+    -- in smaller powers of omega
+    sorry  -- Complete with ordinal comparison using h_exp
+```
+
+---
+
+## Case 2: `R_eq_refl`
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- Goal: 0 < omega^(2*mu a + 9) + 1
+    -- This is immediate from positivity of omega and the +1
+    have h : 0 < omega0 ^ (mu a + mu a + 9) + 1 := by
+      apply add_pos_right
+      exact opow_pos (mu a + mu a + 9) omega0_pos
+    exact h
+```
+
+---
+
+## Case 3: `R_eq_diff`
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- Goal: omega^4 * (omega^3*(mu a + 1) + omega^2*(mu b + 1) + 2) + 1
+    --       < omega^(mu a + mu b + 9) + 1
+    --
+    -- Strategy: The RHS exponent (mu a + mu b + 9) dominates the LHS.
+    -- LHS is bounded by omega^7 * (mu a + 1) + omega^6 * (mu b + 1) + ...
+    -- which is < omega^(mu a + mu b + 9) when mu a + mu b >= 0
+    --
+    -- Key lemma: For any ordinal x, omega^7 * (x + 1) < omega^(x + 9)
+    -- because the exponent x + 9 > 7, so omega^(x+9) dominates omega^7
+    have h_bound : omega0 ^ (7 : Ordinal) * (mu a + 1) < omega0 ^ (mu a + mu b + 9) := by
+      -- omega^7 * (mu a + 1) < omega^(mu a + mu b + 9)
+      -- since mu a + mu b + 9 >= mu a + 9 > 7 (when mu b >= 0)
+      have h1 : 7 < mu a + mu b + 9 := by
+        calc 7
+          _ < 9 := by norm_num
+          _ ≤ mu a + mu b + 9 := le_add_left _ (mu a + mu b)
+      exact (opow_lt_opow_right omega0_pos h1).le_trans (by
+        calc omega0 ^ 7 * (mu a + 1)
+          _ ≤ omega0 ^ 7 * omega0 ^ (mu a + mu b + 9 - 7) := ?_
+          _ = omega0 ^ (7 + (mu a + mu b + 9 - 7)) := ?_
+          _ = omega0 ^ (mu a + mu b + 9) := by ring)
+    sorry  -- Complete by bounding each LHS term and comparing to RHS
+```
+
+---
+
+## Summary of Key Lemmas Needed
+
+1. **Exponent comparison**: `omega^α * k < omega^β` when `α < β` and `k < omega`
+2. **Addition absorption**: `omega^α + omega^β = omega^α` when `α > β`
+3. **Tower dominance**: `omega^(omega^5 * x) >> omega^x` for any finite x
+
+The proofs hinge on the fact that your measure design ensures the LHS exponent always strictly exceeds any polynomial combination of smaller omega-powers on the RHS.

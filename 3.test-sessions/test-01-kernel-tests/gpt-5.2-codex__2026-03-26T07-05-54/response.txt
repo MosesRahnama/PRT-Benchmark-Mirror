@@ -1,0 +1,41 @@
+Here’s a straight, no-frills assessment based only on
+(the rules you showed).
+
+## Raw assessment
+
+**Yes — strong normalization can be established from the presented calculus alone**, without adding any extra rewrite rules, guards, or assumptions. A standard termination proof (e.g., lexicographic/path ordering) suffices.
+
+The only potentially tricky rule is the primitive-recursion-like `recΔ` rule that duplicates `s`, but it still reduces the recursion argument, and a standard simplification order can orient it. No rule introduces new constructors like `delta` or `recΔ` out of thin air; the system doesn’t have an expansion loop.
+
+If you interpret `Step` *literally* as a root-only rewrite relation (no context closure), then termination is trivial. But even under the usual context-closure notion of rewriting, termination still goes through.
+
+## Short proof roadmap (within the boundary)
+
+**Method:** Lexicographic Path Ordering (LPO) / Recursive Path Ordering.
+
+1. **Fix a precedence** such as  
+   `recΔ > app`, and `eqW > integrate > merge > delta > void`.  
+   (Any precedence with `recΔ > app` and `eqW > integrate` works.)
+
+2. **Use LPO with lexicographic status** for `recΔ`’s arguments (default order is fine).
+
+3. **Orient each rule:**
+   - `integrate (delta t) → void`: head symbol decreases.
+   - `merge void t → t`, `merge t void → t`, `merge t t → t`: LHS strictly larger than its proper subterm.
+   - `recΔ b s void → b`: LHS strictly larger than subterm `b`.
+   - `recΔ b s (delta n) → app s (recΔ b s n)`:  
+     `recΔ > app`, and `recΔ b s (delta n) > recΔ b s n` because `delta n > n`.
+   - `eqW a a → void`: head symbol decreases.
+   - `eqW a b → integrate (merge a b)`:  
+     `eqW > integrate`, and `eqW a b > a,b`, hence `> merge a b`, hence `> integrate (merge a b)`.
+
+4. **Conclude termination** because LPO is a well‑founded reduction order closed under contexts/substitutions. Thus all reduction sequences are finite ⇒ **strong normalization**.
+
+## ✅ Updated checklist
+
+- [x] Read and inspect
+only.  
+- [x] Analyze termination risk points (especially `recΔ`).  
+- [x] Provide a proof roadmap that stays within the given calculus.  
+
+**Summary:** Strong normalization is provable from the given syntax and rules alone, using a standard simplification order (e.g., LPO). No extra axioms or rule strengthening are needed.

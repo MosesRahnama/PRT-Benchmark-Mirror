@@ -1,0 +1,107 @@
+No. The helper strategy is **not sound as written**.
+
+Let
+\[
+M(b,s,n) := \max\big(\max(\kappa b,\kappa s),\kappa n\big).
+\]
+
+From the definition:
+
+- \(\kappa(\delta t)=\kappa(t)\)
+- \(\kappa(\mathrm{recDelta}\ b\ s\ (\delta n)) = M(b,s,n)+1\)
+- \(\kappa(\mathrm{recDelta}\ b\ s\ n)\) is:
+  - \(M(b,s,n)\) if \(n\) is **not** syntactically `delta _`
+  - \(M(b,s,n)+1\) if \(n\) **is** syntactically `delta _`
+
+So the first helper theorem
+
+\[
+\kappa(\mathrm{recDelta}\ b\ s\ (\delta n))
+=
+\kappa(\mathrm{recDelta}\ b\ s\ n)+1
+\]
+
+is only true when `n` is **not** of the form `delta _`.
+
+## Counterexample to `kappa_rec_delta_step`
+
+Take `b = void`, `s = void`, `n = delta void`.
+
+Then:
+
+\[
+\kappa(\mathrm{recDelta}\ \mathrm{void}\ \mathrm{void}\ (\delta(\delta\ \mathrm{void}))) = 1
+\]
+
+because the third argument is syntactically `delta _`, and all inner kappas are \(0\).
+
+Also:
+
+\[
+\kappa(\mathrm{recDelta}\ \mathrm{void}\ \mathrm{void}\ (\delta\ \mathrm{void})) = 1.
+\]
+
+So the theorem would assert
+
+\[
+1 = 1 + 1,
+\]
+
+which is false.
+
+## Counterexample to `kappa_rec_succ_drop`
+
+Using the same values:
+
+\[
+\kappa(\mathrm{app}\ \mathrm{void}\ (\mathrm{recDelta}\ \mathrm{void}\ \mathrm{void}\ (\delta\ \mathrm{void})))
+=
+\max(0,1)=1
+\]
+
+while
+
+\[
+\kappa(\mathrm{recDelta}\ \mathrm{void}\ \mathrm{void}\ (\delta(\delta\ \mathrm{void})))=1.
+\]
+
+So the claimed strict inequality becomes
+
+\[
+1 < 1,
+\]
+
+also false.
+
+## Why the strategy fails
+
+`kappa` does **not** count recursion depth in the third argument. It only notices whether the **current** third argument of `recDelta` is headed by `delta`.
+
+So for nested deltas:
+
+\[
+\kappa(\mathrm{recDelta}\ b\ s\ (\delta^m n)) = M+1 \quad \text{for every } m\ge 1,
+\]
+
+because `delta` itself does not increase `kappa`.
+
+After one `R_rec_succ` step:
+\[
+\mathrm{recDelta}\ b\ s\ (\delta^{m+1} n)
+\to
+\mathrm{app}\ s\ (\mathrm{recDelta}\ b\ s\ (\delta^m n)).
+\]
+
+If \(m\ge 1\), then:
+\[
+\kappa(\mathrm{app}\ s\ (\mathrm{recDelta}\ b\ s\ (\delta^m n)))
+=
+\max(\kappa s, M+1)
+=
+M+1,
+\]
+which is **equal** to the source measure, not smaller.
+
+## Conclusion
+
+The helper argument is unsound. Both helper theorems fail in general, and the failure occurs exactly on branches where the recursive argument already contains another outer `delta`. A sound termination proof would need a measure that tracks the number of leading `delta` constructors (or another shape-sensitive descent argument).

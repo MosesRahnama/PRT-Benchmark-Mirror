@@ -1,0 +1,18 @@
+I'll read the file and assess the strong normalization property of the term rewriting system.
+**Assessment: Yes, strong normalization can be established under standard TRS semantics.**
+
+**Reasoning:**
+
+The system exhibits a clear structural decrease through the rules:
+
+1. **Rule 1** (`F(x, y, Z) -> x`): Eliminates an F-term entirely
+2. **Rule 2** (`F(x, y, S(n)) -> G(y, F(x, y, n))`): Peels one S-constructor from the third argument while introducing G (which has no rewrite rules)
+
+**Termination measure**: Count the total number of S-constructors in third arguments of all F-subterms. Each rule application strictly decreases this measure:
+- Rule 1 removes an F entirely (measure decreases)  
+- Rule 2 reduces S-nesting depth by 1 in the recursive F-call (measure decreases)
+- G-terms are irreducible (in normal form)
+
+Under standard first-order TRS assumptions (finite terms, free constructors, pattern-matching exclusivity), this gives a well-founded decreasing measure over the natural numbers, establishing strong normalization via lexicographic path ordering or simple polynomial interpretation.
+
+**Caveat**: If you interpret "derivable from rules alone" in the strictest sense—requiring explicit proof that Z ≠ S(n), that S-nesting is well-founded, or that terms are finite—then no, these meta-properties aren't derivable from rule syntax alone. But these are standard background assumptions in TRS theory, not "imported object-level axioms" like Peano induction.

@@ -1,0 +1,63 @@
+## Assessment: The Lexicographic Measure is **Not Sound**
+
+### What the measure claims
+
+`measure t = (phase t, cost t)` with lexicographic `<`. The intent is that every `Step t t'` satisfies `measure t' < measure t`.
+
+---
+
+### Rule-by-rule analysis
+
+**Rules where phase is 0 on both sides — only cost needs to drop:**
+
+| Rule | LHS cost | RHS cost | Verdict |
+|---|---|---|---|
+| `R_int_delta` | `2 + cost t` | `0` | ✓ |
+| `R_eq_refl` | `3 + 2·cost a` | `0` | ✓ |
+| `R_eq_diff` | `3 + cost a + cost b` | `2 + cost a + cost b` | ✓ |
+
+**`R_rec_succ`** (the rule `phase` was designed for):
+- LHS `recDelta b s (delta n)`: phase = **1**, cost = `2 + cost b + cost s + cost n`
+- RHS `app s (recDelta b s n)`: phase = **0** (it is an `app`, not `recDelta _ _ (delta _)`)
+- Phase strictly drops 1 → 0. ✓
+
+---
+
+### The four broken rules
+
+`phase` only inspects the **outermost constructor**. Any rule whose RHS exposes a `recDelta _ _ (delta _)` at the top level will **increase** phase from 0 to 1 — an immediate contradiction of the measure.
+
+**`R_merge_void_left`**: `Step (merge void t) t`
+
+Take `t = recDelta b s (delta n)`:
+- LHS `merge void (recDelta b s (delta n))`: phase = **0**
+- RHS `recDelta b s (delta n)`: phase = **1**
+- `(1, …) > (0, …)` — measure **increases**. ✗
+
+**`R_merge_void_right`**: `Step (merge t void) t` — identical argument. ✗
+
+**`R_merge_cancel`**: `Step (merge t t) t` — identical argument. ✗
+
+**`R_rec_zero`**: `Step (recDelta b s void) b`
+
+Take `b = recDelta b' s' (delta n')`:
+- LHS `recDelta (recDelta b' s' (delta n')) s void`: phase = **0** (outermost is `recDelta _ _ void`)
+- RHS `recDelta b' s' (delta n')`: phase = **1**
+- `(1, …) > (0, …)` — measure **increases**. ✗
+
+---
+
+### Root cause
+
+`phase` is a **local, outermost-constructor predicate**. It equals 1 only when the outermost node is exactly `recDelta _ _ (delta _)`. This means:
+
+- Reductions that strip an outer `merge` or `recDelta _ _ void` can **promote** a subterm with a high-phase shape to the top level.
+- The `cost` component decreases under those rules (the merge/recDelta wrapper is removed), but the **phase component increases**, and in a lexicographic order the first component dominates.
+
+Because `cost` is the *second* component, it cannot compensate for a phase increase.
+
+---
+
+### Conclusion
+
+The measure `(phase, cost)` is **unsound**. It fails for `R_merge_void_left`, `R_merge_void_right`, `R_merge_cancel`, and `R_rec_zero` — all for the same structural reason: reductions that discard a wrapper can expose a `recDelta _ _ (delta _)` redex at the top level, strictly increasing `phase` from 0 to 1. A sound measure would need `phase` to account for every occurrence of that pattern in the entire term tree (e.g., count all such subterms), or the two components must be swapped/redesigned so that cost alone serves as the primary decreasing quantity.

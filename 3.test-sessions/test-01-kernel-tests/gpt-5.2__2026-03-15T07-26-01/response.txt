@@ -1,0 +1,44 @@
+## Raw assessment
+
+Yes—**strong normalization is establishable from the presented rules alone**, without importing any extra object-level axioms/guards/side-conditions, *provided* we’re talking about the standard notion of rewriting on first-order terms (i.e., you can contract a redex at any position via contextual closure). Nothing in your eight rules can generate the kind of self-feeding growth needed for an infinite reduction: the only “expanding-looking” rule (`R_rec_succ`) consumes a `delta` from a fixed finite spine, and `eqW` is eliminated in one step and never reintroduced.
+
+One caveat: as written, `Step` is explicitly a **root** relation. If you literally mean “only root steps, no context closure”, then SN is even more immediate (the system is finitary at the top and still cannot loop). If you mean the usual rewrite closure-under-contexts, SN still goes through, but you need that closure definition to even state the intended notion precisely.
+
+## Why termination looks provable *internally* (no extra axioms)
+
+Key structural facts derivable just from the signature + rules:
+
+- **No rule introduces `eqW`** on the right-hand side. So the number of `eqW` nodes strictly decreases whenever an `eqW` redex is contracted, and can never go back up.
+- **No rule introduces `recΔ`** except the `recΔ` already present in `R_rec_succ`’s RHS (it preserves the count of `recΔ` occurrences: 1 stays 1; `R_rec_zero` decreases it).
+- **No rule introduces a new outer `delta`** (indeed, no RHS has `delta` at the root). So the “available fuel” in the third argument of any `recΔ` is bounded by the number of leading `delta` constructors already present in that subterm.
+- `merge`/`integrate` rules are all **collapsing** (they strictly simplify structure: remove `merge`, remove `integrate∘delta`, etc.). `R_eq_diff` is the only rule that can increase raw symbol count locally, but it strictly eliminates an `eqW` and does not create any symbol that can recreate `eqW`, so it cannot sustain an infinite chain.
+
+Non-determinism from the overlap `eqW a a` (both `R_eq_refl` and `R_eq_diff` apply) affects confluence, **not** termination: either choice still consumes the `eqW` at the root and never brings it back.
+
+## A short proof roadmap that stays within your boundary
+
+A clean “standard method” route (no extra rewrite rules, no side conditions):
+
+1. **Define the full rewrite relation** as the compatible/contextual closure of `Step` (if that’s your intended operational semantics). This is definitional, not an added axiom/rule.
+2. Prove termination by orienting all eight rules with a **simplification order**, e.g. **Recursive Path Ordering (RPO)**:
+   - Choose a precedence such as  
+     \[
+     \texttt{recΔ} \;>\; \texttt{app} \;>\; \texttt{eqW} \;>\; \texttt{integrate} \;>\; \texttt{merge} \;>\; \texttt{delta} \;>\; \texttt{void}.
+     \]
+   - Give `recΔ` a **lexicographic status that compares the 3rd argument first**, so that  
+     `recΔ b s (delta n)  >  recΔ b s n` holds because `delta n > n` (subterm property).
+   - Then check each rule:
+     - Collapsing rules (`merge` void/cancel, `integrate(delta _)`, `recΔ _ _ void`, `eqW a a`) are oriented because a compound term is greater than its proper subterms/constants in RPO.
+     - `R_eq_diff`: `eqW a b > integrate(merge a b)` holds because `eqW > integrate` and `eqW a b` dominates the argument `merge a b` (again by subterm dominance + precedence).
+     - `R_rec_succ`: `recΔ b s (delta n) > app s (recΔ b s n)` holds because `recΔ > app` and (crucially) `recΔ b s (delta n) > recΔ b s n` by the “3rd argument first” status.
+3. Use the standard theorem: **RPO is well-founded on finite first-order terms**, hence no infinite descending chains, hence the rewrite relation is terminating ⇒ **strong normalization**.
+
+This stays entirely at the meta-level (induction/well-foundedness on finite syntax trees) and doesn’t smuggle in any object theory or additional rewriting power.
+
+---
+
+## Todo list (final)
+
+- ✅ Interpret reduction notion (root vs contextual)  
+- ✅ Assess termination / SN  
+- ✅ Give proof roadmap or obstacle

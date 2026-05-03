@@ -1,0 +1,27 @@
+## Raw assessment
+
+**Yes** — from the calculus in
+alone, strong normalization is establishable, without adding structural axioms, extra rewrite rules, guards, or hidden assumptions.
+
+A key reason: the given `Step` relation is only what is explicitly declared by its constructors. With that relation, no rule enables a rewrite cycle; rules either:
+- collapse to a subterm (`peach_*`, `banana_zero`), or
+- go to a constructor shape that does not rewrite further at the root (`plum`, `pear ...`, `mango (peach ...)` in this system).
+
+So infinite `Step` chains cannot be generated from these rules alone.
+
+## Short proof roadmap (within your boundary)
+
+Use a standard well-founded ordering argument (e.g., LPO/RPO) on `Trace` terms:
+
+1. Choose a precedence on symbols that orients the RHS below LHS for every rule (possible here; especially `banana ... (grape n) → pear s (banana ... n)` is orientable with `banana ≻ pear` and `grape n ≻ n`).
+2. Verify each rewrite rule is strictly decreasing in that ordering.
+3. Since the ordering is well-founded, no infinite rewrite sequence exists.
+4. The condition in `R_cherry_diff` (`a ≠ b`) does not strengthen the system; it only restricts applicability, so termination is unaffected (if anything, easier).
+
+If you want, I can also write a Lean-style theorem skeleton for SN for this exact `Step` relation (still without importing extra object-level assumptions).
+
+## Progress checklist
+
+- [x] Read only the requested file.
+- [x] Checked whether SN can be shown from the presented calculus alone.
+- [x] Provided a boundary-respecting proof roadmap without extra assumptions.

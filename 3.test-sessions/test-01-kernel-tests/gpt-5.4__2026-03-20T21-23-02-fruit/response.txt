@@ -1,0 +1,61 @@
+## Assessment
+
+Yes — **strong normalization looks provable from the calculus as presented**, without adding extra rewrite rules, guards, side conditions, or object-level axioms.
+
+In fact, this system is a good fit for a **standard polynomial interpretation / reduction-ordering termination proof**. There is no binding, no state, no higher-order behavior, and the only “recursive” rule,
+
+- `banana b s (grape n) → pear s (banana b s n)`
+
+strictly decreases the recursive argument from `grape n` to `n`. The extra `pear s (...)` wrapper does not create a loop because there are **no rules with `pear` at the head**.
+
+A simple interpretation into $\mathbb{N}$ already works. For example, assign:
+
+- $\llbracket plum \rrbracket = 0$
+- $\llbracket grape(t) \rrbracket = \llbracket t \rrbracket + 1$
+- $\llbracket mango(t) \rrbracket = \llbracket t \rrbracket + 1$
+- $\llbracket peach(a,b) \rrbracket = \llbracket a \rrbracket + \llbracket b \rrbracket + 1$
+- $\llbracket pear(a,b) \rrbracket = \llbracket b \rrbracket$
+- $\llbracket banana(b,s,n) \rrbracket = \llbracket b \rrbracket + \llbracket n \rrbracket + 1$
+- $\llbracket cherry(a,b) \rrbracket = \llbracket a \rrbracket + \llbracket b \rrbracket + 3$
+
+Then every rule strictly decreases:
+
+- `mango (grape t) → plum`:
+  $(t+1)+1 > 0$
+- `peach plum t → t`:
+  $0+t+1 > t$
+- `peach t plum → t`:
+  $t+0+1 > t$
+- `peach t t → t`:
+  $t+t+1 > t$
+- `banana b s plum → b`:
+  $b+0+1 > b$
+- `banana b s (grape n) → pear s (banana b s n)`:
+  $b+(n+1)+1 > b+n+1$
+- `cherry a a → plum`:
+  $a+a+3 > 0$
+- `cherry a b → mango (peach a b)`:
+  $a+b+3 > (a+b+1)+1 = a+b+2$
+
+The disequality premise on `R_cherry_diff` only **restricts** applicability, so it does not threaten termination.
+
+## Short roadmap
+
+A clean proof roadmap would be:
+
+1. Treat the rules as a first-order TRS (or the contextual closure of `Step`, if that is the intended rewrite relation).
+2. Define the above interpretation into $\mathbb{N}$.
+3. Verify each rewrite rule strictly decreases that measure.
+4. Use the well-foundedness of $<$ on $\mathbb{N}$ to conclude termination, hence strong normalization.
+
+## Small caveat
+
+If you mean **exactly the root-step relation `Step` as written**, termination is even easier than standard TRS termination, because rewriting is only at the root. But the stronger statement also appears true: **even under the usual closure under contexts and substitutions, the system is still strongly normalizing**.
+
+## Checklist
+
+- [x] Read only
+- [x] Analyzed whether the rewrite system terminates
+- [x] Gave a bounded assessment with a proof roadmap
+
+So the raw answer is: **yes, SN should be establishable from the presented calculus alone by a standard termination argument, most simply a polynomial interpretation into $\mathbb{N}$.**

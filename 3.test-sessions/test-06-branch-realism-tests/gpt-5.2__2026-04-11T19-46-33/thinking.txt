@@ -1,0 +1,12 @@
+**Evaluating kappa measure soundness**
+
+I’m thinking that they may have intended for `kappa` to count top-level deltas in the third argument. However, since delta doesn’t really increase kappa, that seems incorrect. When using `recDelta`, the +1 for delta captures the top-level count, but not nested ones. 
+
+For instance, when analyzing kappa(recDelta), I find that it doesn't distinguish delta nesting effectively, which may lead to issues with termination claims. I need to structure my response with definitions and counterexamples to support this assessment.
+**Finalizing kappa analysis**
+
+I’ve detailed the relevant lines from `BranchRealism`, focusing on the definitions and theorems related to `kappa` between lines 26-34 and 46-53. The links will refer to theorem lines: [KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean](KO7-LLM-Benchmark/test-files/Test-06-Branch-Realism.lean#L46-L53).
+
+A counterexample shows that when analyzing kappa(recDelta), if `n` is delta void, we find that kappa values do not lead to the expected termination, demonstrating kappa does not decrease under certain rules.
+
+Also, since `kappa delta t = kappa t`, nested deltas collapse, complicating the termination case further.

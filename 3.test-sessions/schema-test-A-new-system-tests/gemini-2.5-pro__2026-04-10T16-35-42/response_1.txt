@@ -1,0 +1,13 @@
+Based on the provided rewrite system, strong normalization can be established
+.
+
+**Reasoning:**
+
+The system is terminating. This can be demonstrated by defining a simple precedence `F > G` and using a standard reduction ordering like the Recursive Path Ordering (RPO).
+
+1.  **Rule `F(x, y, Z) -> x`**: The right-hand side (`x`) is a variable, which is a subterm of the left-hand side's arguments. This rule is inherently terminating as it reduces the term to one of its components.
+2.  **Rule `F(x, y, S(n)) -> G(F(x, y, n))`**:
+    *   The recursive call `F(x, y, n)` is applied to a structurally smaller argument, as `n` is a subterm of `S(n)`.
+    *   With the precedence `F > G`, the left-hand side `F(x, y, S(n))` is greater than the right-hand side `G(F(x, y, n))` in RPO because the outermost function symbol `F` has a higher precedence than `G`.
+
+Since both rules are decreasing under a well-founded ordering (RPO with precedence `F > G`), the entire system is strongly normalizing. No external axioms or assumptions are needed to reach this conclusion.

@@ -1,0 +1,25 @@
+I'll provide a proof skeleton for the remaining five cases in the `measure_decreases` theorem from the provided Lean 4 file. I won't modify the file or run any tools, as requested.
+
+Below is a skeleton for the proofs of the remaining cases marked with `sorry`. Each case will focus on showing that the lexicographic measure `(kappa, mu)` decreases under the `Step` relation.
+
+- **integrate (delta t) → void** (`R_int_delta`):
+  - Here, `kappa` of the result is 0 (since `void` has `kappa = 0`), and `kappa` of the input is `kappa t` (since `integrate` and `delta` are transparent to `kappa`). Since `kappa t` could be any natural number (including 0), we note that `kappa` either decreases or stays the same. However, `mu` decreases from `1 + mu t` to `0`, ensuring a lexicographic decrease if `kappa` ties.
+  - Skeleton: Check if `kappa` decreases; if not, show `mu` decreases.
+
+- **recDelta b s void → b** (`R_rec_zero`):
+  - `kappa` of the input is `max(max(kappa b, kappa s), kappa void) = max(kappa b, kappa s)`, and output is `kappa b`. Since `max(kappa b, kappa s) ≥ kappa b`, `kappa` either ties or decreases. `mu` decreases from `3 + mu b + mu s + mu void` to `mu b`, which is a strict decrease.
+  - Skeleton: Show `kappa` ties or decreases, and `mu` decreases.
+
+- **recDelta b s (delta n) → app s (recDelta b s n)** (`R_rec_succ`):
+  - `kappa` of input is `max(max(kappa b, kappa s), kappa n) + 1`, and output is `max(kappa s, max(max(kappa b, kappa s), kappa n)) = max(kappa b, kappa s, kappa n) + 1` for the `app` constructor. We need to compute carefully, but `kappa` likely ties, and we check `mu` for decrease.
+  - Skeleton: Compute `kappa` to confirm it ties, then show `mu` decreases due to the structural change.
+
+- **eqW a a → void** (`R_eq_refl`):
+  - `kappa` of input is `max(kappa a, kappa a) = kappa a`, and output is `0`. `kappa` decreases if `kappa a > 0`, otherwise ties, but `mu` decreases from `4 + 2 * mu a` to `0`.
+  - Skeleton: Show `kappa` decreases or ties, and `mu` decreases.
+
+- **eqW a b → integrate (merge a b)** (`R_eq_diff`):
+  - `kappa` of input is `max(kappa a, kappa b)`, and output is `kappa (merge a b) = max(kappa a, kappa b)`, so `kappa` ties. `mu` changes from `4 + mu a + mu b` to `1 + (2 + mu a + mu b) = 3 + mu a + mu b`, which is a decrease by 1.
+  - Skeleton: Show `kappa` ties, and `mu` decreases by a fixed amount.
+
+These skeletons should guide the completion of the proofs by focusing on whether `kappa` decreases (triggering `drop_left`) or ties, in which case `mu` must decrease (triggering `drop_right`). Each case will use the `LexOrder` definition to establish the decrease in the lexicographic measure.

@@ -1,0 +1,95 @@
+### Proof Skeleton for Remaining Cases in `mu_decreases`
+
+The following outlines the structure for completing the `sorry` cases and refining the sketched proofs in `mu_decreases`. Each case leverages ordinal arithmetic properties (e.g., `opow_pos`, `add_pos`, `mul_pos`, `lt_of_lt_of_le`) from Mathlib. Focus on establishing strict inequalities via dominance of higher exponents or positive additives. Assume `omega0 = ω` for brevity in comments.
+
+#### Case: `R_merge_cancel` (merge t t → t)
+The provided sketch is nearly complete but needs a final strict inequality. Refine the `calc` to emphasize the positive `ω² · (μ t + 1)` term:
+
+```lean
+| _, _, Step.R_merge_cancel t => by
+  simp [mu]
+  have h1 : μ t < μ t + 1 := lt_add_one (μ t)
+  have h2 : μ t + 1 ≤ ω ^ 3 * (μ t + 1) := le_mul_right _ (opow_pos 3 ω_pos)
+  have h3 : μ t < ω ^ 3 * (μ t + 1) := lt_of_lt_of_le h1 h2
+  have h_pos : 0 < ω ^ 2 * (μ t + 1) := mul_pos (opow_pos 2 ω_pos) (add_pos (zero_le _) one_pos)
+  calc μ t
+    _ < ω ^ 3 * (μ t + 1) := h3
+    _ ≤ ω ^ 3 * (μ t + 1) + ω ^ 2 * (μ t + 1) := le_add_right _ _
+    _ < ω ^ 3 * (μ t + 1) + ω ^ 2 * (μ t + 1) + 1 := lt_add_of_pos_right _ h_pos
+```
+
+#### Case: `R_rec_zero` (recDelta b s void → b)
+The sketch bounds `μ b` below the dominant `ω^(μ s + 6)` term. Adjust the `calc` for strictness using `add_lt_add_left` and positivity of the exponent term:
+
+```lean
+| _, _, Step.R_rec_zero b s => by
+  simp [mu]
+  have h1 : μ b < μ b + 1 := lt_add_one (μ b)
+  have h2 : μ b + 1 ≤ ω * (μ b + 1) := le_mul_right _ ω_pos
+  have h3 : μ b < ω * (μ b + 1) := lt_of_lt_of_le h1 h2
+  have h_dom : 0 < ω ^ (μ s + 6) := opow_pos _ (add_pos (zero_le _) (by decide))
+  calc μ b
+    _ < ω * (μ b + 1) := h3
+    _ ≤ ω ^ (μ s + 6) + ω * (μ b + 1) := le_add_left _ _
+    _ < ω ^ (μ s + 6) + ω * (μ b + 1) + 1 := add_lt_add_left h_dom _
+```
+
+#### Case: `R_rec_succ` (recDelta b s (delta n) → app s (recDelta b s n))
+This requires inducting on `n` or using ordinal exponent rules to show the exponent `ω^5 · (μ n + 1) + μ s + 7` (from `mu (delta n) = ω^5 · (μ n + 1) + 1`) dominates the RHS's base-`ω^3` and `ω^2 · ω^(μ n + μ s + 6)` terms. Key lemma: `ω^α < ω^β` if `α < β`.
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+  simp [mu]
+  -- Define exponents for clarity
+  let α := μ n + μ s + 6  -- Exponent in recDelta b s n
+  let β := ω ^ 5 * (μ n + 1) + μ s + 7  -- Exponent in recDelta b s (delta n); β > α by ω^5 dominance
+  have h_exp : α < β := by
+    -- Prove ω^5 * (μ n + 1) + 1 > μ n + 6 (since μ s ≥ 0)
+    have : ω ^ 5 * (μ n + 1) > μ n + 6 := by
+      apply lt_of_lt_of_le _ (add_le_add_left (le_of_lt (mul_pos (opow_pos 5 ω_pos) (add_pos (zero_le _) one_pos))) _)
+      exact lt_trans (lt_add_of_pos_left (opow_pos 5 ω_pos) (le_refl _)) (lt_add_one _)
+    simp [β, α]; exact add_lt_add this (by decide)
+  -- LHS μ(app ...) = ω^3 · (μ s + 1) + ω^2 · (ω^α + ω · (μ b + 1) + 2) + 1
+  -- Dominant term: ω^2 · ω^α = ω^(2 + α)
+  -- RHS μ(recDelta ...) = ω^β + ω · (μ b + 1) + 1
+  -- Show ω^(2 + α) < ω^β since 2 + α < β
+  have h_base : ω ^ (2 + α) < ω ^ β := opow_lt_opow ω_pos h_exp
+  -- Bound full LHS < ω^(2 + α) + lower terms < ω^β (by absorption)
+  have h_lhs_bound : ω ^ 3 * (μ s + 1) + ω ^ 2 * (ω ^ α + ω * (μ b + 1) + 2) + 1 < ω ^ β := by
+    -- ω^3 · (μ s + 1) ≤ ω^3 · ω^α < ω^(3 + α) ≤ ω^(2 + α) by ordinal limits
+    sorry  -- Fill with chain of mul/opow/add inequalities
+  exact add_lt_add_left h_lhs_bound _
+```
+
+#### Case: `R_eq_refl` (eqW a a → void)
+Simple positivity: `ω^(2 · μ a + 9) + 1 > 0`.
+
+```lean
+| _, _, Step.R_eq_refl a => by
+  simp [mu]
+  exact zero_lt_one.trans_le (add_le_add (opow_le_opow ω_pos (add_le_add (add_le_add (mul_pos (zero_le _) (zero_le _)) (by decide)) (by decide))) (le_refl _))
+  -- Or more directly: exact Ordinal.pos_iff_ne_zero.mpr (ne_of_gt (add_pos (opow_pos _ (add_pos _ (by decide))) one_pos))
+```
+
+#### Case: `R_eq_diff` (eqW a b → integrate (merge a b))
+Show LHS `ω^4 · (ω^3 · (μ a + 1) + ω^2 · (μ b + 1) + 2) + 1` bounded by `ω^(4 + 3) = ω^7` (dominant term), which is < RHS `ω^(μ a + μ b + 9)` since `μ a + μ b + 2 ≥ 7` (by induction base μ ≥ 0, but actually μ ≥ 1 for non-void).
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+  simp [mu]
+  -- LHS expands to ω^4 · (ω^3 · (μ a + 1) + ω^2 · (μ b + 1) + 2) + 1 ≤ ω^7 · (μ a + μ b + c) for some small c
+  -- But dominant: ω^4 · ω^3 · (μ a + 1) = ω^7 · (μ a + 1)
+  have h_lhs_dom : ω ^ 4 * (ω ^ 3 * (μ a + 1) + ω ^ 2 * (μ b + 1) + 2) + 1 ≤ ω ^ 7 * (μ a + μ b + 3) + 1 := by
+    -- Bound additives: ω^4 · ω^2 · (μ b + 1) ≤ ω^6 · (μ b + 1) < ω^7, etc.
+    sorry  -- Chain via mul_add, opow_add, le_trans
+  -- RHS = ω^(μ a + μ b + 9) + 1
+  -- Key: ω^7 * k < ω^(μ a + μ b + 9) if 7 + log k < μ a + μ b + 9, but since μ a, μ b ≥ 0 and exponents grow fast
+  have h_exp : 7 < μ a + μ b + 9 := add_lt_add_of_le_of_lt (zero_le _) (lt_add_of_pos_left (by decide) (zero_le _))
+  have h_rhs_dom : ω ^ 7 * (μ a + μ b + 3) + 1 < ω ^ (μ a + μ b + 9) + 1 := by
+    apply add_lt_add
+    · exact mul_lt_opow_of_lt ω_pos h_exp (by decide)  -- ω^7 * finite < ω^(7 + δ) for δ > 0
+    · exact zero_lt_one
+  exact lt_of_le_of_lt h_lhs_dom h_rhs_dom
+```
+
+These skeletons use `calc`, `have`, and Mathlib lemmas for ordinal comparisons. Complete by verifying each `sorry` with specific `opow_lt_opow`, `mul_lt_mul'`, etc., ensuring induction on `μ` if needed for base cases. The overall measure ensures confluence via well-foundedness.

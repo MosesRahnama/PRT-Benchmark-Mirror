@@ -1,0 +1,13 @@
+**Assessing Rewrite Calculus**
+
+I've begun examining the `Test-06-Branch-Realism.lean` file, focusing on the rewrite calculus. I'm currently parsing the `kappa` definition and related theorems to understand their role. Specifically, I am analyzing the `Step` calculus components.
+
+
+**Evaluating `kappa` Functionality**
+
+I've just reviewed the `kappa` function and its behavior in the context of the rewrite calculus, specifically focusing on `recDelta`. There's an apparent increment in the measure when a `delta` is present within the `recDelta` construct. I'm now cross-referencing this with the `kappa_rec_delta_step` theorem to clarify its implications. I'm also now analyzing the `eqW` construct, as a function in the calculus.
+
+
+**Confirming Theorem Unsafety**
+
+After careful evaluation, it's clear the `kappa_rec_delta_step` theorem is flawed. By substituting `n` with `delta m`, the left and right sides of the equation don't align, leading to a contradiction. I'm now documenting this critical error and its implications for the rewrite calculus.

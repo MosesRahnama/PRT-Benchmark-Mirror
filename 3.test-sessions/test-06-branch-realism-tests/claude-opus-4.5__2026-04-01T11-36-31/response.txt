@@ -1,0 +1,39 @@
+## Analysis
+
+The file defines a measure `kappa` and two helper theorems intended to prove termination of the `R_rec_succ` rewrite rule. The strategy is **unsound** — both theorems are false.
+
+### The Problem
+
+The `kappa` function has two overlapping cases for `recDelta`:
+
+```lean
+| .recDelta b s (.delta n) => Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1
+| .recDelta b s n => Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)
+```
+
+The first (more specific) pattern adds `+1` when the third argument is a `delta`. This creates problems when `n` itself has the form `delta m`.
+
+### Counterexample: `b = s = void`, `n = delta void`
+
+**Theorem 1** (`kappa_rec_delta_step`):
+
+- LHS: `kappa (recDelta void void (delta (delta void)))`
+  - Matches first pattern with inner term `delta void`
+  - `= max (max 0 0) (kappa (delta void)) + 1 = max 0 0 + 1 = 1`
+
+- RHS: `kappa (recDelta void void (delta void)) + 1`
+  - `recDelta void void (delta void)` matches first pattern with inner term `void`
+  - `= (max (max 0 0) 0 + 1) + 1 = 1 + 1 = 2`
+
+**Result: 1 ≠ 2** — the theorem is false.
+
+**Theorem 2** (`kappa_rec_succ_drop`):
+
+- LHS: `kappa (app void (recDelta void void (delta void))) = max 0 1 = 1`
+- RHS: `kappa (recDelta void void (delta (delta void))) = 1`
+
+**Result: 1 < 1 is false** — the strict inequality fails.
+
+### Root Cause
+
+The `+1` bonus in `kappa` for `recDelta b s (delta n)` accumulates for each nested `delta`, but the theorems assume a simple arithmetic relationship that holds only when `n` is not already a `delta`. When `n = delta m`, both sides of the rewrite get the same `kappa` value, destroying the strict decrease needed for termination.

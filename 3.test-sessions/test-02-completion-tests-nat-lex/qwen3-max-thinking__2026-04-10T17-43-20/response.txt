@@ -1,0 +1,35 @@
+I'll help you provide a proof skeleton for completing the remaining cases in the Lean 4 file. Let me first read the file to understand the current state of the proof.
+Looking at the Lean 4 file, I can see that the `measure_decreases` theorem has three completed cases and five remaining cases marked with `sorry`. The pattern for the completed cases shows that each proof follows a similar structure:
+
+1. Show that `mu` decreases strictly (`hmu : mu b < mu a`)
+2. Show that `kappa` remains equal (`hk : kappa b = kappa a`) 
+3. Apply `drop_right hmu hk` to get the lexicographic decrease
+
+Let me provide a proof skeleton for the remaining five cases:
+
+**Case 1: `R_int_delta` - `integrate (delta t) --> void`**
+- Show `mu void < mu (integrate (delta t))` using simp and omega
+- Show `kappa void = kappa (integrate (delta t))` using simp
+- Apply `drop_right`
+
+**Case 2: `R_rec_zero` - `recDelta b s void --> b`**
+- Show `mu b < mu (recDelta b s void)` using simp and omega  
+- Show `kappa b = kappa (recDelta b s void)` using simp
+- Apply `drop_right`
+
+**Case 3: `R_rec_succ` - `recDelta b s (delta n) --> app s (recDelta b s n)`**
+- Show `mu (app s (recDelta b s n)) < mu (recDelta b s (delta n))` using simp and omega
+- Show `kappa (app s (recDelta b s n)) = kappa (recDelta b s (delta n))` using simp
+- Apply `drop_right`
+
+**Case 4: `R_eq_refl` - `eqW a a --> void`**
+- Show `mu void < mu (eqW a a)` using simp and omega
+- Show `kappa void = kappa (eqW a a)` using simp  
+- Apply `drop_right`
+
+**Case 5: `R_eq_diff` - `eqW a b --> integrate (merge a b)`**
+- Show `mu (integrate (merge a b)) < mu (eqW a b)` using simp and omega
+- Show `kappa (integrate (merge a b)) = kappa (eqW a b)` using simp
+- Apply `drop_right`
+
+The key insight is that all remaining cases maintain the same `kappa` value (no recursion depth change) while strictly decreasing the structural size measure `mu`. This follows the same pattern as the three completed cases, making `drop_right` the appropriate lemma to use in each case.

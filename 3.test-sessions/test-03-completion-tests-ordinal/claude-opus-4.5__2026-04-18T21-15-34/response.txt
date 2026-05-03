@@ -1,0 +1,93 @@
+## Proof Skeleton for Remaining Cases
+
+The file has three incomplete cases marked with `sorry`. Here are the proof skeletons:
+
+---
+
+### Case 1: `R_rec_succ` (lines 130–145)
+
+**Goal:** `mu (app s (recDelta b s n)) < mu (recDelta b s (delta n))`
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- LHS: omega^3 * (mu s + 1) + omega^2 * (omega^(mu n + mu s + 6) + omega * (mu b + 1) + 1 + 1) + 1
+    -- RHS: omega^(omega^5 * (mu n + 1) + 1 + mu s + 6) + omega * (mu b + 1) + 1
+    --
+    -- Key insight: The RHS exponent contains omega^5 * (mu n + 1), which dominates
+    -- any polynomial in mu n, mu s, mu b. The LHS is bounded by
+    -- omega^3 * (mu s + 1) + omega^2 * omega^(mu n + mu s + 7) which is at most
+    -- omega^(mu n + mu s + 9). Since omega^5 * (mu n + 1) + 1 + mu s + 6 > mu n + mu s + 9,
+    -- the RHS dominates.
+    --
+    -- Proof outline:
+    -- 1. Use `Ordinal.opow_lt_opow_right omega0_one_lt` to compare exponents
+    -- 2. Show omega^5 * (mu n + 1) + mu s + 7 > mu n + mu s + 9
+    -- 3. Use transitivity to bound LHS by some omega^e with e < RHS exponent
+    -- 4. Apply `add_lt_add_right` and `mul_lt_mul` as needed
+    sorry
+```
+
+---
+
+### Case 2: `R_eq_refl` (lines 147–151)
+
+**Goal:** `0 < omega^(mu a + mu a + 9) + 1`
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- 0 < omega^(2 * mu a + 9) + 1
+    -- This follows from positivity of ordinal addition with 1
+    apply Ordinal.pos_iff_ne_zero.mpr
+    apply ne_of_gt
+    -- omega^(mu a + mu a + 9) >= 0, so omega^(...) + 1 >= 1 > 0
+    exact add_pos_right (omega0 ^ (mu a + mu a + 9)) one_pos
+```
+
+This case is straightforward: `omega^e + 1 > 0` for any ordinal `e`.
+
+---
+
+### Case 3: `R_eq_diff` (lines 153–164)
+
+**Goal:** `mu (integrate (merge a b)) < mu (eqW a b)`
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- LHS = omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 1 + 1) + 1
+    --     = omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 2) + 1
+    -- RHS = omega^(mu a + mu b + 9) + 1
+    --
+    -- Upper bound LHS: omega^4 * omega^3 * (mu a + 1) = omega^7 * (mu a + 1)
+    --   which is bounded by omega^(mu a + 8) when mu a is finite
+    --   or omega^(mu a + 1) when mu a is infinite.
+    -- Either way, omega^(mu a + mu b + 9) dominates omega^7 * (mu a + 1) + omega^6 * (mu b + 1) + ...
+    --
+    -- Proof outline:
+    -- 1. Establish upper bound: omega^4 * (omega^3 * X + omega^2 * Y + 2) ≤ omega^(max(3 + log(X), 2 + log(Y)) + 4)
+    -- 2. Show this is < omega^(mu a + mu b + 9) using exponent comparison
+    -- 3. Use `opow_lt_opow_right` and ordinal arithmetic lemmas
+    --
+    -- Alternative direct approach:
+    -- have bound : omega0 ^ 4 * (omega0 ^ 3 * (mu a + 1) + omega0 ^ 2 * (mu b + 1) + 2) + 1
+    --              < omega0 ^ (mu a + mu b + 9) + 1 := by
+    --   apply add_lt_add_right
+    --   -- show omega^4 * (...) < omega^(mu a + mu b + 9)
+    --   calc omega0 ^ 4 * (omega0 ^ 3 * (mu a + 1) + omega0 ^ 2 * (mu b + 1) + 2)
+    --        ≤ omega0 ^ 4 * omega0 ^ (mu a + 4) := by ...  -- absorb terms
+    --        = omega0 ^ (mu a + 8) := by rw [← opow_add]
+    --        < omega0 ^ (mu a + mu b + 9) := by apply opow_lt_opow_right; ...
+    sorry
+```
+
+---
+
+### Summary
+
+| Case | Difficulty | Key Lemmas Needed |
+|------|------------|-------------------|
+| `R_rec_succ` | Hard | `opow_lt_opow_right`, comparison of `omega^5 * k` vs polynomial |
+| `R_eq_refl` | Easy | `add_pos_right`, `one_pos` |
+| `R_eq_diff` | Medium | `opow_add`, `opow_lt_opow_right`, distributivity bounds |

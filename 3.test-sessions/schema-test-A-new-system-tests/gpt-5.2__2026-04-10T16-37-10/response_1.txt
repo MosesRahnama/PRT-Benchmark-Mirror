@@ -1,0 +1,7 @@
+Yes — strong normalization (termination) is establishable from the rewrite rules alone in KO7-LLM-Benchmark/test-files/Schema-Test-A-New-System.trs.
+
+- The only recursive rule is `F(x, y, S(n)) -> G(F(x, y, n))`, and it strictly decreases the third argument from `S(n)` to `n`.
+- There are no rewrite rules for `G`, so the wrapper `G(…)` cannot “re-expand” or create new `S`-structure that would enable cycling.
+- The base rule `F(x, y, Z) -> x` ends the recursion when the third argument reaches `Z`, and it does not duplicate or grow terms.
+
+A standard well-founded measure is “the number of `S` constructors in the third argument of each `F`-redex” (or equivalently the natural-number interpretation of that argument). Each step using the recursive rule decreases that measure by 1, so infinite rewrite sequences are impossible without importing any extra axioms.

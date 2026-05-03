@@ -1,0 +1,4 @@
+1. Syntactic multiset measure on S-constructor depth in third arguments of `F` redexes.
+2. Yes (choice of specific well-founded measure/ordering on argument structure).
+3. Yes.
+4. Yes.

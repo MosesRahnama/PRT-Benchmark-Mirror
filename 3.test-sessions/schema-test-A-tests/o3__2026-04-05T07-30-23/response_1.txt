@@ -1,0 +1,25 @@
+Yes – the rules themselves already guarantee strong normalization; no extra axioms are needed.
+
+Proof-sketch roadmap  
+1. Signature and rules  
+ • Constructors: Z, S(·), G(·,·) (no rewrite rules for them).  
+ • Defined symbol: F(·,·,·) with the two rules shown.
+
+2. Termination measure  
+ Define a natural-number measure μ(t) = Σ depth(c) over every sub-term of the form F(…, …, c) occurring in t, where  
+  depth(Z) = 0, depth(S(n)) = 1 + depth(n).
+
+3. Decrease of μ under each rule  
+ • Rule 1 F(x,y,Z) → x  
+  removes one F-occurrence whose depth is 0; μ strictly decreases.  
+ • Rule 2 F(x,y,S(n)) → G(y, F(x,y,n))  
+  replaces depth = 1+depth(n) by an embedded F with depth(n); hence μ decreases by 1.  
+ No other symbols rewrite, so μ can never increase.
+
+4. Well-foundedness  
+ μ maps every term to ℕ with a strict decrease at every rewrite step ⇒ no infinite reduction chains exist ⇒ the system is terminating.
+
+5. Strong normalization  
+ Because the system is left-linear and terminating, every term admits only finite reduction sequences; hence all terms are strongly normalizing.
+
+Therefore strong normalization follows directly from the given two rules.

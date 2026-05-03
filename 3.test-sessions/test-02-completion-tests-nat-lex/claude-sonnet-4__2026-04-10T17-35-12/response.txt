@@ -1,0 +1,101 @@
+Looking at the file, I can see it's a strong normalization proof using a lexicographic measure (kappa, mu) where three of eight reduction rule cases are complete. Let me analyze the remaining five cases and provide proof skeletons.
+
+## Analysis of Remaining Cases
+
+For each case, I need to show the lexicographic measure strictly decreases. The strategy is:
+- If kappa decreases: use `drop_left`
+- If kappa stays same and mu decreases: use `drop_right`
+
+Here are the proof skeletons for the five remaining cases:
+
+### Case 1: `R_int_delta` - integrate (delta t) → void
+```lean
+| _, _, Step.R_int_delta t => by
+    -- kappa: integrate(delta t) has kappa(t), void has 0
+    -- mu: integrate(delta t) has 1 + mu(t), void has 0
+    have hmu : mu void < mu (integrate (delta t)) := by simp [mu]; omega
+    -- Case analysis on whether kappa(t) = 0 or kappa(t) > 0
+    by_cases h : kappa t = 0
+    · -- When kappa(t) = 0, kappa stays same, mu decreases  
+      have hk : kappa void = kappa (integrate (delta t)) := by simp [kappa, h]
+      exact drop_right hmu hk
+    · -- When kappa(t) > 0, kappa decreases
+      have hk : kappa void < kappa (integrate (delta t)) := by 
+        simp [kappa]; omega
+      exact drop_left hk
+```
+
+### Case 2: `R_rec_zero` - recDelta b s void → b
+```lean
+| _, _, Step.R_rec_zero b s => by
+    -- kappa: recDelta b s void has max(kappa(b), kappa(s)), b has kappa(b)
+    -- mu: recDelta b s void has 3 + mu(b) + mu(s), b has mu(b)
+    have hmu : mu b < mu (recDelta b s void) := by simp [mu]; omega
+    -- Case analysis on whether kappa(s) ≤ kappa(b) or kappa(s) > kappa(b)
+    by_cases h : kappa s ≤ kappa b
+    · -- When kappa(s) ≤ kappa(b), kappa stays same
+      have hk : kappa b = kappa (recDelta b s void) := by 
+        simp [kappa]; exact Nat.max_eq_left h
+      exact drop_right hmu hk
+    · -- When kappa(s) > kappa(b), kappa decreases
+      have hk : kappa b < kappa (recDelta b s void) := by
+        simp [kappa]; omega
+      exact drop_left hk
+```
+
+### Case 3: `R_rec_succ` - recDelta b s (delta n) → app s (recDelta b s n)
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    -- kappa: recDelta b s (delta n) has max(max(kappa(b), kappa(s)), kappa(n)) + 1
+    -- kappa: app s (recDelta b s n) has max(kappa(s), max(max(kappa(b), kappa(s)), kappa(n)))
+    --        = max(max(kappa(b), kappa(s)), kappa(n))
+    -- So kappa decreases by exactly 1
+    have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+      simp [kappa]
+      -- max(kappa(s), max(max(kappa(b), kappa(s)), kappa(n))) = max(max(kappa(b), kappa(s)), kappa(n))
+      have h1 : Nat.max (kappa s) (Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)) = 
+                Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) := by
+        simp [Nat.max_assoc, Nat.max_comm (kappa s), Nat.max_left_comm]
+      rw [h1]; omega
+    exact drop_left hk
+```
+
+### Case 4: `R_eq_refl` - eqW a a → void
+```lean
+| _, _, Step.R_eq_refl a => by
+    -- kappa: eqW a a has kappa(a), void has 0
+    -- mu: eqW a a has 4 + 2*mu(a), void has 0
+    have hmu : mu void < mu (eqW a a) := by simp [mu]; omega
+    -- Case analysis on whether kappa(a) = 0 or kappa(a) > 0
+    by_cases h : kappa a = 0
+    · -- When kappa(a) = 0, kappa stays same, mu decreases
+      have hk : kappa void = kappa (eqW a a) := by simp [kappa, h]
+      exact drop_right hmu hk  
+    · -- When kappa(a) > 0, kappa decreases
+      have hk : kappa void < kappa (eqW a a) := by simp [kappa]; omega
+      exact drop_left hk
+```
+
+### Case 5: `R_eq_diff` - eqW a b → integrate (merge a b)
+```lean
+| _, _, Step.R_eq_diff a b => by
+    -- kappa: both sides have max(kappa(a), kappa(b))
+    -- mu: eqW a b has 4 + mu(a) + mu(b)
+    --     integrate(merge a b) has 1 + 2 + mu(a) + mu(b) = 3 + mu(a) + mu(b)
+    -- So mu decreases by 1, kappa stays same
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by simp [mu]; omega
+    have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by simp [kappa]
+    exact drop_right hmu hk
+```
+
+## Key Insights
+
+1. **Kappa vs Mu Strategy**: Most reductions either decrease kappa (recursion depth) or keep kappa constant while decreasing mu (structural size).
+
+2. **Case Analysis Pattern**: Several cases need `by_cases` to handle whether certain components are zero, which affects whether kappa decreases or stays constant.
+
+3. **Recursion Depth**: The `R_rec_succ` case is special because it always decreases kappa by exactly 1 due to the +1 in the recDelta-delta pattern.
+
+4. **Structural Size**: All cases decrease mu, ensuring termination even when kappa stays constant.
+
+These proof skeletons should complete the strong normalization proof by showing that every reduction step strictly decreases the lexicographic measure (kappa, mu).

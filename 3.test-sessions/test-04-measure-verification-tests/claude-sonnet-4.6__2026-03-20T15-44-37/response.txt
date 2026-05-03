@@ -1,0 +1,59 @@
+## Analysis of the Termination Measure
+
+### The System
+
+The calculus defines `Trace` terms and a top-level (non-congruence) rewrite relation `Step`. The proposed measure is the lexicographic pair `(phase t, cost t)`:
+
+- `phase` returns `1` only when the **outermost** constructor is `recDelta _ _ (.delta _)`, and `0` otherwise.
+- `cost` is a structural size (roughly the node count, with `eqW` weighted at 3).
+
+For soundness, every rule `Step t t'` must satisfy `measure t >_lex measure t'`, i.e. either `phase t > phase t'`, or `phase t = phase t'` and `cost t > cost t'`.
+
+---
+
+### Failing Rules
+
+**`R_merge_void_left` : `Step (merge void t) t`**
+
+The LHS always has `phase = 0` (it's a `merge`). But if `t = recDelta b s (.delta k)`, then `phase t = 1`.
+
+Concrete counterexample — let `t = recDelta void void (.delta void)`:
+- LHS: `merge void t` → `phase = 0`, `cost = 1 + cost t = 1 + 2 = 3` → measure `(0, 3)`
+- RHS: `t` → `phase = 1`, `cost = 2` → measure `(1, 2)`
+
+Since `(0, 3) <_lex (1, 2)`, the measure **increases**. The rule is not covered. ✗
+
+The same failure applies to **`R_merge_void_right`** and **`R_merge_cancel`** by identical reasoning — any of them can rewrite a `merge`-wrapped term (phase 0) to expose a `recDelta _ _ (.delta _)` subterm (phase 1).
+
+---
+
+**`R_rec_zero` : `Step (recDelta b s void) b`**
+
+Here the LHS has `phase = 0` because the third argument is `void`, not `.delta _`. But if `b` itself is `recDelta x y (.delta z)`, then `phase b = 1`.
+
+Concrete counterexample — let `b = recDelta void void (.delta void)`, `s = void`:
+- LHS: `recDelta b void void` → `phase = 0`, `cost = 1 + 2 + 0 + 0 = 3` → measure `(0, 3)`
+- RHS: `b` → `phase = 1`, `cost = 2` → measure `(1, 2)`
+
+Again `(0, 3) <_lex (1, 2)`. ✗
+
+---
+
+### Rules That Do Hold
+
+| Rule | Why it holds |
+|---|---|
+| `R_int_delta` | phases both 0, cost drops from `≥2` to 0 |
+| `R_rec_succ` | LHS phase = 1, RHS phase = 0; first component strictly decreases regardless of cost |
+| `R_eq_refl` | phases both 0, cost drops from `3 + 2·cost a` to 0 |
+| `R_eq_diff` | phases both 0, cost drops from `3 + cost a + cost b` to `2 + cost a + cost b` |
+
+---
+
+### Root Cause
+
+`phase` is a **shallow** (top-level only) indicator. It successfully handles the `recDelta`/`app` interaction in `R_rec_succ`, but it is blind to occurrences of `recDelta _ _ (.delta _)` buried as subterms. When a rule like `R_merge_void_left` strips off an outer constructor, it can **expose** a phase-1 subterm as the new root, driving the measure upward. The `cost` component cannot rescue this because cost only acts as a tiebreaker when phase is equal.
+
+### Verdict
+
+**The measure is unsound.** There exist reachable terms for which `R_merge_void_left`, `R_merge_void_right`, `R_merge_cancel`, and `R_rec_zero` each strictly increase `(phase, cost)` under the lexicographic order. A sound alternative would need `phase` (or a replacement first component) to account for `recDelta _ _ (.delta _)` occurrences at all depths — for example by counting them structurally — or the measure would need to be restructured so that the `merge`/`rec` interaction is handled by a single monotone weight function rather than a depth-0 flag.

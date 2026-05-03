@@ -1,0 +1,262 @@
+, and I did **not** modify it or run Lean.
+
+The missing cases are:
+
+- `Step.R_rec_succ`
+- `Step.R_eq_refl`
+- `Step.R_eq_diff`
+
+The easiest one is `R_eq_refl`; the other two want a couple of reusable “$\omega$-power absorbs lower terms” sub-lemmas. Also, as noted above, the comment inside `R_rec_succ` has the two sides verbally swapped; the actual goal is still the right one.
+
+---
+
+## The routine case: `R_eq_refl`
+
+This one should follow exactly the same positivity pattern as `R_int_delta`.
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    exact Ordinal.pos_iff_ne_zero.mpr (by
+      apply ne_of_gt
+      exact add_pos_right _ one_pos)
+```
+
+After `simp [mu]`, the goal is just `0 < omega0 ^ (...) + 1`, and `+ 1` makes it immediate.
+
+---
+
+## The hard case: `R_rec_succ`
+
+### What the goal really is
+
+After `simp [mu]`, you want something of the shape
+
+$$
+\omega^3(\mu s + 1) + \omega^2(\omega^{\mu n + \mu s + 6} + \omega(\mu b + 1) + 2) + 1
+\;<\;
+\omega^{\omega^5(\mu n + 1) + 1 + \mu s + 6} + \omega(\mu b + 1) + 1.
+$$
+
+So the strategy is:
+
+1. bound the entire left-hand side by a **single** smaller principal ordinal, say `omega0 ^ K`;
+2. show `K < omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6`;
+3. conclude by monotonicity of `x ↦ omega0 ^ x`, then use `le_add_right` to absorb the trailing `+ omega0 * ... + 1` on the right.
+
+### Lean-shaped skeleton
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+
+    -- The actual goal is:
+    --   mu (app s (recDelta b s n)) < mu (recDelta b s (delta n))
+
+    -- Pick a “small” exponent dominating the app-side.
+    let K : Ordinal := mu n + mu s + (8 : Ordinal)
+
+    have h_app_lt_K :
+        omega0 ^ (3 : Ordinal) * (mu s + 1) +
+          omega0 ^ (2 : Ordinal) *
+            (omega0 ^ (mu n + mu s + (6 : Ordinal)) + omega0 * (mu b + 1) + 1 + 1) + 1
+          < omega0 ^ K := by
+      -- Skeleton:
+      -- 1. show each summand is < omega0 ^ K
+      -- 2. use additively-principal closure of omega0 ^ K to absorb the sum
+
+      have h₁ :
+          omega0 ^ (3 : Ordinal) * (mu s + 1) < omega0 ^ K := by
+        -- Since 3 < mu n + 8, the ω^3-term is far below ω^K.
+        -- Use:
+        --   * mu s < mu s + 1
+        --   * mu s + 1 ≤ omega0 ^ (mu s + 1)   (or any stronger convenient bound)
+        --   * monotonicity of exponentiation by omega0
+        sorry
+
+      have h₂ :
+          omega0 ^ (2 : Ordinal) *
+            (omega0 ^ (mu n + mu s + (6 : Ordinal)) + omega0 * (mu b + 1) + 1 + 1)
+          < omega0 ^ K := by
+        -- First bound the parenthesized term by something below omega0 ^ (mu n + mu s + 7),
+        -- then multiplying by omega^2 keeps it below omega0 ^ (mu n + mu s + 8) = omega0 ^ K.
+        -- This is the core ordinal-arithmetic step.
+        sorry
+
+      have h₃ : (1 : Ordinal) < omega0 ^ K := by
+        -- Any positivity / nonzeroness argument for omega0 ^ K works here.
+        sorry
+
+      -- Now absorb the finite sum into the principal ordinal omega0 ^ K.
+      -- Use whichever additive-principal lemma you prefer for omega-powers.
+      sorry
+
+    have hK :
+        K < omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal) := by
+      -- This is where the “delta n makes the exponent huge” idea is formalized.
+      --
+      -- Start from:
+      --   mu n < mu n + 1
+      --   mu n + 1 ≤ omega0 ^ 5 * (mu n + 1)
+      -- then add mu s + 6 on the right, and note that K = mu n + mu s + 8
+      -- is still below that enormous exponent.
+      sorry
+
+    have h_big :
+        omega0 ^ K
+          < omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal)) := by
+      -- Strict monotonicity of α ↦ omega0 ^ α
+      sorry
+
+    calc
+      omega0 ^ (3 : Ordinal) * (mu s + 1) +
+          omega0 ^ (2 : Ordinal) *
+            (omega0 ^ (mu n + mu s + (6 : Ordinal)) + omega0 * (mu b + 1) + 1 + 1) + 1
+          < omega0 ^ K := h_app_lt_K
+      _ < omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal)) := h_big
+      _ ≤ omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal))
+            + omega0 * (mu b + 1) + 1 := by
+            exact le_add_right _ _
+```
+
+### What you’ll likely need here
+
+The exact lemma names may vary a bit, but the proof wants these ingredients:
+
+- monotonicity of ordinal addition on the right;
+- strict monotonicity of `fun α => omega0 ^ α`;
+- positivity of `omega0 ^ α`;
+- a lemma expressing that `omega0 ^ K` is additively principal, so if `A < omega0 ^ K` and `B < omega0 ^ K`, then `A + B < omega0 ^ K`.
+
+That last one is the real workhorse. Once you have it, the case becomes mostly bookkeeping.
+
+---
+
+## The other hard case: `R_eq_diff`
+
+### Goal shape
+
+After `simp [mu]`, the goal is essentially
+
+$$
+\omega^4\bigl(\omega^3(\mu a + 1) + \omega^2(\mu b + 1) + 2\bigr) + 1
+\;<\;
+\omega^{\mu a + \mu b + 9} + 1.
+$$
+
+The clean proof pattern is:
+
+1. show the inner merge term is bounded by some ordinal below `omega0 ^ (mu a + mu b + 5)`;
+2. multiplying by `omega0 ^ 4` keeps the whole left side below `omega0 ^ (mu a + mu b + 9)`;
+3. add `1` on both sides.
+
+### Lean-shaped skeleton
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+
+    let E : Ordinal := mu a + mu b + (9 : Ordinal)
+
+    have h_inner :
+        omega0 ^ (3 : Ordinal) * (mu a + 1) +
+          omega0 ^ (2 : Ordinal) * (mu b + 1) + 1 + 1
+          < omega0 ^ (mu a + mu b + (5 : Ordinal)) := by
+      -- Idea:
+      --   * the ω^3-part is below ω^(mu a + 4)
+      --   * the ω^2-part is below ω^(mu b + 3)
+      --   * both are therefore below ω^(mu a + mu b + 5)
+      --   * absorb the sum into the principal ordinal ω^(mu a + mu b + 5)
+      sorry
+
+    have h_main :
+        omega0 ^ (4 : Ordinal) *
+          (omega0 ^ (3 : Ordinal) * (mu a + 1) +
+            omega0 ^ (2 : Ordinal) * (mu b + 1) + 1 + 1)
+          < omega0 ^ E := by
+      -- Use h_inner plus the standard multiplication/exponent comparison
+      -- for omega-powers: multiplying by ω^4 raises the “order” by 4,
+      -- which is still comfortably below the exponent E = mu a + mu b + 9.
+      --
+      -- Depending on the exact lemmas available, this may be done by:
+      --   * bounding the product by ω^(mu a + mu b + 8), then
+      --   * using strict monotonicity to get ω^(mu a + mu b + 8) < ω^E.
+      sorry
+
+    -- Add 1 to both sides.
+    exact add_lt_add_right h_main 1
+```
+
+### A slightly more structured variant
+
+If you want to make the arithmetic less painful, split it into two helper bounds:
+
+```lean
+have hA : omega0 ^ (3 : Ordinal) * (mu a + 1) < omega0 ^ (mu a + (4 : Ordinal)) := by
+  sorry
+
+have hB : omega0 ^ (2 : Ordinal) * (mu b + 1) + 1 + 1 < omega0 ^ (mu b + (3 : Ordinal)) := by
+  sorry
+```
+
+then push both into a common bigger bound like `omega0 ^ (mu a + mu b + 5)` using monotonicity and principal-ordinal absorption.
+
+---
+
+## The two helper patterns that will probably save your sanity
+
+If you decide to finish this fully, I’d expect the missing proofs to become much shorter once you package these two patterns.
+
+### 1. `ω^K` absorbs smaller sums
+
+Something morally like:
+
+```lean
+-- exact lemma name/statement may differ in Mathlib
+have h_absorb :
+    ∀ {A B K : Ordinal},
+      A < omega0 ^ K ->
+      B < omega0 ^ K ->
+      A + B < omega0 ^ K := by
+  ...
+```
+
+and similarly with `A + B + 1`.
+
+This is the “principal ordinal” fact for powers of `ω`.
+
+### 2. Small polynomial terms sit below a larger `ω`-power
+
+A family of tiny estimates like:
+
+```lean
+have h_poly3 (x K : Ordinal) :
+    omega0 ^ (3 : Ordinal) * (x + 1) < omega0 ^ K := by
+  -- provided K is chosen large enough
+  ...
+
+have h_poly2 (x K : Ordinal) :
+    omega0 ^ (2 : Ordinal) * (x + 1) < omega0 ^ K := by
+  ...
+```
+
+For your file, the natural targets are:
+
+- `K = mu n + mu s + 8` in `R_rec_succ`
+- `K = mu a + mu b + 5` or `mu a + mu b + 8` in `R_eq_diff`
+
+---
+
+## Practical reading of the open cases
+
+If you want the shortest path conceptually:
+
+- `R_eq_refl`: done immediately by positivity.
+- `R_eq_diff`: prove “merge is tiny compared to `eqW` exponent”, then `integrate` only adds a fixed outer `ω^4`.
+- `R_rec_succ`: prove the `app`-side is bounded by a modest `ω^(mu n + mu s + 8)`, while the `recDelta`-side starts with `ω^(ω^5 * (mu n + 1) + ...)`, which is astronomically larger in ordinal terms.
+
+That’s the whole game: **collapse the complicated left side under one principal bound, then compare exponents**.
+
+## Completion summary
+
+I identified the three unfinished cases and gave a Lean-shaped proof skeleton for each, with `R_eq_refl` essentially complete and the other two reduced to standard ordinal-arithmetic subgoals. The key missing ingredients are monotonicity of `ω^(-)` and the additively-principal behavior of `ω^K`. No files were changed, and nothing was compiled.

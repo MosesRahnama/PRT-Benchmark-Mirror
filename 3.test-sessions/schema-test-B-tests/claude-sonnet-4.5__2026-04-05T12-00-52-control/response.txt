@@ -1,0 +1,73 @@
+I'll analyze each method against the term rewriting system.
+
+**System:**
+```
+F(x, y, Z) -> x
+F(x, y, S(n)) -> G(y, F(x, y, n))
+```
+
+---
+
+## Method A: LPO/RPO with precedence F > G > S > Z
+
+**Termination:** ✓ **Succeeds**
+- Rule 1: F(x, y, Z) > x by subterm property
+- Rule 2: F(x, y, S(n)) > G(y, F(x, y, n)) holds because F > G, and the necessary conditions are satisfied (S(n) > n gives F(x,y,S(n)) > F(x,y,n), plus subterm conditions for y)
+
+**Boundary:** ✗ **Outside**
+- The precedence F > G > S > Z is an arbitrary choice not fixed by the given rules themselves. Other precedences could be chosen.
+
+---
+
+## Method B: Polynomial interpretation
+
+**Termination:** ✓ **Succeeds**
+- Rule 1: [F(x,y,Z)] = x + 1 > [x] = x
+- Rule 2: [F(x,y,S(n))] = x + n + 2 > [G(y,F(x,y,n))] = x + n + 1
+
+**Boundary:** ✗ **Outside**
+- The specific polynomial values assigned to each symbol are arbitrary numerical choices not determined by the rules.
+
+---
+
+## Method C: KBO with uniform weights w = 1
+
+**Termination:** ✗ **Fails**
+- Rule 1: Weight decreases (|F(x,y,Z)| = 2 + |x| + |y| > |x|) ✓
+- Rule 2: Weight comparison fails
+  - |F(x,y,S(n))| = 2 + |x| + |y| + |n|
+  - |G(y,F(x,y,n))| = 2 + |x| + 2|y| + |n|
+  - Requires |y| > 2|y|, which is false
+
+**Boundary:** Moot (method fails)
+
+---
+
+## Method D: Dependency pairs with subterm criterion
+
+**Termination:** ✓ **Succeeds**
+- Dependency pair: F#(x, y, S(n)) → F#(x, y, n)
+- Third argument: S(n) ⊐ n (strict subterm)
+- Well-founded decrease on argument structure
+
+**Boundary:** ✓ **Within**
+- Uses ordinary metatheoretic soundness reasoning. The projection to the third argument observes the recursive structure present in the rules themselves rather than importing arbitrary choices.
+
+---
+
+## Method E: Direct descent measure
+
+**Termination:** ✓ **Succeeds**
+- Rule 1: mu(F(x,y,Z)) = 1 > mu(x) = 0
+- Rule 2: mu(F(x,y,S(n))) = depth_S(n) + 2 > mu(G(y,F(x,y,n))) = depth_S(n) + 1
+
+**Boundary:** ✓ **Within**
+- The measure directly captures the observable pattern in the rules: the third argument's S-depth decreases. This is derived from the rule structure itself, not imported.
+
+---
+
+## Conclusion
+
+**Methods satisfying both conditions (succeed in proving termination AND stay within the boundary):**
+
+**D and E**

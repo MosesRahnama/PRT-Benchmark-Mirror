@@ -1,0 +1,76 @@
+Now let me analyze this file. The user wants me to assess whether the "helper strategy" is sound. I need to identify what the helper strategy is and check if the theorems are actually provable.
+
+Looking at the file:
+
+1. There's a rewrite calculus with `Trace` types and `Step` reduction rules
+2. There's a structural measure `kappa : Trace -> Nat`
+3. There are two helper theorems with `sorry`:
+   - `kappa_rec_delta_step`: claims `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`
+   - `kappa_rec_succ_drop`: claims `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`
+
+These are clearly meant to help prove termination for the R_rec_succ rule, which transforms `recDelta b s (delta n)` into `app s (recDelta b s n)`.
+
+Let me check if these theorems are actually true by computing the values:
+
+**Theorem 1: `kappa_rec_delta_step`**
+
+Claims: `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`
+
+LHS: `kappa (recDelta b s (delta n))`
+
+According to the definition:
+```lean
+| .recDelta b s (.delta n) => Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1
+```
+
+So LHS = `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1`
+
+RHS: `kappa (recDelta b s n) + 1`
+
+
+According to the general case definition:
+```lean
+| .recDelta b s n => Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)
+```
+
+So RHS = `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1`
+
+Both sides are equal. But I need to be careful about which pattern matches when evaluating `kappa (recDelta b s n)` - the specific `delta` pattern only applies if the third argument is literally `delta n'`, otherwise the general case applies.
+
+For an arbitrary trace `n`, the general pattern matches, giving `kappa (recDelta b s n) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)`. This means RHS becomes `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1`, which matches the LHS exactly. The first theorem holds.
+
+But I need to reconsider the actual theorem statement more carefully. The LHS has `kappa (recDelta b s (delta n))` where the third argument is explicitly `delta n`, while the RHS has `kappa (recDelta b s n) + 1` with just `n`. The LHS will match the special case pattern since the third argument is of the form `delta _`.
+
+For the RHS, whether `kappa (recDelta b s n)` matches the special case or general pattern depends entirely on what `n` is. If `n` itself is a `delta` constructor, then it matches the special case and evaluates to `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 1` for some `n'`. Otherwise it uses the general pattern and gives `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)`. This dependency on the structure of `n` makes the proof more complex than initially apparent. RHS depends on what `n` is. When `n = void`, we get `kappa (recDelta b s void) = Nat.max (Nat.max (kappa b) (kappa s)) 0`, so RHS becomes `Nat.max (Nat.max (kappa b) (kappa s)) 0 + 1`, which matches LHS. When `n = delta n'`, the second pattern gives `kappa (recDelta b s n) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 1`, making RHS equal to `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 1 + 1`.
+
+But since `kappa (delta n') = kappa n'` by definition, LHS becomes `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 1`. This means LHS ≠ RHS in the `delta _` case—the theorem appears to be false. Let me verify this discrepancy more carefully.
+
+For the theorem `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`, when `n` is not itself a `delta` form, the third argument `delta n` matches the pattern and gives `kappa (recDelta b s (delta n)) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1`. Meanwhile, `kappa (recDelta b s n)` evaluates to `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)` since `n` doesn't have the `delta` form.
+
+When `n = delta n'`, the situation becomes more complex. Applying `delta` again gives `delta (delta n')`, which matches the pattern with `m = delta n'`, yielding `Nat.max (Nat.max (kappa b) (kappa s)) (kappa (delta n')) + 1`. Using the fact that `kappa (delta n') = kappa n'`, this simplifies to `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 1`. On the right side, since `n = delta n'`, the pattern matches directly and `kappa (recDelta b s (delta n')) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 1`, making the RHS equal to `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 1 + 1`. Now I need to verify whether the left side equals the right side in this case.
+
+The left side is `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 1` while the right side is `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 2`, so they don't match. This means the first theorem fails when `n` has the form `delta _`. For the second theorem about `kappa_rec_succ_drop`, which claims `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`, the proof would rely on rewriting the RHS using the first theorem, but since that theorem is false, the proof strategy breaks down.
+
+Computing directly: the LHS becomes `Nat.max (kappa s) (kappa (recDelta b s n))`. When `n` is not of the form `delta _`, the RHS is `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1`, while `kappa (recDelta b s n)` equals `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)`. The LHS then becomes `Nat.max (kappa s) (Nat.max (Nat.max (kappa b) (kappa s)) (kappa n))`, which simplifies to `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)` since the inner max is already at least as large as `kappa s`. This means the LHS and RHS differ by exactly 1, confirming the inequality holds in this case.
+
+For Case B where `n` takes the form `delta n'`, the RHS becomes `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 1`. The LHS computation follows similarly, yielding the same structure with the maximum of the three cardinal bounds plus one. HS ≮ RHS ✗ (in Case B)
+
+The second theorem is also **FALSE** when `n` has the form `delta _`.
+
+Let me verify my Case B calculation once more:
+
+If `n = delta n'`:
+- LHS = `kappa (app s (recDelta b s n))`
+      = `kappa (app s (recDelta b s (delta n')))`
+      = `Nat.max (kappa s) (kappa (recDelta b s (delta n')))`
+      = `Nat.max (kappa s) (Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 1)`
+
+Since `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') ≥ Nat.max (kappa b)` and the maximum of these values plus 1 exceeds `kappa s`, the left side simplifies to `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 1`. The right side also evaluates to the same expression, confirming they're equal but contradicting the required strict inequality. Nat.max (kappa b) (kappa s)) (kappa (delta n')) + 1` = `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 1`, so the left and right sides match.
+
+Both theorems turn out to be unsound—they break down when `n` takes the form `delta n'`. Using `b = void`, `s = void`, and `n = delta void` as a concrete case shows the issue: the left side evaluates to `Nat.max 0 0` while the right side produces the same value, contradicting the claimed inequality. = 1`
+
+- RHS = `kappa (recDelta void void (delta (delta void)))`
+      = `Nat.max (Nat.max 0 0) (kappa (delta void)) + 1`
+      = `Nat.max 0 0 + 1 = 1`
+
+Both sides equal 1, so the strict inequality fails. ✗

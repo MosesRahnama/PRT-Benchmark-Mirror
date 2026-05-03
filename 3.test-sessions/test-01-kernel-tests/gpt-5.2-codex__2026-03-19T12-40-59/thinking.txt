@@ -1,0 +1,6 @@
+**Confirming strong normalization with a lexicographic measure**
+
+Strong normalization can be established from the calculus alone by defining a lexicographic measure on terms combining eqW count, recΔ delta-depth, and overall term size; each rewrite strictly decreases this measure, ensuring no infinite reductions even under contextual closure. This proof uses standard induction on the syntax without requiring extra rules or assumptions beyond those derivable from the given syntax and rewrite rules.
+**Providing final update with roadmap**
+
+I read the file and assessed that establishing strong normalization (SN) is straightforward if rewriting applies only at the root, but since the user focuses on calculus alone, SN can still be shown under standard contextual closure. I clarify that the reduction relation applies even when terms are equal, avoiding infinite loops. The update outlines defining lexicographic measures, showing each reduction step decreases these measures, and concluding termination through induction and well-foundedness arguments, all contained within the expected proof boundaries.

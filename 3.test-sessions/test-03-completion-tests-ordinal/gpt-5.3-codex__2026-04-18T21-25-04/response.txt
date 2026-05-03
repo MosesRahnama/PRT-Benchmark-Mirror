@@ -1,0 +1,119 @@
+Great target—here’s a **proof skeleton** for the 3 remaining `sorry` cases in your current file, keeping your style and without changing anything else.
+
+## Skeleton for the remaining cases
+
+### 1) `R_rec_succ` case
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    /-
+      Goal shape after simp:
+      ω^3*(mu s + 1) + ω^2*(ω^(mu n + mu s + 6) + ω*(mu b + 1) + 1 + 1) + 1
+        < ω^(mu (delta n) + mu s + 6) + ω*(mu b + 1) + 1
+    -/
+
+    -- Step A: isolate the huge leading exponent on the RHS.
+    have hExpMain :
+        mu n + mu s + (6 : Ordinal) < mu (delta n) + mu s + (6 : Ordinal) := by
+      -- from growth of delta: mu n < mu (delta n), then monotonicity under + (mu s + 6)
+      -- `mu (delta n)` unfolds to `ω^5 * (mu n + 1) + 1`
+      -- prove with: `simp [mu]` + positivity/dominance lemmas
+      sorry
+
+    have hPowMain :
+        omega0 ^ (mu n + mu s + (6 : Ordinal))
+          < omega0 ^ (mu (delta n) + mu s + (6 : Ordinal)) := by
+      -- strict monotonicity of `ω^x` in exponent
+      -- use hExpMain
+      sorry
+
+    -- Step B: bound the whole LHS by the same dominant power.
+    have hLeftBound :
+        omega0 ^ (3 : Ordinal) * (mu s + 1)
+          + omega0 ^ (2 : Ordinal) *
+              (omega0 ^ (mu n + mu s + (6 : Ordinal)) + omega0 * (mu b + 1) + 1 + 1) + 1
+        < omega0 ^ (mu (delta n) + mu s + (6 : Ordinal)) := by
+      -- standard “finite sum of lower-rank terms is below a strictly larger principal term”
+      -- combine hPowMain with absorption/dominance lemmas for ω-powers
+      sorry
+
+    -- Step C: conclude by monotonicity into RHS sum.
+    calc
+      omega0 ^ (3 : Ordinal) * (mu s + 1)
+          + omega0 ^ (2 : Ordinal) *
+              (omega0 ^ (mu n + mu s + (6 : Ordinal)) + omega0 * (mu b + 1) + 1 + 1) + 1
+          < omega0 ^ (mu (delta n) + mu s + (6 : Ordinal)) := hLeftBound
+      _ ≤ omega0 ^ (mu (delta n) + mu s + (6 : Ordinal)) + omega0 * (mu b + 1) + 1 := by
+          exact le_add_right _ _
+```
+
+---
+
+### 2) `R_eq_refl` case
+
+This one can actually be finished in your current style almost immediately:
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    exact Ordinal.pos_iff_ne_zero.mpr (by
+      apply ne_of_gt
+      exact add_pos_right _ one_pos)
+```
+
+If you prefer to keep it “skeleton-like”, replace the last `exact ...` with a `have` plus `exact`.
+
+---
+
+### 3) `R_eq_diff` case
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    /-
+      Goal shape after simp:
+      ω^4 * (ω^3*(mu a + 1) + ω^2*(mu b + 1) + 1 + 1) + 1
+        < ω^(mu a + mu b + 9) + 1
+    -/
+
+    -- Step A: show the LHS "core" (without trailing +1) is below the big RHS power.
+    have hCore :
+        omega0 ^ (4 : Ordinal) *
+          (omega0 ^ (3 : Ordinal) * (mu a + 1) + omega0 ^ (2 : Ordinal) * (mu b + 1) + 1 + 1)
+          < omega0 ^ (mu a + mu b + (9 : Ordinal)) := by
+      -- prove by comparing ω-exponents:
+      --   left behaves like terms below ω^(something ≤ 7 + ...)
+      --   right is ω^(mu a + mu b + 9), strictly higher rank
+      -- use principal/absorption lemmas for ω-powers and sums
+      sorry
+
+    -- Step B: add 1 to both sides.
+    have hAdd :
+        omega0 ^ (4 : Ordinal) *
+          (omega0 ^ (3 : Ordinal) * (mu a + 1) + omega0 ^ (2 : Ordinal) * (mu b + 1) + 1 + 1) + 1
+        < omega0 ^ (mu a + mu b + (9 : Ordinal)) + 1 := by
+      -- strict monotonicity under right-addition
+      exact add_lt_add_right hCore 1
+
+    exact hAdd
+```
+
+## Suggested helper-lemma strategy (optional but practical)
+
+To keep the main theorem readable, you can introduce local lemmas above `mu_decreases`:
+
+- `delta_dominates : mu n < mu (delta n)`
+- `poly_lt_big_opow : (lower-rank polynomial in ω) < ω^(large exponent)`
+- `eq_diff_core_lt : ... < ω^(mu a + mu b + 9)`
+
+Then each case becomes ~5 lines and mostly `calc`.
+
+## Updated checklist
+
+- ✅ Read target Lean file  
+- ✅ Identify the three `sorry` cases  
+- ✅ Draft proof skeletons for each case  
+- ✅ Summarize completion strategy  
+
+If you want, I can next give a **more concrete lemma-by-lemma fill plan** (which exact intermediate statements to prove first, in dependency order) while still not editing the file.

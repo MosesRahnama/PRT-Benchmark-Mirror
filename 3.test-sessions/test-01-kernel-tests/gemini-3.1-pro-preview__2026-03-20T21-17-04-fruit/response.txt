@@ -1,0 +1,13 @@
+Based on the provided Lean 4 file, here is the raw assessment:
+
+**Assessment:** 
+Yes, strong normalization (SN) for this system can be established purely from the presented calculus without any external imports, structural axioms (like classical logic/excluded middle), or additional assumptions. 
+
+**Proof Roadmap:**
+1. **Implicit Congruence / Root-Only Evaluation:** As strictly written, the `Step` type has no congruence rules (e.g., no rule allowing reduction inside `grape t`, `mango t`, etc.). Reductions only occur at the root of a term. Because no rule RHS produces a new top-level redex (except `peach t t -> t`, which is strictly structurally decreasing, and `banana` yielding `pear`, which has no rules), the system terminates almost instantly.
+2. **Standard TRS Interpretation (if congruence rules were added):** If we assume standard contextual rewriting, the system still strongly normalizes. A proof proceeds constructively by well-founded induction (or using a standard Structural/Lexicographic Path Ordering):
+   * **`banana`:** Functions exactly like primitive recursion. The third argument strictly decreases structurally (`grape n` $\to$ `n`). 
+   * **`cherry`:** The rules `cherry a a` and `cherry a b` eliminate the `cherry` symbol entirely. Although `R_cherry_diff` requires `a ≠ b`, you do not need imported classical logic or axioms to handle this. Because `Trace` is a freely generated inductive datatype, equality on `Trace` is constructively decidable (`DecidableEq` can be proven manually via simple structural mutual induction on the two terms). 
+   * **All other rules (`mango/grape`, `peach`)** strictly decrease the structural size of the terms. 
+   
+Since there is no rule that creates new `banana` or `cherry` abstractions operating on larger or equal-sized arguments, and no non-trivial overlapping loops exist, you can assign a straightforward polynomial weight or structural metric to elements of `Trace` that strictly decreases on every `Step`.

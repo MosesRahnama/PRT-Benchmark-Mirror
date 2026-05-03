@@ -1,0 +1,17 @@
+**Assessment:**  
+Strong normalization **does hold** for the rewrite system shown in
+.
+
+**Reasoning (brief):**
+
+1. **Only two rules** are present, both rewriting a term headed by `F`:
+   * `F(x, y, Z) → x` eliminates the `F` completely.
+   * `F(x, y, S(n)) → G(F(x, y, n))` reduces the third argument from `S(n)` to `n` while wrapping the result in a `G`.
+
+2. The third argument of `F` is the only place where a *decreasing* constructor (`S`) appears. Each application of the second rule removes one `S` layer, strictly decreasing the size of that argument.
+
+3. The symbol `G` has **no rewrite rules**, so once a `G` is introduced it never expands further.
+
+4. Even if variables are instantiated with arbitrary terms (including other `F`‑terms), each rewrite step still strictly reduces the nesting depth of `S` in the third argument of the *outermost* `F`. No rule can introduce new `S` constructors, so the number of possible reductions is bounded by the initial number of `S` constructors.
+
+5. Consequently every rewrite sequence must terminate after a finite number of steps (the number of `S` constructors present initially), and the system is strongly normalising without needing any external axioms or structural assumptions.

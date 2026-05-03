@@ -1,0 +1,90 @@
+Here’s a focused proof skeleton for each remaining rule case, staying within your existing style (using `simp`, `omega`, and the `drop_left`/`drop_right` lemmas). I’m not modifying the file or running anything.
+
+## Proof skeletons for the five remaining cases
+
+### 1) `integrate (delta t) → void`
+Key idea: if `kappa t = 0`, use `drop_right` with a `mu` drop; otherwise, use `drop_left`.
+
+```
+| _, _, Step.R_int_delta t => by
+    cases h : kappa t with
+    | zero =>
+        have hmu : mu void < mu (integrate (delta t)) := by simp
+        have hk  : kappa void = kappa (integrate (delta t)) := by simp [h]
+        exact drop_right hmu hk
+    | succ k =>
+        have hk : kappa void < kappa (integrate (delta t)) := by simp [h]
+        exact drop_left hk
+```
+
+### 2) `recDelta b s void → b`
+Key idea: `mu` strictly decreases; `kappa` is $\le$ the LHS, so split into `<` or `=`.
+
+```
+| _, _, Step.R_rec_zero b s => by
+    have hmu : mu b < mu (recDelta b s void) := by
+      simp [mu]; omega
+    have hk_le : kappa b ≤ kappa (recDelta b s void) := by
+      -- show kappa b ≤ max (max (kappa b) (kappa s)) 0
+      have h1 : kappa b ≤ Nat.max (kappa b) (kappa s) := Nat.le_max_left _ _
+      have h2 : Nat.max (kappa b) (kappa s) ≤
+                Nat.max (Nat.max (kappa b) (kappa s)) (kappa void) := Nat.le_max_left _ _
+      simpa [kappa] using Nat.le_trans h1 h2
+    cases lt_or_eq_of_le hk_le with
+    | inl hklt =>
+        exact drop_left hklt
+    | inr hkeq =>
+        exact drop_right hmu (by simpa [kappa] using hkeq)
+```
+
+### 3) `recDelta b s (delta n) → app s (recDelta b s n)`
+Key idea: the LHS has `+1` in `kappa`, so it strictly drops. Let $M := \max(\max(\kappa b,\kappa s),\kappa n)$.
+
+```
+| _, _, Step.R_rec_succ b s n => by
+    let M := Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)
+    have hs : kappa s ≤ M := by
+      have hs' : kappa s ≤ Nat.max (kappa b) (kappa s) := Nat.le_max_right _ _
+      exact Nat.le_trans hs' (Nat.le_max_left _ _)
+    have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+      -- kappa RHS = M, kappa LHS = M + 1
+      simp [kappa, M, Nat.max_eq_right hs]
+    exact drop_left hk
+```
+
+### 4) `eqW a a → void`
+Same pattern as case (1): split on `kappa a`.
+
+```
+| _, _, Step.R_eq_refl a => by
+    cases h : kappa a with
+    | zero =>
+        have hmu : mu void < mu (eqW a a) := by simp; omega
+        have hk  : kappa void = kappa (eqW a a) := by simp [h]
+        exact drop_right hmu hk
+    | succ k =>
+        have hk : kappa void < kappa (eqW a a) := by simp [h]
+        exact drop_left hk
+```
+
+### 5) `eqW a b → integrate (merge a b)`
+Here `kappa` ties and `mu` drops by exactly 1.
+
+```
+| _, _, Step.R_eq_diff a b => by
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by
+      simp [mu]; omega
+    have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by
+      simp [kappa]
+    exact drop_right hmu hk
+```
+
+If any of the `simp` steps don’t close automatically, keep them and replace with small explicit steps (e.g., rewriting with `kappa_*`/`mu_*` lemmas and then `omega`).
+
+## ✅ Progress checklist
+- ✅ Analyze remaining rule cases
+- ✅ Draft Lean proof skeletons
+- ✅ Summarize completion guidance
+
+## Wrap-up
+You now have a per-case skeleton that matches the earlier proof style: a small `simp`/`omega` proof of strict `mu` drop when `kappa` ties, and `drop_left` when the `kappa` strictly decreases. If you want, I can help refine any of the individual `simp` goals into fully explicit steps without touching the file.

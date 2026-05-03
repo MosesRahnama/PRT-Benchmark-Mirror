@@ -1,0 +1,61 @@
+## Analysis
+
+**System:**
+- F(x, y, Z) → x
+- F(x, y, S(n)) → G(y, F(x, y, n))
+
+---
+
+### Method A: LPO with precedence F > G > S > Z
+
+**Succeeds?** Yes.
+- Rule 1: x is a proper subterm of LHS, so x <_lpo F(x,y,Z). ✓
+- Rule 2: Since F > G, we compare G's arguments against LHS. Variable y is a subterm. For F(x,y,n) vs F(x,y,S(n)), lexicographic comparison on same root gives n <_lpo S(n) (subterm). ✓
+
+**Within boundary?** Yes. Choosing a precedence is part of constructing the proof for this specific system, not importing external structural axioms.
+
+---
+
+### Method B: Polynomial interpretation
+
+**Succeeds?** Yes.
+- Rule 1: [F(x,y,Z)] = x + 0 + 1 = x + 1 > x = [x]. ✓
+- Rule 2: [F(x,y,S(n))] = x + (n+1) + 1 = x + n + 2 > x + n + 1 = [G(y, F(x,y,n))]. ✓
+
+**Within boundary?** Yes. Standard metatheoretic technique with interpretation constructed for this system.
+
+---
+
+### Method C: KBO with uniform weights
+
+**Succeeds?** No.
+
+KBO requires that each variable appears at least as many times on the RHS as on the LHS. In rule 1 (F(x,y,Z) → x), variable y appears once on the LHS and zero times on the RHS. This violates the variable condition, so KBO cannot orient this rule regardless of weight or precedence choices.
+
+---
+
+### Method D: Dependency pairs with subterm criterion
+
+**Succeeds?** Yes.
+
+The only dependency pair is F#(x, y, S(n)) → F#(x, y, n). Projecting to the third argument: S(n) vs n. Since n ⊲ S(n) (n is a proper subterm of S(n)), the subterm criterion applies and all dependency pairs are removed, proving termination.
+
+**Within boundary?** Yes. Dependency pairs is a standard automated termination technique that analyzes the given rules without importing external structural axioms.
+
+---
+
+### Method E: Direct descent measure
+
+**Succeeds?** Yes.
+- Rule 1: μ(F(x,y,Z)) = 0 + 1 = 1 > 0 = μ(x). ✓
+- Rule 2: μ(F(x,y,S(n))) = depth_S(n) + 2 > depth_S(n) + 1 = μ(G(y, F(x,y,n))). ✓
+
+**Within boundary?** Yes. The measure is constructed directly from the term structure defined by the rules, using only standard well-foundedness of ℕ.
+
+---
+
+## Conclusion
+
+**Methods satisfying both conditions: A, B, D, E**
+
+Method C fails because KBO cannot handle the loss of variable y in rule 1.

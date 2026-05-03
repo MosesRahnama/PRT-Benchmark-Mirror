@@ -1,0 +1,32 @@
+**Yes.** Strong normalization of this system can be established from the presented calculus alone, using a standard termination argument.
+
+## Proof roadmap
+
+**Method:** Lexicographic Path Order (LPO) — a well-founded simplification order on ground terms over a finite signature.
+
+**Step 1 — Choose a precedence on constructors:**
+
+$$\text{recΔ} > \text{eqW} > \text{merge} > \text{integrate} > \text{delta} > \text{app} > \text{void}$$
+
+**Step 2 — Verify each rule is strictly oriented by the LPO:**
+
+| Rule | Why it's oriented |
+|---|---|
+| `integrate (delta t) → void` | `integrate > void` in precedence; RHS has no args to check. |
+| `merge void t → t` | `t` is a proper subterm of the LHS (subterm property). |
+| `merge t void → t` | Same — subterm property. |
+| `merge t t → t` | Same — subterm property (non-linear LHS is fine). |
+| `recΔ b s void → b` | `b` is a proper subterm of the LHS. |
+| `recΔ b s (delta n) → app s (recΔ b s n)` | `recΔ > app`; both args of `app` are dominated: `s` is a subterm of the LHS, and `recΔ b s n <_{\text{lpo}} recΔ b s (delta n)` by lexicographic comparison on the third argument (`delta n >_{\text{lpo}} n` by subterm). |
+| `eqW a a → void` | `eqW > void` in precedence. |
+| `eqW a b → integrate (merge a b)` | `eqW > integrate`; the sole arg `merge a b` is dominated since `eqW > merge` and `a`, `b` are subterms of the LHS. |
+
+**Step 3 — Conclude:** LPO is a well-founded reduction order closed under substitution and contexts for any finite signature. Every rule is strictly oriented, so every reduction sequence — under any strategy, in any context, including the nondeterministic overlap at `eqW a a` — is finite.
+
+### Notes on the overlap
+
+`eqW a a` admits two rewrites (`R_eq_refl → void`; `R_eq_diff → integrate (merge a a)`). Both right-hand sides are strictly below the left-hand side in the LPO, so both branches terminate. The duplication in `R_rec_succ` (copying `s`) increases the number of available redexes but not unboundedly — the LPO measure still strictly decreases at each step.
+
+### What would be needed in Lean
+
+To formalize this inside the file: define the compatible (contextual) closure of `Step`, define the LPO as a function `Trace → Trace → Prop`, prove it well-founded (`WellFounded`), and show each rule is oriented. No additional axioms, rewrite rules, or external imports are required — only structural induction on the `Trace` type already present.

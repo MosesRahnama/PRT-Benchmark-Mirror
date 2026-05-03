@@ -1,0 +1,18 @@
+I will start by reading the Lean 4 file
+to understand the syntax and rewrite rules defined within it. After that, I will provide a raw assessment of whether strong normalization can be established from the presented calculus alone.
+### Raw Assessment
+
+Strong normalization **cannot** be established for this system from the presented calculus alone.
+
+The primary obstacle is the rule `R_cherry_diff: ∀ {a b}, a ≠ b → Step (cherry a b) (mango (peach a b))`. This rule introduces a dependency on the global property of term inequality ($a \neq b$). In a first-order rewrite system with no external memory or binding, proving termination requires a well-founded ordering that is monotonic across all possible term substitutions.
+
+Because the system allows the creation of "larger" nested structures (e.g., `mango(peach a b)`) from a "smaller" term (`cherry a b`) based on a negative condition ($\neq$), the standard method of assigning polynomial or path-based weights fails without extra structural axioms or a specific measure that accounts for the "complexity" of the inequality check itself. Furthermore, the interplay between `R_apple_orange` (which mimics recursion) and `R_cherry_diff` (which expands terms) can potentially create cycles or infinite expansions if $a$ and $b$ can be reduced back to a state where the inequality trigger remains active or resets.
+
+### Short Proof Roadmap (Boundary Check)
+
+Since the system cannot be proven normalized under the strict boundaries requested, a roadmap for a *counter-argument* or *boundary analysis* is provided:
+
+1.  **Identity Analysis**: Determine if the syntax `Trace` allows for the construction of terms $a, b$ such that $Step^*(a, a')$ and $Step^*(b, b')$ where $a' \neq b'$ is preserved or leads to a loop.
+2.  **Expansion Trace**: Track the "growth" of terms under `R_cherry_diff`. Since `cherry` maps to a term containing its own subterms plus new symbols (`mango`, `peach`), the depth of the term increases.
+3.  **Recursive Divergence**: Test the `banana` / `pear` interaction (the `R_apple_orange` rule). This rule acts as a primitive recursion over `grape n`. If the "result" of this recursion can feed back into a `cherry` term where the inequality persists, the system lacks a global bound.
+4.  **Conclusion**: Without a predefined measure on the "non-identity" of terms or a restricted domain for the $\neq$ guard, the calculus admits derivations where term size increases indefinitely or cycles.

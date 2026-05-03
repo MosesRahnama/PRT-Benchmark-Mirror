@@ -1,0 +1,82 @@
+## Assessment of Termination Measures for First-Order Rewrite Calculus
+
+### The Rewrite System
+
+The `Step` relation defines 8 rewrite rules:
+
+| Rule | LHS → RHS |
+|------|-----------|
+| `R_int_delta` | `integrate (delta t)` → `void` |
+| `R_merge_void_left` | `merge void t` → `t` |
+| `R_merge_void_right` | `merge t void` → `t` |
+| `R_merge_cancel` | `merge t t` → `t` |
+| `R_rec_zero` | `recDelta b s void` → `b` |
+| `R_rec_succ` | `recDelta b s (delta n)` → `app s (recDelta b s n)` |
+| `R_eq_refl` | `eqW a a` → `void` |
+| `R_eq_diff` | `eqW a b` → `integrate (merge a b)` |
+
+---
+
+### Analysis of Each Measure
+
+#### **mu1** — ❌ FAILS
+
+| Rule | LHS measure | RHS measure | Decreases? |
+|------|-------------|-------------|------------|
+| `R_int_delta` | `2 + μ₁(t)` | `0` | ✓ |
+| `R_merge_void_left/right` | `1 + μ₁(t)` | `μ₁(t)` | ✓ |
+| `R_merge_cancel` | `1 + 2·μ₁(t)` | `μ₁(t)` | ✓ |
+| `R_rec_zero` | `1 + μ₁(b) + μ₁(s)` | `μ₁(b)` | ✓ |
+| **`R_rec_succ`** | `2 + μ₁(b) + μ₁(s) + μ₁(n)` | `2 + μ₁(b) + 2·μ₁(s) + μ₁(n)` | **✗** |
+| `R_eq_refl` | `3 + 2·μ₁(a)` | `0` | ✓ |
+| `R_eq_diff` | `3 + μ₁(a) + μ₁(b)` | `2 + μ₁(a) + μ₁(b)` | ✓ |
+
+**Failure on `R_rec_succ`:** The RHS contains `s` twice (once in `app s _`, once inside `recDelta b s n`), while LHS has `s` once. Requires `μ₁(s) > 2·μ₁(s)`, i.e., `0 > μ₁(s)` — impossible for natural numbers.
+
+---
+
+#### **mu2** — ❌ FAILS
+
+| Rule | LHS measure | RHS measure | Decreases? |
+|------|-------------|-------------|------------|
+| `R_int_delta` | `3 + μ₂(t)` | `0` | ✓ |
+| `R_merge_void_left/right` | `2 + μ₂(t)` | `μ₂(t)` | ✓ |
+| `R_merge_cancel` | `2 + 2·μ₂(t)` | `μ₂(t)` | ✓ |
+| `R_rec_zero` | `5 + μ₂(b) + μ₂(s)` | `μ₂(b)` | ✓ |
+| **`R_rec_succ`** | `6 + μ₂(b) + μ₂(s) + μ₂(n)` | `6 + μ₂(b) + 2·μ₂(s) + μ₂(n)` | **✗** |
+| `R_eq_refl` | `5 + 2·μ₂(a)` | `0` | ✓ |
+| `R_eq_diff` | `5 + μ₂(a) + μ₂(b)` | `4 + μ₂(a) + μ₂(b)` | ✓ |
+
+**Failure on `R_rec_succ`:** Same structural issue. Requires `μ₂(s) > 2·μ₂(s)`.
+
+---
+
+#### **mu3** — ❌ FAILS
+
+| Rule | LHS measure | RHS measure | Decreases? |
+|------|-------------|-------------|------------|
+| `R_int_delta` | `3 + μ₃(t)` | `0` | ✓ |
+| `R_merge_void_left/right` | `1 + μ₃(t)` | `μ₃(t)` | ✓ |
+| `R_merge_cancel` | `1 + 2·μ₃(t)` | `μ₃(t)` | ✓ |
+| `R_rec_zero` | `1 + μ₃(b) + μ₃(s)` | `μ₃(b)` | ✓ |
+| **`R_rec_succ`** | `2 + μ₃(b) + μ₃(s) + μ₃(n)` | `3 + μ₃(b) + 2·μ₃(s) + μ₃(n)` | **✗** |
+| `R_eq_refl` | `4 + 2·μ₃(a)` | `0` | ✓ |
+| `R_eq_diff` | `4 + μ₃(a) + μ₃(b)` | `3 + μ₃(a) + μ₃(b)` | ✓ |
+
+**Failure on `R_rec_succ`:** Even worse — requires `2 + μ₃(s) > 3 + 2·μ₃(s)`, i.e., `-1 > μ₃(s)`.
+
+---
+
+### Root Cause
+
+The `R_rec_succ` rule exhibits **argument duplication**:
+
+```
+recDelta b s (delta n) → app s (recDelta b s n)
+```
+
+The parameter `s` appears **once** on the LHS but **twice** on the RHS (explicitly in `app s _` and implicitly inside `recDelta b s n`). No linear additive measure can handle this — the "weight" of `s` on the RHS will always be at least double its weight on the LHS.
+
+### Conclusion
+
+**All three candidates fail.** The rewrite system may still be terminating (the `delta n` decreases structurally in the recursive call), but proving termination requires a **lexicographic** or **multiset** measure that tracks the decreasing `n` argument in `recDelta` as the primary component, not a simple size-based natural number measure.

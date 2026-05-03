@@ -1,0 +1,40 @@
+Checked only
+as requested.
+
+## Raw assessment
+
+**Yes** — strong normalization is establishable from the presented calculus alone, with no extra rewrite rules, guards, side conditions, or external object-level assumptions.
+
+Two ways to see it:
+
+1. **Literal reading of `Step` as defined** (root-step only, no congruence/context rules): termination is immediate; there is no rule that can sustain an infinite top-level chain.
+
+2. **Even under standard contextual closure** (rewrite allowed in subterms), SN is still provable by a standard reduction ordering (e.g., **LPO/RPO**) that orients all rules strictly.
+
+## Short roadmap (within your boundary)
+
+Use a well-founded term ordering (LPO is enough) with a precedence such as:
+\[
+\mathrm{eqW} \succ \mathrm{rec\Delta} \succ \mathrm{integrate} \succ \mathrm{merge} \succ \mathrm{app} \succ \mathrm{delta} \succ \mathrm{void}.
+\]
+
+Then check each rule decreases:
+
+- `R_merge_*`, `R_merge_cancel`, `R_rec_zero` are subterm-decreasing.
+- `R_int_delta`, `R_eq_refl`, `R_eq_diff` decrease by precedence (`eqW` above `integrate`, etc.).
+- `R_rec_succ` decreases because  
+  \[
+  \mathrm{rec\Delta}(b,s,\delta n) \;>\; \mathrm{rec\Delta}(b,s,n)
+  \]
+  (third argument strictly smaller), and root `recΔ` is above `app`, so
+  \[
+  \mathrm{rec\Delta}(b,s,\delta n) \;>\; \mathrm{app}(s,\mathrm{rec\Delta}(b,s,n)).
+  \]
+
+Since all rules are strictly decreasing in a well-founded order, no infinite reduction exists.
+
+## Checklist
+
+- [x] Read only the specified Lean file  
+- [x] Assessed SN from calculus alone (no extra assumptions)  
+- [x] Provided a short in-boundary proof roadmap

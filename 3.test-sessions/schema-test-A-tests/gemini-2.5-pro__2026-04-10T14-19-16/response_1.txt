@@ -1,0 +1,12 @@
+Based on the provided rewrite system, strong normalization **can be established**.
+
+**Reasoning:**
+The system exhibits a clear pattern of structural recursion on the third argument of the function `F`.
+
+1.  **Rule 2:** `F(x, y, S(n)) -> G(y, F(x, y, n))`
+    The recursive call to `F` on the right-hand side, `F(x, y, n)`, is applied to a structurally smaller term (`n`) than the corresponding argument in the left-hand side, `S(n)`.
+
+2.  **Rule 1:** `F(x, y, Z) -> x`
+    This is the base case for the recursion, where the recursion terminates by eliminating the `F` term entirely.
+
+Because the recursive argument to `F` decreases in size with every application of Rule 2 until it reaches the base case `Z` (which is handled by Rule 1), no infinite reduction sequence involving `F` is possible. The function `G` does not have any rewrite rules, so it cannot introduce non-termination. Therefore, all possible reduction sequences are finite, and the system is strongly normalizing.

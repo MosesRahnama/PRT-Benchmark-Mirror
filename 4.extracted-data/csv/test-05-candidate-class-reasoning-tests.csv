@@ -1,0 +1,109 @@
+session_slug,model,provider,response_truncated_flag,tool_spill_flag,mu1_yes_no,mu2_yes_no,mu3_yes_no,r_rec_succ_cited,self_correction_flag,self_contradiction_flag,adjudicator_notes,mu1_correctness,mu2_correctness,mu3_correctness,r_rec_succ_localization_correctness,overall_test05_correctness
+claude-haiku-4.5__2026-03-25T08-23-44,Claude Haiku 4.5,Anthropic,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+claude-haiku-4.5__2026-03-25T08-44-17,Claude Haiku 4.5,Anthropic,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+claude-haiku-4.5__2026-04-12T12-10-10,Claude Haiku 4.5,Anthropic,0,1,no,yes,yes,yes,yes,no,"Response starts with tool narration (tool_spill=1). Computes RHS for mu2 as 6 + mu2 b + 2*mu2 s + mu2 n but then claims it passes, which is fabricated arithmetic.",Correct,Incorrect,Incorrect,Correct,Incorrect
+claude-haiku-4.5__2026-04-12T12-10-19,Claude Haiku 4.5,Anthropic,0,1,no,yes,no,yes,no,no,"Extractor 1 said partial_rejection, extractor 2 said wrong. Since the model accepts at least one measure, wrong is correct per rubric. all_three_rejected is no since mu2 is explicitly accepted.",Correct,Incorrect,Correct,Correct,Incorrect
+claude-opus-4.5__2026-03-25T08-23-58,Claude Opus 4.5,Anthropic,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+claude-opus-4.5__2026-03-25T08-24-09,Claude Opus 4.5,Anthropic,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+claude-opus-4.5__2026-04-12T12-10-23,Claude Opus 4.5,Anthropic,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+claude-opus-4.5__2026-04-12T12-10-32,Claude Opus 4.5,Anthropic,0,0,no,no,no,yes,yes,yes,Extractor 2 coded proposes_replacement_measure_flag=0 but the response proposes lexicographic measure and multiset ordering. Flag should be 1.,Correct,Correct,Correct,Correct,Correct
+claude-opus-4.6__2026-03-24T22-28-24,Claude Opus 4.6,Anthropic,1,0,no,no,no,yes,no,no,Response ends mid-sentence (truncated). Substantive verdict is complete before truncation. Extractor 2 coded proposes_replacement_measure_flag as text; no replacement proposed (truncation cut it off). Flag=0.,Correct,Correct,Correct,Correct,Correct
+claude-opus-4.6__2026-03-25T08-24-12,Claude Opus 4.6,Anthropic,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+claude-opus-4.6__2026-04-12T12-11-15,Claude Opus 4.6,Anthropic,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+claude-opus-4.6__2026-04-12T12-11-31,Claude Opus 4.6,Anthropic,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+claude-sonnet-4.5__2026-03-25T08-24-37,Claude Sonnet 4.5,Anthropic,0,1,no,no,no,yes,no,no,"Response starts with tool narration (tool_spill=1). Duplication is explicitly named (""app duplicates its first argument s""). ""Simple size-based measures"" sufficiently names the additive class.",Correct,Correct,Correct,Correct,Correct
+claude-sonnet-4.5__2026-03-25T08-24-54,Claude Sonnet 4.5,Anthropic,0,1,no,no,no,yes,no,no,"Main thrust is class-level rejection; alternatives (lexicographic, dependency pair, matrix) are secondary. primary_category = class_level_generalization. Duplication is implicit in description but identified structurally.",Correct,Correct,Correct,Correct,Correct
+claude-sonnet-4.5__2026-04-12T12-10-59,Claude Sonnet 4.5,Anthropic,0,0,no,no,no,yes,yes,yes,Duplication of s is not explicitly stated but the structural problem is described. partial is most accurate.,Correct,Correct,Correct,Correct,Correct
+claude-sonnet-4.5__2026-04-12T12-11-11,Claude Sonnet 4.5,Anthropic,0,0,no,no,no,yes,yes,yes,Primary category is class_level_generalization; replacement suggestion is brief.,Correct,Correct,Correct,Correct,Correct
+claude-sonnet-4.6__2026-04-12T12-11-37,Claude Sonnet 4.6,Anthropic,0,0,no,no,no,yes,no,no,Fabricated arithmetic on R_eq_diff warrants flag=1.,Correct,Correct,Correct,Correct,Correct
+claude-sonnet-4.6__2026-04-12T16-10-47,Claude Sonnet 4.6,Anthropic,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+claude-sonnet-4.6__2026-04-13T21-23-27,Claude Sonnet 4.6,Anthropic,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+claude-sonnet-4.6__2026-04-13T23-03-00,Claude Sonnet 4.6,Anthropic,0,0,no,no,yes,yes,no,no,sign error: treats negative Delta as strictly decreasing so concludes mu3 valid,Correct,Correct,Incorrect,Correct,Incorrect
+claude-sonnet-4__2026-03-25T08-24-23,Claude Sonnet 4,Anthropic,0,0,no,no,no,yes,no,no,Ext2 overcoded class_level_correct; response does not generalize.,Correct,Correct,Correct,Correct,Correct
+claude-sonnet-4__2026-03-25T08-24-33,Claude Sonnet 4,Anthropic,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+claude-sonnet-4__2026-04-12T12-10-36,Claude Sonnet 4,Anthropic,0,0,no,no,no,yes,no,no,Ext1 said instance_correct but model rejects for wrong rules. wrong is correct since rejections are based on fabricated failures. No tool spill visible.,Correct,Correct,Correct,Correct,Correct
+claude-sonnet-4__2026-04-12T12-10-52,Claude Sonnet 4,Anthropic,0,0,no,no,no,yes,no,no,Ext2 overcoded class_level_correct; response does not generalize.,Correct,Correct,Correct,Correct,Correct
+deepseek-r1-0528__2026-03-24T22-30-07,DeepSeek R1,DeepSeek,0,0,no,no,no,yes,no,no,Ext2 overcoded class_level_correct. Instance_correct with hinted_at is more accurate.,Correct,Correct,Correct,Correct,Correct
+deepseek-r1-0528__2026-03-25T08-25-21,DeepSeek R1,DeepSeek,0,0,yes,no,no,yes,no,no,all_three_rejected=no since mu1 is explicitly accepted. Ext2 partial is wrong.,Incorrect,Correct,Correct,Correct,Incorrect
+deepseek-r1-0528__2026-04-12T12-10-04,DeepSeek R1,DeepSeek,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+deepseek-r1-0528__2026-04-12T13-16-27,DeepSeek R1,DeepSeek,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+deepseek-v3.2__2026-03-24T22-29-57,DeepSeek V3.2,DeepSeek,0,0,no,no,no,yes,no,no,"Ext1 flagged tool_spill=1 incorrectly; response starts with analysis, no tool narration.",Correct,Correct,Correct,Correct,Correct
+deepseek-v3.2__2026-03-25T08-25-07,DeepSeek V3.2,DeepSeek,0,0,yes,yes,yes,yes,no,no,"Ext2 said mixed_accept_reject but response clearly says ""all three measures are valid."" Ext1 accepts_all_three is correct.",Incorrect,Incorrect,Incorrect,Correct,Incorrect
+deepseek-v3.2__2026-04-12T13-17-12,DeepSeek V3.2,DeepSeek,0,0,no,no,no,yes,no,no,Ext2 said wrong/accepts_all_three but response clearly rejects all three. Ext1 instance_correct is correct.,Correct,Correct,Correct,Correct,Correct
+deepseek-v3.2__2026-04-12T13-17-22,DeepSeek V3.2,DeepSeek,0,0,no,no,no,yes,no,no,Ext2 overcoded class_level_correct. Instance_correct with hinted_at is more accurate.,Correct,Correct,Correct,Correct,Correct
+gemini-2.5-pro__2026-03-24T22-28-49,Gemini 2.5 Pro,Google,0,0,no,no,no,yes,yes,no,Self-corrected mu2 from valid to invalid; also walked back an early mu3 R_merge_cancel concern,Correct,Correct,Correct,Correct,Correct
+gemini-2.5-pro__2026-04-12T13-17-27,Gemini 2.5 Pro,Google,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+gemini-2.5-pro__2026-04-12T13-17-43,Gemini 2.5 Pro,Google,0,0,no,no,no,yes,no,no,E2 text in proposes_replacement_measure_flag interpreted as 0.,Correct,Correct,Correct,Correct,Correct
+gemini-2.5-pro__2026-04-13T21-11-04,Gemini 2.5 Pro,Google,1,0,no,no,no,yes,yes,yes,Adjudicated to class_level_correct. The model explicitly generalizes to constants Let (delta t) = C_d + (t)... and proves it fails. E2 had the correct categorization.,Correct,Correct,Correct,Correct,Correct
+gemini-3-flash-preview__2026-03-24T22-29-10,Gemini 3 Flash,Google,0,1,no,no,no,yes,yes,yes,E1 flagged tool_spill=1 correctly. Self-correction on mu2 noted but final answer correct.,Correct,Correct,Correct,Correct,Correct
+gemini-3-flash-preview__2026-03-25T08-25-52,Gemini 3 Flash,Google,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+gemini-3-flash-preview__2026-04-12T13-17-47,Gemini 3 Flash,Google,0,1,no,no,no,yes,no,no,"Opens with ""I will read the contents of the specified Lean 4 file"" tool narration",Correct,Correct,Correct,Correct,Correct
+gemini-3-flash-preview__2026-04-12T13-17-59,Gemini 3 Flash,Google,0,1,no,no,no,yes,no,no,E1 tool_spill=1 correct. Clean class-level generalization.,Correct,Correct,Correct,Correct,Correct
+gemini-3.1-pro-preview__2026-03-24T22-28-58,Gemini 3.1 Pro,Google,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+gemini-3.1-pro-preview__2026-03-25T08-26-57,Gemini 3.1 Pro,Google,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+gemini-3.1-pro-preview__2026-04-12T12-12-25,Gemini 3.1 Pro,Google,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+gemini-3.1-pro-preview__2026-04-12T13-18-07,Gemini 3.1 Pro,Google,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+glm-5__2026-03-24T22-30-19,GLM-5,Zhipu AI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+glm-5__2026-03-25T08-27-10,GLM-5,Zhipu AI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+glm-5__2026-04-12T12-12-43,GLM-5,Zhipu AI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+glm-5__2026-04-12T12-12-53,GLM-5,Zhipu AI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+gpt-4o__2026-03-25T08-27-37,GPT-4o,OpenAI,0,0,yes,yes,no,no,no,no,"No rule-by-rule check; vague strengths/weaknesses language; mu3 said to ""may fail to ensure termination in some cases""; never names R_rec_succ",Incorrect,Incorrect,Correct,Incorrect,Incorrect
+gpt-4o__2026-03-25T08-27-49,GPT-4o,OpenAI,0,0,yes,yes,yes,yes,no,no,Same pattern as sibling gpt-4o session.,Incorrect,Incorrect,Incorrect,Correct,Incorrect
+gpt-4o__2026-04-12T12-12-56,GPT-4o,OpenAI,0,0,yes,yes,yes,yes,no,no,E1 did not flag problematic_answer but zero rule-by-rule analysis. Flag warranted.,Incorrect,Incorrect,Incorrect,Correct,Incorrect
+gpt-4o__2026-04-12T13-19-01,GPT-4o,OpenAI,0,0,yes,yes,yes,no,no,no,No rule-by-rule check; vague strengths/weaknesses framing treats each as having strengths; R_rec_succ not named,Incorrect,Incorrect,Incorrect,Incorrect,Incorrect
+gpt-5.2-codex__2026-03-25T08-28-52,GPT-5.2 Codex,OpenAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+gpt-5.2-codex__2026-03-25T08-29-07,GPT-5.2 Codex,OpenAI,0,1,no,no,no,yes,no,no,todo checklist spill,Correct,Correct,Correct,Correct,Correct
+gpt-5.2-codex__2026-04-12T15-37-51,GPT-5.2 Codex,OpenAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+gpt-5.2-codex__2026-04-12T15-38-37,GPT-5.2 Codex,OpenAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+gpt-5.2__2026-03-24T22-29-48,GPT-5.2,OpenAI,0,0,no,no,no,yes,no,no,"E1 coded proposes_replacement as primary_category. Response includes ""What kind of measure would work"" section. proposes_replacement is defensible.",Correct,Correct,Correct,Correct,Correct
+gpt-5.2__2026-04-11T21-21-23,GPT-5.2,OpenAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+gpt-5.2__2026-04-12T13-19-50,GPT-5.2,OpenAI,0,0,no,no,no,yes,no,no,E1 coded proposes_replacement as primary_category; class_level_generalization is more accurate.,Correct,Correct,Correct,Correct,Correct
+gpt-5.2__2026-04-12T13-28-53,GPT-5.2,OpenAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+gpt-5.3-codex__2026-03-25T08-29-23,GPT-5.3 Codex,OpenAI,0,0,no,no,no,yes,no,no,E1 coded proposes_replacement; class_level_generalization is more faithful.,Correct,Correct,Correct,Correct,Correct
+gpt-5.3-codex__2026-03-25T09-36-11,GPT-5.3 Codex,OpenAI,0,1,no,no,no,yes,no,no,opening process narration + checklist,Correct,Correct,Correct,Correct,Correct
+gpt-5.3-codex__2026-04-12T13-19-53,GPT-5.3 Codex,OpenAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+gpt-5.3-codex__2026-04-12T13-20-00,GPT-5.3 Codex,OpenAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+gpt-5.4-pro__2026-03-25T08-25-29,GPT-5.4 Pro,OpenAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+gpt-5.4-pro__2026-03-25T08-25-38,GPT-5.4 Pro,OpenAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+gpt-5.4-pro__2026-04-12T13-19-19,GPT-5.4 Pro,OpenAI,0,0,no,no,no,yes,no,no,Extractor 1 coded proposes_replacement as primary_category; class_level_generalization is more accurate.,Correct,Correct,Correct,Correct,Correct
+gpt-5.4-pro__2026-04-12T13-19-37,GPT-5.4 Pro,OpenAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+gpt-5.4__2026-03-24T22-28-41,GPT-5.4,OpenAI,0,1,no,no,no,yes,no,no,checklist spill,Correct,Correct,Correct,Correct,Correct
+gpt-5.4__2026-03-25T08-46-35,GPT-5.4,OpenAI,0,1,no,no,no,yes,no,no,opening meta narration + checklist,Correct,Correct,Correct,Correct,Correct
+gpt-5.4__2026-04-12T13-20-16,GPT-5.4,OpenAI,0,0,no,no,no,yes,no,no,opening process narration line,Correct,Correct,Correct,Correct,Correct
+gpt-5.4__2026-04-13T21-11-26,GPT-5.4,OpenAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+gpt-oss-120b__2026-03-25T08-29-31,GPT-OSS-120B,OpenAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+gpt-oss-120b__2026-03-25T08-29-39,GPT-OSS-120B,OpenAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+gpt-oss-120b__2026-04-12T12-14-08,GPT-OSS-120B,OpenAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+gpt-oss-120b__2026-04-12T12-14-23,GPT-OSS-120B,OpenAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+grok-3__2026-03-24T22-28-14,Grok 3,xAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+grok-3__2026-03-25T08-30-56,Grok 3,xAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+grok-3__2026-04-12T12-14-28,Grok 3,xAI,0,0,no,no,no,no,no,no,Extractor 1 correct on wrong_rule. Extractor 2 coded rec_succ but quotes show merge. Model never mentions R_rec_succ.,Correct,Correct,Correct,Incorrect,Unresolved
+grok-3__2026-04-12T12-14-41,Grok 3,xAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+grok-4-0709__2026-03-25T08-36-15,Grok 4,xAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+grok-4-0709__2026-03-25T08-36-23,Grok 4,xAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+grok-4-0709__2026-04-12T12-14-46,Grok 4,xAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+grok-4-0709__2026-04-12T12-14-59,Grok 4,xAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+grok-4-1-fast-reasoning__2026-03-25T08-37-16,Grok 4.1 Fast (reasoning),xAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+grok-4-1-fast-reasoning__2026-03-25T08-37-24,Grok 4.1 Fast (reasoning),xAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+grok-4-1-fast-reasoning__2026-04-12T12-15-32,Grok 4.1 Fast (reasoning),xAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+grok-4-1-fast-reasoning__2026-04-12T12-15-44,Grok 4.1 Fast (reasoning),xAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+grok-4-fast-reasoning__2026-03-24T22-28-07,Grok 4 Fast (reasoning),xAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+grok-4-fast-reasoning__2026-03-25T08-36-52,Grok 4 Fast (reasoning),xAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+grok-4-fast-reasoning__2026-04-12T12-15-06,Grok 4 Fast (reasoning),xAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+grok-4-fast-reasoning__2026-04-12T12-15-23,Grok 4 Fast (reasoning),xAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+grok-4.20-0309-reasoning__2026-03-24T22-30-30,Grok 4.20 Reasoning,xAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+grok-4.20-0309-reasoning__2026-03-25T09-37-29,Grok 4.20 Reasoning,xAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+grok-4.20-0309-reasoning__2026-04-13T21-11-56,Grok 4.20 Reasoning,xAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+grok-4.20-0309-reasoning__2026-04-13T21-12-26,Grok 4.20 Reasoning,xAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+grok-code-fast-1__2026-03-25T08-37-44,Grok Code Fast 1,xAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+grok-code-fast-1__2026-03-25T08-37-56,Grok Code Fast 1,xAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+grok-code-fast-1__2026-04-12T13-20-33,Grok Code Fast 1,xAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+grok-code-fast-1__2026-04-12T13-20-45,Grok Code Fast 1,xAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+o3__2026-03-24T22-29-24,o3,OpenAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+o3__2026-03-25T08-38-02,o3,OpenAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+o3__2026-04-12T12-16-12,o3,OpenAI,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+o3__2026-04-12T12-16-22,o3,OpenAI,1,0,no,no,no,yes,no,no,"Response ends mid-sentence confirming truncation (flag=1). Substantive content is complete. ""No purely additive, subterm-linear measure can survive this"" is the class-level blocker. problematic_answer_flag=0 since content is complete.",Correct,Correct,Correct,Correct,Correct
+qwen3-max-thinking__2026-03-25T08-39-19,Qwen3 Max Thinking,Alibaba,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+qwen3-max-thinking__2026-03-25T08-39-27,Qwen3 Max Thinking,Alibaba,0,0,no,no,no,yes,no,no,Similar to sibling session. Identifies the structural issue but additive_class_blocked_stated=no since it frames as fixable.,Correct,Correct,Correct,Correct,Correct
+qwen3-max-thinking__2026-04-12T12-12-07,Qwen3 Max Thinking,Alibaba,0,0,no,no,no,yes,no,no,,Correct,Correct,Correct,Correct,Correct
+qwen3-max-thinking__2026-04-12T12-12-18,Qwen3 Max Thinking,Alibaba,0,0,no,no,no,yes,yes,yes,Extractor 2 over-coded class_level and duplication items. No tool spill visible.,Correct,Correct,Correct,Correct,Correct

@@ -1,0 +1,7 @@
+1. Primary method: a well‑founded syntactic measure / interpretation (“the number of `S` constructors in the 3rd argument of each `F`-redex decreases under `F(x,y,S(n)) -> G(F(x,y,n))`”).
+
+2. Yes. That argument chooses a particular well‑founded ordering/measure (and uses meta-level reasoning about term structure) that is not itself *fixed* by the rewrite rules.
+
+3. If the boundary is read as “no extra meta proof structure beyond the raw rules”, then yes, it’s outside. If the boundary is read in the standard TRS sense (“no extra *object-level* axioms/equations; meta-level termination proofs are allowed”), then no, it’s still within-bounds.
+
+4. Yes, I still think the TRS in KO7-LLM-Benchmark/test-files/Schema-Test-A-New-System.trs is strongly normalizing: the only self-recursion strictly decreases the third argument of `F`, and there are no rules that can increase it or rewrite inside `G` to re-enable growth/looping.

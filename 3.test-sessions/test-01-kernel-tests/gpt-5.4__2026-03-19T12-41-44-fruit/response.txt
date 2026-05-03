@@ -1,0 +1,47 @@
+, **strong normalization can be established from the calculus alone**.
+
+The decisive reason is that `Step` is a **root-only** rewrite relation. There are **no congruence/context rules**, no closure under subterms, no evaluation contexts, and no extra structural axioms. So a term only rewrites when its **outermost** constructor matches one of the listed left-hand sides.
+
+## Why this is enough
+
+Every rule falls into one of two harmless classes:
+
+- **Immediate-stop rules**: the result is already root-normal.
+  - `mango (grape t) → plum`
+  - `banana b s (grape n) → pear s (banana b s n)`  
+    Here the inner `banana ... n` does not matter, because it sits under `pear`, and there is no contextual rewriting.
+  - `cherry a a → plum`
+  - `cherry a b → mango (peach a b)` when `a ≠ b`  
+    This target is root-normal too: `mango` only rewrites on `mango (grape _)`, and `peach a b` cannot be syntactically `grape _` by constructor disjointness.
+
+- **Subterm-returning rules**: the result is a **strict subterm** of the source.
+  - `peach plum t → t`
+  - `peach t plum → t`
+  - `peach t t → t`
+  - `banana b s plum → b`
+
+So any multi-step reduction can only continue by repeatedly dropping to a strict subterm of the previous term. Since `Trace` terms are finite trees, strict-subterm descent cannot continue forever. No infinite reduction chain exists.
+
+## Short proof roadmap
+
+A clean proof stays fully within the given calculus:
+
+1. Note that `Step` rewrites **only at the root**.
+2. Show that each rewrite either:
+   - lands in a root-normal form immediately, or
+   - returns a strict subterm of the source.
+3. Use the well-foundedness of the strict-subterm relation on finite first-order terms to conclude that every `Step`-chain is finite.
+
+So the raw assessment is:
+
+- **From the presented calculus alone: yes, strong normalization is provable.**
+- **No extra rewrite rules, guards, side conditions, or hidden object-level assumptions are needed.**
+
+A small but important footnote: this answer depends on taking the system exactly as written. If one silently added contextual closure or structural operational rules, that would be a different system — and then the analysis could change. Sneaky assumptions are where term rewriting likes to hide bananas.
+
+## Checklist
+
+- [x] Inspect the given calculus
+- [x] Check sources of self-expansion
+- [x] Decide SN from rules alone
+- [x] Summarize verdict briefly

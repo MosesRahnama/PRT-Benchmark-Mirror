@@ -1,0 +1,7 @@
+**Yes**, strong normalization can be established purely from the given syntax and rewrite rules.
+
+**Proof roadmap**:
+- Define term size `|void| = 0`, `|C t₁ … tₙ| = 1 + Σ |tᵢ|` for constructor `C`.
+- **Peeling rules** (R_int_delta, merge cases, R_rec_zero): RHS is strict subterm (void or argument), so `|RHS| < |LHS|`.
+- **Non-peeling rules** (R_rec_succ, eqW cases): RHS has irreducible root (`app …`, `integrate (merge …)`, `void`), as no rule matches these roots (constructors mismatch).
+- Any sequence: finite peeling steps (size drops) + at most 1 non-peeling step to normal form. Thus, terminates for all terms.

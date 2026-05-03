@@ -1,0 +1,86 @@
+Great target—thanks for the clear constraints. I only inspected
+and did not modify anything.
+
+## Suggested proof skeletons for the 3 `sorry` cases
+
+You can drop these as structured starting points for the unfinished branches in `mu_decreases`.
+
+```lean
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+  simp [mu]
+  -- Goal shape after simp:
+  -- omega^3*(mu s + 1) + omega^2*(omega^(mu n + mu s + 6) + omega*(mu b + 1) + 1 + 1) + 1
+  --   < omega^(omega^5*(mu n + 1) + 1 + mu s + 6) + omega*(mu b + 1) + 1
+
+  -- 1) Main domination lemma: the app-side polynomial is below the leading omega-power.
+  have hMain :
+      omega0 ^ (3 : Ordinal) * (mu s + 1)
+        + omega0 ^ (2 : Ordinal) *
+            (omega0 ^ (mu n + mu s + (6 : Ordinal)) + omega0 * (mu b + 1) + 1 + 1)
+        + 1
+      <
+      omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal)) := by
+    -- TODO: ordinal arithmetic comparison:
+    --   exponent omega^5*(mu n+1) + ... dominates all lower-degree terms.
+    sorry
+
+  -- 2) Embed into full RHS by monotonicity of addition on the right.
+  have hEmbed :
+      omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal))
+      ≤
+      omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal))
+        + omega0 * (mu b + 1) + 1 := by
+    calc
+      omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal))
+          ≤ omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal))
+            + omega0 * (mu b + 1) := le_add_right _ _
+      _ ≤ omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal))
+            + omega0 * (mu b + 1) + 1 := le_add_right _ _
+
+  exact lt_of_lt_of_le hMain hEmbed
+```
+
+```lean
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+  simp [mu]
+  -- Goal becomes: 0 < omega0 ^ (mu a + mu a + 9) + 1
+  -- Minimal positivity route:
+  exact add_pos_right _ one_pos
+  -- (Equivalent style to your R_int_delta proof.)
+```
+
+```lean
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+  simp [mu]
+  -- Goal shape:
+  -- omega^4 * (omega^3*(mu a+1) + omega^2*(mu b+1) + 1 + 1) + 1
+  --   < omega^(mu a + mu b + 9) + 1
+
+  -- 1) Prove strict domination of the integrate-merge side by the big eq exponent.
+  have hDom :
+      omega0 ^ (4 : Ordinal) *
+          (omega0 ^ (3 : Ordinal) * (mu a + 1)
+            + omega0 ^ (2 : Ordinal) * (mu b + 1) + 1 + 1) + 1
+      <
+      omega0 ^ (mu a + mu b + (9 : Ordinal)) + 1 := by
+    -- TODO: detailed ordinal arithmetic:
+    -- compare Cantor-normal-form leading exponents; RHS exponent (mu a + mu b + 9)
+    -- is chosen to dominate this finite polynomial in omega.
+    sorry
+
+  exact hDom
+```
+
+## Small technical note
+
+In your `R_rec_succ` comments, the displayed “mu(LHS)” / “mu(RHS)” formulas look swapped relative to the actual rule target/source. The `simp [mu]` goal itself is the reliable ground truth.
+
+## Updated checklist
+
+- ✅ Inspect target Lean file  
+- ✅ Identify the three `sorry` cases  
+- ✅ Draft proof skeletons  
+- ✅ Provide completion guidance

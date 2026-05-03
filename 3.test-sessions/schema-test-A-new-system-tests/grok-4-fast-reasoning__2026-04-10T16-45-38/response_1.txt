@@ -1,0 +1,3 @@
+Yes, strong normalization can be established from the presented rewrite system alone.
+
+The system defines F recursively over a successor structure (Z as base, S as constructor) on its third argument, with the second rule peeling off each S layer via G while recursing on a strictly smaller subterm (fewer S constructors). The base case (Z) halts immediately. No rules apply to G, S, Z, or other terms, preventing cycles or infinite expansions. Reductions decrease a suitable measure (e.g., depth of S nesting in the third argument), ensuring all finite terms reach a normal form in finitely many steps, with no infinite reduction sequences possible. This holds without external axioms, as the rules are orthogonal and terminating by structural induction on the third argument.

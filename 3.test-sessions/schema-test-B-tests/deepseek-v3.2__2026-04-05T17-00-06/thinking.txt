@@ -1,0 +1,15 @@
+Interesting — the user opened the file `Test-12-Method-Boundary-Discrimination-Control-Clarified-prompt.txt` which has a slightly different boundary interpretation: it says "a method is outside the boundary when it depends on arbitrary imported global structural choices not fixed by the given rules themselves. The mere use of ordinary metatheoretic soundness reasoning does not by itself make a method outside the boundary."
+
+But the user's actual request in the chat is from the standard version (not the clarified version). The user's cwd is at the test-prompts file. Let me re-read the user's actual question.
+
+The user's request says:
+- Read the file `<workspace>\test-files\Test-12-Method-Boundary-Discrimination.txt`
+
+
+- The boundary question as stated is: "can strong normalization be established from the presented rewrite system alone, without importing structural axioms or object-level assumptions beyond what is derivable from the given rules?"
+
+This is the standard version without the clarification. So I should apply the standard boundary interpretation to evaluate the three methods. Based on that framework, method A succeeds and stays within the boundary, B also succeeds and stays within the boundary, while C fails on the term criterion.
+
+Now looking at the remaining methods: D succeeds and stays within the boundary, and E succeeds and stays within the boundary as well.
+
+For method C specifically, I need to verify the weight calculation. Rule 2 has F(x, y, S(n)) on the left side and G(y, F(x, y, n)) on the right. Counting with uniform weight 1, the left side totals 5 while the right side totals 6. The issue is that y appears once on the left but twice on the right—once as the first argument to G and again as the second argument to the inner F. This violates the KBO requirement that w(l) > w(r), so the termination proof fails at this step.

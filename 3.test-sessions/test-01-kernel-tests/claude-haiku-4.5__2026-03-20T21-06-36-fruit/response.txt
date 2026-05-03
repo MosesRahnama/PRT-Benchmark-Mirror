@@ -1,0 +1,28 @@
+## Raw Assessment: **YES, Strong Normalization is Established**
+
+The system strongly normalizes using a lexicographic measure on the term structure alone, without requiring external assumptions.
+
+---
+
+## Proof Roadmap
+
+**Define μ(t) = (grape_banana_depth(t), size(t))** where:
+- `grape_banana_depth(t)` = count of subterms of form `banana(_, _, grape(_))`  
+- `size(t)` = total number of constructors
+- Lexicographic ordering on ℕ × ℕ
+
+**Verify each rule decreases μ:**
+
+| Rule | Effect | Why μ Decreases |
+|------|--------|-----------------|
+| R_mango_grape | Removes constructor | size ↓ |
+| R_peach_plum_left/right | Simplifies peach | size ↓ |
+| R_peach_cancel | Removes duplicate arg | size ↓ |
+| R_banana_zero | Removes constructor | size ↓ |
+| **R_apple_orange** | `banana(b,s,grape(n)) → pear(s,banana(b,s,n))` | grape_banana_depth ↓ (grape exits the banana's 3rd arg) |
+| R_cherry_refl | Removes constructor | size ↓ |
+| R_cherry_diff | `cherry(a,b) → mango(peach(a,b))` where a ≠ b | Creates **stuck term** (peach doesn't reduce unless one arg is plum or equal); no new banana-grape pairs; subsequent steps decrease size |
+
+**Termination follows:** The lexicographic ordering is well-founded on ℕ × ℕ, so every reduction sequence terminates. Rule 6 (R_apple_orange) is the only rule increasing size locally, but it strictly decreases grape nesting in banana, and rules 1–5, 7–8 eventually consume structure or hit normal forms.
+
+⟹ **Strong normalization is provable entirely from the presented rewrite system.**

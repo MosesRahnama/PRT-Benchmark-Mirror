@@ -1,0 +1,45 @@
+## Assessment: Yes — strong normalization holds and is provable from the presented calculus alone.
+
+The system is a standard first-order TRS (no binding, no beta-reduction — `app` is an inert constructor). A **polynomial interpretation** over $\mathbb{N}$ strictly orients all 8 rules without any additional axioms or side conditions.
+
+### Interpretation
+
+$$
+\begin{aligned}
+[\mathtt{void}] &= 1 \\
+[\mathtt{delta}(x)] &= x + 1 \\
+[\mathtt{integrate}(x)] &= x + 1 \\
+[\mathtt{merge}(x, y)] &= x + y + 1 \\
+[\mathtt{app}(x, y)] &= x + y \\
+[\mathtt{rec\Delta}(x, y, z)] &= (y + 1)\cdot z + x + 1 \\
+[\mathtt{eqW}(x, y)] &= x + y + 3
+\end{aligned}
+$$
+
+### Verification (each rule LHS $>$ RHS)
+
+| Rule | LHS value | RHS value | Gap |
+|---|---|---|---|
+| R_int_delta | $t + 2$ | $1$ | $t + 1$ |
+| R_merge_void_left | $t + 2$ | $t$ | $2$ |
+| R_merge_void_right | $t + 2$ | $t$ | $2$ |
+| R_merge_cancel | $2t + 1$ | $t$ | $t + 1$ |
+| R_rec_zero | $s + b + 2$ | $b$ | $s + 2$ |
+| R_rec_succ | $(s{+}1)(n{+}1) + b + 1$ | $s + (s{+}1)n + b + 1$ | $1$ |
+| R_eq_refl | $2a + 3$ | $1$ | $2a + 2$ |
+| R_eq_diff | $a + b + 3$ | $a + b + 2$ | $1$ |
+
+Every gap is $\geq 1$ over $\mathbb{N}_{\geq 1}$ (the range of ground-term values, since $[\mathtt{void}] = 1$ and every constructor adds $\geq 0$).
+
+### Why this suffices
+
+All interpretation functions are **strictly monotone** in every argument over $\mathbb{N}_{\geq 1}$ (the only borderline case is $\partial[\mathtt{rec\Delta}]/\partial y = z$, but $z \geq 1$ for any ground term). Strict monotonicity guarantees that a strict decrease at any redex position propagates up through every context, so $[s] > [t]$ for every rewrite step $s \to t$. Since $(\mathbb{N}, >)$ is well-founded, every reduction sequence is finite.
+
+### Key observations
+
+- **R_rec_succ** duplicates $s$, but the third argument shrinks from $\delta(n)$ to $n$ (value drop of 1), and the product $(s{+}1) \cdot z$ absorbs the duplication cost.
+- **R_eq_refl / R_eq_diff overlap** (when $a = b$, both fire): harmless because both branches strictly decrease.
+- **Non-left-linear patterns** (rules 4, 7): handled naturally — the polynomial inequality holds for all ground instances.
+- No rule introduces a constructor on the right that could grow the interpretation unboundedly: `app` is the only constructor with a zero additive constant, and it never appears as a root redex symbol.
+
+**No imported structural axioms, extra rules, guards, or hidden assumptions are needed.** The proof sits entirely within the standard polynomial-interpretation method for first-order TRSs, applied to the 7 constructors and 8 rules as given.

@@ -1,0 +1,39 @@
+I’ve finished inspecting the target file and identified a direct termination argument that stays entirely within the given rules; I’ll now mark the checklist complete and then give you the concise assessment.
+## Raw assessment
+
+Yes — **strong normalization is establishable from the presented calculus alone**, with no extra structural axioms or hidden object-level assumptions.
+
+In fact, there are two ways to see it:
+
+- **Literal reading of `Step` as defined** (root-step only, no context closure rule shown): SN is immediate/trivial.
+- **Even under standard TRS-style contextual rewriting**, SN can still be proved with a standard interpretation argument, without adding any rule/guard/side condition.
+
+## Short roadmap (within your boundary)
+
+Use a well-founded interpretation into $\mathbb{N}$ (standard polynomial/exponential interpretation), e.g.:
+
+- $I(\text{plum}) = 0$
+- $I(\text{grape}(t)) = I(t)+1$
+- $I(\text{mango}(t)) = I(t)+1$
+- $I(\text{peach}(a,b)) = I(a)+I(b)+1$
+- $I(\text{pear}(a,b)) = I(b)$
+- $I(\text{banana}(b,s,n)) = I(b)+2^{I(n)}+1$
+- $I(\text{cherry}(a,b)) = I(a)+I(b)+3$
+
+Then each rewrite rule strictly decreases $I$:
+
+- `mango (grape t) → plum`: $I(t)+2 > 0$
+- `peach plum t → t`, `peach t plum → t`, `peach t t → t`: all strictly decreasing
+- `banana b s plum → b`: $I(b)+2 > I(b)$
+- `banana b s (grape n) → pear s (banana b s n)`:  
+  $I(b)+2^{I(n)+1}+1 > I(b)+2^{I(n)}+1$
+- `cherry a a → plum`: $2I(a)+3 > 0$
+- `cherry a b → mango (peach a b)`: $I(a)+I(b)+3 > I(a)+I(b)+2$
+
+So no infinite descending chain exists; hence SN.
+
+## Updated checklist
+
+- ✅ Read target Lean calculus file  
+- ✅ Assess SN from rules alone  
+- ✅ Give bounded roadmap or blocker

@@ -1,0 +1,7 @@
+1. Informal analysis of decreasing successor depth on third argument, plus suggestion of lexicographic path order (LPO) with specific precedences.
+
+2. Yes: LPO requires choosing symbol precedences/statuses (e.g., `S > Z, G > F`), which are not fixed or derivable from the rules.
+
+3. Yes: such choices import ordering assumptions beyond the rules themselves.
+
+4. Yes.

@@ -1,0 +1,78 @@
+Below is a proof skeleton for completing the remaining five cases in the `measure_decreases` theorem. I've structured it as Lean code snippets that can replace each `sorry` directly (while preserving the existing proved cases). Each skeleton follows the same style as the existing proofs: it computes the necessary inequalities for `kappa` and `mu`, then applies `drop_left` or `drop_right` as appropriate. Where needed, it uses `by_cases` to handle scenarios where `kappa` ties vs. strictly decreases. I've included comments explaining the key insights and any assumptions (e.g., Lean tactics like `simp` and `omega` for arithmetic).
+
+These skeletons are based solely on analyzing the provided file's definitions (e.g., `Step`, `kappa`, `mu`, `drop_left`, `drop_right`) and ensuring lexicographic decrease for each rule. They are not full proofs but outlines with the core structure and steps—fill in any gaps (e.g., with additional `simp` lemmas or arithmetic proofs) as needed.
+
+### Case: `R_int_delta` (integrate (delta t) --> void)
+```
+| _, _, Step.R_int_delta t => by
+    -- kappa before: kappa t
+    -- kappa after: 0
+    -- mu before: 1 + mu t
+    -- mu after: 0 (always < before)
+    -- Cases: if kappa t > 0, kappa decreases; else ties and mu decreases
+    by_cases h : kappa t = 0
+    · have hmu : mu void < mu (integrate (delta t)) := by simp [mu]; omega
+      have hk : kappa void = kappa (integrate (delta t)) := by simp [kappa, h]
+      exact drop_right hmu hk
+    · apply drop_left
+      simp [kappa]
+      exact Nat.pos_of_ne_zero h
+```
+
+### Case: `R_rec_zero` (recDelta b s void --> b)
+```
+| _, _, Step.R_rec_zero b s => by
+    -- kappa before: max (kappa b) (kappa s)
+    -- kappa after: kappa b
+    -- mu before: 3 + mu b + mu s
+    -- mu after: mu b (always < before)
+    -- Cases: if kappa s ≤ kappa b, kappa ties; else kappa decreases
+    by_cases h : kappa s ≤ kappa b
+    · have hmu : mu b < mu (recDelta b s void) := by simp [mu]; omega
+      have hk : kappa b = kappa (recDelta b s void) := by simp [kappa, Nat.max_eq_left h]
+      exact drop_right hmu hk
+    · apply drop_left
+      simp [kappa]
+      rw [Nat.max_eq_right (le_of_not_le h)]
+      exact lt_of_not_le h
+```
+
+### Case: `R_rec_succ` (recDelta b s (delta n) --> app s (recDelta b s n))
+```
+| _, _, Step.R_rec_succ b s n => by
+    -- kappa before: max (max (kappa b) (kappa s)) (kappa n) + 1
+    -- kappa after: max (max (kappa b) (kappa s)) (kappa n)
+    -- Always: kappa decreases (by +1)
+    apply drop_left
+    simp [kappa]
+    omega
+```
+
+### Case: `R_eq_refl` (eqW a a --> void)
+```
+| _, _, Step.R_eq_refl a => by
+    -- kappa before: kappa a
+    -- kappa after: 0
+    -- mu before: 4 + 2 * mu a
+    -- mu after: 0 (always < before)
+    -- Cases: if kappa a > 0, kappa decreases; else ties and mu decreases
+    by_cases h : kappa a = 0
+    · have hmu : mu void < mu (eqW a a) := by simp [mu]; omega
+      have hk : kappa void = kappa (eqW a a) := by simp [kappa, h]
+      exact drop_right hmu hk
+    · apply drop_left
+      simp [kappa]
+      exact Nat.pos_of_ne_zero h
+```
+
+### Case: `R_eq_diff` (eqW a b --> integrate (merge a b))
+```
+| _, _, Step.R_eq_diff a b => by
+    -- kappa before: max (kappa a) (kappa b)
+    -- kappa after: max (kappa a) (kappa b) (ties)
+    -- mu before: 4 + mu a + mu b
+    -- mu after: 3 + mu a + mu b (always < before, by 1)
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by simp [mu]; omega
+    have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by simp [kappa]
+    exact drop_right hmu hk
+```

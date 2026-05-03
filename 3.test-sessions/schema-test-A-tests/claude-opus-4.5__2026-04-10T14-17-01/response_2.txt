@@ -1,0 +1,7 @@
+1. **Primary method:** Polynomial interpretation over natural numbers with manually chosen coefficients.
+
+2. **Does it rely on assumptions not fixed by the rules?** Yes. The interpretation function, the semantic domain (ℕ), the coefficient choices, and the well-foundedness of > on ℕ are all external to the rewrite rules. Nothing in the .trs file determines that [S(n)] = [n] + 2 rather than [n] + 7.
+
+3. **Does that place it outside the stated boundary?** Yes. Under a strict reading, polynomial interpretations are imported proof machinery—they are not "derivable from the given rules." The same applies to any standard termination method (RPO, KBO, dependency pairs, etc.): they all require external orderings or interpretations not specified by the rewrite system itself.
+
+4. **Is the system still strongly normalizing?** Yes. The third argument is structurally decreasing (S is peeled off until Z is reached), and the recursion is primitive recursive. Termination is evident—but *proving* it formally requires some proof apparatus beyond the bare rules.

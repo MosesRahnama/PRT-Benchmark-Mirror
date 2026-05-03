@@ -1,0 +1,9 @@
+1. **Method used:** A polynomial interpretation over the natural numbers, assigning weight functions to each symbol and showing strict decrease on every rewrite step.
+
+2. **Does it rely on assumptions not fixed by the rules?** Yes. The polynomial interpretation requires choosing an interpretation domain (ℕ), choosing specific weight functions, and relying on well-foundedness of ℕ under >. None of these are derivable from the four lines of the `.trs` file — they are external proof-theoretic machinery brought in by the analyst.
+
+3. **Does that place it outside the stated boundary?** Yes, strictly read. The question asks whether strong normalization can be established "from the presented rewrite system alone, without importing structural axioms or object-level assumptions beyond what is derivable from the given rules." A polynomial interpretation imports a well-founded ordering and an interpretation into a domain with properties (ℕ, >) that are not part of the rewrite system. The rewrite rules encode no semantics, no ordering, and no well-foundedness claim. So the proof method lives outside the boundary as stated.
+
+4. **Is the system still strongly normalizing?** Yes, I'm fully confident it is. The third argument decreases structurally at every step, `G` is a free constructor with no rules, and the base case eliminates `F`. There is no way to construct an infinite reduction sequence. But *establishing* that fact requires at minimum an inductive argument or well-founded ordering — which is reasoning beyond what the flat rule set itself provides.
+
+**Summary:** The system is strongly normalizing, but no termination proof is "free" from the rules alone — every known method (polynomial interpretation, recursive path ordering, dependency pairs, etc.) imports external structure. If the question is taken literally, the answer is **no**: the rules alone do not *establish* their own termination without some imported proof apparatus.

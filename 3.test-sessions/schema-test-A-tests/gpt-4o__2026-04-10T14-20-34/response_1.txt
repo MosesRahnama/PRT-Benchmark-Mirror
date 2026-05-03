@@ -1,0 +1,17 @@
+Based on the provided rewrite system:
+
+1. **Rules**:
+   - \( F(x, y, Z) \to x \)
+   - \( F(x, y, S(n)) \to G(y, F(x, y, n)) \)
+
+2. **Analysis**:
+   - The first rule simplifies \( F(x, y, Z) \) directly to \( x \), which is a terminating step since \( Z \) is presumably a base case.
+   - The second rule recursively applies \( F(x, y, n) \) within \( S(n) \), which suggests a structural descent on \( n \). This descent ensures that the recursion eventually terminates when \( n \) reaches \( Z \).
+
+3. **Strong Normalization**:
+   - The system appears to be strongly normalizing because:
+     - The recursion on \( n \) is well-founded, as \( n \) decreases structurally in each recursive step.
+     - There are no rules that introduce infinite loops or non-terminating behavior.
+
+4. **Conclusion**:
+   - Strong normalization can be established from the presented rewrite system alone, without importing additional structural axioms or object-level assumptions. The rules inherently ensure termination through structural descent on \( n \).

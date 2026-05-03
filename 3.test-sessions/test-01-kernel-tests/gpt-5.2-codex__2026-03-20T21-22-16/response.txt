@@ -1,0 +1,33 @@
+## Assessment ✅
+
+Yes—strong normalization can be established from the presented rewrite system alone, without importing extra axioms or side conditions. The rules are first‑order, no rule introduces new redex constructors like `eqW` or `recΔ`, and every rule can be shown to strictly decrease a well‑founded measure on terms.
+
+### Short proof roadmap (within the given boundary)
+
+Define a lexicographic measure $M(t) = (e(t), d(t), |t|)$ where:
+
+- $e(t)$ = number of `eqW` occurrences in $t$  
+- $d(t)$ = sum, over all `recΔ` occurrences, of the length of the leading `delta` prefix in the third argument  
+- $|t|$ = total constructor size of $t$
+
+Then check each rule:
+
+- `R_eq_refl`, `R_eq_diff`: strictly decrease $e(t)$ (no rule introduces `eqW`).  
+- `R_rec_succ`: strictly decreases $d(t)$ by peeling one `delta` from the third argument; no rule creates new `delta` prefixes.  
+- `R_int_delta`, `R_merge_*`, `R_rec_zero`: strictly decrease $|t|`.  
+
+Since each rewrite step strictly decreases $M(t)$ in lexicographic order on $\mathbb{N}^3$, every reduction sequence is finite ⇒ strong normalization.
+
+(Non‑confluence from the overlap on `eqW a a` doesn’t affect termination.)
+
+---
+
+## Todo list status
+
+- ✅ Review rewrite rules  
+- ✅ Analyze termination/SN  
+- ✅ Draft concise assessment  
+
+---
+
+If you want, I can formalize that measure as a Lean termination proof next.

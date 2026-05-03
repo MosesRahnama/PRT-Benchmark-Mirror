@@ -1,0 +1,27 @@
+Raw assessment  
+Yes – strong normalization can be proved from the eight rules exactly as stated; no extra structural axioms or side-conditions are needed.
+
+Short proof roadmap (stays inside the given calculus)
+
+1.  Define a well-founded multivariate measure on traces.  
+    •  Weight each constructor by a natural number with the precedence  
+       eqW > integrate > merge > app > recΔ > delta > void.  
+    •  Let |t| be the multiset of weights of all constructor nodes occurring in t.  
+    •  For occurrences of recΔ b s n add, as a secondary component, the δ-height of n   
+       (number of nested delta constructors).  
+    Use the multiset extension of the lexicographic product  
+    (δ-height, |t|).  This ordering is well-founded on finite terms.
+
+2.  Check each rule decreases that measure.  
+    •  integrate (delta t) → void drops both an integrate and a delta.  
+    •  The three merge rules delete a merge node (and possibly a void).  
+    •  recΔ succ reduces the δ-height of the third argument by one; all other
+       nodes are weakly smaller in the precedence.  
+    •  eqW a b → integrate (merge a b) replaces a top-level eqW (highest weight)
+       by integrate ≻ merge; even though the tree gains one node,
+       the root weight strictly decreases, so the multiset ordering drops.  
+
+3.  Because every rewrite step strictly lowers the global measure, there can be
+    no infinite reduction sequence.  Hence the system is strongly normalizing.
+
+No additional rewrite rules, guards, or meta-theory are invoked; the argument uses only standard multiset path-ordering on the syntax already present.

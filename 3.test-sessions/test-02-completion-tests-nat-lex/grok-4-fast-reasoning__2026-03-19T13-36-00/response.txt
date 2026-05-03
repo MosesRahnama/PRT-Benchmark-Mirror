@@ -1,0 +1,41 @@
+### Proof Skeleton for Remaining Cases
+
+Replace each `sorry` in `measure_decreases` with the following proofs. These use the existing `drop_left` and `drop_right` lemmas, simp rules, and basic tactics (e.g., `cases`, `simp`, `omega` for arithmetic). No new definitions or imports are needed.
+
+#### Case 1: `R_int_delta t`
+```lean
+| _, _, Step.R_int_delta t => by
+  cases' (decide (kappa t = 0)) with h
+  · rw [h]; exact drop_right (by simp [mu]) (by simp [kappa])
+  · have : 0 < kappa (integrate (delta t)) := by simp [kappa]; omega
+    exact drop_left this
+```
+
+#### Case 2: `R_rec_zero b s`
+```lean
+| _, _, Step.R_rec_zero b s => by
+  cases' (decide (kappa s ≤ kappa b)) with h
+  · rw [← h] at *; simp [kappa, mu] at *; exact drop_right (by omega) rfl
+  · simp [kappa, mu] at *; exact drop_left (by omega)
+```
+
+#### Case 3: `R_rec_succ b s n`
+```lean
+| _, _, Step.R_rec_succ b s n => by
+  simp [kappa] at *; exact drop_left (by omega)
+```
+
+#### Case 4: `R_eq_refl a`
+```lean
+| _, _, Step.R_eq_refl a => by
+  cases' (decide (kappa a = 0)) with h
+  · rw [h]; exact drop_right (by simp [mu]; omega) (by simp [kappa])
+  · have : 0 < kappa (eqW a a) := by simp [kappa]; omega
+    exact drop_left this
+```
+
+#### Case 5: `R_eq_diff a b`
+```lean
+| _, _, Step.R_eq_diff a b => by
+  simp [kappa, mu] at *; exact drop_right (by omega) rfl
+```

@@ -1,0 +1,4 @@
+1. Informal structural-descent argument on the third argument.  
+2. Yes. It implicitly assumes a well-founded measure/ordering and treats `G` as benign, which is not fixed by the rules alone.  
+3. Yes, that goes beyond the stated boundary.  
+4. I still think the system is strongly normalizing, but a proof would require an external ordering/interpretation.

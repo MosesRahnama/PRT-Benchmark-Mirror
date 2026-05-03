@@ -1,0 +1,104 @@
+Here are proof skeletons for the three `sorry` cases:
+
+---
+
+### Case `R_rec_succ` (line 153)
+
+The goal after `simp [mu]` reduces to showing that `omega^3 * (mu s + 1) + omega^2 * (omega^(mu n + mu s + 6) + omega * (mu b + 1) + 1 + 1) + 1` is strictly less than `omega^(omega^5 * (mu n + 1) + 1 + mu s + 6) + omega * (mu b + 1) + 1`.
+
+**Strategy:** The LHS exponent on the dominant `omega^2` term is `mu n + mu s + 6`, while the RHS exponent on the dominant `omega^(…)` term is `omega^5 * (mu n + 1) + 1 + mu s + 6`. Since `mu n + mu s + 6 < omega^5 * (mu n + 1) + 1 + mu s + 6`, the RHS power tower strictly dominates.
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- Step 1: Bound the LHS's largest summand.
+    -- omega^2 * (omega^(mu n + mu s + 6) + omega * (mu b + 1) + 2)
+    --   ≤ omega^(mu n + mu s + 8)           (absorb polynomial coefficients)
+    -- omega^3 * (mu s + 1)
+    --   ≤ omega^(mu s + 4)                  (similarly)
+    -- So LHS ≤ omega^(mu n + mu s + 8) + omega^(mu s + 4) + 1
+    --        ≤ omega^(mu n + mu s + 8) * 3  (finite sum of smaller towers)
+    --
+    -- Step 2: Show the RHS exponent dominates.
+    -- omega^5 * (mu n + 1) + 1 + mu s + 6
+    --   ≥ omega^5 * (mu n + 1) + mu s + 7
+    --   ≥ mu n + mu s + 9                   (since omega^5 ≥ 2 when mu n ≥ 0)
+    -- So RHS ≥ omega^(mu n + mu s + 9)
+    --        > omega^(mu n + mu s + 8) * 3 ≥ LHS
+    --
+    -- Proof outline:
+    -- have key : mu n + mu s + 8 < omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6 := by
+    --   calc mu n + mu s + 8
+    --     _ < omega0 ^ 5 * (mu n + 1) + mu s + 7 := by linarith-style ordinal bound
+    --     _ ≤ omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6 := by ring-style rewrite
+    -- have hLHS : <full LHS> < omega0 ^ (mu n + mu s + 9) := by
+    --   <bound each summand by an omega tower, then use opow monotonicity>
+    -- have hRHS : omega0 ^ (mu n + mu s + 9) ≤ <full RHS> := by
+    --   <use opow_le_opow_right and le_add>
+    -- exact lt_of_lt_of_le hLHS hRHS
+    sorry
+```
+
+### Case `R_eq_refl` (line 164)
+
+The goal is `0 < omega^(mu a + mu a + 9) + 1`. This is straightforward positivity.
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- 0 < omega^(mu a + mu a + 9) + 1
+    exact add_pos_right _ one_pos
+    -- Alternatively:
+    -- exact pos_iff_ne_zero.mpr (by
+    --   exact ne_of_gt (add_pos_right _ one_pos))
+```
+
+This should close directly—`add_pos_right _ one_pos` produces `0 < X + 1` for any ordinal `X ≥ 0`. If the goal shape after `simp` doesn't match exactly, you may need `Ordinal.add_pos_right` or a `positivity`-style close.
+
+### Case `R_eq_diff` (line 178)
+
+The goal is `omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 2) + 1 < omega^(mu a + mu b + 9) + 1`.
+
+**Strategy:** The LHS is bounded by `omega^(max(7, …) + polynomial)` while the RHS exponent `mu a + mu b + 9` exceeds it.
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- Step 1: Simplify the LHS via ordinal absorption.
+    -- omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 2)
+    --   The leading term inside is omega^3 * (mu a + 1), so the product is
+    --   omega^(4+3) * (mu a + 1) + lower = omega^7 * (mu a + 1) + lower
+    -- Thus LHS ≤ omega^7 * (mu a + 1) * 2 + 1
+    --          ≤ omega^(mu a + 8)              (absorb finite coefficient)
+    --
+    -- Step 2: Show RHS exponent dominates.
+    -- mu a + mu b + 9 ≥ mu a + 9 > mu a + 8
+    -- So omega^(mu a + mu b + 9) ≥ omega^(mu a + 9) > omega^(mu a + 8) ≥ LHS - 1
+    --
+    -- Proof outline:
+    -- have bound_inner : omega0 ^ 3 * (mu a + 1) + omega0 ^ 2 * (mu b + 1) + 2
+    --     ≤ omega0 ^ 3 * (mu a + mu b + 3) := by <ordinal arithmetic>
+    -- have bound_product : omega0 ^ 4 * (omega0 ^ 3 * (mu a + mu b + 3))
+    --     = omega0 ^ 7 * (mu a + mu b + 3) := by rw [← opow_add]
+    -- have bound_tower : omega0 ^ 7 * (mu a + mu b + 3)
+    --     < omega0 ^ (mu a + mu b + 9) := by
+    --   <use the fact that omega^7 * X < omega^(X+7) for infinite ordinals,
+    --    and mu a + mu b + 9 ≥ 7 + (mu a + mu b + 3) when mu a + mu b + 3 ≥ 1>
+    -- calc omega0 ^ 4 * (...) + 1
+    --   _ ≤ omega0 ^ (mu a + mu b + 9) := by linarith-style
+    --   _ ≤ omega0 ^ (mu a + mu b + 9) + 1 := le_add_right _ _
+    -- <then use Ordinal.add_lt_add_right or succ arguments to get strict inequality>
+    sorry
+```
+
+---
+
+**Summary of the three proof obligations:**
+
+| Case | Key lemma needed | Difficulty |
+|---|---|---|
+| `R_eq_refl` | `0 < X + 1` (positivity) | Trivial — likely one line |
+| `R_rec_succ` | `omega^(poly) < omega^(exp-tower)` via exponent comparison | Medium — requires `opow_lt_opow_right` + absorption lemmas |
+| `R_eq_diff` | `omega^7 * (mu a + mu b + k) < omega^(mu a + mu b + 9)` | Medium — same toolkit, bound inner product then compare exponents |
+
+The `R_eq_refl` case should close with `exact add_pos_right _ one_pos` (or similar). The other two cases both follow the same pattern: bound the LHS by a single omega-power tower, then show the RHS exponent is strictly larger using `Ordinal.opow_lt_opow_right omega0_pos` and standard ordinal absorption facts (`mul_omega`, `opow_add`, `le_mul_right`).

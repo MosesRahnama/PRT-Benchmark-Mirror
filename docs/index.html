@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PRT-Benchmark v1.0.0</title>
+    <meta name="description" content="Primitive Recursor Test (PRT) Benchmark: a benchmark of large language model behavior on nine formal-methods termination-reasoning task families. PRT is set at the minimal first-order primitive..." />
+    <link rel="canonical" href="<DATASET_PAGES_URL_PLACEHOLDER>" />
+    <style>
+      html { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif; line-height: 1.5; color: #1a1a1a; background: #ffffff; }
+      body { max-width: 880px; margin: 2.5rem auto; padding: 0 1.25rem; }
+      h1 { font-size: 1.85rem; margin: 0 0 0.4rem 0; }
+      h2 { font-size: 1.2rem; margin-top: 2rem; border-bottom: 1px solid #e2e2e2; padding-bottom: 0.25rem; }
+      ul { padding-left: 1.4rem; }
+      li { margin-bottom: 0.35rem; }
+      code { background: #f4f4f4; padding: 0 0.25rem; border-radius: 3px; font-size: 0.92em; }
+      .meta { color: #444; font-size: 0.95rem; margin-bottom: 1rem; }
+      .meta dt { font-weight: 600; display: inline; }
+      .meta dd { display: inline; margin: 0 1rem 0 0; }
+      a { color: #0a58ca; text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #e2e2e2; color: #555; font-size: 0.9rem; }
+    </style>
+  </head>
+  <body>
+    <h1>PRT-Benchmark</h1>
+    <p class="meta">
+      <dt>Version:</dt><dd>1.0.0</dd>
+      <dt>Published:</dt><dd>2026-04-25</dd>
+      <dt>License:</dt><dd><a href="<DATASET_FILE_URL_PLACEHOLDER>/LICENSE">Polyform Noncommercial 1.0.0 with Commercial License Available</a></dd>
+    </p>
+
+    <p>Primitive Recursor Test (PRT) Benchmark: a benchmark of large language model behavior on nine formal-methods termination-reasoning task families. PRT is set at the minimal first-order primitive recursor F(x,y,Z) -> x, F(x,y,S(n)) -> G(y,F(x,y,n)), evaluated at two tiers (the schema kernel and KO7, an eight-rule first-order calculus) across 27 frontier models and 1,188 sessions on nine tasks. Each session is graded on three axes: termination, witness adequacy, and rule-extracted boundary admissibility, with an externally-checkable answer key fixed by archived TTT2/CeTA certifications and a companion mechanized Lean 4 theorem stack.</p>
+
+    <h2>Machine-readable metadata</h2>
+    <ul>
+      <li><a href="<DATASET_URL_PLACEHOLDER>/blob/main/croissant.json"><code>croissant.json</code></a> &mdash; full Croissant 1.0 + RAI metadata.</li>
+      <li>The same dataset-level metadata is embedded as <code>application/ld+json</code> in this page (view source).</li>
+    </ul>
+
+    <h2>Repository</h2>
+    <ul>
+      <li><a href="<DATASET_URL_PLACEHOLDER>">GitHub: anonymous-eandd/PRT-Benchmark</a></li>
+      <li><a href="<DATASET_URL_PLACEHOLDER>/blob/main/README.md">README</a></li>
+      <li><a href="<DATASET_URL_PLACEHOLDER>/blob/main/DATASHEET.md">Datasheet</a></li>
+      <li><a href="<DATASET_URL_PLACEHOLDER>/blob/main/DATA_STATEMENT.md">Data statement</a></li>
+      <li><a href="<DATASET_URL_PLACEHOLDER>/blob/main/CITATION.cff">Citation</a></li>
+      <li><a href="<DATASET_URL_PLACEHOLDER>/blob/main/CHANGELOG.md">Changelog</a></li>
+      <li><a href="<DATASET_URL_PLACEHOLDER>/blob/main/LICENSE">License</a></li>
+    </ul>
+
+    <h2>Release contents</h2>
+    <ul>
+      <li><a href="<DATASET_URL_PLACEHOLDER>/tree/main/1.test-prompts"><code>1.test-prompts/</code></a> &mdash; prompt templates.</li>
+      <li><a href="<DATASET_URL_PLACEHOLDER>/tree/main/2.test-files"><code>2.test-files/</code></a> &mdash; benchmark test files.</li>
+      <li><a href="<DATASET_URL_PLACEHOLDER>/tree/main/3.lean"><code>3.lean/</code></a> &mdash; benchmark-local Lean 4 verification project.</li>
+      <li><a href="<DATASET_URL_PLACEHOLDER>/tree/main/4.TTT2-Artifacts"><code>4.TTT2-Artifacts/</code></a> &mdash; TTT2 / CeTA termination certificates.</li>
+      <li><a href="<DATASET_URL_PLACEHOLDER>/tree/main/5.test-sessions"><code>5.test-sessions/</code></a> &mdash; flattened public transcript corpus (1,188 sessions).</li>
+      <li><a href="<DATASET_URL_PLACEHOLDER>/tree/main/6.extracted-data"><code>6.extracted-data/</code></a> &mdash; nine adjudicated CSV exports + schemas + normalization guides.</li>
+      <li><a href="<DATASET_URL_PLACEHOLDER>/tree/main/7.scoring"><code>7.scoring/</code></a> &mdash; verdict-derivation scripts and answer-key artifacts.</li>
+      <li><a href="<DATASET_URL_PLACEHOLDER>/tree/main/8.analytics"><code>8.analytics/</code></a> &mdash; paper-number regeneration scripts and markdown outputs.</li>
+    </ul>
+
+    <h2>Citing</h2>
+    <pre><code>Anonymous Authors (2026). The Primitive Recursor and the Representation-Shift Bottleneck in Frontier LLM Termination Reasoning. PRT-Benchmark v1.0.0.</code></pre>
+
+    <h2>Commercial use</h2>
+    <p>
+      This release is dual-licensed. Non-commercial use is governed by the
+      <a href="<DATASET_FILE_URL_PLACEHOLDER>/LICENSE">Polyform Noncommercial 1.0.0 with Commercial License Available</a>. Commercial use requires a separate paid agreement; please contact
+      <a href="mailto:anonymized@neurips.invalid">anonymized@neurips.invalid</a>.
+    </p>
+
+    <footer>
+      Generated mechanically by <code>build_8_croissant.py</code>. Do not edit by hand.
+    </footer>
+
+    <script type="application/ld+json">
+{
+  "@context": {
+    "@language": "en",
+    "@vocab": "https://schema.org/",
+    "citeAs": "cr:citeAs",
+    "column": "cr:column",
+    "conformsTo": "dct:conformsTo",
+    "cr": "http://mlcommons.org/croissant/",
+    "rai": "http://mlcommons.org/croissant/RAI/",
+    "data": {
+      "@id": "cr:data",
+      "@type": "@json"
+    },
+    "dataType": {
+      "@id": "cr:dataType",
+      "@type": "@vocab"
+    },
+    "dct": "http://purl.org/dc/terms/",
+    "examples": {
+      "@id": "cr:examples",
+      "@type": "@json"
+    },
+    "extract": "cr:extract",
+    "field": "cr:field",
+    "fileProperty": "cr:fileProperty",
+    "fileObject": "cr:fileObject",
+    "fileSet": "cr:fileSet",
+    "format": "cr:format",
+    "includes": "cr:includes",
+    "isLiveDataset": "cr:isLiveDataset",
+    "jsonPath": "cr:jsonPath",
+    "key": "cr:key",
+    "md5": "cr:md5",
+    "parentField": "cr:parentField",
+    "path": "cr:path",
+    "recordSet": "cr:recordSet",
+    "references": "cr:references",
+    "regex": "cr:regex",
+    "repeated": "cr:repeated",
+    "replace": "cr:replace",
+    "sc": "https://schema.org/",
+    "separator": "cr:separator",
+    "source": "cr:source",
+    "subField": "cr:subField",
+    "transform": "cr:transform",
+    "wd": "https://www.wikidata.org/wiki/",
+    "prov": "http://www.w3.org/ns/prov#"
+  },
+  "@type": "sc:Dataset",
+  "name": "PRT-Benchmark",
+  "description": "Primitive Recursor Test (PRT) Benchmark: a benchmark of large language model behavior on nine formal-methods termination-reasoning task families. PRT is set at the minimal first-order primitive recursor F(x,y,Z) -> x, F(x,y,S(n)) -> G(y,F(x,y,n)), evaluated at two tiers (the schema kernel and KO7, an eight-rule first-order calculus) across 27 frontier models and 1,188 sessions on nine tasks. Each session is graded on three axes: termination, witness adequacy, and rule-extracted boundary admissibility, with an externally-checkable answer key fixed by archived TTT2/CeTA certifications and a companion mechanized Lean 4 theorem stack.",
+  "conformsTo": [
+    "http://mlcommons.org/croissant/1.0",
+    "http://mlcommons.org/croissant/RAI/1.0"
+  ],
+  "license": {
+    "@type": "sc:CreativeWork",
+    "name": "Polyform Noncommercial 1.0.0 with Commercial License Available",
+    "url": "<DATASET_FILE_URL_PLACEHOLDER>/LICENSE",
+    "description": "Dual license. Non-commercial use governed by PolyForm Noncommercial 1.0.0 (SPDX: PolyForm-Noncommercial-1.0.0, https://polyformproject.org/licenses/noncommercial/1.0.0/). Commercial use requires a separate paid agreement obtained by contacting anonymized@neurips.invalid. Full terms in LICENSE."
+  },
+  "url": "<DATASET_PAGES_URL_PLACEHOLDER>",
+  "sameAs": [
+    "<DATASET_URL_PLACEHOLDER>"
+  ],
+  "creator": [
+    {
+      "@type": "sc:Person",
+      "name": "Anonymous Authors",
+      "affiliation": "Anonymous Authors",
+      "email": "anonymized@neurips.invalid"
+    }
+  ],
+  "publisher": [
+    {
+      "@type": "sc:Organization",
+      "name": "Anonymous Authors",
+      "url": "<ANONYMIZED_ORG_URL>"
+    }
+  ],
+  "datePublished": "2026-04-25",
+  "version": "1.0.0",
+  "keywords": [
+    "benchmark",
+    "termination",
+    "primitive recursion",
+    "first-order rewriting",
+    "Lean 4",
+    "TTT2",
+    "CeTA",
+    "dependency pairs",
+    "formal methods",
+    "LLM evaluation",
+    "frontier models",
+    "PRT",
+    "KO7"
+  ],
+  "citeAs": "Anonymous Authors (2026). The Primitive Recursor and the Representation-Shift Bottleneck in Frontier LLM Termination Reasoning. PRT-Benchmark v1.0.0.",
+  "rai:dataCollection": "PRT-Benchmark is a benchmark of large language model behavior on nine formal-methods and termination-reasoning task families. Public records were collected as benchmark sessions pairing prompt templates and formal test artifacts with model responses. The public release includes structured extracted CSVs, raw session provenance folders, prompt and test files, formal reproducibility artifacts (Lean 4 proofs and TTT2 termination certificates), and per-test analytics summaries.",
+  "rai:dataCollectionType": [
+    "Experiments",
+    "Software Collection",
+    "Web API"
+  ],
+  "rai:dataCollectionRawData": "The raw public provenance layer is stored under 5.test-sessions/, where each session folder contains prompt text, model response text, an exported session JSON, and an extracted thinking transcript where available. The primary structured public dataset surface is the extracted CSV layer under 6.extracted-data/, derived from the raw session JSONs by an in-repository extraction and adjudication pipeline.",
+  "rai:dataPreprocessingProtocol": "Raw benchmark sessions were mechanically exported into public-safe per-session folders, then processed into structured extracted CSVs and normalized public schema guides. Derived correctness and adjudication-style fields appear in the released CSV layer alongside raw extracted answer-bearing fields. Normalization rules mapping free-text method labels to canonical method-class taxonomies are documented in 6.extracted-data/normalization/.",
+  "rai:dataAnnotationProtocol": "Structured benchmark fields were produced through an extraction and adjudication workflow over the raw public session materials. The release distinguishes answer-bearing extracted columns from derived correctness or answer-key comparison fields, as documented in ALL_TESTS_schema.md and the per-test schema files in 6.extracted-data/. Answer-key targets are fixed by externally-checkable artifacts (TTT2 certifications and the companion Lean 4 theorem stack at <COMPANION_LEAN_URL_PLACEHOLDER>), not by author judgment over model prose.",
+  "rai:dataAnnotationPlatform": [
+    "In-repository Python extraction and normalization pipeline.",
+    "Manual-review layer for the small subset of ambiguous extractions, with adjudication notes recorded inline in the released CSVs."
+  ],
+  "rai:dataAnnotationAnalysis": [
+    "The release contains both extracted answer-bearing columns and derived correctness columns. Public schema documentation in 6.extracted-data/ specifies which fields are raw controlled-vocabulary extractions and which are answer-key-derived scoring fields."
+  ],
+  "rai:machineAnnotationTools": [
+    "In-repository Python extraction tooling (per-test build_*_consolidation.py scripts and shared adjudication helpers).",
+    "Adjudicator runs and consistency checks recorded in the per-test build_*_correctness.md output files."
+  ],
+  "rai:dataUseCases": [
+    "Benchmarking formal-methods reasoning in large language models.",
+    "Studying model behavior on termination-reasoning tasks under explicit boundary discipline.",
+    "Auditing model outputs against externally-checkable answer-key constraints.",
+    "Analyzing structured extraction and adjudication over benchmark sessions."
+  ],
+  "rai:dataBiases": "The dataset is intentionally domain-specific and emphasizes formal termination reasoning, Lean / first-order rewriting artifacts, and benchmark-structured prompts. It is not representative of general natural-language interaction. Model coverage reflects the frontier-model and platform choices used in the benchmark rather than a random or demographically representative sample of all LLM systems. Provider coverage is unbalanced (OpenAI 8 models, Anthropic 6, xAI 6, Google 3, DeepSeek 2, Zhipu AI 1, Alibaba 1) by design, to maximize provider-comparison statistical power rather than to balance the panel.",
+  "rai:dataLimitations": "The dataset is a narrow benchmark artifact rather than a general reasoning corpus. Some fields are benchmark-specific and may not transfer outside the formal-methods domain. Structured extracted values may depend on release-documented normalization and adjudication choices. Public transcript provenance is richer than the tabular CSV layer and should be consulted for fine-grained audit questions. Provider-default sampling parameters (temperature, system prompts, reasoning-effort labels) may change without a model-version bump; the recorded session timestamps pin the date window in which the rates were produced.",
+  "rai:personalSensitiveInformation": "No human-subject personal data is intentionally collected as a target of this benchmark release. Public records are benchmark-session artifacts over model interactions and formal task materials. No personally-identifying information about the benchmark author is included beyond the public author/contact metadata in the citation and license.",
+  "rai:dataReleaseMaintenancePlan": "- The release is versioned semantically. Patch releases correct packaging, metadata, or documentation without changing benchmark meaning.\n- Minor releases may add new public metadata, additional sessions, or non-breaking documentation layers.\n- Major releases indicate benchmark-breaking structural or content changes.\n- Release changes are tracked in CHANGELOG.md.\n- Public mirror is hosted on GitHub at anonymous-eandd/PRT-Benchmark; canonical archival mirror is intended for Harvard Dataverse once the dataset DOI is obtained.",
+  "rai:hasSyntheticData": false,
+  "rai:dataSocialImpact": "The release is intended to support transparency and reproducibility in the evaluation of model behavior on formal reasoning tasks. Positive impact comes from clear public benchmark documentation, externally-checkable answer keys, and reproducible artifact packaging. Risks include overgeneralizing from a narrow benchmark domain and reusing benchmark outputs without respecting the documented boundary discipline (rule-extracted vs. boundary-external method status).",
+  "prov:wasGeneratedBy": "Sessions were collected by interactive prompting of 27 frontier large language models against the nine PRT task families under a documented session-isolation protocol (no workspace access, no web, no retrieval, no instruction files, contextual memory disabled, provider-default sampling). Raw exported chat logs were processed by an in-repository Python extraction pipeline into per-session JSON files and per-test CSV exports; an answer-verdict-derivation pipeline mapped free-text model output to canonical method-class taxonomies and computed the answer-key correctness columns. Where row-level adjudication was needed (the 16-row Schema A method-review override layer), reviewer rationale is preserved inline in the released CSVs and in 6.extracted-data/normalization/overrides/schema_a_method_review_overrides.csv. Externally-checkable answer keys: TTT2/CeTA termination certifications and a companion mechanized Lean 4 theorem stack."
+}
+    </script>
+  </body>
+</html>

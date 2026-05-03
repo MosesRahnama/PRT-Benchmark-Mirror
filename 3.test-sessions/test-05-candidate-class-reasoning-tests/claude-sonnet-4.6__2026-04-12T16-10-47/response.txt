@@ -1,0 +1,82 @@
+Here is the analysis of each candidate against all eight rewrite rules.
+
+---
+
+## Setup
+
+Each rule must satisfy: if `Step t u`, then `mu(t) > mu(u)`.
+
+I'll write each check as `mu(lhs) > mu(rhs)` with the actual arithmetic.
+
+---
+
+## mu1
+
+| Rule | lhs | rhs | Check |
+|------|-----|-----|-------|
+| R_int_delta | `1 + (1 + mu1 t)` = `2 + mu1 t` | `0` | ✓ |
+| R_merge_void_left | `1 + 0 + mu1 t` = `1 + mu1 t` | `mu1 t` | ✓ |
+| R_merge_void_right | `1 + mu1 t + 0` = `1 + mu1 t` | `mu1 t` | ✓ |
+| R_merge_cancel | `1 + mu1 t + mu1 t` | `mu1 t` | ✓ (1 + mu1 t ≥ 1 > 0) |
+| R_rec_zero | `1 + mu1 b + mu1 s + 0` = `1 + mu1 b + mu1 s` | `mu1 b` | ✓ |
+| R_rec_succ | `1 + mu1 b + mu1 s + (1 + mu1 n)` = `2 + mu1 b + mu1 s + mu1 n` | `(1 + mu1 s + (1 + mu1 b + mu1 s + mu1 n))` = `2 + mu1 b + 2·mu1 s + mu1 n` | Need `2 + mu1 b + mu1 s + mu1 n > 2 + mu1 b + 2·mu1 s + mu1 n`, i.e. `0 > mu1 s`. **FAILS** when `mu1 s ≥ 1` (any non-void `s`). |
+| R_eq_refl | `3 + mu1 a + mu1 a` | `0` | ✓ |
+| R_eq_diff | `3 + mu1 a + mu1 b` | `1 + (1 + 0 + (1 + mu1 a + mu1 b))` wait — rhs = `integrate (merge a b)`: `1 + (1 + mu1 a + mu1 b)` = `2 + mu1 a + mu1 b` | `3 + mu1 a + mu1 b > 2 + mu1 a + mu1 b` ✓ |
+
+**mu1 fails R_rec_succ.** The `app` weight equals `1 + mu1 a + mu1 b`, which adds `mu1 s` on the rhs. `mu1` assigns `app` the same per-argument cost as `recDelta`'s recursive call, so the rhs picks up an extra copy of `mu1 s`.
+
+---
+
+## mu2
+
+| Rule | lhs | rhs | Check |
+|------|-----|-----|-------|
+| R_int_delta | `2 + (1 + mu2 t)` = `3 + mu2 t` | `0` | ✓ |
+| R_merge_void_left | `2 + 0 + mu2 t` = `2 + mu2 t` | `mu2 t` | ✓ |
+| R_merge_void_right | `2 + mu2 t + 0` = `2 + mu2 t` | `mu2 t` | ✓ |
+| R_merge_cancel | `2 + mu2 t + mu2 t` | `mu2 t` | ✓ |
+| R_rec_zero | `5 + mu2 b + mu2 s + 0` = `5 + mu2 b + mu2 s` | `mu2 b` | ✓ |
+| R_rec_succ | `5 + mu2 b + mu2 s + (1 + mu2 n)` = `6 + mu2 b + mu2 s + mu2 n` | `1 + mu2 s + (5 + mu2 b + mu2 s + mu2 n)` = `6 + mu2 b + 2·mu2 s + mu2 n` | Need `6 + mu2 b + mu2 s + mu2 n > 6 + mu2 b + 2·mu2 s + mu2 n`, i.e. `0 > mu2 s`. **FAILS** for the same reason as mu1. |
+| R_eq_refl | `5 + 2·mu2 a` | `0` | ✓ |
+| R_eq_diff | `5 + mu2 a + mu2 b` | `2 + (2 + mu2 a + mu2 b)` = `4 + mu2 a + mu2 b` | ✓ |
+
+**mu2 fails R_rec_succ** by the same structural defect: `app` has overhead 1, `recDelta` has overhead 5, but the rhs of R_rec_succ is `app s (recDelta b s n)`. The rhs measure is `1 + mu2 s + (5 + mu2 b + mu2 s + mu2 n)` = `6 + mu2 b + 2·mu2 s + mu2 n`. The lhs is also `6 + mu2 b + mu2 s + mu2 n`. Strict decrease requires `mu2 s < 0`.
+
+---
+
+## mu3
+
+| Rule | lhs | rhs | Check |
+|------|-----|-----|-------|
+| R_int_delta | `2 + (1 + mu3 t)` = `3 + mu3 t` | `0` | ✓ |
+| R_merge_void_left | `1 + 0 + mu3 t` = `1 + mu3 t` | `mu3 t` | ✓ |
+| R_merge_void_right | `1 + mu3 t + 0` = `1 + mu3 t` | `mu3 t` | ✓ |
+| R_merge_cancel | `1 + mu3 t + mu3 t` | `mu3 t` | ✓ |
+| R_rec_zero | `1 + mu3 b + mu3 s + 0` = `1 + mu3 b + mu3 s` | `mu3 b` | ✓ |
+| R_rec_succ | `1 + mu3 b + mu3 s + (1 + mu3 n)` = `2 + mu3 b + mu3 s + mu3 n` | `2 + mu3 s + (1 + mu3 b + mu3 s + mu3 n)` = `3 + mu3 b + 2·mu3 s + mu3 n` | Need `2 + mu3 b + mu3 s + mu3 n > 3 + mu3 b + 2·mu3 s + mu3 n`, i.e. `-1 > mu3 s`. **FAILS** unconditionally — the lhs is strictly less than the rhs even when `mu3 s = 0`, since `2 < 3`. |
+| R_eq_refl | `4 + 2·mu3 a` | `0` | ✓ |
+| R_eq_diff | `4 + mu3 a + mu3 b` | `2 + (1 + mu3 a + mu3 b)` = `3 + mu3 a + mu3 b` | ✓ |
+
+**mu3 fails R_rec_succ** — and does so unconditionally (even for `s = void`). The extra overhead of `app` (2) relative to `recDelta` (1) makes the rhs strictly larger than the lhs by at least 1 before any sub-term costs are counted.
+
+---
+
+## Summary
+
+| Candidate | Fails on | Root cause |
+|-----------|----------|------------|
+| **mu1** | R_rec_succ | `app` overhead (1) equals `recDelta` overhead (1); rhs duplicates `mu1 s` |
+| **mu2** | R_rec_succ | `app` overhead (1) vs. `recDelta` overhead (5) is irrelevant once `mu2 s` is duplicated |
+| **mu3** | R_rec_succ | `app` overhead (2) > `recDelta` overhead (1); rhs is unconditionally larger than lhs |
+
+All three measures fail, and they all fail on the same rule: **R_rec_succ**. The shared structural problem is that R_rec_succ rewrites `recDelta b s (delta n)` → `app s (recDelta b s n)`, so the `s` sub-term appears **once** on the left (inside `recDelta`) but **twice** on the right (once as the direct argument to `app`, once inside the recursive `recDelta`). Any purely additive, context-free measure that assigns non-negative weights must satisfy:
+
+$$\mu(\text{recDelta}\ b\ s\ (\delta n)) > \mu(\text{app}\ s\ (\text{recDelta}\ b\ s\ n))$$
+
+which expands (with constants $c_r$, $c_a$ for the node overheads) to:
+
+$$c_r + \mu b + \mu s + 1 + \mu n > c_a + \mu s + c_r + \mu b + \mu s + \mu n$$
+
+$$1 > c_a + \mu s$$
+
+This is impossible for $\mu s \geq 0$ and $c_a \geq 1$. A valid termination proof for this calculus requires either a **multiset/lexicographic** measure on the entire reduction sequence, or a measure that is **non-linear** in `s` (e.g., exponential), or a structural argument that bounds the number of times `s` can be duplicated before reaching normal form.

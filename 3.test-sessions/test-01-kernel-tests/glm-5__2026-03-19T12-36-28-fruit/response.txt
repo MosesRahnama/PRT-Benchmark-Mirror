@@ -1,0 +1,35 @@
+## Raw Assessment
+
+**Yes, strong normalization can be established trivially.**
+
+### Key Observation
+
+The `Step` relation is defined as an inductive predicate with exactly 8 constructors—there is **no contextual closure**. This means:
+
+- `Step (mango (grape t)) plum` holds
+- But `Step (grape (mango (grape t))) (grape plum)` does **not** hold
+
+Reductions can only occur at the **root** of a term, never under constructors.
+
+### Consequence
+
+Every term either:
+1. **Matches exactly one rule** → reduces in one step to a normal form, or
+2. **Matches no rule** → is already a normal form
+
+For example:
+- `R_apple_orange`: `banana b s (grape n) → pear s (banana b s n)` — the result is a normal form because `pear` has no rule and we cannot reduce under it
+- `R_cherry_diff`: `cherry a b → mango (peach a b)` — normal form (no rule for `mango` with a `peach` argument)
+- All other rules produce `plum` or a subterm, both normal forms
+
+### Proof Roadmap
+
+Define `Normal : Trace → Prop` by case analysis on the outermost constructor, excluding the 8 reducible patterns. Then prove:
+
+```lean
+theorem step_to_normal : ∀ t t', Step t t' → Normal t'
+```
+
+This establishes that every reduction produces a normal form in exactly one step. Strong normalization follows immediately—maximum reduction chain length is 1.
+
+No structural axioms, ordinals, or external assumptions needed. The calculus as presented is already terminating by construction.

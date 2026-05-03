@@ -1,0 +1,13 @@
+**Reviewing the Lean file**
+
+I've just finished reading the Lean file. I'm focusing on the `Trace` inductive type and its role in representing terms within the rewrite system. Understanding this is key to grasping the file's purpose. I'm now looking at how the rewrite system is structured.
+
+
+**Examining the Candidate Measures**
+
+I'm now carefully analyzing the definitions of `mu1`, `mu2`, and `mu3` in relation to the `Step` rules. Starting with `mu1`, it seems to count the nesting depth of `delta` and `integrate`. I'm starting by tracing how it behaves on each rewrite rule to understand if it decreases.
+
+
+**Calculating the Measure Values**
+
+I'm now carefully computing the value of `mu1` for each of the `Step` rewrite rules. This involves manually calculating the measure for the left-hand side and right-hand side of each rule. I'm noting the changes in the `mu1` value after each application of a rewrite. It seems like the rewrite rules are quite varied in their behavior with respect to `mu1`.

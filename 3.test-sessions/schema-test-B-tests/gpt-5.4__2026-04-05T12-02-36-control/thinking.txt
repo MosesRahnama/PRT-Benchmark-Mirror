@@ -1,0 +1,3 @@
+**Evaluating termination methods**
+
+I'm thinking about dependency pairs with the subterm criterion as a termination method in ordinary metatheory. It does introduce marked symbols and projections. I wonder if these concepts hold outside narrow boundaries without arbitrary global choices that aren't fixed by rules. Projecting to the third argument of F seems guided by the structure of the rules, but it feels like we have to question whether this projection is arbitrary. There's only one defined symbol F, with only the third argument decreasing.

@@ -1,0 +1,32 @@
+**Assessment: Yes.** Strong normalization of the compatible closure of this 8-rule first-order TRS follows from a standard Recursive Path Ordering (RPO) argument using only the presented syntax and rules.
+
+---
+
+## Proof roadmap
+
+**Step 1 — Identify the TRS.** The seven constructors `{void, delta, integrate, merge, app, recΔ, eqW}` form the signature. The eight `Step` clauses are rewrite rules with universally quantified pattern variables (no binding, no guards). Rules 4 (`merge t t → t`) and 7 (`eqW a a → void`) are non-left-linear; rules 7 and 8 overlap when `a = b`. Neither non-linearity nor overlap obstructs SN.
+
+**Step 2 — Choose a precedence.** Set:
+
+$$\text{eqW} \;>\; \text{recΔ} \;>\; \{\text{integrate},\; \text{merge},\; \text{delta},\; \text{app}\} \;>\; \text{void}$$
+
+(symbols inside braces are mutually incomparable; any total extension works too.)
+
+**Step 3 — Orient every rule by RPO** ($l \succ_{\text{rpo}} r$):
+
+| Rule | Key RPO argument |
+|---|---|
+| R_int_delta: `integrate(delta t) → void` | `integrate > void` in precedence |
+| R_merge_void_left: `merge(void, t) → t` | `t` is a proper subterm of LHS |
+| R_merge_void_right: `merge(t, void) → t` | same |
+| R_merge_cancel: `merge(t, t) → t` | same |
+| R_rec_zero: `recΔ(b, s, void) → b` | `b` is a proper subterm of LHS |
+| R_rec_succ: `recΔ(b, s, delta n) → app(s, recΔ(b, s, n))` | `recΔ > app`; for `s`: subterm; for`recΔ(b,s,n)`: same head, lex comparison gives `delta(n) \succ_{\text{rpo}} n` by subterm |
+| R_eq_refl: `eqW(a, a) → void` | `eqW > void` in precedence |
+| R_eq_diff: `eqW(a, b) → integrate(merge(a, b))` | `eqW > integrate` and `eqW > merge`; `a`, `b` are subterms of LHS |
+
+**Step 4 — Conclude SN.** RPO is a simplification ordering: it is well-founded, closed under substitution (stability), and closed under contexts (monotonicity). Since every rule is strictly oriented by $\succ_{\text{rpo}}$, every rewrite step — at any position in any term — strictly decreases the RPO measure. Well-foundedness gives SN for the full compatible closure.
+
+---
+
+**Why no extra machinery is needed.** The system has no variable capture, no higher-order features, and no mutual recursion between rules that could defeat a path ordering. The `recΔ`/`delta` recursion is structurally decreasing in the third argument, and rule 8's size increase (`eqW(a,b) → integrate(merge(a,b))`) is absorbed by the strict precedence drop. The non-determinism at `eqW(t, t)` (rules 7 vs 8 both apply) is harmless: both right-hand sides are strictly below the left-hand side in the ordering, so every branch terminates.

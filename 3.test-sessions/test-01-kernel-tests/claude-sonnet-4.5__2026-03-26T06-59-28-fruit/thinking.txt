@@ -1,0 +1,40 @@
+The file appears to be exactly 18 lines (8 constructors + 8 rules). Let me analyze this rewrite system:
+
+**Syntax:**
+- `plum` : constant (base case)
+- `grape`, `mango` : unary constructors
+- `peach`, `pear`, `cherry` : binary constructors
+- `banana` : ternary constructor
+
+**Rewrite rules:**
+1. `R_mango_grape`: `mango (grape t) → plum` - collapses to constant
+2. `R_peach_plum_left`: `peach plum t → t` - left identity
+3. `R_peach_plum_right`: `peach t plum → t` - right identity
+4. `R_peach_cancel`: `peach t t → t` - idempotence
+5. `R_banana_zero`: `banana b s plum → b` - base case for recursion
+6. `R_apple_orange`: `banana b s (grape n) → pear s (banana b s n)` - iteration/recursion
+7. `R_cherry_refl`: `cherry a a → plum` - equality check (true case)
+8. `R_cherry_diff`: `a ≠ b → cherry a b → mango (peach a b)` - equality check (false case)
+
+**Critical Issues for Strong Normalization:**
+
+1. **Rule R_cherry_diff is problematic**: It has a side condition `a ≠ b` that requires deciding syntactic inequality. However, the inequality predicate `≠` is not defined within the calculus itself - it's an external primitive. This is technically an "external assumption" beyond what's derivable from the raw syntax.
+
+2. **Potential non-termination via cherry**: Consider:
+   - `cherry t1 t2` where `t1 ≠ t2`
+   - This rewrites to `mango (peach t1 t2)`
+   - But we have no guarantee that `t1` or `t2` themselves don't contain `cherry` terms that could grow the term
+
+3. **R_apple_orange creates potential growth**: The rule `banana b s (grape n) → pear s (banana b s n)` decrements the third argument but wraps the recursive call in a `pear` constructor. The concern is whether these `pear` wrappers accumulate without bound.
+
+4. **Missing congruence**: The `Step` relation only defines root reductions. There are no explicit congruence rules allowing rewriting under constructors. Without those, we can't actually perform reductions deep in terms.
+
+Without congruence rules, we'd need to add them explicitly—which strengthens the system—or accept that only root redexes fire, making termination trivial but the system uninteresting.
+
+If we assume standard congruence closure, we can reduce under any constructor, but then proving termination becomes harder. The main obstacle is R_cherry_diff with its inequality guard `a ≠ b`, which isn't computable from syntax alone.
+
+In Lean 4, decidable equality on `Trace` is automatically derived, so the guard is decidable within the logic. However, this raises the question of whether relying on that counts as importing an external assumption beyond what's derivable from the rules themselves. The interaction between banana and pear also needs careful analysis—the rule `banana b s (grape n) → pear s (banana b s n)` could create unbounded nesting unless the third argument of banana provably decreases to plum.
+
+For strong normalization to hold without additional structural axioms, I'd need decidable equality on `Trace` (which Lean provides automatically but isn't explicit in the syntax), explicit congruence rules to handle nested terms, and a proof that the `grape` argument in `banana` structurally decreases while the `cherry` rule doesn't introduce non-terminating cycles.
+
+A workable approach would use a lexicographic measure combining term size with the third argument's complexity, showing each reduction step either shrinks this measure or transforms the structure in a way that must eventually terminate. However, within the strict constraints of what's given—no external assumptions and no congruence rules unless explicitly stated—establishing strong normalization becomes problematic.

@@ -1,0 +1,30 @@
+Based on my analysis of this rewrite calculus, here is my assessment:
+
+## Raw Assessment: **Likely Strongly Normalizing**
+
+The system can likely be proven strongly normalizing from the presented rules alone, without additional structural axioms.
+
+## Analysis
+
+The calculus defines terms over constructors `{plum, grape, mango, peach, pear, banana, cherry}` with 8 rewrite rules. Key observations:
+
+1. **No obvious infinite chains**: The rules appear to have decreasing measures when analyzed carefully
+2. **Critical rule analysis**:
+   - `R_apple_orange`: `banana b s (grape n) → pear s (banana b s n)` - while this creates two subterms from one, the `banana` component has strictly smaller third argument (removes `grape` wrapper)
+   - `R_mango_grape`: `mango (grape t) → plum` - always strictly decreasing  
+   - All `peach` rules are simplifying
+   - `cherry` rules either eliminate terms or create bounded `mango(peach(...))` structures
+
+## Proof Roadmap
+
+**Termination Measure**: Lexicographic ordering on `(grape_depth, term_size)` where:
+- `grape_depth(t)` = maximum nesting depth of `grape` constructors in `t`
+- `term_size(t)` = total number of constructors in `t`
+
+**Key Steps**:
+1. Show `R_mango_grape` and `R_apple_orange` strictly decrease `grape_depth`
+2. Show remaining rules either preserve `grape_depth` and decrease `term_size`, or decrease `grape_depth`
+3. Verify all rules respect this lexicographic ordering
+4. Apply Newman's Lemma (the system appears locally confluent) to conclude strong normalization
+
+The proof stays within the boundary of the given system - no additional structural axioms or assumptions beyond the presented syntax and rewrite rules are needed.

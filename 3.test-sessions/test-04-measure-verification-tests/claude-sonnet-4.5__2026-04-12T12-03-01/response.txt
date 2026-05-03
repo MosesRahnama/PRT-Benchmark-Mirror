@@ -1,0 +1,46 @@
+Now I'll analyze the soundness of this lexicographic termination measure.
+
+## Assessment: The Measure is **NOT Sound**
+
+The lexicographic measure `(phase t, cost t)` is **unsound** because it fails to decrease for the `R_rec_succ` rewrite rule.
+
+### Critical Failure: R_rec_succ Rule
+
+For the rule:
+```lean
+R_rec_succ : ∀ b s n, Step (recDelta b s (delta n)) (app s (recDelta b s n))
+```
+
+**Left-hand side (LHS):** `recDelta b s (delta n)`
+- `phase = 1` (matches the pattern `recDelta _ _ (delta _)`)
+- `cost = 1 + cost(b) + cost(s) + cost(delta n) = 1 + cost(b) + cost(s) + 1 + cost(n)`
+- **Measure:** `(1, 2 + cost(b) + cost(s) + cost(n))`
+
+**Right-hand side (RHS):** `app s (recDelta b s n)`
+- `phase = 0` (app doesn't match the special pattern)
+- `cost = 1 + cost(s) + cost(recDelta b s n) = 1 + cost(s) + 1 + cost(b) + cost(s) + cost(n)`
+- **Measure:** `(0, 2 + cost(b) + 2·cost(s) + cost(n))`
+
+**Comparison:**
+- Phase: 1 → 0 ✓ (decreases)
+- Cost: `2 + cost(b) + cost(s) + cost(n)` → `2 + cost(b) + 2·cost(s) + cost(n)` ✗ (increases when `cost(s) > 0`)
+
+Since the phase decreases but the cost **increases**, this violates the lexicographic ordering when `s` is non-trivial. The measure doesn't strictly decrease.
+
+### Other Rules (Valid)
+
+The other rules do decrease the measure:
+- **R_int_delta:** `cost(integrate (delta t)) = 3 + cost(t)` → `cost(void) = 0` ✓
+- **R_merge_void_left/right:** Cost decreases ✓
+- **R_merge_cancel:** `cost(merge t t) = 1 + 2·cost(t)` → `cost(t)` ✓
+- **R_rec_zero:** Cost decreases ✓
+- **R_eq_refl:** Cost decreases to 0 ✓
+- **R_eq_diff:** Debatable but likely decreases ✓
+
+### Conclusion
+
+The measure is **unsound** for proving termination. The `R_rec_succ` rule can increase the total term size, and the phase mechanism doesn't adequately compensate for this growth. A sound termination proof would require either:
+
+1. A different measure that accounts for the structural recursion in `R_rec_succ`
+2. A multiset or nested measure approach
+3. Restricting the rewrite system to exclude problematic patterns

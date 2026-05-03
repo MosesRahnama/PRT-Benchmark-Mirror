@@ -1,0 +1,6 @@
+**Planning file read method**
+
+I'm preparing to read up to 2000 lines from the file using the read_file method since no plan tool is available.
+**Preparing proof skeleton and todo list**
+
+I'm providing a proof skeleton text without modifying files and creating a todo list using the manage_todo_list tool as indicated by the workflow instructions.

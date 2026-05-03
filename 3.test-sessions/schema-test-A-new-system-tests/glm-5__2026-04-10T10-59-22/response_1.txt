@@ -1,0 +1,36 @@
+## Assessment: Strong Normalization Can Be Established
+
+**Verdict: YES** — Strong normalization of this system can be established from the presented rewrite rules alone, without importing additional structural axioms or object-level assumptions.
+
+### The Rewrite System
+
+```
+(VAR x y n)
+(RULES
+  F(x, y, Z) -> x
+  F(x, y, S(n)) -> G(F(x, y, n))
+)
+```
+
+### Reasoning
+
+1. **Constructor Discipline**: The symbols `Z` and `S` function as constructors in the second argument position of `F`. They appear only on left-hand sides in that position, never as defined symbols.
+
+2. **Primitive Recursive Pattern**: The rules encode a classic primitive recursion scheme:
+   - **Base case**: `F(x, y, Z) → x` — terminates immediately
+   - **Recursive case**: `F(x, y, S(n)) → G(F(x, y, n))` — the recursive call has a *structurally smaller* argument
+
+3. **Well-Founded Measure**: Define the measure `μ(t)` as the number of `S` constructors in the second argument of any `F`-term. Then:
+   - Rule 1: `μ(F(x, y, Z)) = 0` → `μ(x) = 0` (no new `F`-redexes created)
+   - Rule 2: `μ(F(x, y, S(n))) = 1 + μ(n)` → `μ(G(F(x, y, n))) = μ(n)` — **strict decrease**
+
+4. **No Critical Pairs**: The rules are non-overlapping (the second argument of `F` matches either `Z` or `S(n)`, never both), so there are no local ambiguities that could introduce non-termination.
+
+5. **Termination Argument**: Since each rewrite step strictly decreases a measure bounded below by 0, all rewrite sequences must terminate. This is provable using:
+   - Polynomial interpretations
+   - Structural ordering (simplification orderings)
+   - Lexicographic path orderings
+
+### Conclusion
+
+This is a textbook terminating system. The strong normalization property follows directly from the primitive recursive structure evident in the rules themselves — no external axioms or assumptions are required.

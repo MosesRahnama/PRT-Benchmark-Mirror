@@ -1,0 +1,18 @@
+**Raw assessment:** **Yes.** Strong normalization can be established from the rules shown, without adding extra rewrite rules, guards, or object-level assumptions.
+
+A short roadmap:
+
+1. Read the displayed clauses as a first-order TRS (or, even more weakly, note that if `Step` is taken *literally* as only a root-step relation, termination is trivial).
+2. For the standard contextual reading, orient the rules by a well-founded simplification order such as **LPO/RPO** with a precedence like
+   $$
+   \mathrm{rec}\Delta \succ \mathrm{eqW} \succ \mathrm{integrate} \succ \mathrm{merge} \succ \mathrm{app} \succ \delta \succ \mathrm{void}.
+   $$
+3. Then each rule decreases:
+   - `merge ... -> ...` and `recΔ b s void -> b` by the **subterm property**.
+   - `recΔ b s (delta n) -> app s (recΔ b s n)` because `recΔ` dominates `app`, and `delta n \succ n`.
+   - `eqW a b -> integrate (merge a b)` because `eqW` dominates `integrate` and also dominates `merge a b`.
+   - `integrate (delta t) -> void` and `eqW a a -> void` are immediate.
+4. Since LPO/RPO is well-founded, monotone, and substitution-stable, no infinite rewrite chain exists.
+
+So, within the boundary you imposed, the system looks **strongly normalizing**.  
+The only caveat is interpretive: if one insists on the Lean file’s `Step` relation *without* contextual closure, termination is even easier and essentially immediate.

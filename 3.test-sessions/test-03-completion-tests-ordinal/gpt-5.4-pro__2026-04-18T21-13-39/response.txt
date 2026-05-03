@@ -1,0 +1,116 @@
+Below is a minimal in-place skeleton for the three open cases.  
+One note: in `R_rec_succ`, the comment describing “LHS/RHS” is reversed; the goal is still `mu (app ...) < mu (recDelta ... (delta n))`.
+
+```lean
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    change
+      omega0 ^ (3 : Ordinal) * (mu s + 1)
+        + omega0 ^ (2 : Ordinal) *
+            (omega0 ^ (mu n + mu s + (6 : Ordinal))
+              + omega0 * (mu b + 1) + 1 + 1) + 1
+      <
+      omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal))
+        + omega0 * (mu b + 1) + 1
+
+    have hbase : mu n < omega0 ^ (5 : Ordinal) * (mu n + 1) := by
+      have h1 : mu n < mu n + 1 := lt_add_one (mu n)
+      have h2 : mu n + 1 ≤ omega0 ^ (5 : Ordinal) * (mu n + 1) := by
+        exact le_mul_right _ (opow_pos 5 omega0_pos)
+      exact lt_of_lt_of_le h1 h2
+
+    have hexp :
+        mu n + mu s + (6 : Ordinal)
+          < omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal) := by
+      -- transport `hbase` through addition on the right
+      -- likely via monotonicity of `fun x => x + mu s + 6`
+      sorry
+
+    have hdom :
+        omega0 ^ (mu n + mu s + (6 : Ordinal))
+          <
+        omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal)) := by
+      -- strict monotonicity of `fun x => omega0 ^ x` from `hexp`
+      sorry
+
+    have happ :
+        omega0 ^ (3 : Ordinal) * (mu s + 1)
+          + omega0 ^ (2 : Ordinal) *
+              (omega0 ^ (mu n + mu s + (6 : Ordinal))
+                + omega0 * (mu b + 1) + 1 + 1) + 1
+        <
+        omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal)) := by
+      -- main ordinal-arithmetic package:
+      -- show every summand on the left is still below the dominant principal term on the right,
+      -- using `hdom` and that the RHS exponent is vastly larger than `3`, `2`,
+      -- and the exponent occurring inside `mu (recDelta b s n)`.
+      sorry
+
+    calc
+      omega0 ^ (3 : Ordinal) * (mu s + 1)
+          + omega0 ^ (2 : Ordinal) *
+              (omega0 ^ (mu n + mu s + (6 : Ordinal))
+                + omega0 * (mu b + 1) + 1 + 1) + 1
+        < omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal)) := happ
+      _ ≤ omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal))
+            + omega0 * (mu b + 1) := by
+            exact le_add_right _ _
+      _ ≤ omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + (6 : Ordinal))
+            + omega0 * (mu b + 1) + 1 := by
+            exact le_add_right _ _
+```
+
+```lean
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    exact Ordinal.pos_iff_ne_zero.mpr (by
+      apply ne_of_gt
+      exact add_pos_right _ one_pos)
+```
+
+```lean
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    change
+      omega0 ^ (4 : Ordinal) *
+          (omega0 ^ (3 : Ordinal) * (mu a + 1)
+            + omega0 ^ (2 : Ordinal) * (mu b + 1) + 1 + 1) + 1
+      <
+      omega0 ^ (mu a + mu b + (9 : Ordinal)) + 1
+
+    have hmerge :
+        omega0 ^ (3 : Ordinal) * (mu a + 1)
+          + omega0 ^ (2 : Ordinal) * (mu b + 1) + 1 + 1
+        <
+        omega0 ^ (mu a + mu b + (5 : Ordinal)) := by
+      -- prove the expanded `merge` measure is below one principal power.
+      -- Typical structure:
+      --   1. bound `omega0^3 * (mu a + 1)` by a power below `omega0^(mu a + mu b + 5)`
+      --   2. bound `omega0^2 * (mu b + 1) + 1 + 1` by the same principal power
+      --   3. combine the bounds using that a sum of smaller CNF terms is still
+      --      below the larger principal power.
+      sorry
+
+    have hmul :
+        omega0 ^ (4 : Ordinal) *
+            (omega0 ^ (3 : Ordinal) * (mu a + 1)
+              + omega0 ^ (2 : Ordinal) * (mu b + 1) + 1 + 1)
+        <
+        omega0 ^ (mu a + mu b + (9 : Ordinal)) := by
+      -- use monotonicity of left multiplication with `hmerge`,
+      -- then compare `omega0^4 * omega0^(mu a + mu b + 5)` with `omega0^(mu a + mu b + 9)`.
+      -- This is the core ordinal-arithmetic sublemma for this case.
+      sorry
+
+    exact add_lt_add_right hmul 1
+```
+
+Practical suggestion: factor the two hard subproofs into local helper lemmas first:
+
+- `app_rec_lt_big_power`
+- `integrate_merge_lt_eq_power`
+
+Then the three rule cases stay short.
+
+Exact lemma names for monotonicity of ordinal exponentiation/addition may need minor adjustment when checked.

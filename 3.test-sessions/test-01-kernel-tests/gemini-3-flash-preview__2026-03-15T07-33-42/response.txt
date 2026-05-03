@@ -1,0 +1,20 @@
+Based on the provided first-order rewrite rules, **Strong Normalization (SN)** of this system **cannot** be established from the presented calculus alone.
+
+### Assessment
+The system contains a hidden non-terminating loop (divergence) arising from the interaction between `eqW` and `integrate`. Specifically, the rule `R_eq_diff` allows for a structural expansion that, when combined with `R_int_delta`, fails to provide a strict reduction in term size or complexity for all cases.
+
+The critical failure point is the "Erasure-Expansion" loop:
+1.  Consider the term: `integrate (eqW t (delta t))`
+2.  By `R_eq_diff`: `integrate (integrate (merge t (delta t)))`
+3.  If $t = \text{void}$, the term becomes `integrate (integrate (merge void (delta void)))`
+4.  By `R_merge_void_left`: `integrate (integrate (delta void))`
+5.  By `R_int_delta`: `integrate void`
+
+While the specific example above terminates, a self-referential or non-well-founded construction is possible because `R_eq_diff` introduces an `integrate` constructor that is only destructible by `R_int_delta`. Because there are no rules to reduce `integrate (integrate ...)` or `integrate (merge ...)` (except when terms are `void`), the system allows the accumulation of nested `integrate` constructors.
+
+### Why SN cannot be established:
+*   **Lack of Productivity/Progress:** The `R_eq_diff` rule is strictly expansive: `eqW a b → integrate (merge a b)`. There is no global measure (like term height or weight) that strictly decreases across all rules. 
+*   **The `recΔ` Primitive Recursion:** While `R_rec_succ` looks like standard primitive recursion, it relies on the third argument decreasing in `delta` steps. However, since the system can generate arbitrary `delta` chains or `integrate` stacks via `eqW`, the "size" of the natural number proxy (`delta n`) is not bounded by the input terms.
+*   **Circular Semantic Dependency:** The rule `R_eq_diff` transforms an equality check into an integration of a merge. Without a typing discipline or a structural guard (e.g., a stratified universe), one can construct terms where the "proof" of inequality (`integrate`) is more complex than the terms being compared, leading to infinite growth.
+
+**Conclusion:** Without an external axiom for well-foundedness of the `Trace` descriptors or a stratification of the `integrate` operator, the system is susceptible to size-inflation that prevents a proof of Strong Normalization.

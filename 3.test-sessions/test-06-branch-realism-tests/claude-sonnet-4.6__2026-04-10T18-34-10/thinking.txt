@@ -1,0 +1,44 @@
+Let me analyze these two theorems and the `kappa` function carefully.
+
+**`kappa_rec_delta_step`**:
+
+Claims: `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`
+
+Left-hand side: `kappa (recDelta b s (delta n))`
+By the `kappa_rec_delta` simp lemma (and the definition), this is:
+`Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1`
+
+Right-hand side: `kappa (recDelta b s n) + 1`
+
+
+By the definition of `kappa`, when the third argument isn't explicitly `delta`, we get `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)`. But here's the issue: the pattern matching treats `delta n'` specially with the `+ 1`, while any other `Trace` value (including potentially `delta n'` under a different binding) gets the base case without the increment. This means the variable `n` in the second pattern could itself be a `delta` of something, creating an ambiguity in how the function evaluates. So when `n = delta n'`, the left side becomes `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 1`, but the right side evaluates to `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 1` as well—wait, let me trace through this more carefully because the recursion on `recDelta` is adding an extra `+ 1` that breaks the equality.
+
+Let me work through a concrete case with `b = void`, `s = void`, and `n = delta (delta void)`. Computing the left side gives me `Nat.max 0 0 + 1`, but when I expand the right side with the recursive definition, I'm getting an extra increment that makes them unequal. This shows the theorem is actually false for this case.
+
+Now I'm looking at the `kappa_rec_succ_drop` lemma, which claims a strict inequality between applying `s` to the recursive result versus recursing on the successor. This is the critical termination property needed for the `R_rec_succ` relation.
+
+The proof relies on `kappa_rec_delta_step`, but since that lemma is false, the whole argument collapses. Let me verify whether the conclusion itself actually holds by expanding both sides: the left side gives `Nat.max (kappa s) (kappa (recDelta b s n))`, while the right side expands to `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1`. The inequality needs to hold between these expressions, but the calculation cuts off before reaching a conclusion.
+
+When `n` isn't already a `delta` application, `kappa (recDelta b s n)` simplifies to `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)`, which means the left side collapses down to just `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)` since `kappa s` is absorbed into the larger max. The right side should then be one more than this value, but the calculation is incomplete. I need to carefully work through the max operation here—since `kappa s` is bounded by the nested max expression plus one, the overall max simplifies to just `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 1`, which gives us LHS = RHS - 1 < RHS as required.
+
+Now for case 2 where `n = delta n'`, I'm checking what happens with `recDelta b s (delta (delta n'))`.
+
+The pattern match tells me the third argument `delta (delta n')` matches as `.delta n` where the inner part is `delta n'`, so by definition `kappa` of this recursive call equals `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 1`. Meanwhile, the LHS `kappa (app s (recDelta b s (delta n')))` expands to `Nat.max (kappa s)` of that same recursive call, which gives me `Nat.max (kappa s) (Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 1)`.
+
+This simplifies to exactly `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 1`, so LHS equals RHS—the inequality I was trying to prove is actually false. I can verify this with a concrete counterexample using `b = void`, `s = void`, and `n = delta void`, where all the `kappa` values are 0, and the calculation confirms they're equal. `) serves as a counterexample—when `n = delta void`, the inequality in `kappa_rec_succ_drop` breaks down, so that theorem can't hold for all traces. Let me look more carefully at `kappa_rec_delta_step` to see if there's a similar issue there.
+
+The theorem claims that wrapping the recursion counter in `delta` increases `kappa` by exactly 1. On the left side, I get `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1` from the definition. On the right, I need to expand what `kappa (recDelta b s n)` evaluates to depending on whether `n` is already a `delta` or not.
+
+When `n` isn't wrapped in `delta`, the right side simplifies to the same expression as the left. When `n = delta n'`, I can use the fact that `kappa (delta n') = kappa n'` to show both sides are equal, completing the proof.
+
+But wait—the right side actually becomes `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 1 + 1`, which is one more than the left side. So `kappa_rec_delta_step` fails when `n` is wrapped in `delta`.
+
+Let me verify `kappa_rec_succ_drop` directly instead. It claims the application `app s (recDelta b s n)` has smaller kappa than `recDelta b s (delta n)`, where the right side evaluates to `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1`.
+
+For the left side, I need to split on whether `n` is already a `delta` application or not. If it's not, then `kappa (recDelta b s n)` equals that same max expression, making the left side also equal to that max—which is strictly less than the right side. But if `n` is `delta n'`, the calculation breaks down differently. false** ✗
+
+So the conclusion itself is false when `n = delta _`. This reveals a genuine bug in how the measure is designed.
+
+Both `kappa_rec_delta_step` and `kappa_rec_succ_drop` fail for the same reason—when the third argument is `delta void`, I get LHS=1 but RHS=2. The underlying issue is that `kappa` doesn't properly handle nested `delta` wrappers, so when `recDelta` receives `delta (delta n')`, the measure only accounts for the innermost `kappa n'` rather than flattening the structure correctly.
+
+The real fix would be to either count the depth of `delta` constructors or redesign `kappa` so that nested deltas contribute to the measure properly. A better approach might be to define a depth function that counts how many `delta` layers wrap a term, then use that as the actual measure for the recursion.

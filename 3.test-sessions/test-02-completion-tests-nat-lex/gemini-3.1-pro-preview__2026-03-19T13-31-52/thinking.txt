@@ -1,0 +1,41 @@
+**Drafting Proof Structure**
+
+I'm currently working on structuring a proof skeleton within the Lean 4 file. My primary focus is establishing the necessary framework to address the five remaining cases of the strong normalization proof. I aim to ensure a solid foundation before diving into the specifics of each case. The goal is to maximize clarity for the proof's completion.
+
+
+**Inspecting the Lean File**
+
+I've just finished reading the initial portion of the Lean 4 file, focusing on the proof's structure and the remaining cases. The goal is to understand how the existing proofs are structured to extend that pattern. I'll need to examine the definitions and existing proofs to effectively tackle those "sorry" placeholders. I'll analyze the established case-by-case approach.
+**Developing Proof Strategy**
+
+I'm currently focused on the `sorry` cases for the proof skeleton. The goal is to fully define the remaining steps. Right now, I'm working through integrating `_delta t`, aiming to map that step correctly. The next hurdle is the `recDelta` cases, particularly `R_rec_zero` and `R_rec_succ`, where I need to clarify the relationship between `recDelta` and the parameters to progress.
+
+
+**Evaluating Case by Case**
+
+I'm now diving into the implications of each `sorry` case in more detail. For `R_int_delta t`, the key is understanding how `kappa` relates to the components. My current thought is that while `kappa` *can* drop, it might not *strictly* drop, complicating the direct application of `drop_right`. The analysis of the `LexOrder` structure is proving helpful. I have to find a way to navigate the relations between `kappa` and `mu`.
+
+
+**Tackling Remaining Cases**
+
+I've been working through the remaining `sorry` cases.  Specifically, I've just finalized the proof strategy for `R_int_delta t` using a `by_cases` strategy and leveraging `drop_right` and `drop_left` appropriately.  Now, I'm shifting to analyze `R_rec_zero` and `R_rec_succ`, starting by mapping how the `recDelta` interacts with parameters. I'm focusing on defining `LexOrder` relations.
+
+
+**Completing Remaining Cases**
+
+I've just finished the proof strategy for `R_int_delta t`. I used `unfold LexOrder measure; simp only [...]; by_cases` to create the appropriate structure.  Now, I'm focusing on `R_rec_zero` and starting to analyze how `kappa` and `mu` change in relation to each parameter. My next move is to find a way to navigate `drop_right` conditions.
+
+
+**Finalizing Proof Skeletons**
+
+I've just finalized the proof strategies for all five `sorry` cases. For `R_int_delta t` and `R_eq_refl a`, I used `unfold LexOrder measure; simp only [...]; by_cases` to create the appropriate structure. For `R_rec_succ b s n`, I used `drop_left`, and `R_eq_diff a b` used `drop_right`.  Now, I have proof skeletons for all cases.
+
+
+**Refining Proof Skeletons**
+
+I've updated the proof skeletons with more specific strategies. I've used `unfold measure LexOrder` and `by_cases` as needed. For the `drop_right` and `drop_left` cases, I have added the appropriate `simp` commands and `omega` for the inequalities. I've also focused on the `R_rec_zero` case, with a strategy involving `by_cases`.
+
+
+**Generating Final Skeletons**
+
+I've just refined the strategy for the remaining cases. For `R_int_delta t` and `R_eq_refl a`, I'm leveraging `unfold measure LexOrder` and a `by_cases` strategy to handle the `kappa` comparisons, followed by an application of `Prod.Lex.right` or `Prod.Lex.left` based on the case. For the `drop_right` and `drop_left` cases, I used appropriate `simp` and `omega` calls. The `R_rec_zero` case has a similar `by_cases` setup.

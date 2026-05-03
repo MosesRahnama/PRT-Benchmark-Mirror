@@ -1,0 +1,77 @@
+The file is complete at ~20 lines. Here is my assessment.
+
+---
+
+## System summary
+
+| Symbol | Arity | Role |
+|--------|-------|------|
+| `plum` | 0 | ground constant (zero / base) |
+| `grape` | 1 | successor-like wrapper |
+| `mango` | 1 | negation / complement |
+| `peach` | 2 | binary "difference" / subtraction |
+| `pear` | 2 | pairing / application |
+| `banana` | 3 | bounded iterator (primitive recursion) |
+| `cherry` | 2 | equality test |
+
+There are 8 rewrite rules (the `Step` constructors), no congruence/context-closure rule, and no variable binding.
+
+## Can strong normalization (SN) be proved from this calculus alone?
+
+**Yes — with one critical observation about what "rewriting" means here.**
+
+### 1. The relation `Step` is root-only
+
+`Step` relates a redex pattern to its contractum. There is no congruence closure (no rules of the form "if `Step s t` then `Step (grape s) (grape t)`"). So as written, `Step` only fires at the **root** of a term. A term like `grape (mango (grape plum))` is already in normal form with respect to `Step`, even though its subterm `mango (grape plum)` matches `R_mango_grape`.
+
+Under root-only rewriting, every term admits **at most one** `Step` (the rules are non-overlapping on their LHS patterns, with `R_cherry_refl` / `R_cherry_diff` partitioned by the equality guard). So every rewrite sequence is deterministic and we only need to show termination, not strong normalization per se — they coincide.
+
+### 2. If we extend to full subterm rewriting
+
+Suppose we close `Step` under all subterm contexts (the usual convention for a first-order rewrite system). Then we must prove SN of the resulting relation. Here is a roadmap that stays entirely within the presented syntax and rules:
+
+#### Proof roadmap (polynomial interpretation method)
+
+Assign every constructor a **polynomial weight** $w : \text{Trace} \to \mathbb{N}$ such that every rule strictly decreases weight. A suitable assignment:
+
+| Term | Weight |
+|------|--------|
+| $w(\texttt{plum})$ | $1$ |
+| $w(\texttt{grape}\ t)$ | $w(t) + 2$ |
+| $w(\texttt{mango}\ t)$ | $2\,w(t) + 1$ |
+| $w(\texttt{peach}\ s\ t)$ | $w(s) + w(t) + 1$ |
+| $w(\texttt{pear}\ s\ t)$ | $w(s) + w(t)$ |
+| $w(\texttt{banana}\ b\ s\ n)$ | $(w(b) + w(s)) \cdot (w(n) + 1)$ |
+| $w(\texttt{cherry}\ a\ b)$ | $2\,(w(a) + w(b)) + 2$ |
+
+**Verification of each rule** (all weights are in $\mathbb{N}_{\geq 1}$ since every subterm has weight $\geq 1$):
+
+1. **R\_mango\_grape**: $w(\texttt{mango}(\texttt{grape}\ t)) = 2(w(t)+2)+1 = 2w(t)+5$. RHS: $w(\texttt{plum})=1$. Strict decrease. ✓
+
+2. **R\_peach\_plum\_left**: $w(\texttt{peach}\ \texttt{plum}\ t) = 1 + w(t) + 1 = w(t)+2$. RHS: $w(t)$. Strict decrease. ✓
+
+3. **R\_peach\_plum\_right**: symmetric. ✓
+
+4. **R\_peach\_cancel**: $w(\texttt{peach}\ t\ t) = 2w(t)+1$. RHS: $w(t)$. Strict decrease (since $w(t)\geq 1$). ✓
+
+5. **R\_banana\_zero**: $w(\texttt{banana}\ b\ s\ \texttt{plum}) = (w(b)+w(s))\cdot 2$. RHS: $w(b)$. Since $w(s)\geq 1$, LHS $\geq 2w(b)+2 > w(b)$. ✓
+
+6. **R\_apple\_orange** (banana-grape): LHS $= (w(b)+w(s))\cdot(w(n)+3)$. RHS $= w(s) + (w(b)+w(s))\cdot(w(n)+1) = w(s) + (w(b)+w(s))\cdot(w(n)+1)$. Difference: $(w(b)+w(s))\cdot 2 - w(s) = 2w(b)+w(s) \geq 3 > 0$. ✓
+
+7. **R\_cherry\_refl**: $w(\texttt{cherry}\ a\ a) = 4w(a)+2$. RHS: $1$. Strict decrease. ✓
+
+8. **R\_cherry\_diff**: LHS $= 2(w(a)+w(b))+2$. RHS $= w(\texttt{mango}(\texttt{peach}\ a\ b)) = 2(w(a)+w(b)+1)+1 = 2w(a)+2w(b)+3$. LHS $- $ RHS $= -1 < 0$. **Fails!**
+
+The naïve assignment doesn't work for `R_cherry_diff`. Adjust: set $w(\texttt{cherry}\ a\ b) = 3(w(a)+w(b)) + 4$.
+
+Re-check R\_cherry\_diff: LHS $= 3(w(a)+w(b))+4$. RHS $= 2(w(a)+w(b)+1)+1 = 2w(a)+2w(b)+3$. Difference $= w(a)+w(b)+1 \geq 3 > 0$. ✓
+
+Re-check R\_cherry\_refl: LHS $= 3(2w(a))+4 = 6w(a)+4$. RHS $= 1$. ✓
+
+All other rules are unaffected since `cherry` appears only on LHSs of cherry rules.
+
+### 3. Conclusion
+
+**Strong normalization is provable from the presented calculus alone**, using the standard polynomial interpretation method over $\mathbb{N}$. The weight function above witnesses that every rule strictly decreases a well-founded measure. By monotonicity of polynomial interpretations under subterm contexts, every rewrite sequence (at any position) is strictly decreasing in $\mathbb{N}$, hence finite.
+
+No additional rewrite rules, guards, side conditions, structural axioms, or object-level assumptions are needed — only the well-foundedness of $\mathbb{N}$ (a metatheoretic fact) and the eight rules as given.

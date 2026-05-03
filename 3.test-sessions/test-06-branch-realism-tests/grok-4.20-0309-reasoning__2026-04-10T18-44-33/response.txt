@@ -1,0 +1,29 @@
+**The helper strategy is not sound.**
+
+The provided `kappa` measure is intended to support a termination argument for the `Step` relation (via strict decrease on redexes, particularly the `R_rec_succ` case). The two helper theorems are the key supporting lemmas. However, both fail to hold in general, as shown by case analysis on the structure of the third argument to `recDelta` (i.e., whether it is headed by the `delta` constructor). This breaks the intended strict decrease.
+
+### Direct computation of `kappa` (from the provided definition)
+Let `M = Nat.max (kappa b) (kappa s)` and `K = kappa n`. Then:
+- `kappa (recDelta b s (delta n)) = Nat.max M K + 1` (always matches the specialized pattern).
+- `kappa (recDelta b s n)` equals `Nat.max M K` if `n` is *not* headed by `delta`; equals `Nat.max M K + 1` if `n = delta p` for some `p` (with `K = kappa p` by the `kappa_delta` rule).
+
+### Failure of `kappa_rec_delta_step`
+```lean
+kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1
+```
+- **Case n not headed by `delta`**: LHS = `max M K + 1`; RHS = `(max M K) + 1`. Holds.
+- **Case n = delta p** (so `K = kappa p`):  
+  LHS = `max M K + 1` (third argument is `delta (delta p)`).  
+  RHS = `(max M K + 1) + 1 = max M K + 2`.  
+  **LHS = RHS - 1**; equality fails.
+
+### Failure of `kappa_rec_succ_drop` (the key termination step)
+This corresponds to `R_rec_succ`: we need `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`.
+- LHS of inequality (redex measure): always `max M K + 1`.
+- RHS measure = `Nat.max (kappa s) (kappa (recDelta b s n))`.
+- **Case n not headed by `delta`**: RHS measure = `max M K`. Then `max M K < max M K + 1` holds.
+- **Case n = delta p**:  
+  `kappa (recDelta b s n) = max M K + 1`, so RHS measure = `max(ks, max M K + 1) = max M K + 1` (since `M ≥ ks`).  
+  **Equality holds**: both sides are `max M K + 1`. Strict decrease fails.
+
+The measure is non-decreasing on this family of terms (it plateaus under nested `delta`s in the recursion argument). The lemmas cannot be proved as written (the `sorry` proofs have no valid completion that holds for all `Trace` values), so the proposed termination argument is unsound. A revised measure or additional well-founded relation on `Trace` would be needed.

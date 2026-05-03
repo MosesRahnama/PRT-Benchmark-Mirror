@@ -1,0 +1,42 @@
+I'll read the file to understand the structure and the remaining cases that need proofs.
+Now I'll provide a proof skeleton for the three remaining cases (`R_rec_succ`, `R_eq_refl`, and `R_eq_diff`). Here's the analysis:
+
+## Proof Skeleton for Remaining Cases
+
+The file contains three incomplete cases marked `sorry`. Here's a proof strategy for each:
+
+### Case 1: `R_rec_succ` (recDelta b s (delta n) → app s (recDelta b s n))
+
+**Strategy:**
+The measure of `recDelta b s (delta n)` contains $\omega^{\omega^5 \cdot (\mu(n) + 1) + 1 + \mu(s) + 6}$ in the exponent, which is vastly larger than any term appearing in the right-hand side. The right side's largest exponent is $\mu(n) + \mu(s) + 6$ (from the nested `recDelta`), which is dominated by $\omega^5 \cdot (\mu(n) + 1)$.
+
+**Proof approach:**
+1. Unpack both sides' measure definitions
+2. Show that $\omega^5 \cdot (\mu(n) + 1) \gg \mu(n) + \mu(s) + 6$ in ordinal terms
+3. Use `opow_lt_opow_left` or similar to conclude the LHS exponent dominates the RHS exponent
+4. Apply ordinal arithmetic lemmas to complete the inequality chain
+
+### Case 2: `R_eq_refl` (eqW a a → void)
+
+**Strategy:**
+This is straightforward: we need $0 < \omega^{2 \cdot \mu(a) + 9} + 1$, which is obviously true since $\omega^{2 \cdot \mu(a) + 9}$ is a positive ordinal.
+
+**Proof approach:**
+1. Apply `simp [mu]` (already done)
+2. Use `Ordinal.zero_lt_one` or `add_pos_right`
+3. Apply `pos_iff_ne_zero` and conclude that the ordinal power is nonzero
+
+### Case 3: `R_eq_diff` (eqW a b → integrate (merge a b))
+
+**Strategy:**
+The LHS measure is $\omega^{\mu(a) + \mu(b) + 9} + 1$, while the RHS is $\omega^4 \cdot (\omega^3 \cdot (\mu(a) + 1) + \omega^2 \cdot (\mu(b) + 1) + 2) + 1$. The key is showing that $\mu(a) + \mu(b) + 9$ is much larger than 4, which makes the LHS exponent dominate.
+
+**Proof approach:**
+1. Unpack both sides' measures
+2. Show $\mu(a) + \mu(b) + 9 > 4$ (or use a more sophisticated ordinal argument)
+3. Apply `opow_lt_opow_left` to relate the exponents
+4. Use additivity lemmas to handle the additive terms and complete the proof
+
+---
+
+Each case follows the pattern established in the proved cases: carefully decompose the ordinal expressions, identify the dominating term, and use ordinal arithmetic lemmas from `Mathlib.SetTheory.Ordinal` to establish the strict inequality.

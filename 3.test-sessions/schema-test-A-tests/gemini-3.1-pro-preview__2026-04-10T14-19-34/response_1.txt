@@ -1,0 +1,12 @@
+**Assessment:** Yes, strong normalization of this system can be established solely from the presented rewrite system without importing any external structural axioms or object-level assumptions.
+
+**Reasoning:** 
+The provided term rewriting system consists of two rules:
+1. `F(x, y, Z) -> x`
+2. `F(x, y, S(n)) -> G(y, F(x, y, n))`
+
+This system is strictly terminating because it is a simple form of primitive recursion on the third argument of `F`. 
+
+In every recursive application of the rule for `F`, the size of the third argument strictly decreases from `S(n)` (a successor term) to its immediate subterm `n`. The base case `Z` effectively halts the sequence, replacing the `F` application with the variable `x`. Since there are no rewrite rules defining non-terminating or cyclic behavior for the function `G`, and `F` strictly consumes its structurally finite third argument in each step, infinite rewrite sequences are impossible. 
+
+This termination can be formally proven using standard automated techniques that rely purely on the syntactic structure of the rules, such as a Lexicographic Path Ordering (LPO) with precedence `F > G` or via a simple polynomial interpretation, entirely independent of any external axioms.

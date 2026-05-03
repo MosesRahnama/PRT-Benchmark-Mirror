@@ -1,0 +1,59 @@
+## Raw Assessment
+
+**Yes, strong normalization is derivable from the given rules alone.** No extra axioms, guards, or hidden assumptions are needed.
+
+---
+
+## Why It Works
+
+The only structurally non-obvious rule is `R_apple_orange`:
+
+```
+banana b s (grape n)  →  pear s (banana b s n)
+```
+
+When `s` is non-trivial, the right-hand side is *heavier* under a naive size measure — it copies `s` into both the `pear` and the inner `banana`. However:
+
+**No rule introduces fresh `grape` constructors.** Every RHS either eliminates constructors or rearranges existing subterms. The third argument of `banana` can only receive a `grape`-wrapped value that was already present in the input. This is the decisive structural fact.
+
+---
+
+## Proof Roadmap (polynomial interpretation)
+
+Define the interpretation $[\![\cdot]\!] : \text{Trace} \to \mathbb{Z}_{>0}$:
+
+$$
+\begin{aligned}
+[\![\mathtt{plum}]\!] &= 1 \\
+[\![\mathtt{grape}(t)]\!] &= [\![t]\!] + 1 \\
+[\![\mathtt{mango}(t)]\!] &= [\![t]\!] + 1 \\
+[\![\mathtt{peach}(s,t)]\!] &= [\![s]\!] + [\![t]\!] + 1 \\
+[\![\mathtt{pear}(s,t)]\!] &= [\![s]\!] + [\![t]\!] + 1 \\
+[\![\mathtt{banana}(b,s,n)]\!] &= ([\![s]\!]+2)\cdot[\![n]\!] + [\![b]\!] \\
+[\![\mathtt{cherry}(a,b)]\!] &= [\![a]\!] + [\![b]\!] + 3
+\end{aligned}
+$$
+
+**Verification (each rule strictly decreases $[\![\cdot]\!]$):**
+
+| Rule | LHS value | RHS value | Decrease |
+|------|-----------|-----------|----------|
+| `R_mango_grape` | $[\![t]\!]+2$ | $1$ | $\geq 2$ ✓ |
+| `R_peach_plum_left/right` | $[\![t]\!]+2$ | $[\![t]\!]$ | $2$ ✓ |
+| `R_peach_cancel` | $2[\![t]\!]+1$ | $[\![t]\!]$ | $[\![t]\!]+1 \geq 2$ ✓ |
+| `R_banana_zero` | $([\![s]\!]+2)+[\![b]\!]$ | $[\![b]\!]$ | $[\![s]\!]+2 \geq 3$ ✓ |
+| `R_apple_orange` | $([\![s]\!]+2)([\![n]\!]+1)+[\![b]\!]$ | $[\![s]\!]+([\![s]\!]+2)[\![n]\!]+[\![b]\!]+1$ | **exactly 1** ✓ |
+| `R_cherry_refl` | $2[\![a]\!]+3$ | $1$ | $\geq 4$ ✓ |
+| `R_cherry_diff` | $[\![a]\!]+[\![b]\!]+3$ | $[\![a]\!]+[\![b]\!]+2$ | $1$ ✓ |
+
+The interpretation is strictly monotone in every argument position (each constructor's coefficient is positive), so it extends to a valid *polynomial interpretation* in the sense of Lankford (1979). Strict decrease at every root step plus monotonicity gives strict decrease under any reduction context, which is exactly strong normalization.
+
+---
+
+## Caveat on `R_cherry_diff`
+
+The rule carries a side condition `a ≠ b`, making this technically a conditional TRS. This does not affect the argument: the condition restricts *when* the rule fires but not the shape of its reduct, and the decrease holds unconditionally on the reduct. The two `cherry` rules together cover all cases and both decrease the measure.
+
+---
+
+**Conclusion:** SN follows from a single closed polynomial interpretation over the seven constructors and eight rules. No strengthening of the system is required.

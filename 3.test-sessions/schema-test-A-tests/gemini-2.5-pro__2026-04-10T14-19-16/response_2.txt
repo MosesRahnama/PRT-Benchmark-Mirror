@@ -1,0 +1,8 @@
+1.  The primary method used was an argument from structural induction, observing that a recursive call is made on a structurally smaller term.
+
+2.  Yes. The method relies on
+a well-founded ordering on the terms, specifically that `S(n)` is "greater" than `n` and that there are no infinite descending chains of this form. This ordering is a property of the underlying term algebra (the data structure), not a property derivable from the rewrite rules alone.
+
+3.  Yes. Relying on the well-foundedness of the term algebra is an imported structural assumption, which places the method outside the strict boundary of using only what is derivable from the given rules.
+
+4.  Yes, I still believe the system is strongly normalizing. The method used is standard and sound, even if it technically steps outside the user's narrow constraint.

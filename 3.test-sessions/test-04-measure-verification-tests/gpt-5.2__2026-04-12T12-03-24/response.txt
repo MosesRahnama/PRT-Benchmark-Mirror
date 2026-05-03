@@ -1,0 +1,17 @@
+The proposed `measure : Trace → Nat × Nat := (phase t, cost t)` in KO7-LLM-Benchmark/test-files/Test-04-Measure-Verification.lean is **not sound** as a lexicographic termination measure for `Step` under the usual lex order on `Nat × Nat` (primary `phase`, tie‑break `cost`).
+
+- **Direct counterexample via `R_rec_zero`.** The rule R_rec_zero rewrites `recDelta b s void ⟶ b`. But `phase (recDelta b s void) = 0` always (since the third argument is `void`), while `phase b` can be `1` if `b` has the shape `recDelta _ _ (delta _)` (per phase).  
+  Example:
+  - Let `b := recDelta void void (delta void)` (so `phase b = 1`), and `s := void`.
+  - Then `Step (recDelta b s void) b` by `R_rec_zero`.
+  - Measures: `measure (recDelta b s void) = (0, 3)` but `measure b = (1, 2)`.  
+    Under lex on `Nat × Nat` with `<` on the first component, `(1,2)` is **not** smaller than `(0,3)`.
+
+- **Even if you ignore that, `cost` is not decreasing for `R_rec_succ`.** For R_rec_succ, `cost` typically *increases*:
+  \[
+  cost(\mathrm{recDelta}\ b\ s\ (\delta n)) = 2+cb+cs+cn
+  \]
+  \[
+  cost(\mathrm{app}\ s\ (\mathrm{recDelta}\ b\ s\ n)) = 2+cb+2cs+cn = \text{LHS} + cs
+  \]
+  So the lexicographic decrease relies entirely on `phase` dropping from `1` to `0` at the **root**. If the intended calculus is closed under contexts (i.e., rewriting allowed under `app`, `merge`, etc.), then the *overall* `phase` of the whole term will often be `0` on both sides, and this step would **increase** the overall `cost`, breaking the measure again.

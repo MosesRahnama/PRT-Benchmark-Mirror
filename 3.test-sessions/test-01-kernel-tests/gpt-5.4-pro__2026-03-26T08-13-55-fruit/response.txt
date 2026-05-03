@@ -1,0 +1,42 @@
+**Yes — for the calculus literally presented in
+, strong normalization can be established from that file alone.**
+
+A short roadmap, staying strictly inside the shown syntax and rules:
+
+1. Treat `Step` exactly as defined: a one-step relation generated only by the eight constructors shown.  
+   No contextual closure, congruence, substitution schema, or extra structural axioms are needed.
+
+2. Use a natural-number interpretation:
+   $$
+   \begin{aligned}
+   |plum| &:= 0 \\
+   |grape\,t| &:= |t|+1 \\
+   |mango\,t| &:= |t| \\
+   |peach\,a\,b| &:= |a|+|b|+1 \\
+   |pear\,s\,t| &:= |t|+1 \\
+   |banana\,b\,s\,n| &:= |b|+2|n|+1 \\
+   |cherry\,a\,b| &:= |a|+|b|+2
+   \end{aligned}
+   $$
+
+3. Check each rule strictly decreases this measure:
+   - `mango (grape t) → plum`:
+     $|t|+1 > 0$
+   - `peach plum t → t`:
+     $|t|+1 > |t|$
+   - `peach t plum → t`:
+     $|t|+1 > |t|$
+   - `peach t t → t`:
+     $2|t|+1 > |t|$
+   - `banana b s plum → b`:
+     $|b|+1 > |b|$
+   - `banana b s (grape n) → pear s (banana b s n)`:
+     $|b|+2|n|+3 > |b|+2|n|+2$
+   - `cherry a a → plum`:
+     $2|a|+2 > 0$
+   - `cherry a b → mango (peach a b)`:
+     $|a|+|b|+2 > |a|+|b|+1$
+
+Since every `Step` strictly lowers a value in $\mathbb{N}$, there is no infinite reduction sequence.
+
+**Boundary note:** if one *adds* contextual/structural closure, that is a different system from the one literally encoded here. The argument above does **not** rely on importing any such extra machinery.

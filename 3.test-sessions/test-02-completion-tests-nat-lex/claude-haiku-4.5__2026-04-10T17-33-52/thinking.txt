@@ -1,0 +1,48 @@
+Now I understand the structure. This is a strong normalization proof for a rewrite calculus with 8 rules. Three cases are already proved (R_merge_void_left, R_merge_void_right, R_merge_cancel), and five cases need to be completed:
+
+1. R_int_delta: `integrate (delta t) --> void`
+2. R_rec_zero: `recDelta b s void --> b`
+3. R_rec_succ: `recDelta b s (delta n) --> app s (recDelta b s n)`
+4. R_eq_refl: `eqW a a --> void`
+5. R_eq_diff: `eqW a b --> integrate (merge a b)`
+
+The proof strategy uses lexicographic ordering on pairs (kappa, mu) where:
+- kappa is "recursion depth" (counts delta-wrapped third arguments of recDelta)
+- mu is "weighted structural size"
+
+Let me analyze each case:
+
+**1. R_int_delta: `integrate (delta t) --> void`**
+- Before: integrate (delta t)
+- After: void
+- kappa before: kappa (integrate (delta t)) = kappa (delta t) = kappa t
+- kappa after: kappa void = 0
+- Since kappa drops, we can use drop_left
+
+**2. R_rec_zero: `recDelta b s void --> b`**
+- Before: recDelta b s void
+- After: b
+- According to the definition of kappa:
+  - For `recDelta b s (delta n)` (third arg is delta-wrapped): kappa = max(max(kappa b, kappa s), kappa n) + 1
+  - For other `recDelta b s n`: kappa = max(max(kappa b, kappa s), kappa n)
+- So kappa (recDelta b s void) = max(max(kappa b, kappa s), 0) = max(kappa b, kappa s)
+
+
+- Since kappa b ≤ max(kappa b, kappa s), the recursion depth doesn't increase. But the measure mu does decrease: mu (recDelta b s void) = 3 + mu b + mu s, while mu b is strictly smaller. So when kappa stays the same, the structural size drops, which means we apply drop_right to establish the ordering.
+- When kappa b < kappa s, the depth actually increases to kappa s, so we need drop_left instead. The key distinction is whether kappa b ≥ kappa s—if so, depths are equal and we rely on the measure decrease; if not, we use the left-drop rule.
+
+For the successor case, the recursion depth decreases by one. Before the reduction, kappa (recDelta b s (delta n)) = max(kappa b, kappa s, kappa n) + 1, while after applying s to the recursive call, kappa (app s (recDelta b s n)) = max(kappa b, kappa s, kappa n). The +1 is eliminated, so we need drop_right to account for this depth reduction.
+
+For equality reflection, eqW a a reduces to void. Since kappa a > 0 but kappa void = 0, the complexity strictly decreases and we apply drop_left.
+
+When comparing different terms with eqW a b, the reduction to integrate (merge a b) preserves kappa since both have max(kappa a, kappa b). However, the measure mu decreases from 4 + mu a + mu b to 2 + mu a + mu b, so drop_right handles this measure reduction.
+
+Now I need to construct the proof skeletons for these reductions. For the integrate delta case, I'll establish that kappa void is strictly less than kappa (integrate (delta t)), which allows using drop_left.
+
+For recDelta with void, there's a case split: either kappa b is strictly smaller than kappa s, making the overall complexity decrease, or they're equal, in which case I need to show the measure decreases instead.
+
+The recDelta successor case has kappa (app s (recDelta b s n)) strictly less than kappa (recDelta b s (delta n)), so drop_left applies directly.
+
+For equality reflection, kappa void < kappa (eqW a a) since the latter equals kappa a, enabling drop_left.
+
+The equality difference case requires showing mu (integrate (merge a b)) < mu (eqW a b) while kappa values remain equal, which is exactly what drop_right needs.

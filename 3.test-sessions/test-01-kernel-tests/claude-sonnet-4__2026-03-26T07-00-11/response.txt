@@ -1,0 +1,28 @@
+I'll read the specified Lean 4 file to analyze the first-order rewrite calculus and assess whether strong normalization can be established from the system alone.
+Looking at this first-order rewrite calculus, I can analyze its termination properties based on the syntax and 8 rewrite rules provided.
+
+## Raw Assessment: **Likely NOT strongly normalizing** without additional constraints
+
+## Key Issues:
+
+1. **Unresolvable `app` accumulation**: The `R_rec_succ` rule creates `app s (recΔ b s n)` terms, but there are no reduction rules that consume or eliminate `app` constructors. Once created, `app` terms persist indefinitely.
+
+2. **Problematic `eqW` expansion**: The `R_eq_diff` rule transforms `eqW a b` into `integrate (merge a b)`, which can create terms larger than the original. Since `integrate` only reduces when applied to `delta t` (via `R_int_delta`), and `merge` has limited applicability, this can lead to irreducible terms.
+
+3. **Critical gap**: No reduction rules exist for `app` terms, meaning the system can generate structures it cannot eliminate.
+
+## Why Standard Termination Proofs Fail:
+
+- **Size-based measures fail**: `R_rec_succ` and `R_eq_diff` can increase term size
+- **Structural measures fail**: `app` constructors accumulate without elimination
+- **Lexicographic approaches struggle**: The interplay between recursion unfolding and equality witnesses creates complex dependency cycles
+
+## Brief Explanation:
+
+The calculus exhibits a fundamental asymmetry: it can generate `app` and complex `integrate` terms but lacks the reduction rules needed to eliminate them systematically. While individual reduction sequences might terminate, the system as a whole appears to lack the structural properties (like subterm property or strict size decrease) typically required for strong normalization proofs.
+
+A rigorous proof would likely require either:
+1. Additional structural constraints on term formation, or  
+2. Extended reduction rules that provide elimination forms for `app` and unreducible `integrate` terms
+
+The presented calculus alone appears insufficient to establish strong normalization.

@@ -1,0 +1,61 @@
+To complete the remaining five rule cases in the strong normalization proof for the KO7 calculus, you should follow the lexicographic pattern established in the proved cases. The proof relies on showing that for every step $a \to b$, the measure $( \kappa(a), \mu(a) )$ decreases strictly in the lexicographic order.
+
+Here is the proof skeleton for the remaining cases:
+
+```lean
+-- ── Remaining cases ───────────────────────────────────────────
+
+-- integrate (delta t) --> void
+-- kappa(LHS) = kappa(t), kappa(void) = 0.
+-- mu(LHS) = 1 + mu(t), mu(void) = 0.
+| _, _, Step.R_int_delta t => by
+    have hmu : mu void < mu (integrate (delta t)) := by simp
+    by_cases h : 0 < kappa (integrate (delta t))
+    · exact drop_left h
+    · have hk : kappa void = kappa (integrate (delta t)) := by simp at *; omega
+      exact drop_right hmu hk
+
+-- recDelta b s void --> b
+-- kappa(LHS) = max(kappa b, kappa s), kappa(RHS) = kappa b.
+-- mu(LHS) = 3 + mu b + mu s, mu(RHS) = mu b.
+| _, _, Step.R_rec_zero b s => by
+    have hmu : mu b < mu (recDelta b s void) := by simp; omega
+    by_cases h : kappa b < kappa (recDelta b s void)
+    · exact drop_left h
+    · have hk : kappa b = kappa (recDelta b s void) := by simp at *; omega
+      exact drop_right hmu hk
+
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+-- This case involves a recursion depth decrement.
+-- kappa(LHS) = max(kappa b, kappa s, kappa n) + 1.
+-- kappa(RHS) = max(kappa s, kappa (recDelta b s n)).
+| _, _, Step.R_rec_succ b s n => by
+    -- When n is not delta-wrapped, kappa(recDelta b s n) = max(k b, k s, k n),
+    -- leading to a strict decrease in kappa (drop_left).
+    -- If n is delta-wrapped, kappa ties and mu behavior must be considered.
+    sorry
+
+-- eqW a a --> void
+-- kappa(LHS) = kappa a, kappa(void) = 0.
+-- mu(LHS) = 4 + 2*mu a, mu(void) = 0.
+| _, _, Step.R_eq_refl a => by
+    have hmu : mu void < mu (eqW a a) := by simp; omega
+    by_cases h : 0 < kappa (eqW a a)
+    · exact drop_left h
+    · have hk : kappa void = kappa (eqW a a) := by simp at *; omega
+      exact drop_right hmu hk
+
+-- eqW a b --> integrate (merge a b)
+-- kappa ties (both are max(kappa a, kappa b)).
+-- mu(LHS) = 4 + mu a + mu b, mu(RHS) = 1 + (2 + mu a + mu b) = 3 + mu a + mu b.
+| _, _, Step.R_eq_diff a b => by
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by simp; omega
+    have hk  : kappa (integrate (merge a b)) = kappa (eqW a b) := by simp
+    exact drop_right hmu hk
+```
+
+### Key Logic for Completion:
+1.  **`R_int_delta` and `R_eq_refl`**: These cases drop to `void`. Since `void` has the absolute minimum measure $(0, 0)$, they decrease via `drop_left` if the argument has a positive `kappa`, or `drop_right` if the `kappa` is 0 but the `mu` weight is positive.
+2.  **`R_rec_zero`**: The measure of the base case `b` is always lexicographically smaller than the `recDelta` wrapper, as `mu` decreases by at least 3 and `kappa` is non-increasing.
+3.  **`R_rec_succ`**: This is the core recursion case. The `kappa` measure is specifically designed to handle this: `recDelta` increments `kappa` only when its third argument is a `delta`. Reducing `delta n` to `n` removes this increment, causing a `drop_left` in most structural configurations.
+4.  **`R_eq_diff`**: This case ties on `kappa` because both `eqW` and `merge` are transparent to the `kappa` of their arguments. However, the weight of `eqW` (4) is strictly greater than the combined weights of `integrate` and `merge` (1 + 2 = 3), allowing for a `drop_right` proof.

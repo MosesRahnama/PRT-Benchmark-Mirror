@@ -1,0 +1,39 @@
+I’ll set a tiny checklist and read the target Lean file (only that file) so I can evaluate the proposed measure directly and rigorously.
+I’ve identified a concrete counterexample, so I’ll mark the checklist complete and then give you a precise soundness verdict with the measure comparison.
+## Verdict
+
+The proposed measure is **not sound** as a lexicographic termination measure for `Step`.
+
+A direct counterexample uses `R_merge_void_left`:
+
+- Let  
+  $t := \text{recDelta}\ \text{void}\ \text{void}\ (\text{delta}\ \text{void})$.
+- Then `R_merge_void_left` gives:
+  $\text{merge void}\ t \;\to\; t$.
+
+Now evaluate `measure = (phase, cost)`:
+
+- `phase (merge void t) = 0` (top constructor is `merge`)
+- `phase t = 1` (it is `recDelta _ _ (delta _)`)
+
+So first component goes from $0$ to $1$.
+
+Costs:
+- `cost t = 1 + 0 + 0 + (1 + 0) = 2`
+- `cost (merge void t) = 1 + 0 + 2 = 3`
+
+Hence:
+- $\text{measure}(\text{merge void } t) = (0,3)$
+- $\text{measure}(t) = (1,2)$
+
+Under standard lexicographic order on $\mathbb{N}\times\mathbb{N}$ (first component prioritized, ascending), we would need
+$\text{measure}(t) < \text{measure}(\text{merge void } t)$,
+but $(1,2) \not< (0,3)$.
+
+So at least this rewrite step does **not** decrease the measure, therefore the measure is **unsound** for proving termination.
+
+## Todo status
+
+- ✅ Read target Lean file  
+- ✅ Analyze lexicographic measure soundness  
+- ✅ Deliver formal assessment

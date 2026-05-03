@@ -1,0 +1,60 @@
+### Proof Skeleton for Remaining Cases
+
+The theorem `measure_decreases` is already structured as a cases-proof on the `Step` constructors. Below is a skeleton for completing the five remaining cases (replacing each `sorry`). Each case leverages the existing `drop_left` or `drop_right` lemmas, combined with measure simplifications via `@[simp]` lemmas and basic arithmetic (e.g., `omega` for inequalities). 
+
+Focus on:
+- Computing `kappa` and `mu` for both sides using `simp`.
+- Proving strict decrease in the lex order: either `kappa` drops (use `drop_left`), or `kappa` ties and `mu` drops (use `drop_right`).
+- Handle potential ties/equalities with `rw` or `cases` where needed (e.g., if `kappa` may or may not drop).
+- No new definitions or imports are needed; rely on existing simp lemmas.
+
+Insert this directly into the theorem body after the proved cases:
+
+```lean
+-- integrate (delta t) --> void : kappa drops to 0 (if >0) or ties at 0 with mu drop
+| _, _, Step.R_int_delta t => by
+  simp only [kappa, mu] at *  -- Unfold measures
+  have hmu : 0 < 1 + mu t := by omega  -- mu always drops
+  by_cases hk : kappa t = 0
+  · rw [hk]; exact drop_right hmu (by simp [hk])
+  · have : 0 < kappa t := Nat.ne_of_lt (by omega)  -- kappa drops strictly
+    exact drop_left this
+
+-- recDelta b s void --> b : mu always drops; kappa ≤ (drops if kappa s > kappa b)
+| _, _, Step.R_rec_zero b s => by
+  simp only [kappa, mu] at *  -- Unfold measures
+  have hmu : mu b < 3 + mu b + mu s := by omega  -- mu drops by 3 + mu s ≥ 3 > 0
+  by_cases hk : kappa b = Nat.max (kappa b) (kappa s)
+  · rw [hk]; exact drop_right hmu hk  -- kappa ties
+  · have : kappa b < Nat.max (kappa b) (kappa s) := by omega  -- kappa drops (when kappa s > kappa b)
+    exact drop_left this
+
+-- recDelta b s (delta n) --> app s (recDelta b s n) : kappa always drops by 1
+| _, _, Step.R_rec_succ b s n => by
+  simp only [kappa, mu]  -- No need for at *; just compute
+  have : Nat.max (kappa s) (Nat.max (kappa b) (kappa s)) < Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1 := by
+    simp only [Nat.max_assoc, Nat.max_comm]; omega  -- max(k_s, max(k_b, k_s, k_n)) = max(k_b, k_s, k_n) < max(k_b, k_s, k_n) + 1
+  exact drop_left this
+
+-- eqW a a --> void : Similar to R_int_delta; kappa drops to 0 (if >0) or ties with mu drop
+| _, _, Step.R_eq_refl a => by
+  simp only [kappa, mu] at *  -- Unfold measures
+  have hmu : 0 < 4 + 2 * mu a := by omega  -- mu always drops (≥4)
+  by_cases hk : kappa a = 0
+  · rw [hk]; exact drop_right hmu (by simp [hk])
+  · have : 0 < kappa a := Nat.ne_of_lt (by omega)
+    exact drop_left this
+
+-- eqW a b --> integrate (merge a b) : kappa ties; mu drops by 1
+| _, _, Step.R_eq_diff a b => by
+  simp only [kappa, mu] at *  -- Unfold measures
+  have hmu : 3 + mu a + mu b < 4 + mu a + mu b := by omega  -- mu drops by 1
+  have hk : Nat.max (kappa a) (kappa b) = kappa (integrate (merge a b)) := by simp [kappa]  -- kappa ties
+  exact drop_right hmu hk
+```
+
+### Completion Notes
+- **Verification**: After inserting, the proofs should type-check with `simp` and `omega` (from Mathlib) handling arithmetic. If `omega` fails in a case, replace with explicit `simp` steps or `linarith`.
+- **Edge Cases**: The `by_cases` in R_int_delta, R_rec_zero, and R_eq_refl handle when measures tie (e.g., `kappa = 0` or `kappa b ≥ kappa s`), ensuring strict lex decrease.
+- **No File Changes**: This is a copy-paste skeleton; test it manually in Lean before integrating.
+- **Extensions if Needed**: If a case requires deeper induction (unlikely here, as measures are structural), add `induction` on subterms, but the current setup suffices for root rules. The final `strong_normalization` theorem will then hold via the subrelation argument.

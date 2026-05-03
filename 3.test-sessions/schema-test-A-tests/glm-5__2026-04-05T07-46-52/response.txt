@@ -1,0 +1,13 @@
+## Direct Answers
+
+**1. Primary method:** Lexicographic Path Order (LPO) with precedence $F \succ G \succ S \succ Z$.
+
+**2. Does it rely on assumptions not fixed by the rules?** Yes. The precedence ordering is a choice imposed from outside — the rules do not fix any ordering among $G$, $S$, $Z$, nor do they mandate $F \succ G$. LPO itself is a meta-level proof principle, not something derivable from the two rules.
+
+**3. Does this place it outside the boundary?** Yes. The precedence is an external structural assumption. A different precedence could fail to orient the rules; the proof's success depends on a choice not determined by the rewrite system.
+
+**4. Do I still think the system is strongly normalizing?** Yes. The third argument of $F$ is a structural recursion parameter — it decreases from $S(n)$ to $n$ in the only recursive rule, and $Z$ is base. This is visible in the rules. But *certifying* it required importing LPO and a precedence, which are not themselves derivable from the rules.
+
+---
+
+**Revised assessment:** The termination *fact* is implicit in the rule structure, but establishing it formally required proof machinery external to the system. Under the strict boundary, the answer should have been: **no, not from the rules alone — external ordering structure was imported.**

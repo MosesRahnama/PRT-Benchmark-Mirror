@@ -1,0 +1,64 @@
+## Assessment of Termination Measures for First-Order Rewrite Calculus
+
+### The Rewrite System
+
+The `Trace` type defines terms, and `Step` defines 7 rewrite rules:
+
+| Rule | LHS → RHS |
+|------|-----------|
+| `R_int_delta` | `integrate (delta t)` → `void` |
+| `R_merge_void_left` | `merge void t` → `t` |
+| `R_merge_void_right` | `merge t void` → `t` |
+| `R_merge_cancel` | `merge t t` → `t` |
+| `R_rec_zero` | `recDelta b s void` → `b` |
+| `R_rec_succ` | `recDelta b s (delta n)` → `app s (recDelta b s n)` |
+| `R_eq_refl` | `eqW a a` → `void` |
+| `R_eq_diff` | `eqW a b` → `integrate (merge a b)` |
+
+### Analysis of Each Measure
+
+**Critical Rule: `R_rec_succ`**
+
+This is the problematic rule. Let me compute the measure values:
+
+For **mu1**:
+- LHS: `1 + μ₁(b) + μ₁(s) + μ₁(delta n) = 2 + μ₁(b) + μ₁(s) + μ₁(n)`
+- RHS: `1 + μ₁(s) + μ₁(recDelta b s n) = 2 + μ₁(b) + 2·μ₁(s) + μ₁(n)`
+
+**Result: RHS ≥ LHS** (fails to decrease when `μ₁(s) > 0`)
+
+For **mu2**:
+- LHS: `5 + μ₂(b) + μ₂(s) + μ₂(delta n) = 6 + μ₂(b) + μ₂(s) + μ₂(n)`
+- RHS: `1 + μ₂(s) + μ₂(recDelta b s n) = 6 + μ₂(b) + 2·μ₂(s) + μ₂(n)`
+
+**Result: RHS ≥ LHS** (fails to decrease when `μ₂(s) > 0`)
+
+For **mu3**:
+- LHS: `1 + μ₃(b) + μ₃(s) + μ₃(delta n) = 2 + μ₃(b) + μ₃(s) + μ₃(n)`
+- RHS: `2 + μ₃(s) + μ₃(recDelta b s n) = 3 + μ₃(b) + 2·μ₃(s) + μ₃(n)`
+
+**Result: RHS ≥ LHS** (fails to decrease when `μ₃(s) > 0`)
+
+### Verdict
+
+| Measure | Verdict | Reason |
+|---------|---------|--------|
+| **mu1** | ❌ **Invalid** | Fails on `R_rec_succ`: the `app` wrapper adds `μ₁(s)` which is not offset by the decrease from `delta n → n` |
+| **mu2** | ❌ **Invalid** | Same structural flaw: higher coefficients don't help when the RHS contains an extra copy of `μ₂(s)` |
+| **mu3** | ❌ **Invalid** | Same issue: the measure increases under `R_rec_succ` |
+
+### Root Cause
+
+All three measures are **simple additive size measures**. The `R_rec_succ` rule is fundamentally problematic for such measures because:
+
+1. The LHS has one occurrence of `s` (inside `recDelta`)
+2. The RHS has **two** occurrences of `s` (one in `app`, one in the recursive `recDelta`)
+
+No choice of positive coefficients can make `c_recDelta + c_delta > c_app + c_recDelta + μ(s)` hold for all `s`, since `μ(s)` is unbounded.
+
+### What Would Work
+
+A valid termination proof would require:
+- **Lexicographic measure**: e.g., `(depth of delta nesting in 3rd argument, size)` — the 3rd argument strictly decreases from `delta n` to `n`
+- **Multiset order**: track the multiset of delta-depths in recursive positions
+- **Call-graph based**: prove termination via the recursive structure rather than term size

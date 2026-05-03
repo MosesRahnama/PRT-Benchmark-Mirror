@@ -1,0 +1,8 @@
+The provided Lean 4 file defines a trace structure and a rewrite relation `Step` for a first-order rewrite calculus, along with three candidate termination measures `mu1`, `mu2`, and `mu3`.
+
+After analyzing each measure against all `Step` rules:
+
+- All three measures (`mu1`, `mu2`, `mu3`) strictly decrease on rules R_int_delta, R_merge_void_left, R_merge_void_right, R_merge_cancel, R_rec_zero, R_eq_refl, and R_eq_diff.
+- However, all three fail to strictly decrease on rule R_rec_succ, where the measure either stays the same (if `mu(s) = 0`) or increases (if `mu(s) > 0`), due to the step term `s` contributing twice to the measure on the right-hand side but only once on the left.
+
+None of the candidates are valid termination measures, as they do not establish a strict decrease on every rewrite step, which is required for proving termination via a well-founded ordering.

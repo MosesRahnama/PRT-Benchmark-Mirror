@@ -1,0 +1,21 @@
+I'll read the term rewriting system file to analyze it.
+## Assessment
+
+**Yes, strong normalization can be established from this system alone.**
+
+### Reasoning
+
+The system exhibits a straightforward structural decomposition pattern:
+
+1. **Argument measure**: The third argument of `F` serves as a natural descent measure. Rule 2 replaces `S(n)` with `n`, monotonically peeling away the `S` constructor. Rule 1 applies at the base case `Z`.
+
+2. **Well-founded reduction**: Every application of rule 2 strictly decreases the "height" of the nested `S` structure in the third argument. This defines a well-founded order—you cannot endlessly apply rule 2.
+
+3. **Termination guarantee**: By induction on the third argument's structure:
+   - If it's `Z`, rule 1 applies and produces `x` (normal form)
+   - If it's `S(n)`, rule 2 applies, recursively reducing the subterm `F(x, y, n)`
+   - Since `n` is structurally smaller than `S(n)`, the recursion terminates
+
+4. **No cycles**: The symbol `G` has no reduction rules. Terms like `G(G(...G(x)...))` are in normal form. Rule 2 only *introduces* `G` around recursively smaller calls—it doesn't create cycles.
+
+The system is **strongly normalizing** via a straightforward lexicographic/structural argument without requiring external axioms.

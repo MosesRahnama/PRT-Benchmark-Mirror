@@ -1,0 +1,92 @@
+**Conclusion:** the helper strategy is **not sound as written**.
+
+Let  
+$\displaystyle M(x) := \max\!\big(\max(\kappa b,\kappa s), \kappa x\big)$.
+
+Because `kappa` treats `delta` as transparent,
+$\kappa(\delta x)=\kappa(x)$.
+But `kappa` gives `recDelta b s (delta x)` a special extra $+1$.
+
+That means `kappa` does **not** count the full number of nested `delta`s in the third argument; it only detects whether the argument is `delta`-headed at the top level of `recDelta`.
+
+### First helper theorem
+
+The file claims:
+
+$\kappa(\texttt{recDelta}\ b\ s\ (\delta n)) = \kappa(\texttt{recDelta}\ b\ s\ n)+1$
+
+This is false for arbitrary `n`.
+
+Take $n=\delta m$. Then:
+
+- $\kappa(\texttt{recDelta}\ b\ s\ (\delta(\delta m))) = M(m)+1$
+- $\kappa(\texttt{recDelta}\ b\ s\ (\delta m)) = M(m)+1$
+
+since $\kappa(\delta m)=\kappa(m)$.
+
+So the theorem would assert
+
+$$
+M(m)+1 = (M(m)+1)+1,
+$$
+
+which is impossible.
+
+A concrete counterexample is `b = void`, `s = void`, `n = delta void`:
+
+- $\kappa(\texttt{recDelta}\ \texttt{void}\ \texttt{void}\ (\delta(\delta\ \texttt{void}))) = 1$
+- $\kappa(\texttt{recDelta}\ \texttt{void}\ \texttt{void}\ (\delta\ \texttt{void})) = 1$
+
+So the theorem becomes $1 = 2$.
+
+### Second helper theorem
+
+The file then claims:
+
+$\kappa(\texttt{app}\ s\ (\texttt{recDelta}\ b\ s\ n)) < \kappa(\texttt{recDelta}\ b\ s\ (\delta n))$
+
+Again take $n=\delta m$.
+
+Then:
+
+- $\kappa(\texttt{recDelta}\ b\ s\ (\delta m)) = M(m)+1$
+- $\kappa(\texttt{app}\ s\ (\texttt{recDelta}\ b\ s\ (\delta m))) = \max(\kappa s, M(m)+1)=M(m)+1$
+- $\kappa(\texttt{recDelta}\ b\ s\ (\delta(\delta m))) = M(m)+1$
+
+So the inequality becomes
+
+$$
+M(m)+1 < M(m)+1,
+$$
+
+false.
+
+With the same concrete choice `b = void`, `s = void`, `n = delta void`:
+
+- $\kappa(\texttt{app}\ \texttt{void}\ (\texttt{recDelta}\ \texttt{void}\ \texttt{void}\ (\delta\ \texttt{void}))) = 1$
+- $\kappa(\texttt{recDelta}\ \texttt{void}\ \texttt{void}\ (\delta(\delta\ \texttt{void}))) = 1$
+
+so it says $1<1$.
+
+### What *is* true
+
+If `n` is **not** of the form `delta _`, then the intended equations do hold:
+
+- $\kappa(\texttt{recDelta}\ b\ s\ n)=M(n)$
+- $\kappa(\texttt{recDelta}\ b\ s\ (\delta n))=M(n)+1$
+- $\kappa(\texttt{app}\ s\ (\texttt{recDelta}\ b\ s\ n))=\max(\kappa s, M(n))=M(n)<M(n)+1$
+
+So the strategy only works with an extra side condition excluding `delta`-headed `n`.
+
+### Termination consequence
+
+For the rewrite rule
+
+`recDelta b s (delta n)  →  app s (recDelta b s n)`
+
+`kappa` does **not** strictly decrease in general. It decreases only when `n` is not `delta`-headed.
+
+So the helper lemmas do **not** support a valid global termination argument as written.
+
+A further warning: even beyond these two helpers, `kappa` is not a strict one-step ranking for all rules in `Step`; for example `R_eq_diff` preserves `kappa` exactly:
+$\kappa(\texttt{eqW}\ a\ b)=\max(\kappa a,\kappa b)=\kappa(\texttt{integrate}(\texttt{merge}\ a\ b))$.

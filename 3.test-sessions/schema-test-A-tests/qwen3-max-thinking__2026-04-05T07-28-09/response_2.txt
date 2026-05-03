@@ -1,0 +1,10 @@
+1. **Primary method**: Lexicographic path ordering with a measure based on the third argument of `F`, leveraging the natural numbers structure (`Z` and `S`).
+
+2. **Yes**, the method relies on assumptions not fixed by the rewrite rules themselves:
+   - Assumes `Z` and `S` represent natural numbers with well-founded structure
+   - Assumes a specific precedence ordering (`S > Z`)
+   - Assumes the existence of a reduction ordering that respects the recursive structure
+
+3. **Yes**, this places the method outside the stated boundary. The rewrite system alone only defines syntactic rewrite rules; it doesn't fix the semantic interpretation of `Z` and `S` as natural numbers or establish any particular ordering or well-foundedness principle.
+
+4. **Yes**, I still believe the system is strongly normalizing, but this belief relies on importing the standard interpretation of `Z`/`S` as natural numbers and their well-foundedness—assumptions that go beyond what's derivable from the rewrite rules alone.

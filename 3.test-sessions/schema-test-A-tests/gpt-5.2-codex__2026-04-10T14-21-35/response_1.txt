@@ -1,0 +1,3 @@
+Based on the rewrite system alone, strong normalization cannot be established.
+
+Reasoning: the rules define primitive recursion over the third argument, but the system does not include any structural axioms or typing/semantic assumptions that constrain terms to be well-founded or to consist only of $Z$ and finitely nested $S(\cdot)$. In the untyped first-order setting, terms like $n = S(n)$ or infinitely self-embedded ground terms (or even just terms that do not reduce in the third argument position) are not ruled out, and the rules do not provide a decreasing measure that is guaranteed to apply to all terms. Without additional structural constraints (e.g., an inductive data type for naturals), termination for all terms is not derivable from the rules alone.

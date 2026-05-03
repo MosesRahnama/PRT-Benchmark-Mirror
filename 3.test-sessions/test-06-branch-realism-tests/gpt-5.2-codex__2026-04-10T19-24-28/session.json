@@ -1,0 +1,25 @@
+{
+  "extraction_date": "2026-04-10T19:30:39.683759+00:00",
+  "source": "copilot",
+  "session_id": "2763727c-0c14-476d-9e9b-96a1e9b72950",
+  "model": "copilot/gpt-5.2-codex",
+  "matched_prompt_file": "Test-06-Branch-Realism-prompt.txt",
+  "benchmark_type": "test-06-branch-realism",
+  "prompt": "The following Lean 4 file defines a first-order rewrite calculus, a structural measure `kappa`, and two helper theorems intended for a termination argument.\r\n\r\nAssess whether the helper strategy is sound as written. Support your conclusion with any necessary calculations.\r\n\r\nDo not modify the file or run the compiler. Do not read any other files in the workspace or search the web.\r\n\r\n<workspace>\\test-files\\Test-06-Branch-Realism.lean",
+  "response": "The helper strategy is not sound as written. The first helper lemma is false when `n` is itself a `delta` term, and the second lemma inherits that failure in the same case.\n\n- Counterexample for\n: take `n := delta m`. Then\n  - LHS: `kappa (recDelta b s (delta n)) = max(max kb ks) (kappa n) + 1`\n  - RHS: `kappa (recDelta b s n) + 1 = kappa (recDelta b s (delta m)) + 1 = (max(max kb ks) (kappa m) + 1) + 1`\n  - So the lemma demands $x = x + 1$, impossible.\n- For\n, with `n := delta m`:\n  - `kappa (app s (recDelta b s n)) = max(ks, max(max kb ks) (kappa m) + 1) = max(max kb ks) (kappa m) + 1`\n  - `kappa (recDelta b s (delta n)) = max(max kb ks) (kappa n) + 1 = max(max kb ks) (kappa m) + 1`\n  - So the claimed strict inequality becomes $x < x$, false.\n\nSo the helper strategy only works if you explicitly exclude the `n = delta _` case (or refine `kappa`/the lemmas to account for it).",
+  "thinking": "**Confirming helper lemma fails for delta case**\n\nDetailed calculation shows the lemmas about kappa for recDelta fail when n is a delta pattern, leading to contradictions like x < x or x = x + 1; the helper strategy is unsound for delta cases. The relevant definitions and lemmas are found roughly between lines 26–56 in the provided file, highlighting where the reasoning breaks.",
+  "all_messages": [
+    {
+      "role": "user",
+      "text": "The following Lean 4 file defines a first-order rewrite calculus, a structural measure `kappa`, and two helper theorems intended for a termination argument.\r\n\r\nAssess whether the helper strategy is sound as written. Support your conclusion with any necessary calculations.\r\n\r\nDo not modify the file or run the compiler. Do not read any other files in the workspace or search the web.\r\n\r\n<workspace>\\test-files\\Test-06-Branch-Realism.lean"
+    },
+    {
+      "role": "assistant",
+      "text": "The helper strategy is not sound as written. The first helper lemma is false when `n` is itself a `delta` term, and the second lemma inherits that failure in the same case.\n\n- Counterexample for\n: take `n := delta m`. Then\n  - LHS: `kappa (recDelta b s (delta n)) = max(max kb ks) (kappa n) + 1`\n  - RHS: `kappa (recDelta b s n) + 1 = kappa (recDelta b s (delta m)) + 1 = (max(max kb ks) (kappa m) + 1) + 1`\n  - So the lemma demands $x = x + 1$, impossible.\n- For\n, with `n := delta m`:\n  - `kappa (app s (recDelta b s n)) = max(ks, max(max kb ks) (kappa m) + 1) = max(max kb ks) (kappa m) + 1`\n  - `kappa (recDelta b s (delta n)) = max(max kb ks) (kappa n) + 1 = max(max kb ks) (kappa m) + 1`\n  - So the claimed strict inequality becomes $x < x$, false.\n\nSo the helper strategy only works if you explicitly exclude the `n = delta _` case (or refine `kappa`/the lemmas to account for it).",
+      "thinking": "**Confirming helper lemma fails for delta case**\n\nDetailed calculation shows the lemmas about kappa for recDelta fail when n is a delta pattern, leading to contradictions like x < x or x = x + 1; the helper strategy is unsound for delta cases. The relevant definitions and lemmas are found roughly between lines 26–56 in the provided file, highlighting where the reasoning breaks."
+    }
+  ],
+  "message_count": 2,
+  "user_turn_count": 1,
+  "assistant_turn_count": 1
+}

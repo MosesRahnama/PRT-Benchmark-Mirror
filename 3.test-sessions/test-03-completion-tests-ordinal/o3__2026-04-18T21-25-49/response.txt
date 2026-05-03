@@ -1,0 +1,66 @@
+Here is a concise outline you can paste in place of each `sorry`.  
+It shows the key lemmas you will typically invoke and the structure of the `calc`-chains, without doing any heavy ordinal arithmetic.  Replace the `admit` lines with the specific inequalities you need.
+
+```lean
+-- recDelta b s (delta n)  ⟶  app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+  -- Goal:  μ (app s (recDelta b s n)) < μ (recDelta b s (delta n))
+  simp [mu]                                  -- expand the two μ-terms
+  -- 1.  Show the big ω-power on LHS exponent dominates RHS’s summands
+  have h_dom :
+      omega0 ^ (mu n + mu s + 6)     -- part of RHS
+        < omega0 ^ (omega0 ^ (5 : ℕ) * (mu n + 1) + mu s + 6) :=
+    by
+      -- monotonicity of ^ and the fact that
+      --   mu n + mu s + 6  <  ω^5 * (mu n + 1) + mu s + 6
+      admit
+  -- 2.  Turn h_dom into the final strict inequality
+  calc
+    omega0 ^ (mu n + mu s + 6) + _   < _
+        := add_lt_add_of_lt_of_le h_dom (by simp [Ordinal.pos_iff_ne_zero])
+    _ = _                            := by ring_nf     -- rewrite to the RHS shape
+
+-- eqW a a  ⟶  void
+| _, _, Step.R_eq_refl a => by
+  -- Goal:  μ void = 0  <  μ (eqW a a)
+  simp [mu]                           -- reduces goal to 0 < ω^(2*μ a + 9) + 1
+  have : (0 : Ordinal) < omega0 ^ (mu a + mu a + 9) :=
+    by
+      -- ω^α is positive for any α, so use opow_pos
+      simpa using opow_pos _ omega0_pos
+  exact lt_of_lt_of_le this (by simp)
+
+-- eqW a b  ⟶  integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+  -- Goal: μ (integrate (merge a b)) < μ (eqW a b)
+  simp [mu]                           -- expand both sides
+  -- 1.  Bound the LHS by replacing inner μ with a crude upper bound
+  have h_bound :
+      omega0 ^ (4 : ℕ) *
+        (omega0 ^ (3 : ℕ) * (mu a + 1)
+           + omega0 ^ (2 : ℕ) * (mu b + 1) + 2)
+        + 1
+        < omega0 ^ (mu a + mu b + 9) :=
+    by
+      -- Use:  ω^4·( … )  <  ω^(μ a + μ b + 9)
+      -- because the exponent 4 is dwarfed by (μ a + μ b + 9)
+      admit
+  -- 2.  Finish with simple arithmetic
+  have : (omega0 ^ (4 : ℕ) *
+            (omega0 ^ (3 : ℕ) * (mu a + 1)
+               + omega0 ^ (2 : ℕ) * (mu b + 1) + 2)
+            + 1)
+          < omega0 ^ (mu a + mu b + 9) + 1 :=
+    by
+      exact
+        lt_of_lt_of_le h_bound (by simp [le_add_of_nonneg_right, Ordinal.zero_le])
+  exact this
+```
+
+Guidance for completing each `admit`:
+
+1. Use monotonicity of ordinal exponentiation (`opow_le_opow_of_le`, `opow_lt_opow_of_lt`, etc.).  
+2. Combine with basic facts like `mu t < mu t + 1`, `lt_add_of_pos_right`, and `opow_pos`.  
+3. You often only need a coarse upper bound: showing that a small fixed tower height (e.g. 4) is below the huge variable exponent on the right is enough.
+
+Once the specific inequalities are written, the file should compile without further changes.

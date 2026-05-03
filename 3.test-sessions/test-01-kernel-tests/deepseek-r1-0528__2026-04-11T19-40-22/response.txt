@@ -1,0 +1,35 @@
+Based on the provided Lean 4 calculus, I assess that **strong normalization cannot be established** for this system without additional axioms or structural assumptions. Here's my reasoning:
+
+1. **Recursive structure without termination guarantee**: The `recΔ` recursor allows arbitrary recursion through its reduction rules:
+   lean4
+   | R_rec_zero : ∀ b s, Step (recΔ b s void) b
+   | R_rec_succ : ∀ b s n, Step (recΔ b s (delta n)) (app s (recΔ b s n))
+   
+   There is no structural guarantee that the recursion terminates, as:
+   - The step function `s` can be any term
+   - The recursive call `recΔ b s n` reappears in the reduct
+   - No constraints exist on the "natural number" argument (built from `void`/`delta`)
+
+2. **Potential infinite reduction sequence**: Consider:
+   lean4
+   def omega := recΔ void (app s) (delta void)
+   
+   Reduction could proceed as:
+   
+   omega ~> app s (recΔ void (app s) void)  ~> app s void ~> ... (arbitrary app reductions)
+   
+   Without constraints on `s`, this could diverge.
+
+3. **Lack of type safety**: The calculus allows arbitrary term composition (e.g., `app` applied to any two terms), with no:
+   - Type system enforcing well-formed recursions
+   - Positivity checks for recursive definitions
+   - Guardedness conditions
+
+4. **Equality rules enable complex structures**: The `eqW` reductions can generate nested `integrate(merge(...))` structures that might facilitate non-terminating computations when combined with `recΔ`.
+
+**Conclusion**: While some reductions clearly terminate (e.g., `R_merge_void_left`), the combination of unconstrained recursion via `recΔ` and arbitrary term formation makes strong normalization unprovable without either:
+1. Adding termination measures (e.g., well-founded ordering)
+2. Introducing typing constraints
+3. Adding syntactic guards to `recΔ`
+
+The system as given is sufficient for defining computational patterns but insufficient for proving universal termination.

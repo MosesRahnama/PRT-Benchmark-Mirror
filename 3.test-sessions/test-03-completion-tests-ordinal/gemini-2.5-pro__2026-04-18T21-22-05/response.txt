@@ -1,0 +1,107 @@
+For the `R_rec_succ` case, we need to show that `mu (app s (recDelta b s n)) < mu (recDelta b s (delta n))`.
+
+The left-hand side (LHS) is:
+`mu (app s (recDelta b s n))`
+`= omega0 ^ 3 * (mu s + 1) + omega0 ^ 2 * (mu (recDelta b s n) + 1) + 1`
+`= omega0 ^ 3 * (mu s + 1) + omega0 ^ 2 * (omega0 ^ (mu n + mu s + 6) + omega0 * (mu b + 1) + 1 + 1) + 1`
+
+The right-hand side (RHS) is:
+`mu (recDelta b s (delta n))`
+`= omega0 ^ (mu (delta n) + mu s + 6) + omega0 * (mu b + 1) + 1`
+`= omega0 ^ (omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6) + omega0 * (mu b + 1) + 1`
+
+The exponent on the RHS contains `omega0 ^ 5`, which dominates all terms on the LHS. The proof relies on properties of ordinal arithmetic, particularly `opow_lt_opow_iff` and showing that the exponent on the RHS is much larger.
+
+```lean
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- We need to show mu(app s (recDelta b s n)) < mu(recDelta b s (delta n))
+    -- Let's define LHS and RHS expressions for clarity
+    let lhs := omega0 ^ (3 : Ordinal) * (mu s + 1) + omega0 ^ (2 : Ordinal) * (omega0 ^ (mu n + mu s + 6) + omega0 * (mu b + 1) + 2) + 1
+    let rhs := omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6) + omega0 * (mu b + 1) + 1
+
+    -- The core of the argument is that the exponent on the RHS is much larger
+    -- than any component of the LHS.
+    -- omega0 ^ 5 * (mu n + 1) is the dominant term.
+    have h_exp_dom : mu n + mu s + 6 < omega0 ^ 5 * (mu n + 1) := by
+      -- This follows because omega0^5 is a principal ordinal for addition and multiplication
+      -- and is much larger than mu n and mu s.
+      apply principal_add_omega_opow_five
+    
+    have h_exp_lt : mu n + mu s + 6 + 1 < omega0 ^ 5 * (mu n + 1) + (mu s + 7) := by
+      apply add_lt_add_right
+      apply add_lt_add_of_lt_of_le h_exp_dom
+      exact le_refl _
+
+    -- Using the dominance of the exponent, we can show the inequality.
+    -- A full proof requires careful application of ordinal arithmetic properties
+    -- like `opow_lt_opow_iff` and transitivity.
+    -- The general idea is that `omega0 ^ (large_exponent)` will be larger than
+    -- sums of `omega0` raised to smaller exponents.
+    -- The term omega0 ^ (omega0 ^ 5 * ...) on the RHS dominates everything on the LHS.
+    sorry
+```
+
+### `Step.R_eq_refl`
+
+For `R_eq_refl`, we need to prove `mu void < mu (eqW a a)`, which simplifies to `0 < omega0 ^ (mu a + mu a + 9) + 1`. This is a basic positivity argument for ordinals.
+
+```lean
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- We need to show: 0 < omega0 ^ (mu a + mu a + 9) + 1
+    -- Since omega0 > 1, any power of omega0 is positive.
+    have h_opow_pos : 0 < omega0 ^ (mu a + mu a + 9) := by
+      apply opow_pos
+      exact Ordinal.omega0_pos
+    -- Adding 1 to a positive ordinal results in a positive ordinal.
+    apply add_pos_of_pos_of_le h_opow_pos
+    exact zero_le_one
+```
+
+### `Step.R_eq_diff`
+
+For `R_eq_diff`, we must show `mu (integrate (merge a b)) < mu (eqW a b)`.
+
+The LHS is:
+`mu (integrate (merge a b))`
+`= omega0 ^ 4 * (mu (merge a b) + 1) + 1`
+`= omega0 ^ 4 * (omega0 ^ 3 * (mu a + 1) + omega0 ^ 2 * (mu b + 1) + 1 + 1) + 1`
+
+The RHS is:
+`mu (eqW a b) = omega0 ^ (mu a + mu b + 9) + 1`
+
+The proof hinges on the fact that the exponent `mu a + mu b + 9` on the RHS is substantially larger than the exponents on the LHS (which are at most `4 + 3 = 7`).
+
+```lean
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- We need to show:
+    -- omega0^4 * (omega0^3 * (mu a + 1) + omega0^2 * (mu b + 1) + 2) + 1
+    -- < omega0^(mu a + mu b + 9) + 1
+    -- This is equivalent to showing:
+    -- omega0^4 * (omega0^3 * (mu a + 1) + omega0^2 * (mu b + 1) + 2)
+    -- < omega0^(mu a + mu b + 9)
+    apply add_lt_add_iff_right.mpr
+    
+    -- By distributing omega0^4, we get:
+    -- omega0^7 * (mu a + 1) + omega0^6 * (mu b + 1) + omega0^4 * 2
+    let lhs_expanded := omega0 ^ (7 : Ordinal) * (mu a + 1) + omega0 ^ (6 : Ordinal) * (mu b + 1) + omega0 ^ (4 : Ordinal) * 2
+    
+    -- We need to show lhs_expanded < omega0^(mu a + mu b + 9)
+    -- The exponent on the RHS (mu a + mu b + 9) is larger than any exponent on the LHS (7, 6, 4).
+    -- Since mu a and mu b are ordinals, mu a + mu b + 9 > 7.
+    have h_exp_gt : 7 < mu a + mu b + 9 := by
+      apply lt_add_of_pos_right
+      apply lt_add_of_pos_right
+      exact Ordinal.pos_iff_ne_zero.mpr (ne_of_gt (show (9:Ordinal) > 7 by norm_num))
+
+    -- Because omega0 is a principal ordinal for addition, the sum on the LHS is bounded by
+    -- a term with the largest exponent.
+    -- The term omega0^(mu a + mu b + 9) will dominate.
+    -- A full proof involves using properties of Cantor Normal Form.
+    sorry
+```

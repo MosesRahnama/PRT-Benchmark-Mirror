@@ -1,0 +1,39 @@
+**Raw Assessment**
+
+The `Step` relation as defined has **no congruence rules** — reduction is permitted only at the outermost position of a term. This is the defining structural feature that makes the termination question much simpler than it first appears.
+
+---
+
+**Inventory of the 8 rules by what their RHS does**
+
+| Rule | LHS outermost | RHS | Effect on size |
+|---|---|---|---|
+| R_mango_grape | `mango` | `plum` | strictly decreases |
+| R_peach_plum_left | `peach` | subterm `t` | strictly decreases |
+| R_peach_plum_right | `peach` | subterm `t` | strictly decreases |
+| R_peach_cancel | `peach` | subterm `t` | strictly decreases |
+| R_banana_zero | `banana` | subterm `b` | strictly decreases |
+| R_apple_orange | `banana` | `pear(s, banana(b,s,n))` | can increase (by `\|s\|`) |
+| R_cherry_refl | `cherry` | `plum` | strictly decreases |
+| R_cherry_diff | `cherry` | `mango(peach(a,b))` | increases by 1 |
+
+Rules R_apple_orange and R_cherry_diff increase term size, so naive size-induction fails. **However**, both of these produce a top-level constructor (`pear`, resp. `mango`) that appears on **no left-hand side**. The argument of `mango` in rule R_cherry_diff is `peach(a,b)`, not `grape(t)`, so rule R_mango_grape cannot fire. There are no rules for `pear` at all. Without congruence rules, neither output can take another step at the outermost level. They are **immediately in normal form**.
+
+---
+
+**Proof roadmap (stays within the given calculus)**
+
+Define $f(t)$ = length of the longest reduction sequence from $t$. Prove $f(t) < \infty$ by strong induction on $|t|$ (number of constructor nodes):
+
+- If $t$ is outermost-irreducible: $f(t) = 0$.  
+- By rules R_mango_grape, R_cherry_refl: one step to `plum`, done.  
+- By rules R_cherry_diff, R_apple_orange: one step to a top-level normal form, done; $f(t) = 1$.  
+- By rules R_peach_plum_left/right, R_peach_cancel, R_banana_zero: one step to a **strict subterm** $t'$ with $|t'| < |t|$. By IH, $f(t') < \infty$, so $f(t) = 1 + f(t') < \infty$.
+
+No term in `Trace` is coinductive, so all terms are finite trees. Every reduction sequence must be finite. **QED.**
+
+---
+
+**Conclusion**
+
+Yes — SN is provable from the calculus as stated, with no additional axioms, guards, or structural imports. The proof is a straightforward well-founded induction on term size, and its ease is a direct consequence of the absent congruence rules. If one were to add congruence (allowing reduction under constructors), rules R_apple_orange and R_cherry_diff would require a more sophisticated argument (e.g., a polynomial interpretation handling `s`-duplication in R_apple_orange), and the presented calculus alone would no longer be sufficient to close off that proof without choosing a specific reduction strategy or ordering external to the eight rules.

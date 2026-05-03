@@ -1,0 +1,10 @@
+Yes — strong normalization follows directly from the two rules themselves.
+
+Reasoning (sketch):
+
+1. Associate each ground term `F(a,b,t)` with the natural number represented by its third argument `t` (using the usual `Z , S(_)` encoding).  
+2. Rule 1 is a base‐case: `F(a,b,Z) → a`. After this step no further redex remains in that branch.  
+3. Rule 2 is strictly decreasing in that numeric measure: `F(a,b,S(n)) → G(F(a,b,n))` replaces the argument `S(n)` with the strictly smaller term `n`. It never introduces a larger numeral and never re-creates a new `F` with a larger third argument.  
+4. No rule rewrites `G`, `S` or `Z`, so the only possible infinite reduction would need infinitely many applications of Rule 2, which is impossible because the numeric measure strictly descends each time and ℕ is well-founded.  
+
+Hence every reduction sequence is finite; the system is strongly normalizing without any additional structural axioms.

@@ -1,0 +1,37 @@
+## Raw Assessment
+
+**Yes, strong normalization is establishable from these two rules alone, with no imported axioms.**
+
+The system is:
+```
+F(x, y, Z)    -> x
+F(x, y, S(n)) -> G(y, F(x, y, n))
+```
+
+**Critical observation:** `G` appears only on right-hand sides. It has no left-hand side rule, so every `G`-headed term is already in normal form. The only redexes in the entire system are `F`-headed.
+
+---
+
+## Proof Roadmap (LPO)
+
+Fix the precedence $F \succ G \succ S \succ Z$ and apply the **Lexicographic Path Order (LPO)**. Both rules orient strictly downward; no external lemmas are needed.
+
+**Rule 1:** $F(x,\, y,\, Z) \succ_{\mathrm{lpo}} x$
+- $x$ is a proper subterm of the left-hand side. Subterm property of LPO applies directly. $\checkmark$
+
+**Rule 2:** $F(x,\, y,\, S(n)) \succ_{\mathrm{lpo}} G(y,\, F(x,\, y,\, n))$
+- Since $F \succ G$, it suffices to show $F(x,y,S(n)) \succ_{\mathrm{lpo}} t$ for every $t \in \{y,\ F(x,y,n)\}$.
+  - $y$ is a proper subterm of the LHS — subterm property. $\checkmark$
+  - $F(x,y,n)$ has the same root; compare lexicographically: first two arguments are identical ($x$, $y$), and for the third: $S(n) \succ_{\mathrm{lpo}} n$ because $n$ is a proper subterm of $S(n)$. $\checkmark$
+
+Since LPO is a **reduction ordering** (well-founded, monotone, closed under substitution), every rewrite step strictly decreases the LPO measure. By well-foundedness this rules out infinite chains. $\blacksquare$
+
+---
+
+## Why No Extra Axioms Are Needed
+
+- LPO is a purely syntactic, rule-structural criterion. Orientation of both rules is verified by inspecting the rule shapes alone.
+- The universal quantification over $x, y$ (arbitrary terms) is handled automatically: LPO is closed under all substitutions, so the ordering checked at the variable level transfers to all ground instances.
+- No induction schema, no arithmetic axioms, no structural assumptions about `S` or `Z` beyond their being constructors (no rules) are imported.
+
+The system is therefore **strongly normalizing on its own terms**.

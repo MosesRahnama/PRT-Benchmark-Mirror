@@ -1,0 +1,12 @@
+**No, the measure is not sound.**
+
+The proposed lexicographic measure `(phase t, cost t)` fails to strictly decrease on several `Step` rules:
+
+- `R_merge_void_left`: `merge void t → t`. If `phase t = 1` (e.g., `t := recDelta b s (delta n)`), then `(0, cost(merge void t)) < (1, cost t)` lexicographically—increasing the measure.
+- `R_merge_void_right`: `merge t void → t`. Same issue if `phase t = 1`.
+- `R_merge_cancel`: `merge t t → t`. Same issue if `phase t = 1`.
+- `R_rec_zero`: `recDelta b s void → b`. `phase` of LHS is `0`; if `phase b = 1`, measure increases.
+
+These rules allow steps from `phase 0` to `phase 1`, violating strict decrease. Other rules (e.g., `R_rec_succ`, `R_eq_refl`) decrease properly, but soundness requires decrease on *all* steps. 
+
+The measure is unsound for proving termination of this rewrite system.

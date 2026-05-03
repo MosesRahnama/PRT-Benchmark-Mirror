@@ -1,0 +1,24 @@
+For the TRS in the specified file, termination is in fact provable, but not all five methods do it as stated.
+
+1. A: Yes on success. Yes on boundary.
+An LPO/RPO-style path order with precedence $F > G > S > Z$ can orient both rules. The recursive rule works because the left side has root $F$, the right side has root $G$, and the recursive subterm $F(x,y,n)$ is smaller than $F(x,y,S(n))$ since $S(n) > n$.
+
+2. B: Yes on success. Yes on boundary.
+The polynomial interpretation decreases on both rules:
+$\llbracket F(x,y,Z)\rrbracket = x+1 > x$
+and
+$\llbracket F(x,y,S(n))\rrbracket = x+n+2 > x+n+1 = \llbracket G(y,F(x,y,n))\rrbracket$.
+This is a standard termination proof from the rewrite system alone.
+
+3. C: No on success. Yes on boundary.
+KBO with all symbol weights equal to 1 fails on the second rule because the right-hand side duplicates $y$: the left side contains $y$ once, while $G(y,F(x,y,n))$ contains it twice. KBO cannot orient such a rule under the stated setup.
+
+4. D: Yes on success. Yes on boundary.
+The only relevant dependency pair is
+$F^\#(x,y,S(n)) \to F^\#(x,y,n)$.
+Projecting to the third argument gives $S(n) \triangleright n$, so the subterm criterion proves the DP problem finite.
+
+5. E: No on success. Yes on boundary.
+The proposed measure decreases for top-level applications of the two rules, but it does not strictly decrease for arbitrary rewrite steps inside contexts. For example, reducing inside the first argument of an $F$-term leaves $\mu(F(\_,y,n))$ unchanged, because the measure ignores the first argument. So the method as stated does not prove global termination.
+
+The methods that satisfy both conditions are A, B, and D.

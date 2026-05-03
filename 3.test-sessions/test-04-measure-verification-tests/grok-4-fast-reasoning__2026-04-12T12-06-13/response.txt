@@ -1,0 +1,61 @@
+### Assessment of the Proposed Termination Measure
+
+The provided Lean 4 code defines an inductive relation `Step` over `Trace` terms, modeling a first-order rewrite calculus with rules for integration, merging, recursion, and equality witnessing. It proposes a lexicographic measure `measure t = (phase t, cost t)` on `Nat × Nat`, where:
+- `phase t` is 1 if `t` is a `recDelta` with a `delta` in its third argument (indicating a "recursive successor" case), and 0 otherwise.
+- `cost t` is a simple additive cost based on constructor sizes (e.g., 1 per constructor, plus recursive costs).
+
+For the measure to be **sound** for proving termination of `Step` (i.e., no infinite reduction sequences), it must strictly decrease along every step: for all `t u` where `Step t u`, we require `measure t > measure u` in lexicographic order (first compare `phase`, then `cost` if phases are equal; higher values are larger).
+
+#### Verification by Rule
+I manually verified each `Step` rule, assuming arbitrary subterms (as the rules are unrestricted). All costs are non-negative integers, and `cost t ≥ 0` with equality only for `void`.
+
+- **R_int_delta**: `integrate (delta t) ↦ void`  
+  `phase t = 0`, `phase u = 0`.  
+  `cost t = 2 + cost t' > 0 = cost u`.  
+  `(0, 2 + cost t') > (0, 0)`. **Decreases** (good).
+
+- **R_merge_void_left**: `merge void t ↦ t`  
+  `phase t = 0` always.  
+  `cost t = 1 + cost t > cost t` (by 1).  
+  If `phase u = phase t = 0`, then `(0, 1 + cost t) > (0, cost t)`. **Decreases**.  
+  But if `phase t = 1` (possible, e.g., `t = recDelta b s (delta n)`), then `(0, 1 + cost t) < (1, cost t)` (phase drops from 1 to 0? No: step is from `t` (phase 0) to `u = t` (phase 1), so first component 0 < 1). **Increases**. **Problem**.
+
+- **R_merge_void_right**: `merge t void ↦ t`  
+  Symmetric to above. Same issue: if `phase t = 1`, measure increases from `(0, 1 + cost t)` to `(1, cost t)`. **Increases**. **Problem**.
+
+- **R_merge_cancel**: `merge t t ↦ t`  
+  `phase t = 0` always.  
+  `cost t = 1 + 2 ⋅ cost t > cost t` (by `1 + cost t ≥ 1`).  
+  If `phase u = 0`, decreases.  
+  But if `phase t = 1`, increases from `(0, 1 + 2 ⋅ cost t)` to `(1, cost t)`. **Increases**. **Problem**.
+
+- **R_rec_zero**: `recDelta b s void ↦ b`  
+  `phase t = 0` (third arg is `void`, not `delta _`).  
+  `cost t = 1 + cost b + cost s + 0 > cost b` (by `1 + cost s ≥ 1`).  
+  If `phase u = phase b = 0`, decreases.  
+  But if `phase b = 1`, increases from `(0, 1 + cost b + cost s)` to `(1, cost b)`. **Increases**. **Problem**.
+
+- **R_rec_succ**: `recDelta b s (delta n) ↦ app s (recDelta b s n)`  
+  `phase t = 1`. `phase u = 0` (app constructor).  
+  First components: `1 > 0`, so `(1, cost t) > (0, cost u)` regardless of costs. **Decreases** (good).
+
+- **R_eq_refl**: `eqW a a ↦ void`  
+  `phase t = 0`, `phase u = 0`.  
+  `cost t = 3 + 2 ⋅ cost a > 0 = cost u`.  
+  `(0, 3 + 2 ⋅ cost a) > (0, 0)`. **Decreases** (good).
+
+- **R_eq_diff**: `eqW a b ↦ integrate (merge a b)`  
+  `phase t = 0`, `phase u = 0`.  
+  `cost t = 3 + cost a + cost b`.  
+  `cost u = 2 + cost a + cost b`.  
+  `(0, 3 + cost a + cost b) > (0, 2 + cost a + cost b)`. **Decreases** (good).
+
+#### Conclusion
+The measure is **not sound**. It strictly decreases for `R_int_delta`, `R_rec_succ`, `R_eq_refl`, and `R_eq_diff`. However, it **increases** in the merge rules (`R_merge_void_left`, `R_merge_void_right`, `R_merge_cancel`) and `R_rec_zero` whenever the target trace `u` has `phase u = 1` (e.g., `u = recDelta b s (delta n)`). This is possible because the rules apply to arbitrary subtraces, and `phase` can "emerge" from 0 to 1 during unwrapping/simplification steps.
+
+Such increases prevent the measure from establishing strict termination, as they allow potential non-decreasing (or ascending) reduction paths. A sound measure would need to either:
+- Ensure phase never increases (e.g., via invariants on valid traces, not present here).
+- Reverse the lex order (e.g., `(cost, phase)` with phase as a "height" that increases inward).
+- Use a different measure (e.g., a multiset or polynomial variant).
+
+Without restrictions on traces or rule applications, the proposal fails to prove termination.

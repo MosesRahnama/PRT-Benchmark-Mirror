@@ -1,0 +1,85 @@
+Here are proof skeletons for the three `sorry` cases:
+
+---
+
+### Case `R_rec_succ` (line 149)
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- Goal: ω^3·(μs+1) + ω^2·(ω^(μn+μs+6) + ω·(μb+1) + 1 + 1) + 1
+    --     < ω^(ω^5·(μn+1) + 1 + μs + 6) + ω·(μb+1) + 1
+    --
+    -- Strategy: The LHS exponent on ω in the RHS is
+    --   ω^5·(μn+1) + μs + 7, which is ≥ ω·something,
+    --   so ω^(that) absorbs the polynomial-level LHS.
+    --
+    -- Step 1: Show μn + μs + 6 < ω^5·(μn+1) + μs + 7
+    --         (because ω^5·(μn+1) > μn when μn is any ordinal).
+    -- Step 2: Therefore ω^(μn+μs+6) < ω^(ω^5·(μn+1)+μs+7)  (opow_lt_opow_right).
+    -- Step 3: Bound ω^2·(ω^(μn+μs+6)+ω·(μb+1)+2) ≤ ω^(μn+μs+8)
+    --         (mul_opow absorption, since ω^2·ω^α = ω^(α+2)).
+    -- Step 4: Show ω^(μn+μs+8) < ω^(ω^5·(μn+1)+μs+7)
+    --         (the ω^5 tower in the exponent dominates).
+    -- Step 5: ω^3·(μs+1) < ω^(ω^5·(μn+1)+μs+7) likewise.
+    -- Step 6: Sum of two terms < ω^(ω^5·(μn+1)+μs+7) by
+    --         principal_add_of_principal or add_lt_of_lt for
+    --         principal omega-power ordinals.
+    -- Step 7: Conclude LHS < RHS via calc chain adding back
+    --         the ω·(μb+1)+1 tail.
+    sorry
+```
+
+### Case `R_eq_refl` (line 157)
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- Goal: 0 < ω^(μa + μa + 9) + 1
+    -- This is immediate: 0 < 1 ≤ ω^(...) + 1.
+    exact Ordinal.pos_iff_ne_zero.mpr (by
+      apply ne_of_gt
+      exact add_pos_right _ one_pos)
+```
+
+This case is actually completable with the same one-liner pattern used in `R_int_delta`. The proof is: `0 < 1 ≤ _ + 1`.
+
+### Case `R_eq_diff` (line 169)
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- Goal: ω^4·(ω^3·(μa+1) + ω^2·(μb+1) + 1 + 1) + 1
+    --     < ω^(μa + μb + 9) + 1
+    --
+    -- Strategy: Collapse the LHS into a single ω-power and show
+    -- its exponent is strictly less than μa + μb + 9.
+    --
+    -- Step 1: Bound the inner sum:
+    --   ω^3·(μa+1) + ω^2·(μb+1) + 2 < ω^(max(μa,μb) + 4)
+    --   (each term is < ω^(μa+4) or ω^(μb+3), and finite sums
+    --    below ω^α stay below ω^α for limit α or successor).
+    -- Step 2: Therefore ω^4 · (inner) < ω^4 · ω^(max(μa,μb)+4)
+    --         = ω^(max(μa,μb) + 8).
+    -- Step 3: Show max(μa,μb) + 8 < μa + μb + 9
+    --         when μa, μb are ordinals with μa + μb ≥ max(μa,μb)
+    --         and the +9 provides the extra unit.
+    --         (More precisely: max(μa,μb) + 8 ≤ μa + μb + 8 < μa + μb + 9.)
+    -- Step 4: opow_lt_opow_right omega0_pos gives
+    --         ω^(max(μa,μb)+8) < ω^(μa+μb+9).
+    -- Step 5: Conclude via:
+    --   calc LHS ≤ ω^(max(μa,μb)+8) + 1
+    --          _ < ω^(μa+μb+9)           (principal ordinal absorbs +1)
+    --          _ ≤ ω^(μa+μb+9) + 1       (le_add_right)
+    sorry
+```
+
+---
+
+**Summary of the three strategies:**
+
+| Case | Core idea |
+|---|---|
+| `R_rec_succ` | The `ω^5·(μn+1)` in the exponent of the RHS towers above the `μn+μs+6` exponent buried in the LHS, so the single `ω^(ω^5·…)` absorbs all polynomial-level LHS terms. |
+| `R_eq_refl` | Pure positivity: `0 < _ + 1`. Directly provable with the same `add_pos_right` pattern already in the file. |
+| `R_eq_diff` | Collapse `ω^4 · (ω^3·… + ω^2·… + 2)` into `ω^(max(μa,μb)+8)`, then use `max ≤ sum` and the extra `+9` vs `+8` margin to get strict inequality of exponents. |

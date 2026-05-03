@@ -1,0 +1,6 @@
+**Evaluating kappa in rewrites**
+
+The rewrite R_rec_succ reduces delta^k to delta^(k-1) during recursion, but because kappa remains constant, I can't demonstrate a decrease, which is crucial. Likewise, when considering R_int_delta, the measure from kappa t to 0 might not decrease if kappa t equals 0. If kappa t is always zero, that could mean no reduction occurs. Also, termination might still be possible without strict decrease, but for a well-founded relation, I think strictness is necessary, especially when it comes to kappa’s role in determining accessibility.
+**Concluding on helper strategy soundness**
+
+The helper strategy appears unsound because the theorems are false due to the overlapping equation in the recDelta case. Even if I fix this, kappa isn’t an adequate measure for termination since many rules preserve kappa. I should outline the reasoning step by step, showing a definitional reduction using pattern matching. For example, if `n` matches `.delta m`, the left-hand side does not equal the right-hand side. Also, mentioning that case handling on `n` is necessary to prove the lemma is important, as it may hide failures. I’ll provide a counterexample, concluding that the second theorem also fails. Plus, I need to follow formatting rules for file references, ensuring to use links without backticks while allowing backticks for symbols like `kappa`.

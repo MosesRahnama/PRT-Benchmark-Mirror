@@ -1,0 +1,14 @@
+### Assessment of Strong Normalization
+
+Based solely on the given syntax (inductive Trace) and rewrite rules (inductive Step), without any additional structural axioms, congruence closures, or object-level assumptions:
+
+Yes, strong normalization can be established. The system has no infinite reduction sequences because reductions are strictly top-level (no subterm reductions), and chains are bounded.
+
+### Short Proof Roadmap
+1. **Classify rules by effect on term size** (size = number of nodes in the term tree):
+   - Decreasing rules (R_mango_grape, all R_peach_*, R_banana_zero, R_cherry_refl): Strictly decrease size by ≥2 nodes.
+   - Increasing rules (R_apple_orange, R_cherry_diff): Increase size (by size of specific subterms or by 1), but produce terms with root constructors (pear or mango-of-peach) that do not match any left-hand side, hence irreducible.
+
+2. **Analyze chain structure**: Any sequence starts with 0+ decreasing steps (finite, as each reduces size ≥2 on finite terms), optionally followed by at most one increasing step (terminal, as result irreducible), then halts.
+
+3. **Conclusion**: No infinite chains possible; every term has finite reduction sequences under Step.

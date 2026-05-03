@@ -1,0 +1,27 @@
+**Yes**, strong normalization can be established from the presented syntax (`inductive Trace`) and rules (`inductive Step`) alone.
+
+### Short Proof Roadmap
+Prove `∀ t : Trace, Acc Step t` (where `Acc` witnesses strong normalization for the reflexive-transitive closure) by induction on `t` via `Trace.rec`:
+
+- **plum**: NF (no matching rule), `Acc` (base).
+- **grape t**: Root `grape` (no rule), NF.
+- **mango t**:
+  - If `t = grape u` (case on `t`), `Step` to `plum` (NF by IH/base).
+  - Else NF (no rule).
+- **peach t₁ t₂**:
+  - If `t₁ = plum`, `Step` to `t₂` (IH).
+  - Elif `t₂ = plum`, `Step` to `t₁` (IH).
+  - Elif `t₁ = t₂` (via `eq.rec`), `Step` to `t₁` (IH).
+  - Else NF.
+- **pear t₁ t₂**: Root `pear` (no rule), NF.
+- **banana t₁ t₂ t₃**:
+  - If `t₃ = plum`, `Step` to `t₁` (IH).
+  - Elif `t₃ = grape t₄` (case on `t₃`), `Step` to `pear t₂ (banana t₁ t₂ t₄)`:
+    - `pear`-root NF (no rule); subterms `{t₂, t₁, t₂, t₄}` proper subterms (IH).
+  - Else NF.
+- **cherry a b**:
+  - If `a = b` (via `eq.rec`), `Step` to `plum` (NF).
+  - Elif `¬ a = b`, `Step` to `mango (peach a b)`:
+    - NF: `peach ≠ grape u` (constructors disjoint); subterms `{a, b}` proper (IH).
+
+Rules are deterministic (disjoint/overlapping yield same RHS); all reducts use IH on proper subterms or base NF cases. No extra axioms needed—relies solely on `inductive` recursion, `eq.rec`, and constructor disjointness/injectivity (derivable from syntax).

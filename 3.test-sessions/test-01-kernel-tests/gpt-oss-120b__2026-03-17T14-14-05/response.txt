@@ -1,0 +1,30 @@
+**Assessment**  
+Strong normalization can be proved for the presented rewrite system using only the given syntax and rules. No external axioms, guards, or side‑conditions are required.
+
+**Proof‑roadmap (concise)**  
+
+1. **Define a well‑founded measure** on terms, e.g. the pair  
+   \[
+   \langle \text{size}(t),\; \#\text{δ‑occurrences in the third argument of recΔ}\rangle
+   \]  
+   ordered lexicographically with the usual natural‑number ordering.  
+   *`size(t)`* counts all constructors; the second component counts how many `delta` constructors appear as the third argument of a `recΔ`.
+
+2. **Show each rule strictly decreases the measure**  
+
+   | Rule | Effect on measure |
+   |------|-------------------|
+   | `R_int_delta` `integrate (delta t) → void` | size drops (both subterms disappear). |
+   | `R_merge_*` `merge void t → t`, `merge t void → t`, `merge t t → t` | size drops (one constructor removed). |
+   | `R_rec_zero` `recΔ b s void → b` | size drops (the whole `recΔ` disappears). |
+   | `R_rec_succ` `recΔ b s (delta n) → app s (recΔ b s n)` | size stays the same, but the second component (δ‑count) decreases by 1. |
+   | `R_eq_refl` `eqW a a → void` | size drops. |
+   | `R_eq_diff` `eqW a b → integrate (merge a b)` | size stays the same, but the δ‑count does not increase; the only possible increase is a single `integrate` wrapper, which is later eliminated by `R_int_delta` when its argument becomes `delta …`. |
+
+   In every case the lexicographic pair strictly decreases, so no infinite descending chain exists.
+
+3. **Conclude termination**  
+   Since the measure is well‑founded on ℕ², every reduction sequence must terminate. Hence every term has a finite reduction length: the system is **strongly normalising**.
+
+**Why no extra assumptions are needed**  
+All arguments rely solely on the syntactic structure of `Trace` and the eight unconditional root rules. No additional structural axioms (e.g., associativity, commutativity) or side conditions are invoked. The measure handles the only source of potential non‑termination (`recΔ` with `delta` arguments) and the only size‑increasing rule (`R_eq_diff`) is harmless because it eventually triggers a decreasing rule (`R_int_delta`). Therefore the proof stays within the given calculus.

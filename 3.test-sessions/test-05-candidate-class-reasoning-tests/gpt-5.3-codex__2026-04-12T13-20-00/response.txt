@@ -1,0 +1,21 @@
+Assessed in KO7-LLM-Benchmark/test-files/Test-05-Candidate-Class-Reasoning.lean using the standard criterion: for every `Step l r`, require `μ r < μ l`.
+
+**Result**
+- `mu1`: **fails** as a global termination measure.
+- `mu2`: **fails** as a global termination measure.
+- `mu3`: **fails** as a global termination measure.
+
+**Why all three fail**
+- Every rule decreases except `R_rec_succ`.
+- For `R_rec_succ : recDelta b s (delta n) → app s (recDelta b s n)`:
+  - `mu1`:  
+    `lhs = 2 + μ₁(b)+μ₁(s)+μ₁(n)`,  
+    `rhs = 2 + μ₁(b)+2μ₁(s)+μ₁(n)`  
+    so `rhs - lhs = μ₁(s)` (non-decreasing; equal at `s=void`, increasing otherwise).
+  - `mu2`: same pattern, `rhs - lhs = μ₂(s)` (same failure).
+  - `mu3`:  
+    `lhs = 2 + μ₃(b)+μ₃(s)+μ₃(n)`,  
+    `rhs = 3 + μ₃(b)+2μ₃(s)+μ₃(n)`  
+    so `rhs - lhs = 1 + μ₃(s)` (strict increase always).
+
+So none of the three candidates can prove one-step decrease for the full rewrite system.

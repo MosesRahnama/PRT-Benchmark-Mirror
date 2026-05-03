@@ -1,0 +1,53 @@
+The proposed measure is
+
+- `measure t : Nat × Nat := (phase t, cost t)`
+- where `phase t = 1` **only** when `t` is exactly of the form `recDelta _ _ (delta _)`, and `0` otherwise
+- and `cost` is a size/weight function.
+
+Interpreting “lexicographic termination measure” in the standard way (lex order on `Nat × Nat`, first component primary, using `<` on `Nat`), this is **not sound**: there are rewrite steps `Step l r` where `measure r` is **not** lexicographically smaller than `measure l` (in fact, it can increase in the first component).
+
+## Concrete counterexample (measure increases)
+
+Use rule `R_merge_void_left : Step (merge void t) t` with a `t` that has `phase t = 1`, e.g.
+
+- let `t := recDelta void void (delta void)`
+
+Then:
+
+- `phase (merge void t) = 0` (because it’s not syntactically `recDelta _ _ (delta _)`)
+- `phase t = 1`
+
+So the first component goes `0 → 1` across the rewrite:
+\[
+measure(\text{merge void } t) = (0, \; 1 + cost(t)), \quad measure(t) = (1,\; cost(t)).
+\]
+Under lex order (phase first), `(1, cost t)` is **not** `< (0, 1+cost t)`. So this step does **not** decrease the measure, contradicting the requirement for a ranking function that proves termination of `Step`.
+
+This same issue also appears for:
+
+- `R_merge_void_right : Step (merge t void) t`
+- `R_merge_cancel : Step (merge t t) t`
+- `R_rec_zero : Step (recDelta b s void) b`
+
+because their LHS always has `phase = 0`, but the RHS can be chosen to have `phase = 1`.
+
+## Why you can’t “just swap the lex order”
+You might wonder if the intended lexicographic order was “cost first, then phase”. That doesn’t work either, because `R_rec_succ` typically **increases** `cost`:
+
+`recDelta b s (delta n) → app s (recDelta b s n)`
+
+A quick cost comparison:
+- `cost(lhs) = 2 + cost b + cost s + cost n`
+- `cost(rhs) = cost(lhs) + cost s`
+
+So unless `s` is extremely special (e.g. `s = void`), cost goes up, meaning cost-first lex would fail on `R_rec_succ`.
+
+## Verdict
+As written, `(phase, cost)` is **not a sound lexicographic termination measure for `Step`**, because there are valid rewrite steps that increase `phase` from `0` to `1`, and other steps (notably `R_rec_succ`) that increase `cost`, so no straightforward lex interpretation over these two components makes every rule strictly decrease.
+
+## Todo list (updated)
+- 1 ✅ Read Lean file (termination measure)
+- 2 ✅ Identify proposed lexicographic measure
+- 3 ✅ Check decrease for each rewrite rule
+- 4 ✅ Assess soundness & edge cases
+- 5 ✅ Write concise verdict

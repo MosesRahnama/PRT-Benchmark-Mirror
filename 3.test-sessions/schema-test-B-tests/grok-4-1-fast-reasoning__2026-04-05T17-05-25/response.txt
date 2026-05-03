@@ -1,0 +1,21 @@
+**Method A:**
+1. Yes, LPO with the given precedence orients both rules (F > G on tops, F(...) > vars).
+2. Yes, purely syntactic order on symbols and structure; no external axioms.
+
+**Method B:**
+1. Yes, the interpretation strictly decreases on both rules (x + n + 1 > x; x + n + 2 > x + n + 1).
+2. No, relies on arithmetic (+, >) and well-foundedness of ℕ, not derivable from rules.
+
+**Method C:**
+1. No, weights equal on second rule; no precedence specified for tie-breaking top symbols or arg multisets.
+2. N/A.
+
+**Method D:**
+1. Yes, sole dependency pair F(x,y,S(n)) → F(x,y,n) satisfies subterm criterion (rhs proper subterm).
+2. Yes, syntactic analysis of recursive calls.
+
+**Method E:**
+1. Yes, μ structurally decreases on both rules (1 > 0; depth_S(S(n)) + 1 > depth_S(n) + 1).
+2. Yes, μ defined recursively on term structure; decrease by rule cases.
+
+**Methods satisfying both:** A, D, E.

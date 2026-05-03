@@ -1,0 +1,10 @@
+Let me carefully analyze the proposed lexicographic termination measure `(phase t, cost t)` for the rewrite system defined by `Step`.
+
+The measure is `measure(t) = (phase(t), cost(t))` ordered lexicographically on `Nat × Nat`. For soundness, we need: for every rule `Step lhs rhs`, `measure(lhs) > measure(rhs)` in the lexicographic order. That means either `phase(lhs) > phase(rhs)`, or `phase(lhs) = phase(rhs)` and `cost(lhs) > cost(rhs)`.
+
+
+Now I'm checking each rule to verify the measure decreases. For the first rule where `integrate (delta t)` reduces to `void`, the phase stays at 0 for both sides, but the cost drops from `2 + cost(t)` down to 0, which satisfies the requirement.
+
+For `merge_void_left`, I need to be more careful. When the right side is `recDelta b s (delta n)`, the left side has phase 0 but the right side has phase 1, which would make the measure increase — that's a problem. Let me trace through the actual costs to see if the lexicographic ordering still works out in our favor.
+
+Actually, looking at this more carefully, the measure does increase from LHS to RHS in these cases, which breaks soundness. The same issue affects `merge_void_right`, `merge_cancel`, and `rec_zero` — whenever we're eliminating a `merge` or `recDelta` wrapper but the result has a higher phase, the measure goes up instead of down. I need to check the remaining rules to see how widespread this problem is. The issue is that the `phase` function only catches the pattern at the top level, but reductions can expose it deeper in the term structure. In all four problematic rules, the LHS has phase 0 while the RHS exposes a `recDelta` with `delta` at the top level, jumping to phase 1. The real problem is that `merge` operations can bubble up these patterns in ways the measure doesn't account for.

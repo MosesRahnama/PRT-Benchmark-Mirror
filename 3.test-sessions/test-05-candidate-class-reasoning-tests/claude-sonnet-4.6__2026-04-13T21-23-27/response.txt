@@ -1,0 +1,99 @@
+Now let me analyze each rule and each candidate measure carefully.
+
+---
+
+## Analysis
+
+### The Rewrite Rules and What They Require
+
+To be a valid termination measure, `mu` must satisfy: for every rule `Step s t`, `mu t < mu s`.
+
+Let me check each rule against each candidate.
+
+---
+
+### Candidate `mu1`
+
+**R_int_delta:** `integrate (delta t)` → `void`
+- LHS: `1 + (1 + mu1 t)` = `2 + mu1 t`
+- RHS: `0`
+- Decrease: YES for all `t`.
+
+**R_merge_void_left:** `merge void t` → `t`
+- LHS: `1 + 0 + mu1 t` = `1 + mu1 t`
+- RHS: `mu1 t`
+- Decrease: YES.
+
+**R_merge_void_right:** `merge t void` → `t`
+- LHS: `1 + mu1 t + 0` = `1 + mu1 t`
+- RHS: `mu1 t`
+- Decrease: YES.
+
+**R_merge_cancel:** `merge t t` → `t`
+- LHS: `1 + mu1 t + mu1 t` = `1 + 2·mu1 t`
+- RHS: `mu1 t`
+- Decrease: YES (for all `t ≥ 0`).
+
+**R_rec_zero:** `recDelta b s void` → `b`
+- LHS: `1 + mu1 b + mu1 s + 0` = `1 + mu1 b + mu1 s`
+- RHS: `mu1 b`
+- Decrease: YES (since `1 + mu1 s ≥ 1 > 0`).
+
+**R_rec_succ:** `recDelta b s (delta n)` → `app s (recDelta b s n)`
+- LHS: `1 + mu1 b + mu1 s + (1 + mu1 n)` = `2 + mu1 b + mu1 s + mu1 n`
+- RHS: `1 + mu1 s + (1 + mu1 b + mu1 s + mu1 n)` = `2 + mu1 b + 2·mu1 s + mu1 n`
+- Require LHS > RHS: `2 + mu1 b + mu1 s + mu1 n > 2 + mu1 b + 2·mu1 s + mu1 n`
+- Simplifies to: `0 > mu1 s`
+- **FAILS** when `mu1 s ≥ 1`, i.e., when `s ≠ void`.
+
+**R_eq_refl:** `eqW a a` → `void`
+- LHS: `3 + 2·mu1 a` > 0. YES.
+
+**R_eq_diff:** `eqW a b` → `integrate (merge a b)`
+- LHS: `3 + mu1 a + mu1 b`
+- RHS: `1 + (1 + mu1 a + mu1 b)` = `2 + mu1 a + mu1 b`
+- Decrease: YES.
+
+**Verdict for `mu1`: FAILS** on `R_rec_succ`. The recursive call unfolds `recDelta b s (delta n)` into `app s (recDelta b s n)`, but `mu1` assigns `recDelta` only a constant overhead of 1, while `app` also costs 1. The recursive copy of `recDelta` on the RHS plus the `app s` wrapper exceeds the LHS whenever `mu1 s ≥ 1`.
+
+---
+
+### Candidate `mu2`
+
+**R_rec_succ:** `recDelta b s (delta n)` → `app s (recDelta b s n)`
+- LHS: `5 + mu2 b + mu2 s + (1 + mu2 n)` = `6 + mu2 b + mu2 s + mu2 n`
+- RHS: `1 + mu2 s + (5 + mu2 b + mu2 s + mu2 n)` = `6 + mu2 b + 2·mu2 s + mu2 n`
+- Require: `6 + mu2 b + mu2 s + mu2 n > 6 + mu2 b + 2·mu2 s + mu2 n`
+- Simplifies to: `0 > mu2 s`
+- **FAILS** for the same structural reason as `mu1`.
+
+The constant offset on `recDelta` is irrelevant here: the `app` wrapper contributes `1 + mu2 s`, and the recursive `recDelta b s n` contributes everything the original had minus the `delta` overhead on `n`. The net change is `−1 + mu2 s` (the `delta` overhead is 1 in `mu2`, the `app` adds `1 + mu2 s`). For any `s` with `mu2 s ≥ 1` this is non-negative, so the measure does not decrease.
+
+**Verdict for `mu2`: FAILS** on `R_rec_succ` for the identical structural reason.
+
+---
+
+### Candidate `mu3`
+
+**R_rec_succ:** `recDelta b s (delta n)` → `app s (recDelta b s n)`
+- LHS: `1 + mu3 b + mu3 s + (1 + mu3 n)` = `2 + mu3 b + mu3 s + mu3 n`
+- RHS: `2 + mu3 s + (1 + mu3 b + mu3 s + mu3 n)` = `3 + mu3 b + 2·mu3 s + mu3 n`
+- Require LHS > RHS: `2 + mu3 b + mu3 s + mu3 n > 3 + mu3 b + 2·mu3 s + mu3 n`
+- Simplifies to: `-1 > mu3 s`
+- **FAILS** unconditionally (no natural number satisfies this).
+
+Here the situation is strictly worse than `mu1`/`mu2`: `mu3` assigns `app` a cost of 2 (vs. 1 for `recDelta`), so the `app` wrapper is *more* expensive than the savings from peeling one `delta` off `n`. The deficit is always at least 1.
+
+**Verdict for `mu3`: FAILS** on `R_rec_succ`, unconditionally (even for `s = void`).
+
+---
+
+## Summary
+
+| Candidate | Failing Rule | Root Cause |
+|-----------|-------------|------------|
+| `mu1` | `R_rec_succ` | `app` overhead (1) + recursive `recDelta` ≥ original when `mu1 s ≥ 1`; the constant on `recDelta` is too small to absorb the `s`-weight duplicated into the `app` wrapper |
+| `mu2` | `R_rec_succ` | Identical structural failure; larger constant on `recDelta` (5) is irrelevant because it cancels on both sides |
+| `mu3` | `R_rec_succ` | Unconditionally fails — `app` cost (2) exceeds `delta` cost (1), so peeling one `delta` always increases the measure by at least 1, regardless of `s` |
+
+**All three candidates fail.** The shared defect is that none of them penalise the `s`-argument of `recDelta` heavily enough relative to `app`. A valid measure must assign `recDelta b s n` a weight that is strictly greater than `app s (recDelta b s n)` after peeling one `delta` from `n` — which requires the `recDelta` header cost to exceed `1 + mu(s)` for all possible `s`. Since `s` is an arbitrary `Trace`, no fixed additive constant on `recDelta` can satisfy this unless `app` is assigned a *smaller* per-node cost than `delta`, or the `s`-component inside `recDelta` is weighted to dominate its copy inside the `app` wrapper (e.g., via a multiplicative factor on `mu(s)` within `recDelta`).

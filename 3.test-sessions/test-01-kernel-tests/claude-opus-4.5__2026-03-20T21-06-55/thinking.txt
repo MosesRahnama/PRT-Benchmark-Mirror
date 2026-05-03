@@ -1,0 +1,47 @@
+Now I have the full file. Let me analyze this first-order rewrite calculus:
+
+**Syntax (Trace):**
+- `void` — base constant
+- `delta t` — unary constructor (successor-like)
+- `integrate t` — unary operator
+- `merge t₁ t₂` — binary operator
+- `app t₁ t₂` — binary application
+- `recΔ b s n` — ternary recursor
+- `eqW t₁ t₂` — equality witness
+
+**Rewrite rules (Step):**
+1. `integrate (delta t) → void`
+2. `merge void t → t`
+3. `merge t void → t`
+4. `merge t t → t`
+5. `recΔ b s void → b`
+6. `recΔ b s (delta n) → app s (recΔ b s n)`
+7. `eqW a a → void`
+8. `eqW a b → integrate (merge a b)`
+
+**Analysis for Strong Normalization:**
+
+Let me check if this system is strongly normalizing.
+
+**Problem 1: Rule R_eq_diff creates non-termination potential**
+Rule 8 (`R_eq_diff`) says `eqW a b → integrate (merge a b)` for any `a, b`. But wait—it applies when `a ≠ b` semantically, but as written it applies to ANY `a, b`. This means for `a = b`, BOTH rules 7 and 8 can fire:
+- `eqW a a → void` (R_eq_refl)
+- `eqW a a → integrate (merge a a)` (R_eq_diff)
+
+So the system is non-deterministic. But that doesn't immediately break strong normalization—we need ALL reduction paths to terminate.
+
+Actually, looking more carefully at the Lean definition, `R_eq_diff` has type `∀ a b, Step (eqW a b) (integrate (merge a b))`. There's no guard requiring `a ≠ b`. So this rule can always apply.
+
+
+The recursor rule `recΔ b s (delta n) → app s (recΔ b s n)` follows a standard primitive recursion pattern. In this first-order setting without function abstraction, `app` acts as just another constructor, so the recursion should be well-founded. I need to find a termination measure—a polynomial interpretation where each rule strictly decreases the assigned value.
+
+Let me assign natural number values to terms:
+- `[void] = 1`
+- `[delta t] = [t] + 1`
+- `[integrate t] = [t] + 1`
+- `[merge t₁ t₂] = [t₁] + [t₂] + 1`
+- `[app t₁ t₂] = [t₁] + [t₂] + 1`
+- `[recΔ b s n] = [b] + ([s] + 2) · [n] + 1`
+- `[eqW a b] = 2 · ([a] + [b] + 1)`
+
+The first six rules all decrease under this interpretation. Rule 8 is the problematic one: `eqW a b → integrate (merge a b)` increases syntactic size. However, by assigning `eqW` a multiplicative weight of 2, the measure actually decreases: `2([a] + [b] + 1) > [a] + [b] + 2` when both `[a]` and `[b]` are at least 1. Checking all remaining rules confirms they all strictly decrease the measure. This polynomial interpretation establishes strong normalization without requiring any additional axioms beyond what's already in the calculus.

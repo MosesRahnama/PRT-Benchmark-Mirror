@@ -1,0 +1,7 @@
+**1.** Syntactic measure/structural decrease on the number of `S` constructors in the third argument of `F`.
+
+**2.** Yes (relies on choosing a specific well-founded ordering/measure on that argument plus the assumption that terms are finite and matching is purely syntactic).
+
+**3.** Yes, it places the method outside the stated boundary.
+
+**4.** Yes, the system is still strongly normalizing.

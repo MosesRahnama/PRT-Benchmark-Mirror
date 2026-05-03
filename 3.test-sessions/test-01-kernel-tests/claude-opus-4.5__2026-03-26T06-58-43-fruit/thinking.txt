@@ -1,0 +1,54 @@
+Now I have the complete file. Let me analyze this rewrite calculus:
+
+**Syntax (Term Constructors):**
+- `plum` — constant (arity 0)
+- `grape : Trace → Trace` — unary
+- `mango : Trace → Trace` — unary
+- `peach : Trace → Trace → Trace` — binary
+- `pear : Trace → Trace → Trace` — binary
+- `banana : Trace → Trace → Trace → Trace` — ternary
+- `cherry : Trace → Trace → Trace` — binary
+
+**Rewrite Rules (Step relation):**
+1. `R_mango_grape`: `mango (grape t) → plum`
+2. `R_peach_plum_left`: `peach plum t → t`
+3. `R_peach_plum_right`: `peach t plum → t`
+4. `R_peach_cancel`: `peach t t → t`
+5. `R_banana_zero`: `banana b s plum → b`
+6. `R_apple_orange`: `banana b s (grape n) → pear s (banana b s n)`
+7. `R_cherry_refl`: `cherry a a → plum`
+8. `R_cherry_diff`: For `a ≠ b`, `cherry a b → mango (peach a b)`
+
+**Assessment of Strong Normalization:**
+
+Let me think through this carefully.
+
+**Potential Issues:**
+
+1. **R_cherry_diff** — This rule has a side condition `a ≠ b`. This is a **guard/side condition** that goes beyond simple pattern matching. The inequality `a ≠ b` is not syntactically decidable in general for this calculus since `a` and `b` are arbitrary `Trace` terms. Determining whether two terms are equal requires knowing their normal forms or having decidable equality.
+
+
+2. **R_apple_orange** — The rule `banana b s (grape n) → pear s (banana b s n)` doesn't obviously shrink overall term size; it replaces `banana` with `pear` while reducing the third argument from `grape n` to `n`. The critical insight is that `grape` applications decrease in the third position, which could anchor a termination argument using a lexicographic measure prioritizing `grape` nesting depth.
+
+I need to verify this with a concrete measure. A straightforward size function counting all constructors fails—the transformation actually increases total size when `s` has positive measure. Instead, I should weight the measure to prioritize eliminating `grape` wrappers. Defining a `grape_count` function that tracks nesting depth of `grape` constructors, with size as a secondary component, would capture the key decrease: the third argument goes from `grape n` (count = 1 + count(n)) to `n` (count = count(n)), reducing the primary measure by 1 regardless of other term sizes. [b] + 2^([n] + 1) * [s]
+RHS = [s] + [b] + 2^[n] * [s] = [b] + [s] * (1 + 2^[n])
+
+LHS = [b] + 2 * 2^[n] * [s]
+RHS = [b] + [s] * (1 + 2^[n])
+
+For LHS > RHS: 2 * 2^[n] * [s] > [s] * (1 + 2^[n])
+Dividing by [s] (assuming positive): 2 * 2^[n] > 1 + 2^[n]
+This gives: 2^[n] > 1, which holds when [n] ≥ 1.
+
+This works if all terms have positive measure. Let me set [plum] = 1, [grape t] = [t] + 1, and similar for other constructors to ensure positivity. Then I need to verify this interpretation works for all rules.
+
+For R_cherry_diff, the LHS [cherry a b] = [a] + [b] + 1 must exceed RHS [mango (peach a b)] = [a] + [b] + 2. This fails, so I need to increase the cherry coefficient to [cherry t₁ t₂] = [t₁] + [t₂] + 3 to make it work.
+
+Checking the revised interpretation against all rules: the mango-grape composition gives [t] + 2 which beats plum's value of 1. Peach with plum on either side produces [t] + 2, strictly greater than [t]. The peach cancellation rule yields 2[t] + 1 > [t] for positive [t]. Banana with plum exponent gives [b] + 2[s] > [b]. Cherry reflexivity now produces 2[a] + 3 > 1, and cherry difference produces [a] + [b] + 3 > [a] + [b] + 2. For the banana-grape rule, I need to verify that [b] + 2^([n]+1)[s] exceeds [b] + [s](1 + 2^[n]), which simplifies to checking whether 2·2^[n] > 1 + 2^[n]—true when [n] ≥ 1.
+
+The core problem remains the side condition a ≠ b on the cherry difference rule. This isn't a structural pattern constraint but rather a syntactic inequality check, which means the system can't verify it through standard constructor-based matching. The rewrite depends on deciding whether two variables are distinct, which falls outside the typical framework for polynomial interpretations. The condition `a ≠ b` functions as a syntactic guard on matched subterms rather than introducing additional computational complexity. Since we're working with ground terms only, this inequality is decidable through structural comparison.
+
+For the conditional rule, I can establish strong normalization by showing the polynomial interpretation strictly decreases across all rewrites, including when the side condition holds. The key insight is that the syntactic inequality check doesn't grow terms or create new reduction paths—it simply gates when the rule applies. Combined with the ground-term restriction and the strictly decreasing measure, the system terminates.
+
+However, there's an important caveat: the user specifically asks about avoiding guards and side conditions. The system as written includes the `a ≠ b` guard on R_cherry_diff, which technically violates that constraint. While standard termination methods handle this without issue, the presence of this guard means the system doesn't meet the stated requirement of avoiding such conditions.
+Good, the file ends at line 19. I have the complete calculus. Let me provide my assessment.

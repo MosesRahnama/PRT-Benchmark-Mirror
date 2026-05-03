@@ -1,0 +1,53 @@
+## Assessment of the Three Candidate Termination Measures
+
+### Setup
+
+The file defines a first-order rewrite calculus over the `Trace` type with 8 rewrite rules (`Step`), and three candidate natural-number-valued measures `mu1`, `mu2`, `mu3`. A valid termination measure must satisfy $\mu(\text{lhs}) > \mu(\text{rhs})$ for every rule instance.
+
+---
+
+### Rule-by-rule verdicts
+
+I'll abbreviate $\mu(t)$ as just $t$ in the arithmetic below. All seven "easy" rules are handled identically by all three candidates. The critical rule is **R_rec_succ**.
+
+| Rule | LHS → RHS | mu1 margin | mu2 margin | mu3 margin |
+|------|-----------|-----------|-----------|-----------|
+| R_int_delta | `integrate (delta t) → void` | $2+t > 0$ ✓ | $3+t > 0$ ✓ | $3+t > 0$ ✓ |
+| R_merge_void_left | `merge void t → t` | $1$ ✓ | $2$ ✓ | $1$ ✓ |
+| R_merge_void_right | `merge t void → t` | $1$ ✓ | $2$ ✓ | $1$ ✓ |
+| R_merge_cancel | `merge t t → t` | $1+t$ ✓ | $2+t$ ✓ | $1+t$ ✓ |
+| R_rec_zero | `recDelta b s void → b` | $1+s$ ✓ | $5+s$ ✓ | $1+s$ ✓ |
+| **R_rec_succ** | `recDelta b s (delta n) → app s (recDelta b s n)` | **FAIL** | **FAIL** | **FAIL** |
+| R_eq_refl | `eqW a a → void` | $3+2a$ ✓ | $5+2a$ ✓ | $4+2a$ ✓ |
+| R_eq_diff | `eqW a b → integrate (merge a b)` | $1$ ✓ | $1$ ✓ | $1$ ✓ |
+
+---
+
+### Detailed analysis of the critical failure (R_rec_succ)
+
+The rule `recDelta b s (delta n) → app s (recDelta b s n)` **duplicates** the sub-term `s`: the RHS contains `s` both as the first argument of `app` and inside the recursive `recDelta`. For any additive measure with constants $c_r, c_a, c_d$ for `recDelta`, `app`, `delta`:
+
+$$\text{LHS} = c_r + \mu(b) + \mu(s) + c_d + \mu(n)$$
+$$\text{RHS} = c_a + \mu(s) + c_r + \mu(b) + \mu(s) + \mu(n) = c_a + c_r + \mu(b) + 2\mu(s) + \mu(n)$$
+
+The required inequality $\text{LHS} > \text{RHS}$ simplifies to:
+
+$$c_d > c_a + \mu(s)$$
+
+Since $\mu(s)$ is unbounded, **no choice of finite constants can satisfy this**. The deficit for each candidate:
+
+| Candidate | Required (impossible) condition | Deficit when $s = \texttt{void}$ |
+|-----------|-------------------------------|--------------------------------|
+| **mu1** | $0 > \mu_1(s)$ | $0$ (non-strict: $0 \not> 0$) |
+| **mu2** | $0 > \mu_2(s)$ | $0$ (non-strict: $0 \not> 0$) |
+| **mu3** | $0 > 1 + \mu_3(s)$ | $1$ (always $\geq 1$) |
+
+---
+
+### Comparative ranking
+
+1. **mu2 — best of the three (but still unsound).** It passes 7 of 8 rules with the largest margins (e.g., margin 5 on R_rec_zero vs. 1 for the others), giving the most "room" on the rules it does handle. On R_rec_succ its deficit equals $\mu_2(s)$, same structural gap as mu1.
+
+2. **mu1 — tied-second.** Same deficit structure as mu2 on the failing rule ($\mu_1(s)$), but smaller margins on the passing rules (e.g., only 1 on R_merge and R_rec_zero).
+
+3. **mu3 — strictly the worst.** On R_rec_succ the deficit is $1 + \mu_3(s)$, meaning it fails by at least 1 even when $s = \texttt{void}$. This is because mu3 assigns `app` a higher constant

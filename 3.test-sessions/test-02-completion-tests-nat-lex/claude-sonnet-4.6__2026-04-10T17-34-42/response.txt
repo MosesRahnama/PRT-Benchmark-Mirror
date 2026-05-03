@@ -1,0 +1,194 @@
+Here is the proof skeleton for the five remaining cases, with arithmetic justification alongside each.
+
+---
+
+## Analysis of the five `sorry` cases
+
+### Measure landscape recap
+
+| term | `kappa` | `mu` |
+|---|---|---|
+| `integrate (delta t)` | `kappa t` | `1 + mu t` |
+| `void` | `0` | `0` |
+| `recDelta b s void` | `max (max κb κs) 0` = `max κb κs` | `3 + μb + μs` |
+| `b` | `κb` | `μb` |
+| `recDelta b s (delta n)` | `max (max κb κs) κn + 1` | `3 + μb + μs + μn` |
+| `app s (recDelta b s n)` | `max κs (kappa(recDelta b s n))` | `4 + μb + 2μs + μn` |
+| `eqW a a` | `κa` | `4 + 2μa` |
+| `eqW a b` | `max κa κb` | `4 + μa + μb` |
+| `integrate (merge a b)` | `max κa κb` | `3 + μa + μb` |
+
+---
+
+### Case 1 — `R_int_delta` — `integrate (delta t) ↦ void`
+
+`kappa` falls from `kappa t` to `0`. This is a direct `drop_left` unless `kappa t = 0`, in which case `kappa` ties and `mu` falls from `1 + mu t` to `0`.
+
+```lean
+-- integrate (delta t) --> void
+-- kappa(LHS) = kappa t   kappa(RHS) = 0
+-- mu(LHS)    = 1 + mu t  mu(RHS)    = 0
+| _, _, Step.R_int_delta t => by
+    by_cases hk : kappa t = 0
+    · -- kappa ties at 0; mu drops: 0 < 1 + mu t
+      have hmu : mu void < mu (integrate (delta t)) := by simp [mu_integrate, mu_delta, mu_void]; omega
+      have hkeq : kappa void = kappa (integrate (delta t)) := by
+        simp [kappa_integrate, kappa_delta, kappa_void, hk]
+      exact drop_right hmu hkeq
+    · -- kappa strictly drops: 0 < kappa t
+      have hklt : kappa void < kappa (integrate (delta t)) := by
+        simp [kappa_integrate, kappa_delta, kappa_void]
+        omega          -- uses hk : kappa t ≠ 0
+      exact drop_left hklt
+```
+
+---
+
+### Case 2 — `R_rec_zero` — `recDelta b s void ↦ b`
+
+`kappa(recDelta b s void)` unfolds definitionally (since `void` is not `delta _`) to `max (max κb κs) 0 = max κb κs`. Two sub-cases depending on which of `κb`, `κs` dominates.
+
+```lean
+-- recDelta b s void --> b
+-- kappa(LHS) = max κb κs   mu(LHS) = 3 + μb + μs
+-- kappa(RHS) = κb           mu(RHS) = μb
+| _, _, Step.R_rec_zero b s => by
+    -- Unfold kappa(recDelta b s void) via definitional reduction (void ≠ delta _)
+    have hkLHS : kappa (recDelta b s void) = Nat.max (kappa b) (kappa s) := by
+      show Nat.max (Nat.max (kappa b) (kappa s)) (kappa void) = _
+      simp [kappa_void]                         -- max (max κb κs) 0 = max κb κs
+    by_cases hks : kappa s ≤ kappa b
+    · -- max κb κs = κb : kappa ties, mu drops: μb < 3 + μb + μs
+      have hmu : mu b < mu (recDelta b s void) := by
+        simp [mu_recDelta, mu_void]; omega
+      have hkeq : kappa b = kappa (recDelta b s void) := by
+        rw [hkLHS]; omega                       -- max κb κs = κb when κs ≤ κb
+      exact drop_right hmu hkeq
+    · -- max κb κs = κs > κb : kappa drops
+      have hklt : kappa b < kappa (recDelta b s void) := by
+        rw [hkLHS]; omega                       -- κb < κs = max κb κs
+      exact drop_left hklt
+```
+
+---
+
+### Case 3 — `R_rec_succ` — `recDelta b s (delta n) ↦ app s (recDelta b s n)` ⚠️
+
+`kappa(LHS) = K + 1` where `K = max (max κb κs) κn` (by `kappa_rec_delta`). After `simp [kappa_app, kappa_rec_delta]` the goal becomes:
+
+$$\max(\kappa_s,\; \texttt{kappa(recDelta b s n)}) < K + 1$$
+
+This requires an auxiliary bound `kappa (recDelta b s n) ≤ K`. A `cases n` exposes the problem: for all non-`delta` constructors the second branch of `kappa` applies and the bound holds; `omega` closes those sub-goals. **For the `delta n'` sub-case, however, `kappa (recDelta b s (delta n')) = K + 1` (equal to `kappa(LHS)`) so `drop_left` fails, and `mu(RHS) = 4 + μb + 2μs + μn' > 3 + μb + μs + μn' = mu(LHS)` so `drop_right` also fails. The current `(kappa, mu)` measure is insufficient for this sub-case.**
+
+```lean
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+-- kappa(LHS)  = max(max κb κs)(κn) + 1   [kappa_rec_delta]
+-- kappa(RHS)  = max κs (kappa(recDelta b s n))
+-- mu(LHS)     = 3 + μb + μs + μn
+-- mu(RHS)     = 4 + μb + 2·μs + μn   ← strictly LARGER for all n
+| _, _, Step.R_rec_succ b s n => by
+    apply drop_left
+    -- Goal: kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))
+    simp only [kappa_app, kappa_rec_delta]
+    -- Goal: max (kappa s) (kappa (recDelta b s n)) < max (max (kappa b) (kappa s)) (kappa n) + 1
+    -- Need: kappa (recDelta b s n) ≤ max (max κb κs) (κn)
+    -- Proceed by cases on n to expose which kappa branch applies.
+    cases n with
+    | void =>
+        -- kappa (recDelta b s void) = max (max κb κs) 0 = max κb κs ≤ K
+        show Nat.max (kappa s)
+               (Nat.max (Nat.max (kappa b) (kappa s)) (kappa void))
+             < Nat.max (Nat.max (kappa b) (kappa s)) (kappa void) + 1
+        simp [kappa_void]; omega
+    | delta n' =>
+        -- kappa (recDelta b s (delta n')) = max (max κb κs) κn' + 1 = K + 1
+        -- kappa (LHS) = K + 1 where K = max (max κb κs) (kappa (delta n')) = max (max κb κs) κn'
+        -- drop_left fails: kappa(RHS) = K+1 = kappa(LHS)
+        -- drop_right also fails: mu strictly increases
+        -- *** The (kappa, mu) measure is not a decreasing measure for this sub-case.
+        -- A fix requires either a deeper kappa (counting all delta-wrapped recDeltas
+        -- in the whole term), or a third lexicographic component (e.g. structural size
+        -- not transparent to delta).
+        sorry
+    | integrate t =>
+        show Nat.max (kappa s)
+               (Nat.max (Nat.max (kappa b) (kappa s)) (kappa (integrate t)))
+             < Nat.max (Nat.max (kappa b) (kappa s)) (kappa (integrate t)) + 1
+        simp [kappa_integrate]; omega
+    | merge a c =>
+        show Nat.max (kappa s)
+               (Nat.max (Nat.max (kappa b) (kappa s)) (kappa (merge a c)))
+             < Nat.max (Nat.max (kappa b) (kappa s)) (kappa (merge a c)) + 1
+        simp [kappa_merge]; omega
+    | app f x =>
+        show Nat.max (kappa s)
+               (Nat.max (Nat.max (kappa b) (kappa s)) (kappa (app f x)))
+             < Nat.max (Nat.max (kappa b) (kappa s)) (kappa (app f x)) + 1
+        simp [kappa_app]; omega
+    | recDelta b' s' n' =>
+        -- third arg is recDelta b' s' n' (not delta-wrapped at top level)
+        -- kappa(recDelta b s (recDelta b' s' n')) uses the non-delta branch
+        show Nat.max (kappa s)
+               (Nat.max (Nat.max (kappa b) (kappa s)) (kappa (recDelta b' s' n')))
+             < Nat.max (Nat.max (kappa b) (kappa s)) (kappa (recDelta b' s' n')) + 1
+        omega
+    | eqW x y =>
+        show Nat.max (kappa s)
+               (Nat.max (Nat.max (kappa b) (kappa s)) (kappa (eqW x y)))
+             < Nat.max (Nat.max (kappa b) (kappa s)) (kappa (eqW x y)) + 1
+        simp [kappa_eqW]; omega
+```
+
+---
+
+### Case 4 — `R_eq_refl` — `eqW a a ↦ void`
+
+Identical structure to `R_int_delta`: `kappa` falls from `κa` to `0`, with a case split on `κa = 0`.
+
+```lean
+-- eqW a a --> void
+-- kappa(LHS) = κa     mu(LHS) = 4 + 2·μa
+-- kappa(RHS) = 0      mu(RHS) = 0
+| _, _, Step.R_eq_refl a => by
+    by_cases hk : kappa a = 0
+    · -- kappa ties at 0; mu drops: 0 < 4 + 2·μa
+      have hmu : mu void < mu (eqW a a) := by simp [mu_eqW, mu_void]; omega
+      have hkeq : kappa void = kappa (eqW a a) := by simp [kappa_eqW, kappa_void, hk]
+      exact drop_right hmu hkeq
+    · -- kappa strictly drops: 0 < κa
+      have hklt : kappa void < kappa (eqW a a) := by
+        simp [kappa_eqW, kappa_void]; omega      -- uses hk : kappa a ≠ 0
+      exact drop_left hklt
+```
+
+---
+
+### Case 5 — `R_eq_diff` — `eqW a b ↦ integrate (merge a b)`
+
+`kappa` is identical on both sides (`max κa κb` after unfolding `kappa_integrate`, `kappa_merge`, `kappa_eqW`). `mu` drops by exactly 1: `3 + μa + μb < 4 + μa + μb`. No case split needed.
+
+```lean
+-- eqW a b --> integrate (merge a b)
+-- kappa ties: max κa κb = max κa κb
+-- mu drops:   3 + μa + μb < 4 + μa + μb
+| _, _, Step.R_eq_diff a b => by
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by
+      simp [mu_integrate, mu_merge, mu_eqW]; omega
+    have hkeq : kappa (integrate (merge a b)) = kappa (eqW a b) := by
+      simp [kappa_integrate, kappa_merge, kappa_eqW]
+    exact drop_right hmu hkeq
+```
+
+---
+
+## Summary
+
+| Case | Strategy | Obstacle |
+|---|---|---|
+| `R_int_delta` | `by_cases` on `kappa t = 0`; `drop_right` / `drop_left` | none |
+| `R_rec_zero` | `by_cases` on `kappa s ≤ kappa b`; unfold `kappa` at `void` arg; `drop_right` / `drop_left` | need `show` to expose the non-delta kappa branch |
+| `R_rec_succ` | `drop_left` + `cases n`; seven non-delta constructors close with `omega` | the `delta n'` sub-case is unprovable with `(kappa, mu)`: both kappa ties **and** mu increases |
+| `R_eq_refl` | `by_cases` on `kappa a = 0`; `drop_right` / `drop_left` | none |
+| `R_eq_diff` | direct `drop_right` | none |
+
+**Diagnostic note on `R_rec_succ` / `delta n'` sub-case:** when `n = delta n'`, the step is `recDelta b s (delta (delta n')) ↦ app s (recDelta b s (delta n'))`. Both sides have `kappa = max(max κb κs)(κn') + 1`, so kappa does not decrease; and `mu(RHS) − mu(LHS) = 1 + mu s ≥ 1`, so mu strictly *increases*. The lexicographic `(kappa, mu)` order is not a valid termination certificate for this rule with the current definitions. A fix would be to redefine `kappa` to sum delta-wrapped `recDelta` occurrences across the *entire* term (not just add +1 at the immediate node), so that the outer +1 is not replicated in the reduct.

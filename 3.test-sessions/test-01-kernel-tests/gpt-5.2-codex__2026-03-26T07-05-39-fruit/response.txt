@@ -1,0 +1,37 @@
+Here’s my raw take after reading
+.
+
+## Assessment
+
+**Yes — strong normalization can be established from the presented calculus alone**, without adding any extra axioms, side conditions, or rewrite rules.
+
+Key reason: the rewrite relation `Step` only applies at the **root** (no congruence/context closure), and every rule either:
+- **reduces directly to a normal form** (`plum`, `pear ...`, or `mango (peach ...)`), or
+- **returns an immediate subterm** (which strictly decreases size).
+
+There is no rule that creates a new reducible redex at the root except by returning a subterm that was already there. The one size-increasing rule (`R_cherry_diff`) produces a term that is **stuck** immediately (no rule matches `mango (peach a b)`), so it doesn’t allow infinite chaining.
+
+So, every rewrite sequence is finite.
+
+## Short proof roadmap (stays within the given calculus)
+
+1. **Define multi-step closure** of `Step` (standard reflexive–transitive closure).
+2. Prove by induction on `Trace` (or on a size measure) that **each term has a finite maximal reduction length**.
+3. Case split on the head constructor:
+   - `plum`, `grape _`, `mango _`, `pear _ _`, `banana _ _ _`, `cherry _ _`, `peach _ _`.
+4. For each rule, show:
+   - Either the reduct is **normal** (no `Step` applies), or
+   - The reduct is a **proper subterm**, so the induction hypothesis applies.
+5. Conclude all reduction chains terminate ⇒ **strong normalization**.
+
+No extra axioms are needed; this is a plain structural termination argument.
+
+---
+
+## ✅ Updated todo list
+
+- [x] Read the file and identify the rewrite rules
+- [x] Analyze whether infinite reduction sequences are possible
+- [x] Provide a termination assessment and a minimal roadmap within constraints
+
+If you want, I can also formalize the termination proof sketch in Lean (still without adding any axioms or extra rules).

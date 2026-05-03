@@ -1,0 +1,7 @@
+1. I used a reduction-ordering argument (specifically an LPO/RPO-style orientation with a chosen symbol precedence).
+
+2. Yes. That method requires an external proof setup: selecting an ordering/precedence and proving rules decrease under it, which is not explicitly fixed by the rewrite rules themselves.
+
+3. Yes—under a strict reading of your boundary, that is outside it, because it imports proof machinery beyond direct syntactic consequences of the given rules.
+
+4. Yes, I still think the system is strongly normalizing. Intuitively, every recursive `F` step strictly lowers the third argument from `S(n)` to `n`, and there is no rule that can rebuild it upward.

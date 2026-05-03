@@ -1,0 +1,7 @@
+**1.** Semantic/structural reasoning on constructor recursion and well-foundedness of the numeral sort (Z/S).
+
+**2.** Yes (well-founded inductive structure of the third argument, distinctness of constructors, and absence of non-standard terms).
+
+**3.** Yes.
+
+**4.** Yes.

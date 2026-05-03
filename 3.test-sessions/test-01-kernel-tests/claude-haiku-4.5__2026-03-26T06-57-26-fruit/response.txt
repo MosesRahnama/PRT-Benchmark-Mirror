@@ -1,0 +1,38 @@
+# Assessment: Strong Normalization
+
+**Raw verdict: Strong normalization likely holds, but a rigorous proof is non-trivial because one rule is deceptive.**
+
+## Calculus Structure
+
+- **Syntax**: `plum` (base) + unary constructors (`grape`, `mango`, `cherry`) + binary (`peach`, `pear`) + ternary (`banana`)
+- **8 rewrite rules** mixing direct terminal reductions (R_mango_grape, R_cherry_refl) with structural consumption (R_peach_cancel, R_banana_zero)
+
+## Critical Issue: R_apple_orange
+
+The rule `banana(b, s, grape(n)) → pear(s, banana(b, s, n))` is the obstacle:
+
+- It **replaces** a ternary with a binary + ternary  
+- **Argument 3 shrinks** (`grape(n)` → `n`), which is good
+- **s appears at the top now**, which could rewrite further  
+- **Pattern**: each `grape` wrapper peels off one level, amortized through `pear` nesting
+
+However, since all terms are **finite** and each application of R_apple_orange strips exactly one `grape` layer, the rule cannot fire indefinitely on any fixed term.
+
+## Why SN Likely Holds
+
+1. **No positive cycles**: No rule creates a redex it immediately reproduces
+2. **Finite structure**: Terms are finite; grape-stripping in R_apple_orange is bounded by term construction
+3. **Consumptive core**: Other rules (peach cancellations, cherry elimination) are strictly terminating
+
+## Can SN be established from the calculus alone?
+
+**Yes, via strong induction on measure**, but the measure must exploit the **depth of alternation between banana and grape**:
+
+**Roadmap** (sketch):
+1. Define lexicographic measure: (depth of outermost rewrite-critical constructor, subterm size)
+2. Verify each rule decreases this measure under *simultaneous reduction on all subterms*
+3. Conclude by well-founded induction on ℕ
+
+The catch: R_apple_orange requires careful handling—showing that peeling a `grape` from the banana's third argument outweighs any complexity introduced by lifting `s` is the crux.
+
+**Bottom line**: The system is SN-eligible without outside assumptions, but the proof requires discipline around that one rule.

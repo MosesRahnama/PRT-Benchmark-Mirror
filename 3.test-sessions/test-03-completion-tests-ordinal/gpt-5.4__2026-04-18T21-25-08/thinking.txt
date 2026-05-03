@@ -1,0 +1,10 @@
+**Discussing theorem strategy**
+
+I’m considering the theorem for ordinal addition on the right, specifically `add_lt_add_right`. I think I could use that as a skeleton. I also want to include something like `exact add_lt_add_right hInt 1`. 
+
+For reference, I need to be cautious with parentheses to ensure everything aligns properly, and I might need to introduce two helper lemmas later. The user asked for a proof skeleton, so I’ll include some code snippets and a checklist of completed items.
+**Organizing proof structure**
+
+I’m structuring my findings and want to keep it clear. In the section titled "What I found," I’ll mention only three instances of "sorry" and note the swapped `rec_succ` comment. For "Proof skeletons," I'll include three code snippets. 
+
+In "Notes," I should mention that theorem names may need adjustment because they haven't compiled yet. Finally, I’ll create a concise "Checklist" with an updated to-do list. I’ll remember to use backticks for filenames and symbols to keep everything neat!

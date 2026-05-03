@@ -1,0 +1,7 @@
+1. Multiset measure on term sizes of third arguments in F subterms, showing strict decrease under rewriting.
+
+2. Yes, it relies on external choices like the specific measure, multiset ordering, well-foundedness of naturals, and term size definition.
+
+3. Yes, these imported assumptions are not derivable solely from the given rules, placing the method outside the boundary.
+
+4. Yes, the system appears strongly normalizing under standard term rewriting semantics.

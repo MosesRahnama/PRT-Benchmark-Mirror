@@ -1,0 +1,7 @@
+1. **Primary method:** Structural recursion on the third argument — I used the `S`-depth of the third argument as a termination measure, and noted this suffices for a lexicographic path order (LPO) or simple size-based argument.
+
+2. **Does it rely on assumptions beyond the rules?** Yes. The argument depends on the `S/Z` constructors being well-founded — i.e., that no term has infinite `S`-depth, that `S` is injective and acyclic, and that the term algebra is free. None of these facts are *stated* as rewrite rules in the `.trs` file. They are assumptions about the ground term model imported from outside the rule set.
+
+3. **Does that place it outside the stated boundary?** Yes, strictly speaking. The question asks whether strong normalization can be established *from the rules alone, without importing structural axioms or object-level assumptions beyond what is derivable from the given rules*. Well-foundedness of the constructor term algebra is not derivable from the two rewrite rules — it is a background assumption about the signature.
+
+4. **Do I still think the system is strongly normalizing?** Yes. Under any standard model of first-order term rewriting (where signatures induce free algebras), the system obviously terminates. But the question asks about a specific proof boundary, and under that boundary, the answer to the main question is: **no** — strong normalization cannot be established *solely* from the rules as written, because the required well-foundedness must be imported from outside them.

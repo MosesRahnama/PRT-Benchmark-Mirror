@@ -1,0 +1,16 @@
+Here is the assessment for each method A–E.
+
+**Per-method results**
+- **(A)** Succeeds. With precedence `F > G > S > Z`, LPO/RPO orients both rules (the second rule decreases because the recursive call is on the strictly smaller `n`). Boundary: **inside** (uses a standard meta-ordering, no extra object-level axioms).
+- **(B)** Succeeds. The interpretation gives strict decrease on both rules:  
+  $F(x,y,Z)=x+1 > x$ and $F(x,y,S(n))=x+n+2 > x+n+1 = G(y,F(x,y,n))$.  
+  Boundary: **inside** (standard semantic interpretation, no extra axioms beyond rewrite rules).
+- **(C)** **Does not succeed as stated.** With only uniform weights specified and no precedence, KBO cannot orient the second rule when weights tie; the method is incomplete without a precedence choice. Boundary: **inside** (but incomplete).
+- **(D)** Succeeds. Dependency pairs reduce to $F^\#(x,y,S(n)) \to F^\#(x,y,n)$, and projecting the third argument strictly decreases by the subterm criterion. Boundary: **inside**.
+- **(E)** Succeeds. The measure $\mu$ strictly decreases on each rewrite step:  
+  $F(\_,\_,Z)\to x$ drops from $1$ to $0$, and  
+  $F(\_,\_,S(n))\to G(\_,F(\_,\_,n))$ drops by $1$ via the third-argument depth.  
+  Boundary: **inside**.
+
+**Methods satisfying both conditions**
+- **A, B, D, E**.

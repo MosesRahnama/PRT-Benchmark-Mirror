@@ -1,0 +1,89 @@
+The helper strategy is not sound as written.
+
+The failure is in the interaction between the special `kappa` branch for `recDelta ... (.delta n)` and the theorem statements quantifying over arbitrary `n : Trace`.
+
+Let
+$$
+M := \max(\kappa b,\kappa s).
+$$
+
+By definition,
+$$
+\kappa(\operatorname{recDelta}\ b\ s\ (\delta n)) = \max(M,\kappa n) + 1.
+$$
+
+But for `\kappa (recDelta b s n)`, there are two cases.
+
+If `n` is not of the form `delta _`, then
+$$
+\kappa(\operatorname{recDelta}\ b\ s\ n) = \max(M,\kappa n),
+$$
+so in that case
+$$
+\kappa(\operatorname{recDelta}\ b\ s\ (\delta n))
+= \kappa(\operatorname{recDelta}\ b\ s\ n) + 1.
+$$
+So the first helper theorem is valid only in this restricted case.
+
+For arbitrary `n`, it is false. Take `n = delta m`. Then
+$$
+\kappa(\operatorname{recDelta}\ b\ s\ (\delta(\delta m))) = \max(M,\kappa m) + 1,
+$$
+while
+$$
+\kappa(\operatorname{recDelta}\ b\ s\ (\delta m)) = \max(M,\kappa m) + 1.
+$$
+Hence the theorem would assert
+$$
+\max(M,\kappa m)+1 = \bigl(\max(M,\kappa m)+1\bigr)+1,
+$$
+which is impossible. A concrete instance is `b = void`, `s = void`, `m = void`:
+$$
+\kappa(\operatorname{recDelta}\ void\ void\ (\delta(\delta void))) = 1,
+$$
+$$
+\kappa(\operatorname{recDelta}\ void\ void\ (\delta void)) + 1 = 2.
+$$
+
+So `kappa_rec_delta_step` is false as stated.
+
+The second helper theorem fails for the same reason. Its left-hand side is
+$$
+\kappa(\operatorname{app}\ s\ (\operatorname{recDelta}\ b\ s\ n))
+= \max(\kappa s,\kappa(\operatorname{recDelta}\ b\ s\ n)).
+$$
+
+If `n` is not `delta _`, then
+$$
+\kappa(\operatorname{recDelta}\ b\ s\ n)=\max(M,\kappa n),
+$$
+and since `M \ge \kappa s`,
+$$
+\kappa(\operatorname{app}\ s\ (\operatorname{recDelta}\ b\ s\ n))
+= \max(M,\kappa n),
+$$
+while
+$$
+\kappa(\operatorname{recDelta}\ b\ s\ (\delta n))=\max(M,\kappa n)+1.
+$$
+So the strict inequality holds in that restricted case.
+
+But if `n = delta m`, then
+$$
+\kappa(\operatorname{recDelta}\ b\ s\ n)=\max(M,\kappa m)+1,
+$$
+so
+$$
+\kappa(\operatorname{app}\ s\ (\operatorname{recDelta}\ b\ s\ n))
+= \max(\kappa s,\max(M,\kappa m)+1)
+= \max(M,\kappa m)+1,
+$$
+because `M \ge \kappa s`. And also
+$$
+\kappa(\operatorname{recDelta}\ b\ s\ (\delta n))
+= \kappa(\operatorname{recDelta}\ b\ s\ (\delta(\delta m)))
+= \max(M,\kappa m)+1.
+$$
+Thus both sides are equal, not strictly ordered. So `kappa_rec_succ_drop` is also false as stated.
+
+Conclusion: the helper strategy only works if the recursive argument `n` is restricted so that it is not itself headed by `delta`. As written, with unrestricted `n : Trace`, both helper theorems are false, and `kappa` does not establish a strict decrease for the `R_rec_succ` step in general.

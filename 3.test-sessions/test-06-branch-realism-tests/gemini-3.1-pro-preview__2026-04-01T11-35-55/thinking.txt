@@ -1,0 +1,18 @@
+**Revisiting the structure**
+
+I'm currently working with the `Trace` AST and its constructors. I've been considering how `Step` functions as a rewrite system, especially the rules for `integrate` and `merge`. I'm paying close attention to the transformations that occur with `delta` and `void`.
+
+
+**Investigating Kappa's Behavior**
+
+I'm starting to delve deeper into the `kappa` function. The `recDelta_step` theorem piqued my interest, prompting me to carefully examine `kappa`'s definition and its interaction with `recDelta`. I'm now acutely aware of how the linear pattern matching in Lean affects the outcome, especially when dealing with nested structures like `.recDelta b s (.delta n)`. It seems my initial assumption about the behavior was slightly off, and I need to recalibrate my understanding.
+
+
+**Uncovering the Discrepancy**
+
+I've just pinpointed the source of the unsoundness. The theorem `kappa_rec_delta_step` is, in fact, flawed. My analysis revealed that evaluating both sides of the theorem, specifically when `n` is of the form `.delta m`, leads to unequal results. The linear pattern matching in the `kappa` definition is the crux of the issue; it affects how nested structures are handled, making the RHS increment by 2 while the LHS increments by only 1. A correction to this seems essential.
+
+
+**Reassessing the Theorem**
+
+I've been re-evaluating the `kappa_rec_delta_step` theorem with a fresh perspective. After some meticulous tracing, it is still obvious that evaluating the theorem's both sides with a `.delta` argument for `n` yields differing results. The key is in understanding how dependent pattern matching interacts with the nested structure. I now understand the original proof strategy depends on this flawed theorem.

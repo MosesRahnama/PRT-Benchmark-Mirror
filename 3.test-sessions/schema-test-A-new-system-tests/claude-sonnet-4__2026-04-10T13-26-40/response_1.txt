@@ -1,0 +1,24 @@
+Let me analyze this term rewriting system:
+
+**System Analysis:**
+- Variables: x, y, n  
+- Function symbols: F (arity 3), G (arity 1), Z (arity 0), S (arity 1)
+- Rules:
+  1. `F(x, y, Z) -> x`
+  2. `F(x, y, S(n)) -> G(F(x, y, n))`
+
+**Assessment: YES, strong normalization can be established.**
+
+**Reasoning:**
+
+The system admits a well-founded termination argument based on the structure of the third argument to F:
+
+1. **Rule 1** (`F(x, y, Z) -> x`) strictly decreases term size, eliminating the F application entirely.
+
+2. **Rule 2** (`F(x, y, S(n)) -> G(F(x, y, n))`) makes structural progress by "peeling off" one S constructor from the third argument of F. While it may maintain or increase overall term size (adding G wrapper), it strictly decreases the "S-height" of the third argument.
+
+3. **Termination measure**: Define μ(term) as the total number of S constructors appearing as prefixes in third arguments of F subterms. Rule 2 strictly decreases this measure, while rule 1 either decreases it or leaves it unchanged while reducing overall term size.
+
+4. **Well-foundedness**: Since S-towers have finite height in any concrete term, and rule 2 always reduces this height while rule 1 provides termination when no more S constructors remain, infinite reduction sequences are impossible.
+
+The key insight is that rule 2 implements a structural recursion pattern that converges to the base case where rule 1 can eliminate the F application. This establishes strong normalization without requiring external structural axioms.

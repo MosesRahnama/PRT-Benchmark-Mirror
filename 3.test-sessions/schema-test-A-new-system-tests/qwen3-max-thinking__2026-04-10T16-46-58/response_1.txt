@@ -1,0 +1,22 @@
+Based on the provided term rewriting system in
+, I can give the following assessment:
+
+**Yes, strong normalization can be established from the presented rewrite system alone.**
+
+**Reasoning:**
+
+The system contains only two rewrite rules:
+1. `F(x, y, Z) -> x`
+2. `F(x, y, S(n)) -> G(F(x, y, n))`
+
+This system is strongly normalizing because:
+
+1. **Well-founded measure**: We can define a simple complexity measure based on the third argument of `F`. The term `Z` represents a base case (zero), while `S(n)` represents a successor. Each application of rule 2 reduces the "size" of the third argument by peeling off one `S` constructor, eventually reaching `Z` where rule 1 applies and terminates.
+
+2. **No cycles possible**: There are no rewrite sequences that can loop indefinitely. Rule 1 eliminates the `F` symbol entirely, while rule 2 strictly decreases the nesting depth of `S` constructors in the third argument.
+
+3. **Finite descent**: Any term containing `F` will undergo a finite number of rule 2 applications (bounded by the number of nested `S` constructors in the third argument), followed by exactly one application of rule 1, leading to a normal form.
+
+4. **No interaction complexity**: The system is simple enough that no complex interactions between rules can create non-terminating behavior. The `G` symbol introduced by rule 2 is inert (no rules apply to it), so it doesn't contribute to further rewriting.
+
+Since this reasoning uses only the given rewrite rules and basic properties of the term structure (treating `Z` and `S` as constructors with no additional axioms), strong normalization is establishable from the system alone without importing external structural axioms.

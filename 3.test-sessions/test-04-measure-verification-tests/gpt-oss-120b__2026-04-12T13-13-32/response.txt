@@ -1,0 +1,39 @@
+**Assessment of the lexicographic termination measure**
+
+The file defines a rewrite relation `Step : Trace → Trace → Prop` together with a measure  
+
+```lean
+measure (t : Trace) : Nat × Nat := (phase t, cost t)
+```
+
+where  
+
+* `phase : Trace → Nat` is `1` only for terms of the form `recDelta _ _ (.delta _)` and `0` otherwise.  
+* `cost : Trace → Nat` assigns a positive weight to each constructor (the weight of `void` is `0`).
+
+For a lexicographic order `(phase, cost)` to be a *sound* termination measure we must show that **every** rewrite step strictly decreases this pair.
+
+Below each rule of `Step` we compute the phases and costs of the left‑ and right‑hand sides and verify the decrease.
+
+| Rule | Left‑hand side | Right‑hand side | `phase` (L) → `phase` (R) | `cost` (L) → `cost` (R) | Decrease? |
+|------|----------------|-----------------|---------------------------|------------------------|-----------|
+| `R_int_delta` | `integrate (delta t)` | `void` | 0 → 0 | `2 + cost t` → `0` | **yes** |
+| `R_merge_void_left` | `merge void t` | `t` | 0 → 0 | `1 + cost t` → `cost t` | **yes** |
+| `R_merge_void_right` | `merge t void` | `t` | 0 → 0 | `1 + cost t` → `cost t` | **yes** |
+| `R_merge_cancel` | `merge t t` | `t` | 0 → 0 | `1 + 2·cost t` → `cost t` | **yes** |
+| `R_rec_zero` | `recDelta b s void` | `b` | 0 → 0 | `1 + cost b + cost s` → `cost b` | **yes** (since `cost s ≥ 0` and the extra `+1`) |
+| `R_rec_succ` | `recDelta b s (delta n)` | `app s (recDelta b s n)` | **1 → 0** | `2 + cost b + cost s + cost n` → `2 + cost b + 2·cost s + cost n` | **yes** – the phase drops from `1` to `0`, which already makes the pair smaller regardless of the cost (the right‑hand cost may even be larger). |
+| `R_eq_refl` | `eqW a a` | `void` | 0 → 0 | `3 + 2·cost a` → `0` | **yes** |
+| `R_eq_diff` | `eqW a b` | `integrate (merge a b)` | 0 → 0 | `3 + cost a + cost b` → `2 + cost a + cost b` | **yes** (decreases by `1`). |
+
+**Key observations**
+
+1. **Phase component** – The only rule that can increase the phase is `R_rec_succ`, whose right‑hand side has phase `0`. Hence the phase never increases; it either stays `0` or drops from `1` to `0`.
+
+2. **Cost component** – For every rule whose phase does not change, the cost strictly decreases. The only rule where the cost does *not* decrease (`R_rec_succ`) is compensated by a strict decrease in the phase component.
+
+3. **Well‑foundedness** – Both `phase` and `cost` map terms to natural numbers, and the lexicographic order on `ℕ × ℕ` is well‑founded. Since every rewrite step yields a strictly smaller pair, there can be no infinite rewrite sequence.
+
+**Conclusion**
+
+The defined measure `(phase t, cost t)` is **sound**: every application of a `Step` rule strictly reduces the measure in the lexicographic order. Consequently, the rewrite system is terminating under this measure. No contradictions or counter‑examples are apparent from the given definitions.

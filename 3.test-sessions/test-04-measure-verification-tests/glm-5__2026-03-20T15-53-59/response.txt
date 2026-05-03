@@ -1,0 +1,47 @@
+## Assessment: The Measure is **Not Sound**
+
+I've analyzed the proposed lexicographic termination measure `(phase t, cost t)` against the rewrite rules. Here are my findings:
+
+### The Measure Definitions
+
+- **`phase`**: Returns `1` only for terms of the form `recDelta _ _ (.delta _)`, otherwise `0`
+- **`cost`**: A structural size measure counting constructors with weights
+
+### Counterexample to Soundness
+
+The measure **does not always decrease** lexicographically. Consider rule `R_merge_void_left`:
+
+```lean
+R_merge_void_left : ∀ t, Step (merge void t) t
+```
+
+Let `t = recDelta b s (delta n)` (so `phase t = 1`):
+
+| Position | Term | Phase | Cost |
+|----------|------|-------|------|
+| Before | `merge void t` | 0 | 1 + cost t |
+| After | `t` | 1 | cost t |
+
+**Lexicographic comparison**: `(0, 1 + cost t) → (1, cost t)`
+
+Since `0 < 1`, the measure **increases** lexicographically (phase goes from 0 to 1), not decreases.
+
+### Additional Problematic Rules
+
+The same issue affects:
+
+1. **`R_merge_void_right`**: `Step (merge t void) t` — same counterexample
+2. **`R_merge_cancel`**: `Step (merge t t) t` — if `t` has phase 1, measure increases
+3. **`R_rec_zero`**: `Step (recDelta b s void) b` — if `b` has phase 1, measure increases
+
+### Rules That Do Work
+
+The measure correctly decreases for:
+- `R_int_delta`: `(0, 2 + cost t) → (0, 0)` ✓
+- `R_rec_succ`: `(1, ...) → (0, ...)` — phase decreases from 1 to 0 ✓
+- `R_eq_refl`: `(0, 3 + 2·cost a) → (0, 0)` ✓
+- `R_eq_diff`: `(0, 3 + cost a + cost b) → (0, 2 + cost a + cost b)` ✓
+
+### Conclusion
+
+**The measure is unsound.** The `phase` function is designed to handle the `R_rec_succ` case (where phase decreases from 1 to 0), but it creates problems when rules produce outputs that happen to have phase 1. A sound measure would need to account for all possible output phases, not just the `recDelta` unrolling case.

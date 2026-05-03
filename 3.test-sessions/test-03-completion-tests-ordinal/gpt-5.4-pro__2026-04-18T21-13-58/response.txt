@@ -1,0 +1,131 @@
+A workable skeleton is:
+
+- `R_eq_refl`: same positivity pattern as `R_int_delta`.
+- `R_rec_succ` and `R_eq_diff`: prove the left side is already `< ω^E`, then finish with `... ≤ ω^E + ...`.
+
+Also, in the `R_rec_succ` comment block, the “LHS/RHS” labels are swapped; the goal is still correct.
+
+```lean
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    let E : Ordinal := mu (delta n) + mu s + (6 : Ordinal)
+
+    -- Goal shape after simp:
+    -- ω^3 * (mu s + 1) + ω^2 * (mu (recDelta b s n) + 1) + 1
+    --   < ω^E + ω * (mu b + 1) + 1
+
+    have hEbig : mu n + mu s + (6 : Ordinal) < E := by
+      -- expand `E` and use `mu (delta n) = ω^5 * (mu n + 1) + 1`
+      -- so in particular `mu n + mu s + 6 < mu (delta n) + mu s + 6`
+      simp [E, mu]
+      -- fill with monotonicity / positivity of the `delta` term
+      sorry
+
+    have hrec :
+        mu (recDelta b s n) + 1 < omega0 ^ E := by
+      -- expand `mu (recDelta b s n)`
+      -- show:
+      --   ω^(mu n + mu s + 6) + ω * (mu b + 1) + 1 + 1 < ω^E
+      --
+      -- strategy:
+      -- 1. `ω^(mu n + mu s + 6) < ω^E` by `hEbig`
+      -- 2. the tail `ω * (mu b + 1) + 1 + 1` is also `< ω^E`
+      -- 3. combine using that `ω^E` is additively principal
+      simp [mu]
+      sorry
+
+    have happ1 :
+        omega0 ^ (3 : Ordinal) * (mu s + 1) < omega0 ^ E := by
+      -- `E` is far above `3`, so this low-order term is below `ω^E`
+      -- again use monotonicity / principal-ordinal domination
+      sorry
+
+    have happ2 :
+        omega0 ^ (2 : Ordinal) * (mu (recDelta b s n) + 1) < omega0 ^ E := by
+      -- use `hrec` and monotonicity of left multiplication by `ω^2`
+      sorry
+
+    have hsum :
+        omega0 ^ (3 : Ordinal) * (mu s + 1)
+          + omega0 ^ (2 : Ordinal) * (mu (recDelta b s n) + 1) + 1
+          < omega0 ^ E := by
+      -- combine `happ1`, `happ2`, and `1 < ω^E`
+      -- using additively-principal closure of `ω^E`
+      sorry
+
+    calc
+      omega0 ^ (3 : Ordinal) * (mu s + 1)
+          + omega0 ^ (2 : Ordinal) * (mu (recDelta b s n) + 1) + 1
+          < omega0 ^ E := hsum
+      _ ≤ omega0 ^ E + omega0 * (mu b + 1) := by
+            exact le_add_right _ _
+      _ ≤ omega0 ^ E + omega0 * (mu b + 1) + 1 := by
+            exact le_add_right _ _
+```
+
+```lean
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    exact Ordinal.pos_iff_ne_zero.mpr (by
+      apply ne_of_gt
+      exact add_pos_right _ one_pos)
+```
+
+```lean
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    let E : Ordinal := mu a + mu b + (9 : Ordinal)
+
+    -- Goal shape after simp:
+    -- ω^4 * (ω^3 * (mu a + 1) + ω^2 * (mu b + 1) + 1 + 1) + 1
+    --   < ω^E + 1
+
+    have hmerge :
+        mu (merge a b) + 1 < omega0 ^ (mu a + mu b + (5 : Ordinal)) := by
+      -- expand `mu (merge a b)`:
+      --   ω^3 * (mu a + 1) + ω^2 * (mu b + 1) + 1 + 1
+      --
+      -- each summand is below `ω^(mu a + mu b + 5)`;
+      -- combine via additive-principality
+      simp [mu]
+      sorry
+
+    have hint_core :
+        omega0 ^ (4 : Ordinal) * (mu (merge a b) + 1) + 1
+          < omega0 ^ E := by
+      -- from `hmerge`, obtain
+      --   ω^4 * (mu (merge a b) + 1) < ω^(mu a + mu b + 9)
+      -- since multiplying by `ω^4` raises the bound from `... + 5` to `... + 9`
+      -- then absorb the final `+ 1` because `ω^E` is a limit / additively principal ordinal
+      simp [E]
+      sorry
+
+    calc
+      omega0 ^ (4 : Ordinal) * (mu (merge a b) + 1) + 1
+          < omega0 ^ E := hint_core
+      _ ≤ omega0 ^ E + 1 := by
+            exact le_add_right _ _
+```
+
+### What to use in the `sorry` blocks
+The recurring ingredient is:
+
+- show some term is `< ω^E` by comparing exponents;
+- then combine bounded summands using that `ω^E` is additively principal (or a limit ordinal with the usual closure property).
+
+So the proof search should focus on lemmas about:
+
+- monotonicity/strict monotonicity of `fun x => omega0 ^ x`,
+- positivity of `omega0 ^ E`,
+- closure of `ω^E` under addition of smaller ordinals.
+
+If needed, package that closure once as a tiny local helper:
+```lean
+have hAP : IsAddPrincipal (omega0 ^ E) := by
+  -- library lemma for powers of ω
+  sorry
+```
+and then use it in both `R_rec_succ` and `R_eq_diff`.

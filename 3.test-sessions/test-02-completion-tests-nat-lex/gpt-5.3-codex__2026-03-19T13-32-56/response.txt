@@ -1,0 +1,94 @@
+Great target—here’s a **drop-in proof skeleton** for the five remaining branches in `measure_decreases`, without changing your file layout.
+
+## Suggested skeleton for the remaining five cases
+
+```lean
+-- integrate (delta t) --> void
+| _, _, Step.R_int_delta t => by
+    by_cases hk0 : kappa t = 0
+    · -- kappa tie, so use right component (mu)
+      have hk : kappa void = kappa (integrate (delta t)) := by
+        simp [kappa, hk0]
+      have hmu : mu void < mu (integrate (delta t)) := by
+        simp [mu]
+      exact drop_right hmu hk
+    · -- kappa strictly drops to 0
+      have hkpos : 0 < kappa t := Nat.pos_of_ne_zero hk0
+      have hk : kappa void < kappa (integrate (delta t)) := by
+        simpa [kappa] using hkpos
+      exact drop_left hk
+
+-- recDelta b s void --> b
+| _, _, Step.R_rec_zero b s => by
+    by_cases hk : kappa b < kappa (recDelta b s void)
+    · exact drop_left hk
+    · -- no strict left drop from kappa(b), force kappa tie then use mu
+      have hsrc_le : kappa (recDelta b s void) ≤ kappa b := by
+        exact Nat.le_of_not_gt (by simpa [gt_iff_lt] using hk)
+      have hb_le_src : kappa b ≤ kappa (recDelta b s void) := by
+        have h1 : kappa b ≤ Nat.max (kappa b) (kappa s) := Nat.le_max_left _ _
+        have h2 :
+            Nat.max (kappa b) (kappa s) ≤
+              Nat.max (Nat.max (kappa b) (kappa s)) (kappa void) :=
+          Nat.le_max_left _ _
+        simpa [kappa] using Nat.le_trans h1 h2
+      have hk_eq : kappa b = kappa (recDelta b s void) :=
+        Nat.le_antisymm hb_le_src hsrc_le
+      have hmu : mu b < mu (recDelta b s void) := by
+        simp [mu]
+        omega
+      exact drop_right hmu hk_eq
+
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    /-
+      Skeleton strategy:
+      1) First try to prove strict kappa drop and finish with `drop_left`.
+      2) If only kappa tie is available, switch to `drop_right` and prove mu drop.
+      3) If neither can be shown, this is the branch that usually forces a
+         refinement of the measure (common in this style of proof).
+    -/
+    by_cases hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))
+    · exact drop_left hk
+    · have hk_eq : kappa (app s (recDelta b s n)) = kappa (recDelta b s (delta n)) := by
+        -- TODO: derive from comparison lemmas (or prove two-way ≤ and use antisymm)
+        sorry
+      have hmu : mu (app s (recDelta b s n)) < mu (recDelta b s (delta n)) := by
+        -- TODO: arithmetic proof on mu if kappa ties
+        -- (if this is not provable, refine the measure for this rule)
+        sorry
+      exact drop_right hmu hk_eq
+
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    by_cases hk0 : kappa a = 0
+    · have hk : kappa void = kappa (eqW a a) := by
+        simp [kappa, hk0]
+      have hmu : mu void < mu (eqW a a) := by
+        simp [mu]
+      exact drop_right hmu hk
+    · have hkpos : 0 < kappa a := Nat.pos_of_ne_zero hk0
+      have hk : kappa void < kappa (eqW a a) := by
+        simpa [kappa] using hkpos
+      exact drop_left hk
+
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by
+      simp [kappa]
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by
+      simp [mu]
+      omega
+    exact drop_right hmu hk
+```
+
+### Note on the hard branch
+
+The `R_rec_succ` case is the one to pressure-test first. If your current `(kappa, mu)` cannot discharge both `hk_eq` and `hmu`, you’ll likely need a slight measure refinement specifically to make that rule strictly decreasing.
+
+## Updated checklist
+
+- [x] Read target Lean file  
+- [x] Identify remaining `sorry` cases  
+- [x] Draft proof skeleton per case  
+- [x] Deliver non-invasive guidance

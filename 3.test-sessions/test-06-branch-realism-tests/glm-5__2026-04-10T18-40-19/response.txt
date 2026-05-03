@@ -1,0 +1,58 @@
+## Assessment of the Helper Strategy
+
+I'll analyze both helper theorems for soundness.
+
+---
+
+### Theorem 1: `kappa_rec_delta_step`
+
+**Claim:** `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`
+
+**Calculation:**
+
+| Side | Expression |
+|------|------------|
+| LHS | `kappa (recDelta b s (delta n))` |
+| | By definition (delta case): `max (max (kappa b) (kappa s)) (kappa n) + 1` |
+| RHS | `kappa (recDelta b s n) + 1` |
+| | By definition (non-delta case): `max (max (kappa b) (kappa s)) (kappa n) + 1` |
+
+**Verdict: ✅ SOUND** — Both sides are definitionally equal.
+
+---
+
+### Theorem 2: `kappa_rec_succ_drop`
+
+**Claim:** `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`
+
+**Calculation:**
+
+Let $k_b = \kappa(b)$, $k_s = \kappa(s)$, $k_n = \kappa(n)$, and $M = \max(\max(k_b, k_s), k_n)$.
+
+| Side | Expression |
+|------|------------|
+| LHS | `kappa (app s (recDelta b s n))` |
+| | = `max (kappa s) (kappa (recDelta b s n))` |
+| | = `max(k_s, M)` |
+| RHS | `kappa (recDelta b s (delta n))` |
+| | = `M + 1` |
+
+**Key observation:** Since $M = \max(\max(k_b, k_s), k_n) \geq \max(k_b, k_s) \geq k_s$, we have $M \geq k_s$.
+
+Therefore: $\max(k_s, M) = M$
+
+The inequality becomes: $M < M + 1$, which is trivially true for all natural numbers.
+
+**Verdict: ✅ SOUND** — The inequality holds for all traces `b`, `s`, `n`.
+
+---
+
+### Summary
+
+Both helper theorems are **correct as stated**. The strategy is sound:
+
+1. `kappa_rec_delta_step` follows directly from the definition of `kappa` on `recDelta` (the delta-wrapped case adds 1 compared to the unwrapped case).
+
+2. `kappa_rec_succ_drop` holds because `kappa(app s _)` takes the max with `kappa s`, but the `recDelta` term already dominates `kappa s` in its own measure, so the app doesn't increase the measure beyond what the recDelta already contributes—yet the RHS has the extra `+1` from the delta wrapper, guaranteeing a strict decrease.
+
+This supports the termination argument for the `R_rec_succ` rewrite rule: `recDelta b s (delta n)` steps to `app s (recDelta b s n)`, and `kappa` strictly decreases.

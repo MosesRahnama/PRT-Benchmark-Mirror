@@ -1,0 +1,11 @@
+The system appears strongly normalizing based solely on the given syntax and rewrite rules.
+
+**Proof roadmap:**  
+1. Define normal forms as terms where no rule applies (e.g., void, delta t where t is NF, app t u where t and u are NF, etc.).  
+2. Prove by structural induction on terms that every term reduces to a NF in finitely many steps:  
+   - For terms without applicable rules, they are already NF.  
+   - For terms with rules (e.g., integrate (delta t) → void), the reduction produces a term that is "simpler" in structure (e.g., fewer constructors or resolved subterms).  
+   - For recΔ and eqW, reductions terminate after a finite number of steps bounded by the "length" of the natural-number-like argument (for recΔ) or resolve to NF after at most one step.  
+   - No cycles exist, as rules are oriented and subterm reductions are finite by induction.  
+
+This establishes SN without external axioms.

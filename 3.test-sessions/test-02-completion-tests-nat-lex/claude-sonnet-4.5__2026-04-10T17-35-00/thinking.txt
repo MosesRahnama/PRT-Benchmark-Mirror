@@ -1,0 +1,44 @@
+Good! I've read the complete file. Let me analyze what's going on:
+
+1. There's a term language (Trace) with 7 constructors: void, delta, integrate, merge, app, recDelta, eqW
+2. There's a reduction relation (Step) with 8 rules
+3. Two measures are defined:
+   - kappa: recursion depth (delta-transparent)
+   - mu: weighted structural size (delta-transparent, various weights)
+4. A lexicographic ordering (kappa, mu) is used
+5. Three cases are already proved:
+   - R_merge_void_left
+   - R_merge_void_right  
+   - R_merge_cancel
+6. Five cases need to be completed:
+   - R_int_delta: integrate (delta t) → void
+   - R_rec_zero: recDelta b s void → b
+   - R_rec_succ: recDelta b s (delta n) → app s (recDelta b s n)
+   - R_eq_refl: eqW a a → void
+   - R_eq_diff: eqW a b → integrate (merge a b)
+
+Let me analyze each case:
+
+**R_int_delta: integrate (delta t) → void**
+- LHS: integrate (delta t)
+  - kappa: kappa(integrate(delta t)) = kappa(delta t) = kappa t
+  - mu: mu(integrate(delta t)) = 1 + mu(delta t) = 1 + mu t
+- RHS: void
+  - kappa: 0
+  - mu: 0
+- Analysis: If kappa t > 0, then kappa drops (kappa t > 0). Otherwise kappa t = 0, so kappa ties, and mu drops from 1 + mu t to 0.
+- Strategy: Need to consider whether kappa t = 0 or kappa t > 0. If kappa t > 0, use drop_left. 
+
+When kappa t = 0, the recursion depth stays the same but the weighted size strictly decreases from 1 + mu t down to 0, so drop_right applies. The key insight is that either the first component of the lexicographic pair strictly decreases, or it stays equal while the second component strictly decreases.
+
+**R_rec_zero: recDelta b s void → b**
+
+For this case, the left side has kappa = max(kappa b, kappa s) and mu = 3 + mu b + mu s, while the right side has kappa = kappa b and mu = mu b. Since max(kappa b, kappa s) ≥ kappa b, the recursion depth either stays the same or decreases depending on whether kappa s ≤ kappa b or kappa s > kappa b. kappa s, so kappa b < kappa s = max, and we use drop_left. If kappa s ≤ kappa b, then max = kappa b, so kappa ties and mu b < 3 + mu b + mu s, applying drop_right instead.
+
+For the recursive case with R_rec_succ, the left side has kappa equal to max(max(kappa b, kappa s), kappa n) + 1 and mu equal to 3 + mu b + mu s + mu n. The right side applies app s to the recursive delta, which needs to be compared against these bounds. , kappa n)) = max(kappa s, kappa b, kappa n) = max(kappa b, kappa s, kappa n). So the LHS kappa is max(kappa b, kappa s, kappa n) + 1 while the RHS is max(kappa b, kappa s, kappa n), meaning kappa decreases by 1 and I can apply drop_left.
+
+For R_eq_refl with eqW a a, the left side has kappa a and mu of 4 + 2·mu a, but the right side (void) has kappa 0 and undefined mu.
+
+For R_eq_diff, eqW a b reduces to integrate (merge a b). Both sides maintain the same kappa value of max(kappa a, kappa b), but the mu measure improves from 4 + mu a + mu b down to 3 + mu a + mu b since integrate adds 1 and merge contributes 2 plus the individual measures.
+
+Now I'll construct proof skeletons for each equivalence.

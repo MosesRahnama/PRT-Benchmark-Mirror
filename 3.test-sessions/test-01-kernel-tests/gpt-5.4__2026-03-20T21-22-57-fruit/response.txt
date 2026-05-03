@@ -1,0 +1,45 @@
+## Assessment
+
+Yes — **strong normalization can be established from the presented calculus alone**.
+
+On the file as written, the relation `Step` consists only of the eight displayed rewrite clauses. There are **no extra structural principles** shown beyond those clauses, so there is no need to import any object-level axiom to prove termination. In fact, for the literal relation in the file, termination is quite tame: several rules collapse immediately to `plum` or to a proper subterm, and the two “expanding-looking” rules
+
+- `banana b s (grape n) → pear s (banana b s n)`
+- `cherry a b → mango (peach a b)` when `a ≠ b`
+
+still do **not** create a loop.
+
+## Short roadmap
+
+A clean standard route is to orient the rules by a **lexicographic path ordering** / **recursive path ordering** with a precedence such as
+
+$$
+\texttt{cherry} \succ \texttt{mango} \succ \texttt{peach}, \qquad
+\texttt{banana} \succ \texttt{pear}, \qquad
+\texttt{grape} \succ \texttt{plum}.
+$$
+
+Then each rule decreases:
+
+- `peach plum t → t`, `peach t plum → t`, `peach t t → t`, `banana b s plum → b`  
+  are subterm-decreasing.
+- `mango (grape t) → plum` and `cherry a a → plum`  
+  decrease to a smaller constant term.
+- `cherry a b → mango (peach a b)`  
+  decreases because the root symbol drops from `cherry` to `mango`, and the left side dominates the arguments by subterm property.
+- `banana b s (grape n) → pear s (banana b s n)`  
+  decreases because `banana ≻ pear`, and the recursive occurrence changes from third argument `grape n` to `n`, i.e. the recursive payload strictly drops.
+
+Since such an ordering is well-founded and every rule is strictly decreasing in it, **no infinite rewrite sequence exists**.
+
+## Boundary note
+
+Because you asked for a strict “no extra assumptions” reading: the file itself only defines the displayed `Step` relation, so the claim is already safe there. If one reads it in the usual first-order TRS sense, the same rule set is still termination-friendly by the ordering above.
+
+## Todo status
+
+- [x] Read target Lean file
+- [x] Analyze rewrite system
+- [x] Give bounded assessment
+
+In short: **raw answer = yes, strong normalization is provable from the calculus shown, without adding rules or hidden assumptions.**

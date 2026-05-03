@@ -1,0 +1,26 @@
+**Yes**, strong normalization holds for this system.
+
+**Proof roadmap** (induction on term size `|t|`):
+
+- **IH**: All `t'` with `|t'| < |t|` are SN.
+- **Cases on root**:
+  - `void`: NF.
+  - `delta t`: NF (no matching LHS).
+  - `app s u`: NF.
+  - `integrate u`:
+    - If `u = delta t`: `→ void` (NF, size 0).
+    - Else (incl. `merge a b`): NF (`u` head ≠ `delta`).
+  - `merge a b`:
+    - `a = void`: `→ b` (size `|b| < 1 + |b|`).
+    - `b = void`: `→ a` (smaller).
+    - `a = b`: `→ a` (size `|a| < 1 + 2|a|`).
+    - Else: NF.
+  - `recΔ b s u`:
+    - `u = void`: `→ b` (smaller).
+    - `u = delta n`: `→ app s (recΔ b s n)` (NF, `app` root).
+    - Else: NF.
+  - `eqW a b`:
+    - `a = b`: `→ void` (NF).
+    - Else: `→ integrate (merge a b)` (NF, arg head `merge` ≠ `delta`).
+
+All one-step reducts are either NF or smaller size (SN by IH). Thus SN `t`.

@@ -1,0 +1,4 @@
+1. **Primary method used**: Lexicographic Path Ordering (LPO) based on a strictly decreasing structural subterm property. 
+2. **Reliance on external choices/assumptions**: Yes. The method relies on choosing a precedence ordering for the function symbols (e.g., assuming `F > G`) and importing the structural axiom that all terms are well-founded, finite trees. 
+3. **Outside the stated boundary**: Yes. Assigning a symbol precedence or applying an external well-foundedness theorem involves importing object-level assumptions and structural axioms that are not strictly derivable from the raw syntactic rewrite rules alone.
+4. **Still strongly normalizing?**: Yes. Under standard termination theory for finite terms, the system is strongly normalizing because it strictly structurally decreases on its third argument bounding any infinite rewrite sequences.

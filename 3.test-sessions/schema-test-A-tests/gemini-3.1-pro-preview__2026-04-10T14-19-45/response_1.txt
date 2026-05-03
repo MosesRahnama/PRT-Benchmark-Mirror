@@ -1,0 +1,10 @@
+**Assessment:** Yes, strong normalization (termination) can be established from the presented rewrite system alone.
+
+**Reasoning:** 
+The provided system consists of two rules:
+1. `F(x, y, Z) -> x`
+2. `F(x, y, S(n)) -> G(y, F(x, y, n))`
+
+This is a strictly structurally decreasing recursive schema. In the recursive rule (rule 2), the third argument of the function `F` strictly decreases from `S(n)` to its direct subterm `n`. The variables `x` and `y` are simply passed through unelaborated, and the function `G` acts as an uninterpreted symbol or constructor. 
+
+Because terms in an algebraic, first-order rewriting system are inherently constructed from finite trees, any sequence of applications of rule 2 must eventually terminate when the third argument is reduced to `Z` (triggering rule 1), or when no further structural pattern matches. It requires no external object-level axioms, inductive principles, or type theories to verify; strong normalization is an immediate consequence of standard purely syntactic mechanisms, such as Lexicographic Path Ordering (LPO) strictly on the subterm property.

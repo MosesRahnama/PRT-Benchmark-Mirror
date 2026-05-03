@@ -1,0 +1,17 @@
+**Assessment: Yes**, strong normalization of this system can be established from the presented rules alone, without importing any external axioms.
+
+**Reasoning:**
+
+The system has two function symbols (`F`, `G`), one constant (`Z`), and one constructor (`S`). The two rules are:
+
+1. `F(x, y, Z) → x`
+2. `F(x, y, S(n)) → G(F(x, y, n))`
+
+Strong normalization holds because there is a straightforward **structural descent** on the third argument of `F`:
+
+- Rule 1 is a base case — `F` applied to `Z` reduces immediately to a subterm (`x`), eliminating the `F` redex.
+- Rule 2 replaces `S(n)` in the third argument with `n`, strictly decreasing the size of that argument. The result wraps the recursive call in `G`, but `G` has no rewrite rules, so it is inert (a constructor/free symbol in this system).
+
+A simple **lexicographic path order (LPO)** or even a basic measure — the size of the third argument of `F` — serves as a well-founded termination argument. Every rewrite step strictly decreases this measure (from `S(n)` to `n`), and no new `F`-redexes at equal or greater depth are introduced. The `G` wrapper is irrelevant since it never triggers a rewrite.
+
+No structural axioms about `S`/`Z` (e.g., induction principles, injectivity, disjointness) are needed. The termination proof relies only on the syntactic structure of the rules themselves.

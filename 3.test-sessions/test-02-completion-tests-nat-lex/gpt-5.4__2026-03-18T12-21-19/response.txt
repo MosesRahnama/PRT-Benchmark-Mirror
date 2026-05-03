@@ -1,0 +1,137 @@
+, and I did **not** modify it or run the compiler.
+
+## Suggested skeleton
+
+Here’s a proof skeleton for the five remaining cases, written to match the style already used in `measure_decreases`:
+
+```lean
+-- integrate (delta t) --> void
+| _, _, Step.R_int_delta t => by
+    by_cases hkt : kappa t = 0
+    · have hmu : mu void < mu (integrate (delta t)) := by
+        simp [mu]
+      have hk : kappa void = kappa (integrate (delta t)) := by
+        simp [kappa, hkt]
+      exact drop_right hmu hk
+    · have hk : kappa void < kappa (integrate (delta t)) := by
+        simpa [kappa] using Nat.pos_of_ne_zero hkt
+      exact drop_left hk
+
+-- recDelta b s void --> b
+| _, _, Step.R_rec_zero b s => by
+    by_cases hs : kappa s ≤ kappa b
+    · have hmu : mu b < mu (recDelta b s void) := by
+        simp [mu]
+        omega
+      have hk : kappa b = kappa (recDelta b s void) := by
+        simp [kappa, Nat.max_eq_left hs]
+      exact drop_right hmu hk
+    · have hlt : kappa b < kappa s := Nat.lt_of_not_ge hs
+      have hk : kappa b < kappa (recDelta b s void) := by
+        have hmax : kappa b < Nat.max (kappa b) (kappa s) :=
+          lt_of_lt_of_le hlt (Nat.le_max_right _ _)
+        simpa [kappa] using hmax
+      exact drop_left hk
+
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    let K := Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)
+    have hk₁ : kappa (app s (recDelta b s n)) = K := by
+      simp [K, kappa, Nat.max_assoc, Nat.max_left_comm, Nat.max_comm]
+    have hk₂ : kappa (recDelta b s (delta n)) = K + 1 := by
+      simp [K, kappa]
+    have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+      rw [hk₁, hk₂]
+      exact Nat.lt_succ_self K
+    exact drop_left hk
+
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    by_cases hka : kappa a = 0
+    · have hmu : mu void < mu (eqW a a) := by
+        simp [mu]
+      have hk : kappa void = kappa (eqW a a) := by
+        simp [kappa, hka]
+      exact drop_right hmu hk
+    · have hk : kappa void < kappa (eqW a a) := by
+        simpa [kappa] using Nat.pos_of_ne_zero hka
+      exact drop_left hk
+
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by
+      simp [mu]
+      omega
+    have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by
+      simp [kappa, Nat.max_assoc, Nat.max_left_comm, Nat.max_comm]
+    exact drop_right hmu hk
+```
+
+## Why these are the right shapes
+
+### `R_int_delta`
+
+This one is a little sneaky: `void` does **not** always have strictly smaller `kappa`, because `kappa (integrate (delta t)) = kappa t`, and that may already be `0`.
+
+So the clean pattern is:
+
+- if `kappa t = 0`, use `drop_right` with a strict `mu` decrease;
+- otherwise, use `drop_left` from $0 < \kappa t$.
+
+Same story for `R_eq_refl`.
+
+### `R_rec_zero`
+
+This case depends on whether `s` contributes more `kappa` than `b`.
+
+- If `kappa s ≤ kappa b`, then source and target have the same `kappa`, so use `drop_right`.
+- Otherwise `kappa b < kappa s`, hence `kappa b < kappa (recDelta b s void)`, so use `drop_left`.
+
+### `R_rec_succ`
+
+This is the nicest one conceptually: the source is exactly “one more” than the recursive call’s `kappa`.
+
+If you name
+$$
+K := \max(\max(\kappa b,\kappa s),\kappa n),
+$$
+then:
+
+- `kappa (recDelta b s (delta n)) = K + 1`
+- `kappa (app s (recDelta b s n)) = K`
+
+and `drop_left` finishes it.
+
+### `R_eq_diff`
+
+Here `kappa` stays the same and only `mu` drops:
+
+- `kappa (integrate (merge a b)) = max (kappa a) (kappa b)`
+- `kappa (eqW a b) = max (kappa a) (kappa b)`
+
+while
+- `mu (integrate (merge a b)) = 3 + mu a + mu b`
+- `mu (eqW a b) = 4 + mu a + mu b`
+
+so `drop_right` is exactly the right hammer. A very small hammer, but still satisfying.
+
+## Small caveat
+
+Because I didn’t run Lean, a couple of the `simp` lines may want tiny massaging depending on your local lemma set—typically one extra occurrence of:
+
+- `Nat.max_assoc`
+- `Nat.max_comm`
+- `Nat.max_left_comm`
+
+or an `omega` after simplification.
+
+But the **proof structure** above is the right one for all five remaining cases.
+
+## Updated checklist
+
+- [x] Read target Lean file
+- [x] Identify proved and missing cases
+- [x] Draft proof skeletons
+- [x] Summarize completion strategy
+
+If you want, I can next give you a **more conservative version** of the same skeleton with a few intermediate `have` steps expanded further, to maximize the chance it drops into Lean with minimal adjustment.

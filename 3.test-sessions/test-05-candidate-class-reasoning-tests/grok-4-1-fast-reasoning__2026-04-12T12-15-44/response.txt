@@ -1,0 +1,23 @@
+**Assessment of the three termination measure candidates (mu1, mu2, mu3):**
+
+All three measures are **invalid** as termination measures for the `Step` relation. They fail to strictly decrease on **R_rec_succ**: `recDelta b s (delta n) → app s (recDelta b s n)`.
+
+**Detailed verification:**
+
+Let `b = μ(b)`, `s = μ(s)`, `n = μ(n)` (shorthand for any measure μ).
+
+- **mu1**(`recDelta b s (delta n)`) = `2 + b + s + n`  
+  **mu1**(`app s (recDelta b s n)`) = `2 + b + 2s + n`  
+  Difference: `-s ≤ 0` (non-increasing).
+
+- **mu2**(`recDelta b s (delta n)`) = `6 + b + s + n`  
+  **mu2**(`app s (recDelta b s n)`) = `6 + b + 2s + n`  
+  Difference: `-s ≤ 0` (non-increasing).
+
+- **mu3**(`recDelta b s (delta n)`) = `2 + b + s + n`  
+  **mu3**(`app s (recDelta b s n)`) = `3 + b + 2s + n`  
+  Difference: `-1 - s < 0` (decreases in wrong direction).
+
+All measures strictly decrease (or are non-increasing) on the other 7 rules (R_int_delta, R_merge_void_left/right, R_merge_cancel, R_rec_zero, R_eq_refl, R_eq_diff).
+
+**Conclusion:** No candidate proves termination. A revised measure (e.g., higher weight on `recDelta`, multiset on subterms, or delta-counting) is required.

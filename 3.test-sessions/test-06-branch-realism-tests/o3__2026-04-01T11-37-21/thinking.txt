@@ -1,0 +1,3 @@
+**Evaluating the helper strategy**
+
+I’m looking at whether the helper strategy and two theorems are sound for the termination argument. It seems that since the measure decreases from M+1 to M, that’s a good sign. However, I need to ensure that this decrease holds true for all rules involved. We can provide reasoning based on definitions ensuring that soundness is maintained throughout. Oh, and I should consider edge cases, particularly about comparing infinite values while staying within natural numbers. Let’s clarify this fully!

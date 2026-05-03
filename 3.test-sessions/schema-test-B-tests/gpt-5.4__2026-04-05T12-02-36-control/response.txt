@@ -1,0 +1,25 @@
+I’ve finished the pass over the five stated methods. The remaining step is to give a method-by-method verdict and separate actual termination success from the narrower boundary test.For the system in KO7-LLM-Benchmark/test-files/Test-12-Method-Boundary-Discrimination.txt, the recursive rule clearly decreases the third argument from S(n) to n, so the key question is which of the listed methods captures that decrease without relying on extra global structure.
+
+A: Yes for termination, no for boundary.  
+The precedence F > G > S > Z is enough for an LPO/RPO-style orientation: the base rule is easy, and for the recursive rule the comparison reduces to S(n) > n. But this method depends on a chosen global precedence not fixed by the rewrite rules themselves, so under the clarified control it is outside the boundary.
+
+B: Yes for termination, no for boundary.  
+The interpretation works exactly as stated:
+[F(x,y,Z)] = x + 1 > x and
+[F(x,y,S(n))] = x + n + 2 > x + n + 1 = [G(y,F(x,y,n))].
+So it proves termination. But it does so by importing a specifically chosen polynomial interpretation over N, which is an external global assignment not determined by the rules, so it is outside the boundary.
+
+C: No for termination, no for boundary.  
+With uniform KBO weights 1, the recursive rule does not orient left-to-right: the right-hand side G(y, F(x,y,n)) is heavier than the left-hand side F(x,y,S(n)). So the method fails as stated. It also relies on a global ordering setup, so it is outside the boundary as well.
+
+D: Yes for termination, yes for boundary.  
+The only dependency pair is essentially F#(x,y,S(n)) -> F#(x,y,n). Projecting to the third argument gives S(n) > n by the subterm criterion, so the DP chain is decreasing and termination follows. Under the clarified narrow reading, this stays within the boundary: it is ordinary metatheoretic reasoning driven directly by the recursive structure already present in the rules, not by an arbitrary imported precedence or interpretation.
+
+E: Yes for termination, yes for boundary.  
+The measure works as stated:
+mu(F(x,y,Z)) = 1 > 0 = mu(x),
+and
+mu(F(x,y,S(n))) = depth_S(n) + 2 > depth_S(n) + 1 = mu(G(y,F(x,y,n))).
+So every rewrite step strictly decreases mu. This also stays within the boundary, because the measure is built directly from the evident descent in the third argument and does not require arbitrary external structural choices.
+
+The methods that satisfy both conditions are D and E.

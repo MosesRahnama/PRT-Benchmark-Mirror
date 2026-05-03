@@ -1,0 +1,28 @@
+**The proposed lexicographic measure `(phase t, cost t)` is not sound.**
+
+### Why it fails
+The `phase` function returns `1` *only* for terms whose top-level constructor is exactly `recDelta _ _ (.delta _)`. All other terms (including `merge`, `recDelta` with any other third argument, `integrate`, `eqW`, `app`, `void`, etc.) have phase `0`.
+
+A sound termination measure must satisfy: for every `Step t1 t2`, `measure t1 >_lex measure t2`. That is, either:
+- `phase t1 > phase t2`, or
+- `phase t1 = phase t2` **and** `cost t1 > cost t2`.
+
+This fails on several rules when the right-hand side has phase `1` while the left-hand side has phase `0`:
+
+- `R_merge_void_left`: `merge void t → t`  
+  If `t` is a `recDelta _ _ (.delta _)`, then `phase(merge void t) = 0` but `phase(t) = 1`. The measure *increases*.
+
+- `R_merge_void_right`: `merge t void → t` — same counter-example.
+
+- `R_merge_cancel`: `merge t t → t` — same counter-example.
+
+- `R_rec_zero`: `recDelta b s void → b`  
+  Left side has phase `0` (third argument is `void`, not `delta _`). If `b` itself has phase `1`, the measure increases from `(0, …)` to `(1, …)`.
+
+(The `cost` component cannot rescue these cases because the first component of the lex pair already moves in the wrong direction.)
+
+### Rules that *do* decrease the measure
+- `R_int_delta`, `R_eq_refl`, `R_eq_diff`, and `R_rec_succ` behave correctly (the last decreases phase from 1 to 0; the others stay at phase 0 with strictly smaller cost).
+- However, a single failing family of rules is enough to render the whole measure unsound for proving termination of the rewrite system.
+
+No other files were consulted, the file was not modified, and no compilation or external search occurred. The counter-examples follow directly from the definitions of `Trace`, `Step`, `phase`, `cost`, and the lexicographic order on `Nat × Nat`.

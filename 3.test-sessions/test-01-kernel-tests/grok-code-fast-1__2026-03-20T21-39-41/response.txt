@@ -1,0 +1,3 @@
+The presented first-order rewrite system appears strongly normalizing based on the given syntax and rules alone.
+
+**Proof roadmap:** Define a well-founded ordering on terms using a lexicographic combination of (1) the "unfolding depth" of recΔ terms (finite since delta chains are finite) and (2) a size measure where constructors are weighted to ensure reductions decrease or preserve termination (e.g., assign weights so recΔ unfolding increases size but is bounded, while other rules decrease size). Verify each rule respects the ordering, confirming no infinite reductions.

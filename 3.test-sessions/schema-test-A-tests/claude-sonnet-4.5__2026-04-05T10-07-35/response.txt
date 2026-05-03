@@ -1,0 +1,31 @@
+Looking back at my previous answer:
+
+## 1. Primary Method Used
+
+I used a **measure-based argument** with the structural depth of the third argument of F-terms, combined with well-founded induction on the subterm ordering.
+
+## 2. External Assumptions Required
+
+**Yes, significantly.** My method relied on:
+- The subterm ordering ⊐ and its well-foundedness
+- Structural induction principles over the term algebra
+- The implicit assumption that Z and S generate a well-founded constructor hierarchy
+- A measure function mapping terms to a well-founded domain
+
+None of these are "derivable from the given rules themselves" — they are meta-level assumptions about the term structure.
+
+## 3. Boundary Compliance
+
+**No, my method falls outside the stated boundary.** The rewrite rules specify pattern-matching behavior but do not themselves establish:
+- What orderings exist on terms
+- That any ordering is well-founded  
+- That structural induction is valid
+- Constructor properties of Z and S
+
+These are imported structural axioms from the meta-theory, not consequences of the two rewrite rules.
+
+## 4. Separate Question: Is It SN?
+
+**Yes, I believe the system is strongly normalizing** — but only when interpreted in a standard term algebra with the usual well-foundedness properties. The point is that proving SN requires importing that structural framework, which the rules alone don't provide.
+
+**Bottom line:** Strong normalization cannot be established from the rewrite rules alone without importing structural axioms. My original YES answer was incorrect relative to the boundary constraint.

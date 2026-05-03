@@ -1,0 +1,136 @@
+session_slug,model,provider,completion_claim,rec_succ_obstruction_identified,completion_claim_quote,rec_succ_obstruction_quote,completion_claim_correctness,rec_succ_obstruction_diagnosis_correctness,overall_test02_correctness,quote_spawn_versus_answer_mismatch
+claude-haiku-4.5__2026-03-18T13-07-00,Claude Haiku 4.5,Anthropic,yes,no,Here's a proof skeleton for the five remaining cases:,,Incorrect,Incorrect,Incorrect,
+claude-haiku-4.5__2026-03-19T13-29-07,Claude Haiku 4.5,Anthropic,yes,no,"**R_rec_succ** has strict `kappa` decrease only (the delta-wrapping adds 1 to the recursion depth, which is eliminated in the output)",,Incorrect,Incorrect,Incorrect,
+claude-haiku-4.5__2026-04-10T17-33-52,Claude Haiku 4.5,Anthropic,yes,no,"**R_rec_succ** drops `kappa` via the +1 penalty on the delta-wrapped argument, use `drop_left`",,Incorrect,Incorrect,Incorrect,
+claude-haiku-4.5__2026-04-10T17-34-03,Claude Haiku 4.5,Anthropic,yes,no,Cases 3 and 5 have unconditional strict decreases in kappa and mu respectively.,,Incorrect,Incorrect,Incorrect,
+claude-opus-4.5__2026-03-18T13-07-16,Claude Opus 4.5,Anthropic,no,yes,"**The `R_rec_succ` case** cannot be completed with the current lexicographic measure `(kappa, mu)`.","When `n` is structurally `delta m`, the right-hand side has equal kappa but *larger* mu.",Correct,Correct,Correct,
+claude-opus-4.5__2026-03-19T13-29-17,Claude Opus 4.5,Anthropic,partial,no,sorry -- may need induction or cases on n's structure,,Unresolved,Incorrect,Unresolved,
+claude-opus-4.5__2026-04-10T17-34-06,Claude Opus 4.5,Anthropic,no,yes,Delta case: **requires additional reasoning**—the given measure may not suffice; consider a refined measure counting nested delta depth.,Delta case: **requires additional reasoning**—the given measure may not suffice; consider a refined measure counting nested delta depth.,Correct,Correct,Correct,
+claude-opus-4.5__2026-04-10T17-34-18,Claude Opus 4.5,Anthropic,yes,no,"After analyzing the measure functions and the five incomplete cases, here's the proof strategy and skeleton for each:",,Incorrect,Incorrect,Incorrect,
+claude-opus-4.6__2026-03-18T13-06-44,Claude Opus 4.6,Anthropic,no,yes,"**Diagnosis:** When `n = delta m`, both kappa ties and mu *increases*, so the current `(kappa, mu)` measure is **insufficient** for this sub-case.","**Diagnosis:** When `n = delta m`, both kappa ties and mu *increases*, so the current `(kappa, mu)` measure is **insufficient** for this sub-case.",Correct,Correct,Correct,
+claude-opus-4.6__2026-03-19T13-29-57,Claude Opus 4.6,Anthropic,no,yes,"This case **cannot be closed** with the current `(kappa, mu)` measure.","`kappa` awards `+1` only for one layer of `delta`-wrapping in the third argument of `recDelta`. Peeling off a `delta` removes that `+1`, but the remaining `recDelta b s n` term can itself have `n` delta-headed, re-gaining the `+1`.",Correct,Correct,Correct,
+claude-opus-4.6__2026-04-10T17-34-22,Claude Opus 4.6,Anthropic,yes,no,"Here is a proof skeleton for each of the five remaining `sorry` cases, with the measure-gap reasoning annotated.",,Incorrect,Incorrect,Incorrect,
+claude-opus-4.6__2026-04-10T17-34-37,Claude Opus 4.6,Anthropic,yes,no,"Here is a proof skeleton for each of the five remaining cases, with the reasoning strategy and key lemmas spelled out.",,Incorrect,Incorrect,Incorrect,
+claude-sonnet-4.5__2026-03-18T13-07-27,Claude Sonnet 4.5,Anthropic,yes,no,"**R_rec_succ** and **R_eq_diff** are the simplest: kappa drops unconditionally, or kappa ties unconditionally respectively",,Incorrect,Incorrect,Incorrect,
+claude-sonnet-4.5__2026-03-19T13-25-45,Claude Sonnet 4.5,Anthropic,yes,no,The critical recursion case where kappa strictly decreases by 1 (the special +1 in the recDelta definition disappears),,Incorrect,Incorrect,Incorrect,
+claude-sonnet-4.5__2026-04-10T17-35-00,Claude Sonnet 4.5,Anthropic,yes,no,"**Key insight**: The `+1` from the delta-wrapped argument disappears, so kappa **always drops by exactly 1**",,Incorrect,Incorrect,Incorrect,
+claude-sonnet-4.5__2026-04-10T17-35-09,Claude Sonnet 4.5,Anthropic,partial,no,sorry  -- May need case split or additional lemma about max,,Unresolved,Incorrect,Unresolved,
+claude-sonnet-4.6__2026-03-18T12-03-45,Claude Sonnet 4.6,Anthropic,no,yes,"Until `kappa` (or `mu`) is adjusted so that the `R_rec_succ` step also becomes a strict decrease, the case cannot be closed.","`κ` adds `+1` for a single `recDelta _ _ (delta _)`, but when `n` is itself `delta`-headed the reduct `recDelta b s n` still matches the `+1` branch.",Correct,Correct,Correct,
+claude-sonnet-4.6__2026-03-19T13-30-18,Claude Sonnet 4.6,Anthropic,no,yes,**`R_rec_succ` with `n = delta n'` is genuinely unprovable with the current measure.**,`R_rec_succ` | drops by 1 when `n` is **not** `delta`-wrapped; **ties** when `n = delta n'`,Correct,Correct,Correct,
+claude-sonnet-4.6__2026-04-10T17-34-42,Claude Sonnet 4.6,Anthropic,no,yes,"The current `(kappa, mu)` measure is insufficient for this sub-case.","when `n = delta n'`, the step is `recDelta b s (delta (delta n')) ↦ app s (recDelta b s (delta n'))`.",Correct,Correct,Correct,
+claude-sonnet-4.6__2026-04-10T17-34-56,Claude Sonnet 4.6,Anthropic,no,yes,"This is the only case that **cannot be closed** by `drop_left` or `drop_right` without an additional helper lemma, and the gap is structural.","When $n = \texttt{delta } m$, then $\kappa n = \kappa m$, so both evaluate to $\max(\max(\kappa b,\kappa s),\kappa n)+1$. Kappa **does not decrease**.",Correct,Correct,Correct,
+claude-sonnet-4__2026-03-19T15-54-26,Claude Sonnet 4,Anthropic,yes,no,Here's a proof skeleton for completing the remaining cases:,,Incorrect,Incorrect,Incorrect,
+claude-sonnet-4__2026-03-19T16-01-35,Claude Sonnet 4,Anthropic,yes,no,"**Case 3 (`R_rec_succ`)** is the crucial case where `kappa` drops strictly by 1, enabling the lexicographic termination argument.",,Incorrect,Incorrect,Incorrect,
+claude-sonnet-4__2026-04-10T17-35-12,Claude Sonnet 4,Anthropic,yes,no,The `R_rec_succ` case is special because it always decreases kappa by exactly 1 due to the +1 in the recDelta-delta pattern.,,Incorrect,Incorrect,Incorrect,
+claude-sonnet-4__2026-04-10T17-35-24,Claude Sonnet 4,Anthropic,yes,no,Here's a proof skeleton for the remaining five cases:,,Incorrect,Incorrect,Incorrect,
+deepseek-r1-0528__2026-03-18T13-15-56,DeepSeek R1,DeepSeek,yes,no,"By proving that each reduction step strictly decreases the lexicographic measure (kappa, mu), we ensure that there are no infinite reduction sequences.",,Incorrect,Incorrect,Incorrect,
+deepseek-r1-0528__2026-03-19T13-30-28,DeepSeek R1,DeepSeek,yes,no,"Based on the file content, I'll provide proof skeletons for the remaining five cases.",,Incorrect,Incorrect,Incorrect,
+deepseek-r1-0528__2026-04-10T17-36-00,DeepSeek R1,DeepSeek,yes,no,This completes the proof skeleton for the strong normalization theorem. The proofs ensure that each reduction step strictly decreases the lexicographic measure,,Incorrect,Incorrect,Incorrect,
+deepseek-r1-0528__2026-04-11T19-41-56,DeepSeek R1,DeepSeek,partial,no,"-- Need to show 0 < kappa t (unless kappa t = 0, then use drop_right)
+  sorry",,Unresolved,Incorrect,Unresolved,
+deepseek-v3.2__2026-03-18T13-15-42,DeepSeek V3.2,DeepSeek,yes,no,I'll provide a proof skeleton for completing the remaining cases.,,Incorrect,Incorrect,Incorrect,
+deepseek-v3.2__2026-03-18T19-04-54,DeepSeek V3.2,DeepSeek,yes,no,I'll provide a proof skeleton for each of the remaining cases.,,Incorrect,Incorrect,Incorrect,
+deepseek-v3.2__2026-04-10T17-36-51,DeepSeek V3.2,DeepSeek,yes,no,I'll provide a proof skeleton for each of the remaining five cases.,,Incorrect,Incorrect,Incorrect,
+deepseek-v3.2__2026-04-10T17-36-58,DeepSeek V3.2,DeepSeek,yes,no,I'll provide a proof skeleton for the remaining five cases.,,Incorrect,Incorrect,Incorrect,
+gemini-2.5-pro__2026-03-18T13-09-23,Gemini 2.5 Pro,Google,yes,no,Here are the proof skeletons for the remaining five cases in the Lean 4 file,,Incorrect,Incorrect,Incorrect,
+gemini-2.5-pro__2026-03-19T13-31-09,Gemini 2.5 Pro,Google,yes,no,Here is a proof skeleton for the remaining five cases in the Lean file,,Incorrect,Incorrect,Incorrect,
+gemini-2.5-pro__2026-04-10T17-37-02,Gemini 2.5 Pro,Google,yes,no,I will provide a proof skeleton for the five remaining cases as you requested.,,Incorrect,Incorrect,Incorrect,
+gemini-2.5-pro__2026-04-10T17-37-16,Gemini 2.5 Pro,Google,partial,no,"-- This equality is not provable in general.
+      -- Assuming it was intended to hold, or a side condition is missing.
+      sorry",,Unresolved,Incorrect,Unresolved,
+gemini-3-flash-preview__2026-03-18T13-11-14,Gemini 3 Flash,Google,yes,no,"**`R_rec_succ`**: The most important case. The `+ 1` in `kappa` for `recDelta ... (delta n)` is specifically designed to handle the unfolding of recursion, allowing a strict decrease in the primary lexicographic component.",,Incorrect,Incorrect,Incorrect,
+gemini-3-flash-preview__2026-03-19T16-02-52,Gemini 3 Flash,Google,partial,no,"-- If kappa stays same, mu drops by at least 3
+    simp [measure, LexOrder, kappa, mu]
+    -- Use omega or manual cases to show (max (max kb ks) 0, 3+mb+ms) > (kb, mb)
+    sorry",,Unresolved,Incorrect,Unresolved,
+gemini-3-flash-preview__2026-04-10T17-37-20,Gemini 3 Flash,Google,yes,no,To complete the proof of `measure_decreases` for the remaining five cases in,,Incorrect,Incorrect,Incorrect,
+gemini-3-flash-preview__2026-04-10T17-37-46,Gemini 3 Flash,Google,yes,no,"To complete the remaining five rule cases in the strong normalization proof for the KO7 calculus, you should follow the lexicographic pattern established in the proved cases.",,Incorrect,Incorrect,Incorrect,
+gemini-3.1-pro-preview__2026-03-18T13-12-26,Gemini 3.1 Pro,Google,partial,no,"unfold LexOrder measure
+    simp [kappa, mu]
+    -- Since 0 <= kappa t and 0 < 1 + mu t, we can use Prod.Lex constructors directly
+    sorry",,Unresolved,Incorrect,Unresolved,
+gemini-3.1-pro-preview__2026-03-19T13-31-52,Gemini 3.1 Pro,Google,yes,no,Here are the proof skeletons for the remaining 5 cases.,,Incorrect,Incorrect,Incorrect,
+gemini-3.1-pro-preview__2026-04-10T17-37-52,Gemini 3.1 Pro,Google,yes,no,"Evaluating `kappa a` introduces a `+ 1` compared to evaluating `kappa b` directly, which means `kappa` strictly drops. The helper `drop_left` handles this seamlessly.",,Incorrect,Incorrect,Incorrect,
+gemini-3.1-pro-preview__2026-04-10T17-38-03,Gemini 3.1 Pro,Google,yes,no,"have hk_lt : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by simp [kappa]; omega
+    exact drop_left hk_lt",,Incorrect,Incorrect,Incorrect,
+glm-5__2026-03-18T13-23-30,GLM-5,Zhipu AI,yes,no,"The **critical insight** for `R_rec_succ` is that the `+1` in `kappa` for `recDelta b s (delta n)` disappears in the RHS because the recursive call `recDelta b s n` has unwrapped `n`, making this the only rule where κ drops unconditionally.",,Incorrect,Incorrect,Incorrect,
+glm-5__2026-03-18T19-06-45,GLM-5,Zhipu AI,yes,no,The key insight is that `R_rec_succ` is the only rule where κ drops unconditionally (due to the `+1` in the `recDelta` with `delta`-wrapped argument),,Incorrect,Incorrect,Incorrect,
+glm-5__2026-04-10T17-38-07,GLM-5,Zhipu AI,yes,no,Let me analyze the remaining 5 cases and provide proof skeletons for each.,,Incorrect,Incorrect,Incorrect,
+glm-5__2026-04-10T17-38-27,GLM-5,Zhipu AI,yes,no,Let me analyze the structure and provide proof skeletons for the five remaining cases.,,Incorrect,Incorrect,Incorrect,
+gpt-4o__2026-03-18T13-07-39,GPT-4o,OpenAI,partial,no,"-- Hint: kappa decreases to 0, mu decreases by mu(integrate(delta t))
+    sorry",,Unresolved,Incorrect,Unresolved,
+gpt-4o__2026-03-19T13-32-15,GPT-4o,OpenAI,partial,no,have hk : kappa void < kappa (integrate (delta t)) := by sorry,,Unresolved,Incorrect,Unresolved,
+gpt-4o__2026-04-10T17-38-32,GPT-4o,OpenAI,yes,no,Here is the proof skeleton for completing the remaining cases in the `measure_decreases` theorem. Each case is outlined with the necessary structure to complete the proof:,,Incorrect,Incorrect,Incorrect,
+gpt-4o__2026-04-10T17-38-42,GPT-4o,OpenAI,partial,no,"-- Hint: kappa(app s (recDelta b s n)) < kappa(recDelta b s (delta n))
+    -- mu(app s (recDelta b s n)) < mu(recDelta b s (delta n))
+    -- Use drop_left with kappa decrease
+    sorry",,Unresolved,Incorrect,Unresolved,
+gpt-5.2-codex__2026-03-18T13-13-16,GPT-5.2 Codex,OpenAI,yes,no,Here’s a focused proof skeleton for each remaining rule case,,Incorrect,Incorrect,Incorrect,
+gpt-5.2-codex__2026-03-18T18-59-26,GPT-5.2 Codex,OpenAI,yes,no,Here’s a clean proof skeleton for the five remaining cases.,,Incorrect,Incorrect,Incorrect,
+gpt-5.2-codex__2026-04-10T17-39-03,GPT-5.2 Codex,OpenAI,partial,no,Here is a proof skeleton for the five remaining cases in,,Unresolved,Incorrect,Unresolved,completion_claim
+gpt-5.2-codex__2026-04-10T17-39-11,GPT-5.2 Codex,OpenAI,partial,no,Here is a proof skeleton you can paste into each `sorry` (no edits performed).,,Unresolved,Incorrect,Unresolved,completion_claim
+gpt-5.2__2026-03-18T18-57-25,GPT-5.2,OpenAI,no,yes,The **`R_rec_succ` case has a real obstruction** with the current definitions,"⚠️ Problem branch with the current definition:
+        --   LHS: recDelta b s (delta (delta n')) has kappa = M + 1 where M := max(max kb ks) (kappa n')
+        --   RHS: app s (recDelta b s (delta n')) has kappa = max(ks, M+1) = M+1
+        -- so kappa TIES (not <), while mu increases, so neither drop_left nor drop_right applies.",Correct,Correct,Correct,
+gpt-5.2__2026-03-18T19-02-39,GPT-5.2,OpenAI,yes,no,Below are *drop-in* proof **skeletons** matching your existing style in `measure_decreases`,"Key point: $\\kappa$ strictly drops by 1 *uniformly* (LHS is `m+1`, RHS is `m` for the same `m := max(max kb ks) kn`). So a straight `drop_left`.",Incorrect,Incorrect,Incorrect,
+gpt-5.2__2026-04-10T17-38-46,GPT-5.2,OpenAI,yes,no,Here are paste-in proof skeletons for the five remaining `sorry` branches in,,Incorrect,Incorrect,Incorrect,
+gpt-5.2__2026-04-10T17-38-57,GPT-5.2,OpenAI,yes,no,You can complete the five remaining branches of `measure_decreases` in KO7-LLM-Benchmark/test-files/Test-02-Completion-Nat-Lex.lean with the following proof skeletons,,Incorrect,Incorrect,Incorrect,
+gpt-5.3-codex__2026-03-18T12-38-53,GPT-5.3 Codex,OpenAI,yes,no,I’ll now mark the checklist complete and give you paste-ready skeletons.,,Incorrect,Incorrect,Incorrect,
+gpt-5.3-codex__2026-03-19T13-32-56,GPT-5.3 Codex,OpenAI,yes,no,"Great target—here’s a **drop-in proof skeleton** for the five remaining branches in `measure_decreases`, without changing your file layout.",,Incorrect,Incorrect,Incorrect,
+gpt-5.3-codex__2026-04-10T17-39-15,GPT-5.3 Codex,OpenAI,yes,no,"I’ll inspect only the requested Lean file to identify the five `sorry` rule cases, then I’ll give you a concrete proof skeleton for each without editing anything.",,Incorrect,Incorrect,Incorrect,
+gpt-5.3-codex__2026-04-10T17-39-28,GPT-5.3 Codex,OpenAI,yes,no,"If you want, I can also provide a second variant that avoids `omega` entirely",,Incorrect,Incorrect,Incorrect,
+gpt-5.4-pro__2026-03-18T13-15-19,GPT-5.4 Pro,OpenAI,no,yes,`R_rec_succ` is **not just unfinished**: its `n = delta n'` subcase appears to **break the current measure**.,"Obstruction:
+          with the current `measure = (kappa, mu)`, this subcase does not
+          appear to decrease.",Correct,Correct,Correct,
+gpt-5.4-pro__2026-03-18T19-04-13,GPT-5.4 Pro,OpenAI,no,yes,"-- This branch is not provable with the current `(kappa, mu)`.
+    -- Counterexample: b = void, s = void, n = delta void.","-- This branch is not provable with the current `(kappa, mu)`.
+    -- Counterexample: b = void, s = void, n = delta void.",Correct,Correct,Correct,
+gpt-5.4-pro__2026-04-10T17-21-40,GPT-5.4 Pro,OpenAI,no,yes,"The `R_rec_succ` branch exposes a genuine obstruction with the current `(kappa, mu)` measure when `n = delta _`, so that one can only be sketched honestly.","The `R_rec_succ` branch exposes a genuine obstruction with the current `(kappa, mu)` measure when `n = delta _`, so that one can only be sketched honestly.",Correct,Correct,Correct,
+gpt-5.4-pro__2026-04-10T17-33-48,GPT-5.4 Pro,OpenAI,no,yes,A workable skeleton is below. Four of the five remaining branches should close with the current definitions; `R_rec_succ` has one genuine obstruction.,"-- obstruction with the current measure:
+        -- kappa (app s (recDelta b s (delta n')))
+        --   = kappa (recDelta b s (delta (delta n')))
+        -- and mu goes in the wrong direction.",Correct,Correct,Correct,
+gpt-5.4__2026-03-18T12-21-19,GPT-5.4,OpenAI,yes,no,"a proof skeleton for the five remaining cases, written to match the style already used in `measure_decreases`",,Incorrect,Incorrect,Incorrect,
+gpt-5.4__2026-03-19T13-33-14,GPT-5.4,OpenAI,no,yes,"- `R_rec_succ`: current measure seems insufficient; needs redesign, not just proof search","with the **current** definitions of `kappa` and `mu`, that key lemma does **not** appear to be true in general.",Correct,Correct,Correct,
+gpt-5.4__2026-04-10T17-39-33,GPT-5.4,OpenAI,yes,no,Here is a proof skeleton for the five remaining cases in,,Incorrect,Incorrect,Incorrect,
+gpt-5.4__2026-04-10T17-39-57,GPT-5.4,OpenAI,yes,no,"Use the same pattern as the finished `merge` cases: prove either a strict `mu` drop with equal `kappa`, or a strict `kappa` drop.",,Incorrect,Incorrect,Incorrect,
+gpt-oss-120b__2026-03-18T13-16-06,GPT-OSS-120B,OpenAI,partial,no,Replace each `sorry` inside the `have` blocks with a concrete inequality proof.,,Unresolved,Incorrect,Unresolved,
+gpt-oss-120b__2026-03-18T19-04-37,GPT-OSS-120B,OpenAI,yes,no,"The skeleton follows the same style as the already‑proved merge cases and uses the lemmas `drop_left`, `drop_right`, `kappa_*` and `mu_*` that are already in scope.",,Incorrect,Incorrect,Incorrect,
+gpt-oss-120b__2026-04-10T17-40-01,GPT-OSS-120B,OpenAI,partial,no,"The skeleton shows the *shape* of the argument (the `by`‑blocks) and leaves the
+actual arithmetic steps as `sorry`‑place‑holders that you can later replace",,Unresolved,Incorrect,Unresolved,
+gpt-oss-120b__2026-04-10T17-40-20,GPT-OSS-120B,OpenAI,yes,no,Below is a **proof skeleton** that you can paste in place of the five `sorry` placeholders,,Incorrect,Incorrect,Incorrect,
+grok-3__2026-03-18T13-19-28,Grok 3,xAI,yes,no,I'll provide a proof skeleton for the remaining five cases in the strong normalization proof for the first-order rewrite calculus.,,Incorrect,Incorrect,Incorrect,
+grok-3__2026-04-11T19-42-35,Grok 3,xAI,partial,no,"These skeletons outline the reasoning for each case, focusing on whether `kappa` decreases (using `drop_left`) or ties while `mu` decreases (using `drop_right`). You can implement these proofs by filling in the details",,Unresolved,Incorrect,Unresolved,
+grok-3__2026-04-11T19-42-49,Grok 3,xAI,yes,no,I'll provide a proof skeleton for the remaining five cases in the `measure_decreases` theorem from the provided Lean 4 file.,,Incorrect,Incorrect,Incorrect,
+grok-3__2026-04-11T19-42-55,Grok 3,xAI,partial,no,"These skeletons should guide the completion of the proofs by focusing on whether `kappa` decreases (triggering `drop_left`) or ties, in which case `mu` must decrease (triggering `drop_right`).",,Unresolved,Incorrect,Unresolved,
+grok-4-0709__2026-03-18T13-21-19,Grok 4,xAI,partial,no,"Complete the proofs by filling in details (e.g., arithmetic, lemmas).",,Unresolved,Incorrect,Unresolved,
+grok-4-0709__2026-03-18T19-07-51,Grok 4,xAI,yes,no,"They are not full proofs but outlines with the core structure and steps—fill in any gaps (e.g., with additional `simp` lemmas or arithmetic proofs) as needed.",,Incorrect,Incorrect,Incorrect,
+grok-4-0709__2026-04-10T17-41-24,Grok 4,xAI,yes,no,"Complete the proofs by filling in any gaps (e.g., via cases or additional arithmetic).",,Incorrect,Incorrect,Incorrect,
+grok-4-0709__2026-04-10T17-41-40,Grok 4,xAI,partial,no,"I've included key lemmas and conditions to prove the lexicographic decrease, but left tactical details (e.g., exact `simp` or `omega` invocations) as placeholders for completion.",,Unresolved,Incorrect,Unresolved,
+grok-4-1-fast-reasoning__2026-03-18T13-24-50,Grok 4.1 Fast (reasoning),xAI,yes,no,"Replace each `sorry` with the corresponding tactic proof above. These leverage `simp`, `omega`, and basic `Nat` arithmetic to establish strict decreases in `(kappa, mu)`.",,Incorrect,Incorrect,Incorrect,
+grok-4-1-fast-reasoning__2026-04-10T17-41-44,Grok 4.1 Fast (reasoning),xAI,yes,no,"Replace each `sorry` with the corresponding proof tactic block. All cases now use `simp`, `omega`, `by_cases`, and the provided lemmas `drop_left`/`drop_right` for lexicographic decrease.",,Incorrect,Incorrect,Incorrect,
+grok-4-1-fast-reasoning__2026-04-10T17-41-52,Grok 4.1 Fast (reasoning),xAI,yes,no,"Replace each `sorry` in `theorem measure_decreases` with the corresponding proof above. These proofs use `simp`, `omega` (for arithmetic), and the existing `drop_left`/`drop_right` lemmas.",,Incorrect,Incorrect,Incorrect,
+grok-4-1-fast-reasoning__2026-04-11T19-43-17,Grok 4.1 Fast (reasoning),xAI,yes,no,kappa drops to 0 or ties and mu drops by 1 + mu(t),,Incorrect,Incorrect,Incorrect,
+grok-4-fast-reasoning__2026-03-19T13-35-42,Grok 4 Fast (reasoning),xAI,partial,no,"Below is a skeleton for each remaining case, with key measure computations and proof structure (replace `sorry` with the indicated steps).",,Unresolved,Incorrect,Unresolved,completion_claim
+grok-4-fast-reasoning__2026-03-19T13-36-00,Grok 4 Fast (reasoning),xAI,yes,no,"Replace each `sorry` in `measure_decreases` with the following proofs. These use the existing `drop_left` and `drop_right` lemmas, simp rules, and basic tactics (e.g., `cases`, `simp`, `omega` for arithmetic). No new definitions or imports are needed.",,Incorrect,Incorrect,Incorrect,
+grok-4-fast-reasoning__2026-04-10T17-41-56,Grok 4 Fast (reasoning),xAI,yes,no,"After insertion, the full theorem should type-check and prove strong normalization.",,Incorrect,Incorrect,Incorrect,
+grok-4-fast-reasoning__2026-04-10T17-42-05,Grok 4 Fast (reasoning),xAI,yes,no,"After inserting, the proofs should type-check with `simp` and `omega` (from Mathlib) handling arithmetic.",,Incorrect,Incorrect,Incorrect,
+grok-4.20-0309-reasoning__2026-04-11T19-43-38,Grok 4.20 Reasoning,xAI,partial,yes,"-- mu of RHS vs LHS differs by 1 + μ(s); when κ equal this requires the nested-delta
+      -- structure of n to be accounted for in a refined measure or auxiliary lemma on n","when κ equal this requires the nested-delta
+      -- structure of n to be accounted for in a refined measure or auxiliary lemma on n",Unresolved,Correct,Unresolved,
+grok-4.20-0309-reasoning__2026-04-11T19-43-54,Grok 4.20 Reasoning,xAI,yes,no,The full `strong_normalization` theorem will then be constructible from `measure_decreases` without further changes.,,Incorrect,Incorrect,Incorrect,
+grok-4.20-0309-reasoning__2026-04-11T19-44-25,Grok 4.20 Reasoning,xAI,yes,no,The resulting `measure_decreases` theorem will then allow `strong_normalization` to close without further changes.,,Incorrect,Incorrect,Incorrect,
+grok-4.20-0309-reasoning__2026-04-13T21-05-28,Grok 4.20 Reasoning,xAI,yes,no,These complete the `measure_decreases` theorem. The final `strong_normalization` proof (which relies on it) will then go through without further changes.,,Incorrect,Incorrect,Incorrect,
+grok-code-fast-1__2026-03-19T13-36-12,Grok Code Fast 1,xAI,partial,no,"Below is a proof skeleton for the five remaining `sorry` cases. Each skeleton outlines the key inequalities to prove (based on the measure definitions and simp lemmas), the reasoning for whether `kappa` decreases or ties, and which drop lemma to apply. The actual proofs would involve arithmetic simplifications",,Unresolved,Incorrect,Unresolved,
+grok-code-fast-1__2026-03-19T13-36-28,Grok Code Fast 1,xAI,yes,no,"This skeleton provides the logical structure and key inequalities for each case, ensuring the lexicographic order decreases. You can fill in the details by expanding the `simp` and `omega` calls as needed for full proofs.",,Incorrect,Incorrect,Incorrect,
+grok-code-fast-1__2026-04-10T17-42-23,Grok Code Fast 1,xAI,yes,no,"For each of the five remaining `sorry` cases in the `measure_decreases` theorem, the proof skeleton follows the same pattern as the three completed cases",,Incorrect,Incorrect,Incorrect,
+grok-code-fast-1__2026-04-10T17-42-37,Grok Code Fast 1,xAI,yes,no,the proof skeleton below shows how to establish the lexicographic decrease,,Incorrect,Incorrect,Incorrect,
+o3__2026-03-18T13-13-23,O3,OpenAI,partial,no,Below is a compact “fill-in-the-blanks” outline for the five remaining rule cases.,,Unresolved,Incorrect,Unresolved,
+o3__2026-03-18T19-00-01,O3,OpenAI,yes,no,"Each branch now contains the necessary structure; you only need to fill in any missing arithmetic lemmas (`simp`, `omega`, or small `Nat` facts) to turn the comments into fully-checked proofs.",,Incorrect,Incorrect,Incorrect,
+o3__2026-04-10T17-42-40,O3,OpenAI,partial,no,"With these placeholders filled, all eight primitive rules are covered, and `measure_decreases` will compile without `sorry`.",,Unresolved,Incorrect,Unresolved,
+o3__2026-04-11T19-42-18,O3,OpenAI,partial,no,"Below is a minimal skeleton—just enough structure and lemmas—to replace the five remaining `sorry` placeholders.  It shows the key tactics (mostly `simp`, `omega`/`nat_arith`, or small rewrites) you will need, but leaves the delicate arithmetic or equalities for you to fill in.",,Unresolved,Incorrect,Unresolved,
+qwen3-max-thinking__2026-03-18T13-18-49,Qwen3 Max Thinking,Alibaba,partial,no,The skeleton provides the logical structure and key insights needed for each case while following the established proof pattern in the file.,,Unresolved,Incorrect,Unresolved,
+qwen3-max-thinking__2026-03-18T19-06-14,Qwen3 Max Thinking,Alibaba,partial,no,sorry -- This equality needs to be proven,,Unresolved,Incorrect,Unresolved,
+qwen3-max-thinking__2026-04-10T17-43-11,Qwen3 Max Thinking,Alibaba,partial,no,I'll help you provide a proof skeleton for completing the remaining cases,,Unresolved,Incorrect,Unresolved,
+qwen3-max-thinking__2026-04-10T17-43-20,Qwen3 Max Thinking,Alibaba,partial,no,"The key insight is that all remaining cases maintain the same `kappa` value (no recursion depth change) while strictly decreasing the structural size measure `mu`. This follows the same pattern as the three completed cases, making `drop_right` the appropriate lemma to use in each case.",,Unresolved,Incorrect,Unresolved,completion_claim

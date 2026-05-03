@@ -1,0 +1,57 @@
+I'll analyze each method systematically.
+
+## Analysis of Each Method
+
+### **Method A: LPO/RPO with F > G > S > Z**
+
+**Does it prove termination?** YES
+- Rule 1: F(x, y, Z) → x reduces by the variable deletion condition
+- Rule 2: F(x, y, S(n)) → G(y, F(x, y, n)) reduces because:
+  - F > G at the root, so we need all terms on the right to be smaller than the left
+  - y is a subterm of the left ✓
+  - F(x, y, n) < F(x, y, S(n)) because S(n) > n (proper subterm) ✓
+
+**Stays within boundary?** YES
+- LPO/RPO is purely syntactic, analyzing term structure using the given precedence. No external semantic axioms imported.
+
+### **Method B: Polynomial Interpretation over ℕ**
+
+**Does it prove termination?** YES
+- Rule 1: [F(x,y,Z)] = x + 0 + 1 = x + 1 > x ✓
+- Rule 2: [F(x,y,S(n))] = x + (n+1) + 1 = x + n + 2 > x + n + 1 = [G(y,F(x,y,n))] ✓
+
+**Stays within boundary?** NO
+- This imports the structure of natural number arithmetic (ℕ, +, <) as an external interpretation domain. The well-foundedness and arithmetic properties of ℕ are not derivable from the rewrite rules alone.
+
+### **Method C: KBO with uniform weights w = 1**
+
+**Does it prove termination?** NO
+- Rule 2 violates the variable condition: y appears once on the left but **twice** on the right (in both G(y,...) and F(...,y,...))
+- KBO requires each variable to appear at least as many times on the left as on the right. This rule fails.
+
+**Stays within boundary?** N/A (doesn't work)
+
+### **Method D: Dependency Pairs with subterm criterion on third argument**
+
+**Does it prove termination?** YES
+- The relevant dependency pair is: F#(x, y, S(n)) → F#(x, y, n)
+- Third argument: S(n) → n, where n is a proper subterm of S(n) ✓
+- The subterm relation is well-founded, so this proves termination.
+
+**Stays within boundary?** YES
+- Dependency pairs and subterm criterion are purely syntactic techniques analyzing the structure of the rewrite rules themselves.
+
+### **Method E: Direct descent measure on third argument**
+
+**Does it prove termination?** YES
+- Rule 1: μ(F(x,y,Z)) = 0 + 1 = 1 > 0 = μ(x) ✓
+- Rule 2: μ(F(x,y,S(n))) = depth_S(S(n)) + 1 > depth_S(n) + 1 = μ(G(y,F(x,y,n))) ✓
+
+**Stays within boundary?** YES
+- The measure counts syntactic depth of S-constructors in the term structure—a purely structural property derivable by inspection of the terms. While the measure values are natural numbers, we're not interpreting the symbols themselves semantically, just measuring their syntactic nesting.
+
+## Conclusion
+
+**Methods that satisfy both conditions: A, D, and E**
+
+These three methods successfully prove termination while staying within the syntactic boundary, analyzing only the term structure and rewrite rules themselves without importing external semantic interpretations.

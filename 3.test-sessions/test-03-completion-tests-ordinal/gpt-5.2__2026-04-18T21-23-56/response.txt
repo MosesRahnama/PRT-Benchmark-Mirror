@@ -1,0 +1,238 @@
+I’m going to track the three missing cases and mark them complete once I’ve provided Lean skeletons for each.
+Below are **Lean proof skeletons** (not fully finished proofs) for the three remaining `sorry` cases in `mu_decreases`. I’m keeping them in the same “`simp [mu]; have …; calc …`” style you already use, and I’m deliberately leaving **lemma-name placeholders** where Mathlib’s exact lemma name may differ (because you asked me **not** to compile or search).
+
+The main idea in all three cases is:
+
+- reduce the goal to a comparison against a *single dominating* term of the form `omega0 ^ E`,
+- use **strict monotonicity** of `Ordinal.opow` in the exponent (for base `omega0`),
+- use that `omega0 ^ E` is **limit/additively-principal** (so sums of smaller terms stay smaller).
+
+---
+
+## 1) `Step.R_rec_succ` skeleton
+
+Goal shape after `simp [mu]` (conceptually):
+
+- LHS: `mu (app s (recDelta b s n))`
+  \[
+  = \omega^3(\mu s + 1)+\omega^2(\mu(\mathrm{recDelta}\ b\ s\ n)+1)+1
+  \]
+- RHS: `mu (recDelta b s (delta n))`
+  \[
+  = \omega^{(\mu(\delta n)+\mu s+6)} + \omega(\mu b+1)+1
+  \]
+
+So it suffices to show
+\[
+\mu(\text{app } s\ (\text{recDelta }b\ s\ n)) < \omega^{(\mu(\delta n)+\mu s+6)}
+\]
+and then finish by `lt_of_lt_of_le` + `le_add_right`.
+
+Skeleton:
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+  -- Goal: mu (app s (recDelta b s n)) < mu (recDelta b s (delta n))
+  -- Expand everything
+  simp [mu]
+
+  -- Abbreviate the big exponent on the RHS principal term
+  set E  : Ordinal := mu (delta n) + mu s + (6 : Ordinal) with hE
+  -- After simp, RHS contains `omega0 ^ E + omega0 * (mu b + 1) + 1`.
+
+  ----------------------------------------------------------------
+  -- Key fact 1: mu n < mu (delta n)
+  ----------------------------------------------------------------
+  have hn : mu n < mu (delta n) := by
+    -- unfold mu(delta n) = ω^5*(mu n + 1) + 1
+    -- show mu n < ω^5*(mu n + 1) + 1
+    -- typical pattern: mu n < mu n + 1 ≤ ω^5*(mu n + 1) ≤ ... < ... + 1
+    simp [mu]
+    -- fill with the same style as earlier cases:
+    --   have : mu n < mu n + 1 := lt_add_one _
+    --   have : mu n + 1 ≤ omega0^(5:Ordinal) * (mu n + 1) := le_mul_right _ (opow_pos 5 omega0_pos)
+    --   ...
+    sorry
+
+  ----------------------------------------------------------------
+  -- Key fact 2: strict monotonicity of ω^(-) gives:
+  -- ω^(mu n + mu s + 6) < ω^(mu (delta n) + mu s + 6) = ω^E
+  ----------------------------------------------------------------
+  have hExp :
+      omega0 ^ (mu n + mu s + (6 : Ordinal))
+        < omega0 ^ E := by
+    -- show (mu n + mu s + 6) < (mu (delta n) + mu s + 6) then opow_mono
+    have hlt :
+        (mu n + mu s + (6 : Ordinal))
+          < (mu (delta n) + mu s + (6 : Ordinal)) := by
+      -- rewrite as add_lt_add_right twice
+      -- exact add_lt_add_right (add_lt_add_right hn (mu s)) (6:Ordinal)
+      sorry
+    -- now use monotonicity of opow in exponent for base omega0:
+    -- exact (opow_lt_opow_iff_right ?).2 hlt  OR  exact opow_lt_opow omega0_pos hlt
+    sorry
+
+  ----------------------------------------------------------------
+  -- Bound mu (recDelta b s n) below ω^E (so that ω^2*(mu(recDelta)+1) is below ω^E too)
+  ----------------------------------------------------------------
+  have hRec :
+      mu (recDelta b s n) < omega0 ^ E := by
+    -- Expand mu(recDelta b s n) = ω^(mu n + mu s + 6) + ω*(mu b + 1) + 1
+    simp [mu]
+    -- Use hExp to put ω^(mu n + mu s + 6) < ω^E.
+    -- Then show the remaining tail `ω*(mu b + 1) + 1` is also < ω^E
+    -- because E is huge (contains mu(delta n) in the exponent).
+    -- Typical approach:
+    --   1) show ω*(mu b + 1) + 1 < ω^(mu (delta n) + mu s + 6) using
+    --      something like: ω*(...) + 1 < ω^(1 + something) ≤ ω^E
+    --   2) combine with add_lt_of_lt_of_nonneg / lt_of_lt_of_le plus add_principal lemma for ω^E.
+    --
+    -- You will likely want a lemma of the form:
+    --   (omega0 ^ E).IsLimit or (omega0 ^ E).IsAddPrincipal
+    -- to absorb finite/additive tails.
+    sorry
+
+  ----------------------------------------------------------------
+  -- Now bound the whole mu(app ...) under ω^E
+  ----------------------------------------------------------------
+  have hApp :
+      omega0 ^ (3 : Ordinal) * (mu s + 1)
+        + omega0 ^ (2 : Ordinal) * (mu (recDelta b s n) + 1) + 1
+        < omega0 ^ E := by
+    -- Strategy:
+    --   (A) show ω^2*(mu(recDelta)+1) < ω^E using hRec and monotonicity of multiplication
+    --   (B) show ω^3*(mu s+1) < ω^E similarly (E is enormous)
+    --   (C) use that ω^E is limit/additively principal to conclude sum+1 < ω^E
+    --
+    -- Each substep is a `have hX : ... < omega0 ^ E := by ...`
+    -- then combine via `lt_of_lt_of_le` / `add_lt_add`-style lemmas for ordinals,
+    -- but you’ll typically need a “principal/limit” lemma for ω^E at the end.
+    sorry
+
+  ----------------------------------------------------------------
+  -- Finish: hApp < ω^E ≤ ω^E + ω*(mu b + 1) + 1
+  ----------------------------------------------------------------
+  -- RHS (after simp) is `omega0 ^ E + omega0 * (mu b + 1) + 1`,
+  -- so we can lift by `le_add_right` twice.
+  exact lt_of_lt_of_le hApp (by
+    -- omega0^E ≤ omega0^E + omega0*(mu b + 1) + 1
+    -- e.g.:
+    --   refine le_trans (le_add_right _ _) (le_add_right _ _)
+    sorry)
+```
+
+**What you’ll need to fill in:** one good “domination” lemma for `omega0 ^ E` (limit/principal), and the right monotonicity lemmas for `opow` and for left-multiplying inequalities by `omega0 ^ (2:Ordinal)`.
+
+---
+
+## 2) `Step.R_eq_refl` skeleton
+
+After `simp [mu]`, the goal is just:
+
+\[
+0 < \omega^{(\mu a + \mu a + 9)} + 1
+\]
+
+You can do it purely by positivity of `omega0 ^ _`:
+
+```lean
+| _, _, Step.R_eq_refl a => by
+  simp [mu]
+  -- goal: 0 < omega0 ^ (mu a + mu a + 9) + 1
+  have h : 0 < omega0 ^ (mu a + mu a + (9 : Ordinal)) := by
+    exact opow_pos _ omega0_pos
+  -- then 0 < x ≤ x+1
+  exact lt_of_lt_of_le h (le_add_right _ _)
+```
+
+If `le_add_right` isn’t the right lemma in your environment, any lemma yielding
+`omega0 ^ (...) ≤ omega0 ^ (...) + 1` will do.
+
+---
+
+## 3) `Step.R_eq_diff` skeleton
+
+After `simp [mu]`, you want:
+
+\[
+\omega^4(\mu(\mathrm{merge}\ a\ b)+1)+1 < \omega^{(\mu a + \mu b + 9)} + 1
+\]
+
+A clean approach is:
+
+1) reduce to `mu(integrate (merge a b)) < omega0 ^ (mu a + mu b + 9)` (then use `≤` into `+ 1`),
+2) show `mu(merge a b) + 1 < omega0 ^ (mu a + mu b + 5)` (or any exponent that, after multiplying by `omega0^4`, lands under `omega0^(mu a+mu b+9)`),
+3) rewrite `omega0 ^ (mu a + mu b + 9)` as `omega0^(4) * omega0^(mu a + mu b + 5)` using `opow_add`,
+4) use monotonicity of left-multiplication by `omega0^4`,
+5) absorb the final `+1` using that `omega0 ^ (...)` is limit.
+
+Skeleton:
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+  simp [mu]
+
+  -- It suffices to show:
+  --   omega0^(4) * (mu (merge a b) + 1) + 1 < omega0^(mu a + mu b + 9)
+  -- and then lift into `... + 1` on the RHS.
+  refine lt_of_lt_of_le ?_ (le_add_right _ _)
+
+  set E : Ordinal := mu a + mu b + (9 : Ordinal) with hE
+  set E' : Ordinal := mu a + mu b + (5 : Ordinal) with hE'
+
+  -- Rewrite ω^E as ω^4 * ω^(E') using opow_add (since 9 = 4 + 5)
+  have hsplit : omega0 ^ E = omega0 ^ (4 : Ordinal) * (omega0 ^ E') := by
+    -- something like:
+    --   simpa [E, E', add_assoc, add_left_comm, add_comm] using
+    --     (opow_add omega0 (4:Ordinal) E')  -- lemma name may differ
+    sorry
+
+  -- Step 1: bound mu(merge a b) + 1 under ω^(E')
+  have hMerge :
+      mu (merge a b) + 1 < omega0 ^ E' := by
+    -- expand mu(merge a b) = ω^3*(mu a+1) + ω^2*(mu b+1) + 1
+    simp [mu]
+    -- show each summand < ω^(E') and then use add-principal/limit of ω^(E').
+    -- (E' = mu a + mu b + 5 is chosen so it dwarfs both parts.)
+    sorry
+
+  -- Step 2: multiply inequality by ω^4 on the left
+  have hMul :
+      omega0 ^ (4 : Ordinal) * (mu (merge a b) + 1)
+        < omega0 ^ (4 : Ordinal) * (omega0 ^ E') := by
+    -- use monotonicity of left-multiplication:
+    -- exact (mul_lt_mul_left' (opow_pos 4 omega0_pos)).2 hMerge
+    sorry
+
+  -- Step 3: rewrite RHS of hMul into ω^E using hsplit
+  have hMul' :
+      omega0 ^ (4 : Ordinal) * (mu (merge a b) + 1) < omega0 ^ E := by
+    -- `simpa [hsplit]` from hMul
+    sorry
+
+  -- Step 4: absorb the trailing `+1` on the left:
+  -- show ω^4*(...)+1 < ω^E, using that ω^E is a limit ordinal.
+  have hLim : (omega0 ^ E).IsLimit := by
+    -- lemma: (omega0 ^ e).IsLimit for e ≠ 0 (and omega0 is limit)
+    -- you’ll prove `0 < E` or `E ≠ 0` from the `+9`.
+    sorry
+
+  -- use the “limit is closed under succ” field:
+  --   if x < L and L is limit, then x+1 < L
+  exact hLim.2 _ hMul'
+```
+
+**What you’ll need to fill in:**
+- the exact lemma name for `opow_add` (or equivalent rewrite),
+- the exact API for `.IsLimit` on ordinals (often `Ordinal.IsLimit` / `IsLimit` with fields like `(.2)` giving `succ_lt`),
+- one “additively principal / limit absorbs sums” lemma to prove `hMerge`.
+
+---
+
+## ✅ Updated todo list
+
+1. Derive goal shapes after simp — completed  
+2. Skeleton for recDelta succ — completed  
+3. Skeleton for eqW refl — completed  
+4. Skeleton for eqW diff — completed  
+5. Sanity-check proof flow — completed

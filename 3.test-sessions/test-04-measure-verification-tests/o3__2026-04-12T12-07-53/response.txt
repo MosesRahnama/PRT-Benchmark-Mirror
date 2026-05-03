@@ -1,0 +1,30 @@
+The proposed measure  
+
+ measure (t) = ( phase t, cost t ) ∈ ℕ × ℕ,  
+ordered by the usual left-to-right (lexicographic) comparison on natural numbers, is **not sound** for the relation `Step`.
+
+Counter-example (rule `R_merge_void_left`).  
+Let  
+
+ u := recDelta b s (delta n) —for any terms b, s, n.
+
+Before the step  
+ t = merge void u
+
+ phase t = 0,     cost t = 1 + cost u.
+
+After the step  
+ t′ = u
+
+ phase t′ = 1 (because the third argument of `recDelta` is a `delta`),  
+ cost t′ = cost u.
+
+Hence  
+
+ measure t = (0, 1 + cost u)  
+ measure t′ = (1, cost u)
+
+and measure t′ ≮ measure t in the lexicographic order (the first component actually increases).  
+The same problem appears for `R_merge_void_right` and `R_rec_zero`.
+
+Because there exist steps where the measure does not strictly decrease, the calculus is **not proven terminating by this measure**. A sound termination measure must avoid such phase increases—e.g., by redefining `phase` so that every rule either leaves it unchanged or lowers it.

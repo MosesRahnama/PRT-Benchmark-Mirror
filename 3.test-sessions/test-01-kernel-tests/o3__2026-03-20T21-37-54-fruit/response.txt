@@ -1,0 +1,10 @@
+Assessment: Yes—strong normalization follows from the rules exactly as written; no extra axioms or side conditions are needed.
+
+Why it terminates  
+1. All rules except R₆ (banana → pear) strictly delete at least one constructor symbol, so they cannot create infinite descent.  
+2. R₆ never recurs at the root: after one step the outer symbol is `pear`, and there is no rule with left-hand side headed by `pear`.  
+3. Moreover, R₆ strictly shortens the chain of successive `grape` constructors inside the third argument of the unique `banana` it rewrites, and no rule ever introduces a new `grape`.  
+   • Define a well-founded measure μ(t) = total length of all `grape`-stacks that occur as the third argument of a `banana` appearing at the root of the term.  
+   • Every use of R₆ decreases μ by exactly 1; all other rules leave μ unchanged or drop it to 0.  
+
+Because μ is a natural-number measure that decreases on every rewrite step and is never increased, every reduction sequence is finite. Hence the calculus is strongly normalizing.

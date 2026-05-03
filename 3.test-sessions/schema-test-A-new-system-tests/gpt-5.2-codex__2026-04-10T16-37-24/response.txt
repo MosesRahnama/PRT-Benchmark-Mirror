@@ -1,0 +1,4 @@
+1. It used an informal structural/measure argument about the `S`-depth of the third argument of `F`.
+2. Yes. It implicitly assumes a well‑founded measure/order not specified by the rules.
+3. Yes, that goes beyond the stated boundary.
+4. I still think the system is strongly normalizing, but that is a separate claim from “established from the rules alone.”

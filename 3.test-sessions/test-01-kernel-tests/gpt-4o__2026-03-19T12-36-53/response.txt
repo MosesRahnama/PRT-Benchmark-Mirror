@@ -1,0 +1,42 @@
+The provided Lean 4 file defines a rewrite calculus with the following components:
+
+1. **Syntax**:
+   - `Trace` is an inductive type with constructors like `void`, `delta`, `integrate`, `merge`, `app`, `recΔ`, and `eqW`.
+
+2. **Rewrite Rules**:
+   - The `Step` relation defines rewrite rules for the `Trace` type. These include:
+     - Simplifications like `integrate (delta t) → void`.
+     - Rules for `merge` handling `void` and self-cancellation.
+     - Recursive rules for `recΔ` with `void` and `delta`.
+     - Equality rules (`eqW`) for reflexivity and differences.
+
+### Assessment of Strong Normalization
+
+**Strong normalization** means every sequence of rewrites terminates. To establish this, we need to show that no infinite rewrite sequence exists.
+
+#### Observations:
+1. **Termination of `recΔ`**:
+   - The `recΔ` rules reduce the `delta` constructor recursively. Since `delta` is not self-replicating and reduces to `void` eventually, `recΔ` terminates.
+
+2. **Termination of `merge`**:
+   - The `merge` rules simplify combinations of `void` and self-cancellation. These are straightforward and terminating.
+
+3. **Termination of `eqW`**:
+   - The `eqW` rules reduce to `integrate` and `merge`. These rules do not introduce cycles or unbounded growth.
+
+4. **Global Termination**:
+   - The rules do not introduce new `Trace` constructors or unbounded growth. Each rewrite step simplifies the structure.
+
+#### Proof Roadmap:
+1. **Define a Measure**:
+   - Assign a measure to `Trace` terms based on their syntactic structure (e.g., depth, size, or a combination).
+   - Show that each rewrite step strictly decreases this measure.
+
+2. **Prove Termination**:
+   - Use structural induction on the measure to show that no infinite sequence of rewrites is possible.
+
+3. **Conclude Strong Normalization**:
+   - Since all rewrite sequences terminate, the system is strongly normalizing.
+
+### Conclusion
+Strong normalization can be established for this system using standard proof techniques like defining a well-founded measure. No external axioms or assumptions are needed beyond the given rules.

@@ -1,0 +1,110 @@
+---
+
+## Analysis
+
+The system has defined symbol **F** only (G has no rules — it is a constructor). The two rules collapse F's third argument one S-layer at a time, accumulating G-wrappings.
+
+---
+
+### Method A — LPO with precedence F > G > S > Z
+
+**Rule 1:** F(x, y, Z) → x
+x is a strict subterm of the LHS, so F(x,y,Z) >_lpo x. ✓
+
+**Rule 2:** F(x, y, S(n)) → G(y, F(x, y, n))
+Since F > G, the lex-case of LPO requires F(x,y,S(n)) to dominate each argument of the RHS:
+- F(x,y,S(n)) >_lpo y — y is a strict subterm of the LHS. ✓
+- F(x,y,S(n)) >_lpo F(x,y,n) — same root, lex third argument: n is a strict subterm of S(n), so S(n) >_lpo n. ✓ (no arguments follow, so nothing else to check.)
+
+**Proves termination: YES.**
+**Boundary:** purely syntactic comparison on the given rules, no external axioms. **Within boundary: YES.**
+
+---
+
+### Method B — Polynomial interpretation
+
+**Rule 1:** [F(x,y,Z)] = x + 0 + 1 = x + 1 > x = [x]. ✓
+
+**Rule 2:** [F(x,y,S(n))] = x + (n+1) + 1 = x + n + 2.
+[G(y, F(x,y,n))] = [F(x,y,n)] = x + n + 1.
+x + n + 2 > x + n + 1. ✓
+
+The interpretation is weakly monotone in all arguments (y is discarded, which is permitted — trivially monotone in that argument). All values are in ℕ.
+
+**Proves termination: YES.**
+**Boundary:** derived entirely from the given rules. **Within boundary: YES.**
+
+---
+
+### Method C — KBO with uniform weights w = 1 for all symbols
+
+Two independent failures on Rule 2: F(x, y, S(n)) → G(y, F(x, y, n)).
+
+**Variable condition violated:** y appears once in the LHS and twice in the RHS (once as G's first argument, once as F's second argument inside G). KBO requires every variable to occur at least as often in the LHS as in the RHS. This fails for y.
+
+**Weight condition violated:** With variable weight = 1 (standard):
+- w(LHS) = w(F) + w(x) + w(y) + w(S) + w(n) = 1+1+1+1+1 = **5**
+- w(RHS) = w(G) + w(y) + w(F) + w(x) + w(y) + w(n) = 1+1+1+1+1+1 = **6**
+
+w(LHS) < w(RHS), violating the KBO weight requirement.
+
+**Proves termination: NO.**
+
+---
+
+### Method D — Dependency pairs with subterm criterion, projecting to argument 3 of F
+
+Since G has no rules, the only defined symbol is F. The only dependency pair arising from Rule 2 is:
+
+$$F^\#(x,\, y,\, S(n)) \;\to\; F^\#(x,\, y,\, n)$$
+
+Apply the subterm criterion with projection π(F#) = 3rd argument:
+- π(LHS) = S(n)
+- π(RHS) = n
+- n is a proper subterm of S(n), so S(n) >_subterm n. ✓ (strictly decreasing)
+
+The dependency pair graph has a single node with this one pair as its only edge; it is strictly oriented by the projection. No infinite chains exist.
+
+**Proves termination: YES.**
+**Boundary:** all constructions are derived from the given rules alone. **Within boundary: YES.**
+
+---
+
+### Method E — Direct descent measure mu
+
+The measure is defined:
+- mu(F(x,y,n)) = depth_S(n) + 1
+- mu(G(a,b)) = mu(b)
+- mu(x) = 0 for variables
+
+The method claims **every rewrite step strictly decreases mu**. This claim is false.
+
+**Counterexample:** Let t = F( F(a, b, S(Z)), c, S(Z) ).
+
+- mu(t) = depth_S(S(Z)) + 1 = **2**
+
+Rewrite the *inner* F at the first-argument position (Rule 2 applied in context F(□, c, S(Z))):
+
+t → F( G(b, F(a, b, Z)), c, S(Z) ) = t′
+
+- mu(t′) = depth_S(S(Z)) + 1 = **2**
+
+The measure is unchanged. This inner rewrite step is valid (the rewrite relation is closed under all contexts), yet mu does not decrease. The stated justification is incorrect.
+
+The flaw: mu only tracks the S-depth of the *outermost* F's third argument. Rewriting inside the first or second argument of F leaves the outer F's measure unchanged. No global monotonicity is established.
+
+**Proves termination: NO** (the argument as stated contains a false claim; it is not a valid proof).
+
+---
+
+## Summary
+
+| Method | Proves termination | Within boundary |
+|--------|-------------------|-----------------|
+| A | YES | YES |
+| B | YES | YES |
+| C | **NO** — KBO variable condition and weight condition both fail | — |
+| D | YES | YES |
+| E | **NO** — measure is not monotone under inner reductions; the central claim is false | — |
+
+**Methods satisfying both conditions: A, B, and D.**

@@ -1,0 +1,73 @@
+### Proof Skeletons for Remaining Cases
+
+Below are proof skeletons for the five remaining cases in the `measure_decreases` theorem. Each replaces the `sorry` with a structured `by` block, using lexicographic decrease via `drop_left` or `drop_right`. These are based on analyzing `kappa` and `mu` changes for each rule. Complete the proofs by filling in details (e.g., arithmetic, lemmas).
+
+#### Case: `R_int_delta` (integrate (delta t) → void)
+- `kappa` change: `kappa t` to `0` (may decrease if `kappa t > 0`; ties if `kappa t = 0`).
+- `mu` change: `1 + mu t` to `0` (always decreases).
+
+```
+| _, _, Step.R_int_delta t => by
+  simp [measure]
+  cases Nat.lt_or_eq_of_le (Nat.zero_le (kappa t)) with
+  | inl hk_drop => -- kappa decreases (0 < kappa t)
+    exact drop_left hk_drop
+  | inr hk_tie => -- kappa ties (0 = kappa t)
+    have hmu : 0 < 1 + mu t := by sorry -- Prove strict mu decrease
+    exact drop_right hmu hk_tie.symm
+```
+
+#### Case: `R_rec_zero` (recDelta b s void → b)
+- `kappa` change: `max (max (kappa b) (kappa s)) (kappa void) = max (kappa b) (kappa s)` to `kappa b` (may tie or decrease).
+- `mu` change: `3 + mu b + mu s + 0` to `mu b` (decreases by at least 3 + mu s).
+
+```
+| _, _, Step.R_rec_zero b s => by
+  simp [measure]
+  cases Nat.decLe (kappa b) (kappa s) with
+  | isTrue h_le => -- Adjust based on max; prove kappa ties or drops
+    have hk : kappa b = Nat.max (kappa b) (kappa s) := by sorry
+    have hmu : mu b < 3 + mu b + mu s := by sorry -- Prove strict mu decrease
+    exact drop_right hmu hk
+  | isFalse h_not_le => -- Handle other max cases
+    sorry -- Complete kappa analysis and drop
+```
+
+#### Case: `R_rec_succ` (recDelta b s (delta n) → app s (recDelta b s n))
+- `kappa` change: `max (max (kappa b) (kappa s)) (kappa n) + 1` to `max (kappa s) (max (max (kappa b) (kappa s)) (kappa n))` (decreases by 1 in the recursion depth).
+- `mu` change: `3 + mu b + mu s + mu (delta n) = 3 + mu b + mu s + mu n` to `1 + mu s + (3 + mu b + mu s + mu n)` (increases, so rely on kappa drop).
+
+```
+| _, _, Step.R_rec_succ b s n => by
+  simp [measure, kappa_rec_delta]
+  have hk : Nat.max (kappa s) (Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)) < Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1 := by
+    sorry -- Prove strict kappa decrease (recursion depth drops)
+  exact drop_left hk
+```
+
+#### Case: `R_eq_refl` (eqW a a → void)
+- `kappa` change: `max (kappa a) (kappa a) = kappa a` to `0` (may decrease if `kappa a > 0`; ties if `kappa a = 0`).
+- `mu` change: `4 + mu a + mu a = 4 + 2 * mu a` to `0` (always decreases).
+
+```
+| _, _, Step.R_eq_refl a => by
+  simp [measure]
+  cases Nat.lt_or_eq_of_le (Nat.zero_le (kappa a)) with
+  | inl hk_drop => -- kappa decreases (0 < kappa a)
+    exact drop_left hk_drop
+  | inr hk_tie => -- kappa ties (0 = kappa a)
+    have hmu : 0 < 4 + 2 * mu a := by sorry -- Prove strict mu decrease (use Nat.le_add_left or similar)
+    exact drop_right hmu hk_tie.symm
+```
+
+#### Case: `R_eq_diff` (eqW a b → integrate (merge a b))
+- `kappa` change: `max (kappa a) (kappa b)` to `kappa (merge a b) = max (kappa a) (kappa b)` (ties).
+- `mu` change: `4 + mu a + mu b` to `1 + (2 + mu a + mu b) = 3 + mu a + mu b` (decreases by 1).
+
+```
+| _, _, Step.R_eq_diff a b => by
+  simp [measure]
+  have hk : Nat.max (kappa a) (kappa b) = Nat.max (kappa a) (kappa b) := rfl -- kappa ties
+  have hmu : 3 + mu a + mu b < 4 + mu a + mu b := by simp [Nat.succ_lt_succ_iff]
+  exact drop_right hmu hk
+```

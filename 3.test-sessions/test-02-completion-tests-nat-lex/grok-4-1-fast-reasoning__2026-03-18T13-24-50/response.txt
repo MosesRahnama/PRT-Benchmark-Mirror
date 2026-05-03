@@ -1,0 +1,42 @@
+```lean
+-- integrate (delta t) --> void
+| _, _, Step.R_int_delta t => by
+  have hmu : 0 < 1 + mu t := Nat.zero_lt_succ _
+  have hk  : kappa (integrate (delta t)) = kappa t := by simp [kappa]
+  by_cases ht : kappa t = 0
+  · rw [hk, ht]; exact drop_right (by simp [mu, hmu]) rfl
+  · rw [hk]; exact drop_left (Nat.lt_of_le_of_lt (by simp) (Nat.lt_of_not_le ht))
+
+-- recDelta b s void --> b
+| _, _, Step.R_rec_zero b s => by
+  have hmu : mu b < 3 + mu b + mu s := by simp [mu]; omega
+  have hk  : kappa b ≤ Nat.max (kappa b) (kappa s) := Nat.le_max_left _ _
+  by_cases hs : kappa s ≤ kappa b
+  · have : kappa b = Nat.max (kappa b) (kappa s) := Nat.max_eq_left hs
+    rw [←this]; exact drop_right hmu rfl
+  · have : kappa b < Nat.max (kappa b) (kappa s) := Nat.lt_max_of_lt_right (Nat.lt_of_not_le hs)
+    exact drop_left this
+
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+  simp only [measure, kappa, kappa_rec_delta, kappa_app]
+  have : Nat.max (kappa s) (Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)) < Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1 := by
+    apply Nat.lt_succ_of_le; apply Nat.max_le_max <;> simp [Nat.max_assoc]
+  exact Prod.Lex.left _ _ this
+
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+  have hmu : 0 < 4 + 2 * mu a := by simp [mu]; omega
+  have hk  : kappa (eqW a a) = kappa a := by simp [kappa]
+  by_cases ha : kappa a = 0
+  · rw [hk, ha]; exact drop_right (by simp [mu, hmu]) rfl
+  · rw [hk]; exact drop_left (Nat.lt_of_not_le ha)
+
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+  have hmu : 3 + mu a + mu b < 4 + mu a + mu b := by omega
+  have hk  : kappa (eqW a b) = kappa (integrate (merge a b)) := by simp [kappa]
+  exact drop_right (by simp [mu, hmu]) hk
+```
+
+Replace each `sorry` with the corresponding tactic proof above. These leverage `simp`, `omega`, and basic `Nat` arithmetic to establish strict decreases in `(kappa, mu)`. Verify with `lake exe lean --check` after insertion.

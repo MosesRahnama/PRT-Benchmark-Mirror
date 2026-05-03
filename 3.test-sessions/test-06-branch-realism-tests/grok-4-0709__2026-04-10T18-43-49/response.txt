@@ -1,0 +1,30 @@
+No, the helper strategy is not sound as written. The first theorem (`kappa_rec_delta_step`) does not hold for all traces `n`, and the second theorem (`kappa_rec_succ_drop`) claims a strict inequality that fails to hold in some cases. Below, I provide counterexamples with calculations based on the provided definitions of `Trace`, `Step`, and `kappa`. I assume zero `kappa` for base traces like `void` (i.e., `kappa b = 0`, `kappa s = 0`) to simplify, but the issues generalize.
+
+### Counterexample for `kappa_rec_delta_step`
+The theorem claims: `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`.
+
+- Let `n = delta void`.
+- Left side: `kappa (recDelta b s (delta (delta void)))`.
+  - Third arg is `delta (delta void)`, matching the `+1` case in `kappa`.
+  - `kappa (delta (delta void)) = kappa (delta void) = kappa void = 0`.
+  - So, `kappa = max(max(0, 0), 0) + 1 = 1`.
+- Right side: `kappa (recDelta b s (delta void)) + 1`.
+  - Third arg is `delta void`, matching the `+1` case in `kappa`.
+  - `kappa (delta void) = kappa void = 0`.
+  - So, `kappa (recDelta b s (delta void)) = max(max(0, 0), 0) + 1 = 1`.
+  - Right side: `1 + 1 = 2`.
+- `1 ≠ 2`, so the equality fails.
+
+This holds only if `n` is not of the form `delta m` (e.g., it works if `n = void`, yielding `1 = 0 + 1`).
+
+### Counterexample for `kappa_rec_succ_drop`
+The theorem claims: `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))` (intended for the `R_rec_succ` step).
+
+- Let `n = delta void`.
+- Right side: `kappa (recDelta b s (delta (delta void))) = 1` (as calculated above).
+- Left side: `kappa (app s (recDelta b s (delta void)))`.
+  - `kappa (recDelta b s (delta void)) = 1` (as calculated above).
+  - `kappa (app s ...) = max(kappa s, 1) = max(0, 1) = 1`.
+- `1 ≮ 1`, so the strict inequality fails (it's equal, not less).
+
+In cases where the first theorem holds (e.g., `n = void`), the inequality does hold (`0 < 1`). However, since the strategy relies on the first theorem (via `rw [kappa_rec_delta_step]`) and that theorem is false in general, the overall strategy for proving termination via decreasing `kappa` is unsound. The measure doesn't strictly decrease in all relevant `R_rec_succ` steps, which could allow non-termination if reduction can continue under contexts like `app` (though the provided `Step` lacks explicit congruence rules).

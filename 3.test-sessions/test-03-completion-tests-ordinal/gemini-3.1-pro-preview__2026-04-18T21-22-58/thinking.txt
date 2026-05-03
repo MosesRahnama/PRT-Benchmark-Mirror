@@ -1,0 +1,11 @@
+**Developing Proof Skeleton**
+
+I am now focusing on generating a proof skeleton to address the three outstanding cases marked `sorry`. My current thought process is to construct the necessary auxiliary lemmas and definitions that will allow for the completion of these specific cases without altering the existing file.
+
+**Constructing Proof Sketch**
+
+I am currently outlining the proof structure for the three remaining `sorry` tactics. My focus is on devising auxiliary lemmas that will bridge the gap to completion for each of these cases, ensuring they integrate seamlessly with the existing codebase without direct modification.
+
+**Completing `sorry` Cases**
+
+I am now generating a proof skeleton to address the three outstanding cases marked `sorry`. My focus is on creating auxiliary definitions and lemmas that will allow for their completion without modifying the existing code.

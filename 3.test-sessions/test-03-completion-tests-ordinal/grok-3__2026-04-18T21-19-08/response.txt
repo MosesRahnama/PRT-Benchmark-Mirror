@@ -1,0 +1,35 @@
+I'm happy to help with providing a proof skeleton for the remaining cases in the `mu_decreases` theorem from the provided Lean 4 file. I'll focus on the three cases marked with `sorry` and outline the necessary steps to complete the proofs without modifying the file or running the compiler.
+
+### Proof Skeleton for Remaining Cases in `mu_decreases`
+
+#### Case: `R_rec_succ b s n`
+- **Goal**: Show that `mu (app s (recDelta b s n)) < mu (recDelta b s (delta n))`.
+- **Approach**:
+  - Compute `mu` for both sides using the definitions provided.
+  - Left-hand side (LHS): `mu (app s (recDelta b s n)) = omega0 ^ 3 * (mu s + 1) + omega0 ^ 2 * (mu (recDelta b s n) + 1) + 1`.
+  - Right-hand side (RHS): `mu (recDelta b s (delta n)) = omega0 ^ (mu (delta n) + mu s + 6) + omega0 * (mu b + 1) + 1`.
+  - Since `mu (delta n) = omega0 ^ 5 * (mu n + 1) + 1`, the exponent in RHS becomes `omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6`, which is dominated by `omega0 ^ 5 * (mu n + 1)`.
+  - Compare the dominant terms: The RHS exponent is much larger than any term in LHS (which are bounded by exponents of 3 and 2 plus a nested exponent of `mu n + mu s + 6`).
+  - Use ordinal arithmetic properties to show that `omega0 ^ (omega0 ^ 5 * (mu n + 1) + ...)` is greater than any finite combination of smaller exponents.
+  - Conclude that LHS < RHS.
+
+#### Case: `R_eq_refl a`
+- **Goal**: Show that `mu void < mu (eqW a a)`, i.e., `0 < omega0 ^ (mu a + mu a + 9) + 1`.
+- **Approach**:
+  - Simplify the RHS to `omega0 ^ (2 * mu a + 9) + 1`.
+  - Note that any ordinal power of `omega0` is positive, and adding 1 keeps it positive.
+  - Use `Ordinal.pos_iff_ne_zero` to assert that the RHS is positive.
+  - Since LHS is 0, clearly 0 < RHS.
+
+#### Case: `R_eq_diff a b`
+- **Goal**: Show that `mu (integrate (merge a b)) < mu (eqW a b)`.
+- **Approach**:
+  - Compute `mu` for both sides.
+  - LHS: `mu (integrate (merge a b)) = omega0 ^ 4 * (mu (merge a b) + 1) + 1 = omega0 ^ 4 * (omega0 ^ 3 * (mu a + 1) + omega0 ^ 2 * (mu b + 1) + 1 + 1) + 1`.
+  - RHS: `mu (eqW a b) = omega0 ^ (mu a + mu b + 9) + 1`.
+  - Approximate LHS: The dominant term is roughly `omega0 ^ 4 * omega0 ^ 3 * (mu a + 1) = omega0 ^ 7 * (mu a + 1)`, plus smaller terms.
+  - Compare exponents: RHS has exponent `mu a + mu b + 9`, which needs to be shown larger than the effective exponent in LHS.
+  - Since `mu a + mu b + 9` is much larger than the combined exponents in LHS (7 plus smaller terms), argue that `omega0 ^ (mu a + mu b + 9)` dominates all terms in LHS.
+  - Use ordinal inequalities to establish that LHS < RHS.
+
+These skeletons provide the logical steps needed to complete the proofs. Each case relies on the properties of ordinal arithmetic, particularly the dominance of larger exponents in ordinal powers of `omega0`. If you need further assistance with the detailed Lean 4 syntax or specific ordinal arithmetic lemmas, let me know!

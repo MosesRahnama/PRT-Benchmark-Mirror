@@ -1,0 +1,25 @@
+Yes — **raw assessment: strong normalization is establishable from this calculus alone** (no extra object-level axioms needed).
+
+Reason in one line: none of the rules can generate an infinite rewrite loop; the only “recursive-looking” rule
+`banana b s (grape n) → pear s (banana b s n)`
+strictly peels one `grape` layer from the third argument each time.
+
+A short in-bound roadmap:
+
+1. Fix the rewrite relation as the one induced by the listed rules (root-only or contextual closure, whichever your setup uses).
+2. Use a standard well-founded ordering (e.g., recursive path ordering / LPO) with precedence making `banana` dominate `pear`, and with subterm property.
+3. Check each rule decreases:
+   - `peach ... → ...`, `banana ... plum → b`, `cherry a a → plum`: direct subterm/constant decrease.
+   - `mango (grape t) → plum`: strict collapse.
+   - `cherry a b → mango (peach a b)`: top symbol drops from `cherry` to `mango`.
+   - `banana b s (grape n) → pear s (banana b s n)`: strict descent via peeled argument (`grape n > n`) plus lower outer symbol (`pear`).
+4. Conclude well-founded descent for every step, hence SN.
+
+If you interpret `Step` **strictly as root-only** (as written), SN is even more immediate/trivial.
+
+## Updated checklist
+
+- [x] Read target Lean file  
+- [x] Extract rewrite rules precisely  
+- [x] Assess termination possibility  
+- [x] Provide bounded proof roadmap

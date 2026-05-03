@@ -1,0 +1,96 @@
+Looking at this Lean 4 file, I can see it's a strong normalization proof for a first-order rewrite calculus using a lexicographic measure combining recursion depth (`kappa`) and weighted structural size (`mu`). Three of the eight rule cases are already proved, and five remain with `sorry`.
+
+Here's a proof skeleton for completing the remaining cases:
+
+## Case Analysis for Remaining Rules
+
+### 1. `R_int_delta`: `integrate (delta t) → void`
+
+```lean
+-- integrate (delta t) --> void
+| _, _, Step.R_int_delta t => by
+    -- Left: kappa = kappa(t), mu = 1 + mu(t)  
+    -- Right: kappa = 0, mu = 0
+    by_cases h : kappa t = 0
+    · -- When kappa(t) = 0: kappa ties, mu drops
+      have hmu : mu void < mu (integrate (delta t)) := by simp [mu]
+      have hk : kappa void = kappa (integrate (delta t)) := by simp [kappa]; exact h
+      exact drop_right hmu hk
+    · -- When kappa(t) > 0: kappa drops strictly  
+      have hk : kappa void < kappa (integrate (delta t)) := by
+        simp [kappa]; exact Nat.pos_iff_ne_zero.mpr h
+      exact drop_left hk
+```
+
+### 2. `R_rec_zero`: `recDelta b s void → b`
+
+```lean
+-- recDelta b s void --> b
+| _, _, Step.R_rec_zero b s => by
+    -- Left: kappa = max(kappa(b), kappa(s)), mu = 3 + mu(b) + mu(s)
+    -- Right: kappa = kappa(b), mu = mu(b)  
+    -- kappa can only decrease/tie, mu drops by at least 3 + mu(s) ≥ 3
+    by_cases h : kappa b = kappa (recDelta b s void)
+    · -- kappa ties, use mu decrease
+      have hmu : mu b < mu (recDelta b s void) := by simp [mu]; omega
+      exact drop_right hmu h
+    · -- kappa drops
+      have hk : kappa b < kappa (recDelta b s void) := by
+        simp [kappa] at h ⊢; exact Nat.lt_max_of_lt_left (Nat.lt_of_le_of_ne (Nat.le_max_left _ _) h.symm)
+      exact drop_left hk
+```
+
+### 3. `R_rec_succ`: `recDelta b s (delta n) → app s (recDelta b s n)`
+
+```lean
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    -- Left: kappa = max(max(kappa(b), kappa(s)), kappa(n)) + 1
+    -- Right: kappa = max(kappa(s), max(max(kappa(b), kappa(s)), kappa(n)))
+    --              = max(max(kappa(b), kappa(s)), kappa(n))
+    -- So kappa drops by exactly 1
+    have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+      simp [kappa]; omega
+    exact drop_left hk
+```
+
+### 4. `R_eq_refl`: `eqW a a → void`
+
+```lean
+-- eqW a a --> void  
+| _, _, Step.R_eq_refl a => by
+    -- Left: kappa = kappa(a), mu = 4 + 2*mu(a)
+    -- Right: kappa = 0, mu = 0
+    by_cases h : kappa a = 0
+    · -- kappa ties, mu drops
+      have hmu : mu void < mu (eqW a a) := by simp [mu]; omega
+      have hk : kappa void = kappa (eqW a a) := by simp [kappa]; exact h
+      exact drop_right hmu hk
+    · -- kappa drops
+      have hk : kappa void < kappa (eqW a a) := by
+        simp [kappa]; exact Nat.pos_iff_ne_zero.mpr h  
+      exact drop_left hk
+```
+
+### 5. `R_eq_diff`: `eqW a b → integrate (merge a b)`
+
+```lean
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    -- Left: kappa = max(kappa(a), kappa(b)), mu = 4 + mu(a) + mu(b)  
+    -- Right: kappa = max(kappa(a), kappa(b)), mu = 1 + (2 + mu(a) + mu(b)) = 3 + mu(a) + mu(b)
+    -- kappa ties, mu drops by 1
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by simp [mu]; omega
+    have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by simp [kappa]
+    exact drop_right hmu hk
+```
+
+## Key Proof Strategy
+
+The lexicographic measure approach works because:
+
+1. **Kappa decreases**: Rules like `R_rec_succ` where the +1 bonus for delta-wrapping is removed
+2. **Kappa ties, mu decreases**: Most rules where structural complexity reduces while recursion depth stays the same
+3. **Case analysis**: For rules that can reduce terms to `void`, we case-split on whether the original term had recursion depth 0
+
+The critical insight is that `kappa` is "delta-transparent" everywhere except in `recDelta`'s third position, and `mu` always captures the structural cost of constructors with appropriate weights.

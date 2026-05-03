@@ -1,0 +1,7 @@
+1. Semantic measure-based argument, interpreting the third argument as a numeral structure and showing reductions decrease its depth.
+
+2. Yes, it relies on an interpretation of Z/S as base/successor for natural numbers, which is an external semantic assumption.
+
+3. Yes, as this interpretation is an object-level assumption not derivable solely from the rules.
+
+4. Yes.

@@ -1,0 +1,13 @@
+**Raw Assessment:** 
+Yes, strong normalization can be established strictly from the presented rewrite system. No external axioms or structural assumptions are required. 
+
+**Brief Proof Roadmap:**
+We can prove termination natively using a standard reduction ordering, particularly the **Lexicographic Path Ordering (LPO)**, which guarantees strong normalization for TRS systems when all rules can be strictly oriented. 
+
+1. **Establish a Precedence:** Define a symbol precedence where `F > G`. The precedence of the structural constructors `S` and `Z` is irrelevant.
+2. **Orient Rule 1:** `F(x, y, Z) -> x`. This is strictly oriented under LPO because `x` is a proper subterm of the left-hand side.
+3. **Orient Rule 2:** `F(x, y, S(n)) -> G(y, F(x, y, n))`. 
+   - Since the root symbol `F` on the LHS is strictly greater than the root symbol `G` on the RHS (`F > G`), LPO requires that the LHS is strictly greater than all immediate subterms of the RHS.
+   - Test subterm 1 (`y`): `F(x, y, S(n)) > y` holds by the subterm property.
+   - Test subterm 2 (`F(x, y, n)`): Because the root symbols match (`F = F`), LPO checks the arguments lexicographically. The first two arguments match (`x = x`, `y = y`). The third argument strict-decreases from `S(n)` to `n` (which is valid by the subterm property).
+4. **Conclusion:** Since both rules are strictly oriented under a valid LPO, the term rewriting system is necessarily strongly normalizing.

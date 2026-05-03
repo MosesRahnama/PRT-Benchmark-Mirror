@@ -1,0 +1,19 @@
+## Assessment: **Yes, strong normalization can be established**
+
+### Reasoning:
+
+The term rewriting system has a clear structural descent property:
+
+1. **Rule 2 strictly decreases**: `F(x, y, S(n)) → G(F(x, y, n))` removes one `S` constructor from the third argument of `F`. The nested `F` now has `n` instead of `S(n)`.
+
+2. **Rule 1 eliminates**: `F(x, y, Z) → x` eliminates the `F` term entirely when the third argument reaches the base case `Z`.
+
+3. **G is inert**: There are no rewrite rules for `G`, so it acts as a passive wrapper.
+
+4. **No growth**: Neither rule creates new `S` constructors or new `F` applications in decreasing positions. Rule 2 wraps the result in `G`, but preserves the descent on the third argument.
+
+**Standard termination proof approach**: Use recursive path ordering (RPO) or lexicographic path ordering (LPO) with precedence `F > S > G` and `F > Z`. Both rules are strictly decreasing under such an ordering:
+- Rule 1: `F(x, y, Z)` strictly larger than `x`  
+- Rule 2: `F(x, y, S(n))` strictly larger than `G(F(x, y, n))` because `S(n) > n`
+
+This proof requires only standard term rewriting metatheory (substitution, monotonicity, well-foundedness of the induced ordering) — no additional object-level axioms or structural assumptions beyond what's implicit in the term algebra itself.

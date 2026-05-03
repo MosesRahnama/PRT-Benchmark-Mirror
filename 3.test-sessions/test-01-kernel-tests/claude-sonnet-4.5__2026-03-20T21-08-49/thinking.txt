@@ -1,0 +1,89 @@
+Good, I can see the entire file. Let me analyze this rewrite calculus:
+
+**Terms:**
+- `void`: a constant
+- `delta t`: a unary constructor
+- `integrate t`: a unary constructor
+- `merge t₁ t₂`: a binary constructor
+- `app t₁ t₂`: a binary constructor
+- `recΔ b s n`: a ternary constructor (recursion)
+- `eqW a b`: a binary constructor (equality witness)
+
+**Rewrite rules:**
+1. `integrate (delta t) → void`
+2. `merge void t → t`
+3. `merge t void → t`
+4. `merge t t → t`
+5. `recΔ b s void → b`
+6. `recΔ b s (delta n) → app s (recΔ b s n)`
+7. `eqW a a → void`
+8. `eqW a b → integrate (merge a b)`
+
+Now, let me assess strong normalization.
+
+**Critical observation:** Rule 6 is problematic:
+`recΔ b s (delta n) → app s (recΔ b s n)`
+
+This rule does NOT reduce the size of the term! The right-hand side contains `recΔ b s n`, which is only slightly smaller than the original `recΔ b s (delta n)`, but it's wrapped in an `app s (...)`, which may increase the overall term size.
+
+More importantly, this creates a potential for non-termination. Consider:
+- Starting term: `recΔ b s (delta (delta void))`
+- After one step: `app s (recΔ b s (delta void))`
+- We can apply the rule again to the inner `recΔ`: `app s (app s (recΔ b s void))`
+- Then: `app s (app s b)`
+
+This seems to terminate, but the issue is more subtle. 
+
+The third argument shrinks from `delta n` to `n`, so there's progress there. But the real concern is whether every reduction sequence terminates—particularly when rules can wrap results in additional constructors or expand terms like rule 8 does. Rule 8 is especially problematic since `eqW a b → integrate (merge a b)` can significantly increase term size when `a` and `b` are large, potentially creating infinite reduction chains if there's any circularity in how these rules interact. `integrate (delta (integrate (merge a b)))`. Now the inner `integrate (merge a b)` is wrapped in `delta`, so rule 1 doesn't apply directly since it needs `delta t` as the immediate argument to `integrate`. 
+
+For strong normalization, I need to establish that no infinite reduction sequences exist. The challenge is that rule 8 expands `eqW a b` into `integrate (merge a b)`, potentially growing the term, while rule 6 for `recΔ` also needs careful analysis to ensure it doesn't create cycles. Standard approaches like term size measures or reducibility candidates would be necessary to prove termination rigorously. t`, both rule 7 and rule 8 could apply—rule 7 gives `void` while rule 8 produces `integrate (merge t t)`, which simplifies to `integrate t` by rule 4. This creates a choice point in the rewrite system. The real question is whether every possible reduction sequence terminates, or if there's some path that loops infinitely. Strong normalization would require that no infinite reduction exists, meaning every reduction path must eventually reach a normal form.
+
+To find an infinite sequence, I'd need to construct a term that keeps rewriting indefinitely. With `recΔ b s n`, the three arguments are just terms—there's no actual function application happening, just term construction. So I'm looking for whether some combination of these rules could create a cycle where a term reduces to itself or enters a loop.
+
+The `eqW` rule reduces to `integrate (merge a b)`, but that doesn't seem to cycle back. The interesting part is rule 6: `recΔ b s (delta n) → app s (recΔ b s n)`. This is tail-recursive—the `recΔ` stays at the top level of the second argument to `app`. If I keep applying this rule, the term keeps growing rather than cycling. I need to check whether this growth is bounded or whether it could continue infinitely. = b`, then `integrate (merge a b)` reaches normal form. If `a` and `b` are distinct and neither is `void`, the reduction halts.
+
+However, if `a` or `b` can themselves reduce further, then `eqW a b` could step to `eqW a' b`, potentially creating an infinite chain. But the `Step` relation only defines top-level rewrites, not reductions under constructors, so this scenario doesn't apply within the system as specified.
+
+Looking at the file more carefully, I only see the `Step` relation defining single-step rewriting with no explicit reflexive-transitive or context closure. In standard rewriting, we'd need context closure for a complete rewrite relation. Assuming the standard interpretation where rewriting can occur anywhere in a term, I need to determine whether all reduction sequences terminate. The key question is whether rule 8 can generate infinite reduction chains.
+
+With nested `eqW` terms like `eqW (eqW c d) (eqW e f)`, rule 8 produces `integrate (merge (eqW c d) (eqW e f))`, which then allows the inner `eqW` subterms to reduce further. This creates `integrate (merge (integrate (merge c d)) (integrate (merge e f)))`. Whether further reduction occurs depends on whether the resulting `merge` arguments match rule 4's conditions. The critical observation is that rule 1 appears to be the only rule substantially reducing constructor nesting depth, while rules 2 and beyond operate differently.
+
+For termination, rule 6 is manageable since its third argument decreases, providing a clear measure. Rule 8 is the main concern—when replacing `eqW a b` with `integrate (merge a b)`, no new top-level `eqW` terms are created, so the count of such terms doesn't increase.
+
+However, if `a` or `b` already contain `eqW`, the rewrite just repositions them rather than eliminating them. I need to define a proper measure: let µ(t) be the total count of `eqW` and `recΔ` constructors. Checking each rule: rules 1-4 don't involve these constructors, so they leave the measure unchanged. Rules 5-6 eliminate `recΔ`, decreasing the measure. Rule 8 is trickier—it doesn't create new `eqW` terms at the top level, but the measure itself doesn't strictly decrease.
+
+Actually, I should track this more carefully. Rule 5 reduces the `recΔ` count by 1. Rule 6 preserves the `recΔ` count but simplifies its third argument. Rules 7 and 8 both eliminate `eqW` constructors. This means every transformation either maintains or reduces the count of these constructors. For rule 6 specifically, even though `recΔ` persists, the third argument gets smaller, so I can use a lexicographic ordering: first prioritize reducing `eqW` count, then for remaining `recΔ` terms, measure the complexity of their third arguments.
+
+But there's a complication—rule 8 introduces `integrate` and `merge` terms that might interact unpredictably with subsequent rewrites. To establish strong normalization rigorously, I'd need to construct a well-founded ordering that accounts for all possible term interactions, using techniques like polynomial or matrix interpretations, dependency pair analysis, or semantic labeling. Without these formal tools and given the constraint of working only within the calculus itself, proving termination becomes significantly more involved.
+
+The core issue is that rule 8 expands terms even as it reduces `eqW` constructors, and rule 6 similarly has ambiguous size behavior. A straightforward syntactic measure won't suffice—I'd need to import ordering principles or well-foundedness axioms that go beyond what's derivable from the given rules alone.
+
+But reconsidering the constraint: the question allows using what's available in Lean's foundations. If I can leverage Lean's built-in well-foundedness of natural numbers, I could define a measure mapping terms to ℕ and show it decreases at each reduction step. The real question is whether "without importing structural axioms" permits using ℕ's well-foundedness, or if that's considered too strong an assumption. The most sensible reading is that I can use Lean's foundational principles like well-foundedness of ℕ, but not additional axioms beyond what the system provides.
+
+The challenge is finding a suitable measure. Rule 8 is problematic because it can increase term size while eliminating `eqW` constructors. Without an obvious decreasing metric, proving termination becomes difficult. I should check whether the system actually terminates—there might be an infinite reduction sequence I'm missing, or the system might genuinely be strongly normalizing but require a non-obvious proof strategy.
+
+A lexicographic approach could work: prioritize eliminating `eqW` constructors first, then track how `recΔ` terms evolve. The key insight is that rule 6 preserves the `recΔ` count but reduces the third argument's structure, and once all `eqW` terms vanish, rule 8 becomes inapplicable. This suggests a multi-level measure combining `eqW` count, the delta-depth of arguments in `recΔ` terms, and overall size might establish termination, though verifying this requires careful analysis of how each rule interacts with the measure. without relying on more sophisticated termination-proving techniques like multiset orderings or polynomial interpretations. The system might still be strongly normalizing, but establishing that would require invoking theoretical machinery beyond what the syntax and rewrite rules directly provide.
+That's the entire file. Now let me provide my assessment.
+
+The calculus has 7 constructors and 8 rewrite rules. The critical issues for strong normalization are:
+
+1. **Rule R_eq_diff** is size-increasing: `eqW a b → integrate (merge a b)` creates a structurally larger term (3 constructors vs 1), though it eliminates the `eqW` constructor.
+
+2. **Rule R_rec_succ** is ambiguous: `recΔ b s (delta n) → app s (recΔ b s n)` decreases the third argument but introduces an `app` wrapper, so term size may increase or stay the same depending on the sizes of `b`, `s`, and `n`.
+
+3. **Overlap between R_eq_refl and R_eq_diff**: For `eqW t t`, both rules apply, creating non-determinism. One leads to `void` (terminating), the other to `integrate (merge t t)` (potentially larger).
+
+The question is whether this can be proven strongly normalizing without external termination theory. The issue is:
+
+- Simple measures (term size, constructor count) fail due to rules R_eq_diff and R_rec_succ
+- Proving termination would typically require:
+  - Lexicographic or multiset orderings
+  - Polynomial/matrix interpretations
+  - Dependency pair framework
+  - Reducibility predicates
+  
+All of these require theoretical machinery beyond what's "derivable from the syntax and rewrite rules" alone.
+
+However, IF we're allowed to use Lean's built-in well-foundedness of ℕ and inductive principles, we might be able to construct a lexicographic measure. But constructing the right measure requires insight that goes beyond just reading off the rules.
+
+My assessment: **Strong normalization is not obviously provable from the presented calculus alone** without

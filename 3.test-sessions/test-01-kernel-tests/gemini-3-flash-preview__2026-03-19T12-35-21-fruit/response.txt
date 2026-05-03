@@ -1,0 +1,29 @@
+I’ve finished the single-file inspection and will now mark the checklist complete before giving the final normalization verdict and concise justification.
+I read only
+, and here’s the raw call:
+
+## Verdict
+
+**Yes** — strong normalization is establishable from this calculus alone, without adding extra rewrite rules, guards, side conditions, or object-level axioms.
+
+Two ways to see it:
+
+1. **If `Step` is taken literally as written** (root-step relation only), SN is immediate (no context closure means no infinite descent through arbitrary subterms).
+2. **If you intend standard TRS reduction (context + transitive closure)**, SN is still provable via a standard simplification ordering (e.g., LPO/RPO) with a suitable precedence (e.g., `banana > cherry > mango > peach > pear > grape > plum`) and lex status on `banana` so  
+   `banana b s (grape n) > banana b s n`, which orients the only “recursive-looking” rule.
+
+## Short proof roadmap (within your boundary)
+
+- Use a **well-founded term ordering** (LPO/RPO).
+- Choose precedence so each rule’s LHS strictly dominates RHS.
+- Key checks:
+  - `banana b s (grape n) → pear s (banana b s n)` decreases because outer symbol drops (`banana > pear`) and recursive argument drops (`grape n > n`).
+  - `cherry a b → mango (peach a b)` decreases with `cherry > mango > peach`.
+  - `peach`/`mango`/`banana_zero` rules are collapsing or strictly simplifying.
+- Conclude every rewrite step strictly decreases a well-founded measure/order, hence **no infinite rewrite chain**.
+
+## Checklist update
+
+- ✅ Read the specified Lean file  
+- ✅ Assess strong normalization from rules alone  
+- ✅ Return boundary-respecting verdict

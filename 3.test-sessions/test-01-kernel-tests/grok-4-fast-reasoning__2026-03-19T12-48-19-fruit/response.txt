@@ -1,0 +1,18 @@
+Yes, strong normalization of this system can be established from the presented calculus alone.
+
+### Short Proof Roadmap
+Prove ∀ t : Trace, Acc Step t by induction on size(t), where size is the standard constructor-counting measure (size(plum) = 0; size(C t₁ ... tₖ) = k + ∑ size(tᵢ) for constructor arity k).
+
+- **Base**: size(plum) = 0; plum has no steps, so Acc vacuously.
+- **Inductive step**: Assume Acc holds for all traces of size < size(t). Case on the head constructor of t and possible steps:
+  - If t = mango (grape u) → plum: size(plum) = 0 < size(t), so Acc(plum) by IH.
+  - If t = peach plum u → u (or symmetrically peach u plum → u): size(u) < size(t), Acc(u) by IH.
+  - If t = peach u u → u: size(u) < size(t), Acc(u) by IH.
+  - If t = banana b s plum → b: size(b) < size(t), Acc(b) by IH.
+  - If t = cherry a a → plum: size(plum) = 0 < size(t), Acc(plum) by IH.
+  - If t = cherry a b (a ≠ b) → mango (peach a b): The reduct u = mango (peach a b) matches no Step rule (peach ≠ grape, so not R_mango_grape; mango/peach heads have no other rules), so u has no steps and Acc(u) vacuously.
+  - If t = banana b s (grape n) → pear s (banana b s n): The reduct u = pear s (banana b s n) matches no Step rule (pear head unrecognized; no contextual closure), so u has no steps and Acc(u) vacuously.
+  - Other forms (grape _, pear _, heads without matching rules): No steps, Acc vacuously.
+- No other rules apply. Thus, all possible reducts are Acc, so Acc(t) holds.
+
+This uses only the given syntax, rules, and Lean's inductive/WF machinery (Acc as the standard accessibility predicate); no extra axioms, guards, or assumptions needed.

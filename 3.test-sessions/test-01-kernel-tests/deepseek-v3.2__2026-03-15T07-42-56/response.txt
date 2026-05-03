@@ -1,0 +1,49 @@
+I'll analyze the calculus you've presented and provide my assessment.
+
+## System Analysis
+
+The system consists of:
+1. **Term language**: 7 constructors (`void`, `delta`, `integrate`, `merge`, `app`, `recΔ`, `eqW`)
+2. **Reduction rules**: 8 unconditional rewrite rules
+
+## Assessment
+
+**No, strong normalization cannot be established from this calculus alone without additional assumptions.**
+
+### Key Reasons:
+
+1. **Non-terminating recursion**: The `recΔ` constructor with `R_rec_succ` rule creates potential for non-terminating recursion:
+   ```
+   recΔ b s (delta n) → app s (recΔ b s n)
+   ```
+   If `s` can be constructed to re-apply `recΔ` to its argument, this creates a potential infinite reduction sequence.
+
+2. **Lack of size/type restrictions**: There are no guards on the `app` constructor, so `app` can be applied to any term, including itself, enabling self-application:
+   ```
+   app t t → ?
+   ```
+   The system has no rule for `app` reduction, so `app` terms accumulate without bound.
+
+3. **Potential for cyclic `merge` reductions**: While `merge` has cancellation rules, consider:
+   ```
+   merge (merge a b) (merge b a) → ?
+   ```
+   Without structural restrictions, complex merge patterns could potentially create non-terminating sequences.
+
+4. **`integrate` and `delta` interaction**: The only rule for `integrate` is `R_int_delta`, but `integrate` applied to non-`delta` terms doesn't reduce, allowing accumulation.
+
+### Proof Roadmap Limitations
+
+A proof roadmap within your boundary would need to:
+1. Show all possible reduction sequences terminate
+2. Without adding: type system, size measures, well-founded ordering, or additional reduction rules
+
+**The fundamental issue**: The system lacks any form of:
+- Type/structure preservation guarantees
+- Size/rank decreasing measures
+- Well-founded ordering on terms
+- Guard conditions on recursion
+
+**Conclusion**: Strong normalization is not provable from the given calculus alone because the system contains constructs (`app`, `recΔ`) that can create non-terminating computation patterns without any structural restrictions to prevent them. The unconditional nature of the rules combined with the ability to form self-applicative and recursive structures makes termination unprovable without additional assumptions about term structure or reduction ordering.
+
+The system resembles an untyped lambda calculus with recursion, which is known to be non-normalizing without type restrictions or other termination guarantees.

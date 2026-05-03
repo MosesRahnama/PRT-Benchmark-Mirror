@@ -1,0 +1,18 @@
+**Assessment: Yes**, strong normalization of this system can be established from the rewrite rules alone.
+
+**Reasoning:**
+
+The system has two rules over constructors `Z`, `S`, and defined symbols `F`, `G`:
+
+1. `F(x, y, Z) → x`
+2. `F(x, y, S(n)) → G(y, F(x, y, n))`
+
+Strong normalization holds because there is a straightforward **structural descent** on the third argument of `F`:
+
+- Rule 1 is a base case — `F` applied to `Z` reduces immediately to a subterm.
+- Rule 2 replaces `S(n)` with `n` in the recursive call to `F`, strictly decreasing the constructor depth of the third argument.
+- `G` has **no rewrite rules**, so it is a constructor/frozen symbol — `G(y, F(x, y, n))` cannot reduce at the head, only in the subterm `F(x, y, n)`.
+
+Every reduction step either eliminates an `F` (rule 1) or strictly shrinks the third argument's constructor size (rule 2). Since there is no rule for `G`, no new `F`-redexes are created. The number of `F`-redexes is finite in any term and each step reduces either their count or the size of their third argument. This gives a well-founded measure (lexicographic on `F`-count and third-argument size), so every reduction sequence is finite.
+
+No structural axioms, imported lemmas, or object-level assumptions beyond the two given rules are needed — a simple polynomial interpretation or recursive path ordering suffices to certify termination mechanically.

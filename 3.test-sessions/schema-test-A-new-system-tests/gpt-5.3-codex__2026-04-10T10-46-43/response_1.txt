@@ -1,0 +1,10 @@
+Yes — under standard first-order TRS semantics on finite terms, this system is strongly normalizing from the two rules alone.
+
+Reason (brief):
+- The only recursive rule is  
+  \(F(x,y,S(n)) \to G(F(x,y,n))\), which strictly peels one outer \(S\) from the third argument of \(F\).
+- No rule can create a new outer \(S\) on that third argument; \(G\) is just a wrapper with no rewrite rule.
+- The base rule \(F(x,y,Z) \to x\) stops recursion when the third argument reaches \(Z\).
+- There are no rules for \(G\), \(S\), or \(Z\), and no self-reintroducing \(F\)-pattern that can increase this recursion depth.
+
+So an infinite rewrite sequence cannot be generated from these rules alone (again, assuming ordinary finite first-order terms and no extra axioms).

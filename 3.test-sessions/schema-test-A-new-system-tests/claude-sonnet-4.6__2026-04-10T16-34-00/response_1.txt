@@ -1,0 +1,14 @@
+**Raw assessment: No — strong normalization cannot be established from this system alone as presented.**
+
+**Reasoning:**
+
+The system has two rules over constructors `Z`, `S`, and function symbols `F`, `G`. The reduction of `F(x, y, S(n))` peels off one `S` and wraps in `G`, recursing on `n`. The base case `F(x, y, Z) -> x` terminates. So far so good — `F` alone is strongly normalizing by structural recursion on the third argument.
+
+The problem is `G`. It appears on the right-hand side of the second rule but has **no defining rules** in the system. `G` is a free/uninterpreted symbol: it is neither defined by any rule nor constrained in any way. This means:
+
+1. The normal form of a term like `F(a, b, S(Z))` reduces to `G(a)`, which is a **stuck term** — not a redex, but `G` itself has no rules, so this is fine for termination of `F`.
+2. However, if `G` were given rules in an extension of this system — which the system as written **does not prevent or close off** — the overall system could diverge. More critically, the system gives no basis to *prove* or *refute* anything about `G`'s behavior from the rules shown.
+
+From a strictly internal perspective: the two rules shown *are* terminating on their own (lexicographic/structural decrease on the `S`-depth of the third argument of `F`), but the system is **incomplete** — `G` is an unspecified accumulator. A strong normalization proof typically requires that every reachable term has a finite reduction sequence. The reachable terms include `G(...)` in normal position, and since `G` has no rules, those are trivially in normal form.
+
+**Verdict:** The system as written is actually terminating (weakly and strongly) on purely syntactic grounds — `F`'s recursion is structurally decreasing and `G` has no rules — but a formal SN proof cannot be *established* in the sense of being self-justifying, because `G` is an open symbol with no definition. Any claimed proof imports a tacit assumption that `G` remains inert. If the intent was to present a self-contained SN proof obligation, the system is underspecified.

@@ -1,0 +1,52 @@
+**Raw assessment:** **Yes.** Strong normalization can be established from
+alone, without adding any extra rewrite rules, guards, side conditions, or object-level axioms.
+
+Two points:
+
+1. **Literal Lean reading:** `Step` is only a **root-step** relation; no context-closure rule is defined. On that reading, normalization is already very easy.
+2. **Even under the usual TRS reading** (closure under contexts/substitutions), the system is still terminating by a standard **polynomial interpretation** over $\mathbb N$.
+
+### Short proof roadmap
+Assign a natural-number measure $|t|$ by:
+$$
+|\texttt{void}| = 0
+$$
+$$
+|\texttt{delta}\ t| = |t| + 1,\qquad
+|\texttt{integrate}\ t| = |t|
+$$
+$$
+|\texttt{merge}\ a\ b| = |a| + |b| + 1,\qquad
+|\texttt{app}\ a\ b| = |a| + |b|
+$$
+$$
+|\texttt{eqW}\ a\ b| = |a| + |b| + 2
+$$
+$$
+|\texttt{recΔ}\ b\ s\ n| = (|n|+1)(|s|+1) + |b|
+$$
+
+Then every rule strictly decreases this measure:
+
+- `integrate (delta t) → void`:
+  $|t|+1 > 0$
+- `merge void t → t`, `merge t void → t`, `merge t t → t`:
+  $0+|t|+1 > |t|$, $|t|+0+1 > |t|$, $2|t|+1 > |t|$
+- `recΔ b s void → b`:
+  $(0+1)(|s|+1)+|b| > |b|$
+- `recΔ b s (delta n) → app s (recΔ b s n)`:
+  $$
+  (|n|+2)(|s|+1)+|b|
+  >
+  |s| + (|n|+1)(|s|+1) + |b|
+  $$
+  with difference exactly $1$
+- `eqW a a → void`:
+  $2|a|+2 > 0$
+- `eqW a b → integrate (merge a b)`:
+  $|a|+|b|+2 > |a|+|b|+1$
+
+So each rewrite step strictly decreases a well-founded measure on $\mathbb N$. Hence there is **no infinite reduction sequence**.
+
+### Bottom line
+The calculus as presented is sufficient for strong normalization. The only caveat is terminological: if one reads `Step` **literally**, the result is even more immediate because no contextual reduction rule is present. But even under the standard rewrite-calculus interpretation, the system remains strongly normalizing.

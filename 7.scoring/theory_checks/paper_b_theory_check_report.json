@@ -1,0 +1,52 @@
+{
+  "generated": "2026-05-03 01:59",
+  "passed": true,
+  "files_checked": [
+    "Basic.lean",
+    "BenchmarkContractWitnessOrderBridge.lean",
+    "Bottleneck.lean",
+    "BoundaryWitness.lean",
+    "ClaimLedger.lean",
+    "SchemaAdditiveObstruction.lean",
+    "SchemaPartition.lean",
+    "SchemaWitnessTower.lean"
+  ],
+  "theorem_presence": {
+    "no_additive_orients_schema_recursive_root": true,
+    "no_additive_orients_schema_step": true,
+    "schema_dp_rule_extracted_witness": true,
+    "schema_dp_full_adequacy": true,
+    "schema_no_directWhole_witness": true,
+    "schema_has_importedWhole_witness": true,
+    "schema_has_transformedCall_witness": true,
+    "schema_three_kappa_summary": true,
+    "primitive_recursion_schema_witness_partition": true,
+    "schemaMethodStatus_matches_answerKey": true,
+    "schemaMethodStatus_adequate_matches_answerKey": true,
+    "schemaMethodStatus_admissible_matches_answerKey": true,
+    "schema_partition_reflects_answer_key": true,
+    "paperB_schema_pathOrder_boundaryExternal": true,
+    "paperB_schema_dp_ruleExtracted": true,
+    "paperB_schema_false_rivals_refuted": true,
+    "schema_bottleneck_instance": true,
+    "ko7_bottleneck_instance": true,
+    "schema_boundary_gap_skips_importedWhole": true,
+    "ko7_boundary_gap_skips_importedWhole": true,
+    "supports_app_lemma_A6_duplication_obstruction": true,
+    "supports_app_prop_A8_dp_admissible": true,
+    "supports_app_prop_A10_schema_partition": true,
+    "supports_app_theorem_A12_bottleneck": true,
+    "supports_app_corollary_A13_single_step_gap": true,
+    "paperB_theory_core_supported": true
+  },
+  "theorems_found": 26,
+  "theorems_total": 26,
+  "forbidden_token_hits": [],
+  "forbidden_import_hits": [],
+  "build": {
+    "returncode": 0,
+    "stdout": "\u00e2\u0161\u00a0 [3058/3068] Replayed KO7Benchmark.Test02_NatLex_AnswerKey\nwarning: KO7Benchmark/Test02_NatLex_AnswerKey.lean:74:4: try 'simp' instead of 'simpa'\n\nNote: This linter can be disabled with `set_option linter.unnecessarySimpa false`\nBuild completed successfully.\n",
+    "stderr": ""
+  },
+  "error": null
+}

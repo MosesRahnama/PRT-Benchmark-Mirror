@@ -1,0 +1,51 @@
+## Raw Assessment
+
+**The system as written defines `Step` as a root-step relation only — no congruence/context-closure rules are present.** This is the boundary the question draws. The answer depends on which reading of "this system" is intended.
+
+---
+
+### Reading 1: `Step` as stated (root-step only, no congruence)
+
+**SN is provially provable within the given boundary.** Short proof roadmap:
+
+**Measure:** Define `φ(t) : ℕ` as the structural size (1 per constructor node). Then define the lexicographic pair:
+
+$$\psi(t) = (r(t),\; \varphi(t))$$
+
+where $r(t) = 1$ if $t$ matches a left-hand side in `Step` at the root, else $0$. Order $\psi$ lexicographically with $(1, {-}) > (0, {-})$.
+
+**Verification of every rule:**
+
+| Rule | $\varphi$ change | $r(\text{rhs})$ | $\psi$ direction |
+|---|---|---|---|
+| `R_int_delta` | $-2$ | $r(\text{void})=0$ | ↓ |
+| `R_merge_void_left/right` | $-2$ | may be $1$ but $\varphi$ ↓ | ↓ |
+| `R_merge_cancel` | $-\varphi(t)$ | may be $1$ but $\varphi$ ↓ | ↓ |
+| `R_rec_zero` | $-(1{+}\varphi(s))$ | may be $1$ but $\varphi$ ↓ | ↓ |
+| `R_eq_refl` | $-\varphi(a)$ | $r(\text{void})=0$ | ↓ |
+| **`R_rec_succ`** | $+\varphi(s)$ | **`app` matches no LHS → 0** | $r: 1\!\to\!0$, ↓ |
+| **`R_eq_diff`** | $+1$ | **`integrate(merge…)` matches no LHS → 0** | $r: 1\!\to\!0$, ↓ |
+
+Every rule strictly decreases $\psi$ under the lexicographic order. Since $\psi$ maps into a well-founded order, no infinite sequence exists. **No extra axioms, guards, or structural assumptions used.**
+
+---
+
+### Reading 2: Congruence-closed extension (standard TRS sense)
+
+**Still SN, but the boundary becomes non-trivial.**
+
+Under context closure, `R_rec_succ` becomes:
+
+$$\texttt{recΔ}\;b\;s\;(\delta^k\;\texttt{void}) \;\twoheadrightarrow\; \texttt{app}\;s\;(\texttt{app}\;s\;(\cdots(\texttt{app}\;s\;b)\cdots))$$
+
+This is primitive recursion over `delta`-numerals. Since all terms are **finite** inductive trees, the third argument's `delta`-depth is a finite natural number, and `R_rec_zero` terminates the chain. The constructor `app` has no matching LHS, so results accumulate as normal forms. A polynomial interpretation (e.g., $\llbracket \texttt{recΔ}\rrbracket = $ exponential in the third argument's depth) witnesses SN, but this requires reasoning about the inductive structure of `Trace` — which is present in the file but not formalized as a proof object.
+
+**Why this crosses the boundary:** proving termination of the congruence closure requires well-founded induction on `Trace` as an object-level assumption about the host type theory (Lean's `Nat`-like induction on constructor depth). The file presents no such proof term.
+
+---
+
+### Bottom line
+
+For the system **as literally written** (`Step` with no congruence rules): **yes, SN is provable purely within the presented calculus**, using the $\psi$ measure above. No strengthening required.
+
+For the **intended TRS** (congruence-closed): SN holds, but the proof relies on well-founded induction over finite `Trace` terms — which is a structural axiom of Lean's type theory, not derivable from the displayed rewrite rules alone. That is a hidden dependency the question's boundary excludes.

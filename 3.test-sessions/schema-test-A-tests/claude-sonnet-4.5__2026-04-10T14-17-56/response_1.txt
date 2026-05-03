@@ -1,0 +1,24 @@
+I'll read the term rewriting system file to assess strong normalization.
+## Assessment: **Yes, strong normalization can be established**
+
+### Reasoning:
+
+The system is strongly normalizing based on its syntactic structure alone, provable via standard termination techniques without requiring object-level axioms.
+
+**Key observations:**
+
+1. **Rule 1** (`F(x, y, Z) -> x`): Eliminates the F constructor entirely—clearly terminating.
+
+2. **Rule 2** (`F(x, y, S(n)) -> G(y, F(x, y, n))`): Exhibits a **strict structural decrease**. The third argument of F goes from `S(n)` to `n`, peeling off one S-constructor per application.
+
+3. **No reduction rules for G**: Once G appears, those subterms are in normal form.
+
+4. **Well-founded measure**: The nesting depth of S-constructors in the third argument of any F-term forms a natural number that strictly decreases with each Rule 2 application, and reaches base case Z where Rule 1 applies.
+
+**Termination proof sketch:**
+- Define measure: sum of S-nesting depths across all F-terms in an expression
+- Rule 1: eliminates an F (measure decreases)  
+- Rule 2: reduces S-depth by 1 for that F
+- Since this measure is a natural number and strictly decreases, all reduction sequences terminate
+
+This is provable using **recursive path ordering (RPO)** or **lexicographic path ordering (LPO)** with precedence S > F > G, requiring no semantic axioms—only the syntactic structure of the rules themselves.

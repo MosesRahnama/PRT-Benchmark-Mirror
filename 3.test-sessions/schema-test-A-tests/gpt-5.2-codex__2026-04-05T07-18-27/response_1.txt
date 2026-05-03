@@ -1,0 +1,8 @@
+Based on the rules alone, I cannot establish strong normalization. The system is terminating on the first argument of `F` only when the third argument is a numeral built from `Z` and `S`, but there is no rule constraining the shape of that argument or preventing non-numeral terms. Since no structural axioms are allowed, you cannot conclude that all terms reduce by decreasing a well-founded measure. There is also no rewrite rule for `G`, so the behavior of terms containing `G` is unconstrained and could embed non-terminating subterms in the third argument of `F`.
+
+**Short proof roadmap (if you wanted to try):**
+- Define a measure on terms that strictly decreases on each `F`-step, e.g., the size or height of the third argument when it is a numeral.
+- Prove that all terms reachable have the third argument of `F` in numeral form and that no rule can introduce larger numerals.
+- Conclude termination via a well-founded measure.
+
+This roadmap fails here because the rules do not enforce that the third argument of `F` is always `Z` or `S(_)`, nor do they restrict `G` to preserve such a measure. So strong normalization cannot be derived from the rewrite system alone.

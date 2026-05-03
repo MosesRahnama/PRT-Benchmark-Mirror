@@ -1,0 +1,33 @@
+## Assessment: **YES, strong normalization can be established**
+
+### The Rewrite System
+
+```
+(VAR x y n)
+(RULES
+  F(x, y, Z) -> x
+  F(x, y, S(n)) -> G(y, F(x, y, n))
+)
+```
+
+### Reasoning
+
+This is a **pure structural recursion** system with straightforward termination:
+
+1. **Rule 1** (`F(x, y, Z) -> x`): Base case — reduces immediately to a variable, which cannot reduce further.
+
+2. **Rule 2** (`F(x, y, S(n)) -> G(y, F(x, y, n))`): Recursive case — the third argument **structurally decreases** from `S(n)` to `n`.
+
+3. **No other reduction rules**: The symbol `G` has no rules, so `G(y, ...)` is a normal form. There is no mutual recursion, nested recursion, or any other potential source of non-termination.
+
+### Why No External Axioms Are Needed
+
+The termination argument is **purely syntactic**:
+
+- Define a simple measure: `depth(t)` where `depth(S(n)) = 1 + depth(n)` and `depth(Z) = 0`
+- Each application of Rule 2 strictly decreases the depth of the third argument of `F`
+- Since depths are natural numbers and cannot decrease infinitely, every reduction sequence terminates
+
+This does not require importing facts about natural number arithmetic or well-foundedness axioms — it follows directly from the **syntactic structure** of the rewrite rules themselves. The system encodes a primitive recursion schema where the recursive argument is explicitly identified (third position of `F`) and demonstrably shrinks with each step.
+
+**Conclusion**: Strong normalization is derivable from the presented rewrite system alone.

@@ -1,0 +1,52 @@
+## Assessment: The Helper Strategy is **Unsound**
+
+Both helper theorems are false. The issue stems from how `kappa` handles nested `delta` patterns in `recDelta`.
+
+---
+
+### Analysis of `kappa_rec_delta_step`
+
+**Claim:** `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`
+
+From the definition:
+- `kappa (recDelta b s (delta n)) = max(max(κ(b), κ(s)), κ(n)) + 1`
+
+But `kappa (recDelta b s n)` depends on whether `n` itself matches `delta _`:
+
+| Form of `n` | `kappa (recDelta b s n)` |
+|-------------|--------------------------|
+| Not a `delta` | `max(max(κ(b), κ(s)), κ(n))` |
+| `delta m` | `max(max(κ(b), κ(s)), κ(m)) + 1` |
+
+**Counterexample:** Let `b = s = void`, `n = delta void`.
+
+- **LHS:** `kappa (recDelta void void (delta (delta void)))` 
+  `= max(max(0, 0), κ(delta void)) + 1 = max(0, 0) + 1 = 1`
+
+- **RHS:** `kappa (recDelta void void (delta void)) + 1`
+  `= (max(max(0, 0), 0) + 1) + 1 = 2`
+
+**Result:** `1 ≠ 2` ✗
+
+---
+
+### Analysis of `kappa_rec_succ_drop`
+
+**Claim:** `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`
+
+**Same counterexample:** `b = s = void`, `n = delta void`.
+
+- **LHS:** `kappa (app void (recDelta void void (delta void)))`
+  `= max(0, max(max(0,0), 0) + 1) = max(0, 1) = 1`
+
+- **RHS:** `kappa (recDelta void void (delta (delta void)))` `= 1` (computed above)
+
+**Result:** `1 < 1` is false ✗
+
+---
+
+### Root Cause
+
+The `kappa` definition has a **nested pattern match** that adds `+1` specifically when the third argument is `delta n`. The theorems assume the transition `n ↦ delta n` uniformly increases `kappa` by 1, but this fails when `n` is already a `delta`—the `+1` bonus is applied to the *outer* `delta` only, not cumulatively.
+
+For the termination argument to work, `kappa` would need a different structure—such as counting the depth of `delta`-nesting in the third argument directly, rather than pattern-matching only on the outermost layer.

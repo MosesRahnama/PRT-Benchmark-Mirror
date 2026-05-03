@@ -1,0 +1,34 @@
+## Assessment: **YES, Strong Normalization Can Be Established**
+
+### The Rewrite System
+
+```
+(VAR x y n)
+(RULES
+  F(x, y, Z) -> x
+  F(x, y, S(n)) -> G(F(x, y, n))
+)
+```
+
+### Reasoning
+
+This system is **strongly normalizing** and this can be established directly from the rules using standard first-order termination techniques—no external axioms or structural assumptions are needed.
+
+**Why it terminates:**
+
+1. **Structural recursion on the third argument**: The only recursive rule is `F(x, y, S(n)) -> G(F(x, y, n))`. Each application strictly decreases the third argument by "peeling off" one `S` constructor. The third argument is a Peano natural (`Z` for zero, `S` for successor), which is a well-founded structure.
+
+2. **No other redex creation**: The `G` constructor introduced by rule 2 does not create new redexes—there are no rules matching on `G`.
+
+3. **Example trace**:
+   - `F(x, y, S(S(Z)))` → `G(F(x, y, S(Z)))` → `G(G(F(x, y, Z)))` → `G(G(x))`
+
+**Standard termination proofs apply:**
+
+- **Recursive Path Order (RPO)**: With `F` > `G` in the precedence, rule 2 is decreasing because `F(x, y, n)` is a proper subterm of `S(n)` in the recursive position.
+  
+- **Polynomial interpretation**: Interpret `Z` as 0, `S` as λn. n+1, and `F` as a function strictly decreasing in its third argument.
+
+- **Dependency pairs**: The single dependency pair `F#(x, y, S(n)) → F#(x, y, n)` is clearly decreasing.
+
+This is a classic **fold-over-naturals** pattern—structurally recursive and trivially terminating by standard TRS methods.

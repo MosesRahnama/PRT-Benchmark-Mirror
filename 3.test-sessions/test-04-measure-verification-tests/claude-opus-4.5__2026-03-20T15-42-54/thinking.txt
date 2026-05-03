@@ -1,0 +1,29 @@
+Now let me analyze this Lean 4 file. It defines:
+
+1. An inductive type `Trace` representing terms in a first-order rewrite calculus
+2. An inductive relation `Step` defining rewrite rules
+3. A `phase` function mapping traces to natural numbers
+4. A `cost` function computing a size measure
+5. A `measure` combining them lexicographically as `(phase t, cost t)`
+
+Let me verify each rewrite rule to see if the measure decreases:
+
+**R_int_delta**: `integrate (delta t) → void`
+- LHS measure: `(phase (integrate (delta t)), cost (integrate (delta t)))`
+  - phase: Since it's `integrate (delta t)`, not matching `recDelta _ _ (delta _)`, phase = 0
+  - cost: `1 + cost (delta t) = 1 + 1 + cost t = 2 + cost t`
+- RHS measure: `(phase void, cost void) = (0, 0)`
+- Check: `(0, 2 + cost t) > (0, 0)` ✓ (cost decreases)
+
+**R_merge_void_left**: `merge void t → t`
+- LHS: `(phase (merge void t), cost (merge void t))`
+  - phase = 0
+  - cost = `1 + cost void + cost t = 1 + 0 + cost t = 1 + cost t`
+- RHS: `(phase t, cost t)`
+  - phase = 0 (unless t = recDelta _ _ (delta _), then phase = 1)
+- If t is not `recDelta _ _ (delta _)`: `(0, 1 + cost t) > (0, cost t)` ✓
+- If t IS `recDelta _ _ (delta _)`: `(0, 1 + cost t) vs (1, cost t)`
+  - In lexicographic order, the first component dominates: `(0, n) < (1, m)` for any n, m since 0 < 1
+  - So `(0, 1 + cost t) < (1, cost t)` ✓ (measure decreases)
+
+When `t = recDelta b s (delta n)`, the phase increases from 0 to 1, which means the measure actually improves lexicographically despite the cost component growing.

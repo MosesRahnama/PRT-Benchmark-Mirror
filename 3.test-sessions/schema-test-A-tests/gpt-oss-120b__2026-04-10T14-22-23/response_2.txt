@@ -1,0 +1,11 @@
+**1. Primary method used**  
+I argued termination by exhibiting a *decreasing well‑founded measure*: the height of the third argument of the outermost `F` (the number of nested `S` constructors). Each rewrite step either removes the `F` altogether or replaces `S(n)` by the strictly smaller `n`, so the measure strictly decreases.
+
+**2. Does the method rely on any proof structure, ordering choice, interpretation, or other assumption not fixed by the rewrite rules themselves?**  
+The method relies on a *meta‑level* well‑founded ordering (the natural‑number size of the third argument) and the observation that `G` has no rewrite rules. These are not part of the rewrite system’s syntax, but they are standard, external reasoning tools used to prove termination.
+
+**3. If yes, does that place the method outside the stated boundary?**  
+The boundary permits only what is *derivable* from the given rules. Introducing a well‑founded ordering is a proof technique rather than an additional axiom about the object language; it does not import new object‑level axioms or structural assumptions about the terms themselves. Therefore the method stays within the intended boundary (it is a meta‑theoretic argument, not an extra rule).
+
+**4. Separately from boundary compliance, do you still think the system is strongly normalizing?**  
+Yes. Regardless of the proof style, every reduction sequence must eventually eliminate the `F`‑term after a finite number of `S`‑unfoldings, after which no rule applies. Hence the system is strongly normalizing.

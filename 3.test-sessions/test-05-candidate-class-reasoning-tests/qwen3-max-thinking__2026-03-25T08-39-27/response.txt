@@ -1,0 +1,66 @@
+# Assessment of Termination Measure Candidates
+
+I've analyzed the three proposed termination measures (mu1, mu2, and mu3) for the given first-order rewrite calculus. A valid termination measure must strictly decrease with each rewrite step defined in the `Step` relation.
+
+## Analysis of Each Candidate
+
+### Candidate mu1
+This measure assigns:
+- Base case: `void` = 0
+- Unary constructors (`delta`, `integrate`): +1
+- Binary constructors (`merge`, `app`): +1 plus sum of subterms
+- `recDelta`: +1 plus sum of all three subterms
+- `eqW`: +3 plus sum of subterms
+
+**Problem**: The rule `R_eq_diff` transforms `eqW a b` to `integrate (merge a b)`. 
+- LHS measure: 3 + mu1 a + mu1 b
+- RHS measure: 1 + mu1 (merge a b) = 1 + (1 + mu1 a + mu1 b) = 2 + mu1 a + mu1 b
+
+Since 3 + mu1 a + mu1 b > 2 + mu1 a + mu1 b, this rule does decrease.
+
+However, for rule `R_int_delta`: `integrate (delta t)` → `void`
+- LHS: 1 + mu1 (delta t) = 1 + (1 + mu1 t) = 2 + mu1 t
+- RHS: 0
+
+This decreases as long as mu1 t ≥ 0, which it is.
+
+But for rule `R_rec_succ`: `recDelta b s (delta n)` → `app s (recDelta b s n)`
+- LHS: 1 + mu1 b + mu1 s + mu1 (delta n) = 1 + mu1 b + mu1 s + (1 + mu1 n) = 2 + mu1 b + mu1 s + mu1 n
+- RHS: 1 + mu1 s + mu1 (recDelta b s n) = 1 + mu1 s + (1 + mu1 b + mu1 s + mu1 n) = 2 + mu1 b + 2*mu1 s + mu1 n
+
+The RHS is greater than or equal to the LHS (equal only when mu1 s = 0). This means mu1 **does not** strictly decrease for this rule, so mu1 is **not a valid termination measure**.
+
+### Candidate mu2
+This measure assigns higher weights:
+- `integrate`: +2
+- `merge`: +2
+- `recDelta`: +5
+- `eqW`: +5
+
+Checking the problematic `R_rec_succ` rule:
+- LHS: 5 + mu2 b + mu2 s + mu2 (delta n) = 5 + mu2 b + mu2 s + (1 + mu2 n) = 6 + mu2 b + mu2 s + mu2 n
+- RHS: 1 + mu2 s + mu2 (recDelta b s n) = 1 + mu2 s + (5 + mu2 b + mu2 s + mu2 n) = 6 + mu2 b + 2*mu2 s + mu2 n
+
+Again, RHS ≥ LHS, so mu2 also **fails** for the `R_rec_succ` rule.
+
+### Candidate mu3
+This measure assigns:
+- `integrate`: +2
+- `merge`: +1
+- `app`: +2
+- `recDelta`: +1
+- `eqW`: +4
+
+Checking `R_rec_succ`:
+- LHS: 1 + mu3 b + mu3 s + mu3 (delta n) = 1 + mu3 b + mu3 s + (1 + mu3 n) = 2 + mu3 b + mu3 s + mu3 n
+- RHS: 2 + mu3 s + mu3 (recDelta b s n) = 2 + mu3 s + (1 + mu3 b + mu3 s + mu3 n) = 3 + mu3 b + 2*mu3 s + mu3 n
+
+Again, RHS > LHS, so mu3 also **fails** for this rule.
+
+## Conclusion
+
+None of the three candidates (mu1, mu2, mu3) constitute valid termination measures for this rewrite system because they all fail to strictly decrease for the `R_rec_succ` rule. 
+
+The fundamental issue is that the `recDelta` constructor is being replaced with an `app` constructor that contains another `recDelta`, creating a situation where the measure increases rather than decreases.
+
+A valid termination measure would need to assign a significantly higher weight to `recDelta` compared to `app`, or use a more sophisticated measure like a lexicographic or multiset ordering that can handle this recursive pattern properly.

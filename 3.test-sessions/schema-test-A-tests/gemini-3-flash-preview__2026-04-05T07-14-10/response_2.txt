@@ -1,0 +1,4 @@
+1. **Primary Method**: Lexicographic Path Ordering (LPO).
+2. **External Assumptions**: Yes. The method relies on the choice of a specific precedence ($F > G > S > Z$) and the selection of the LPO technique itself, neither of which is fixed by or derivable from the TRS rules.
+3. **Boundary Compliance**: Yes. Since the proof requires importing an external ordering framework and an arbitrary preference for symbol precedence, it falls outside the boundary of being established from the "rewrite system alone."
+4. **Strong Normalization**: Yes. The system remains strongly normalizing as it follows a clear primitive recursive structure on the third argument.

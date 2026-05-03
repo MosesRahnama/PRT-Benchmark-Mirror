@@ -1,0 +1,39 @@
+### Proof Skeleton for Remaining Cases in `mu_decreases`
+
+Replace each `sorry` with the corresponding proof skeleton below. These use ordinal arithmetic properties from Mathlib (e.g., `opow_pos`, `opow_add`, `mul_lt_opow`, `add_lt_opow`) to establish strict decreases. Assume standard lemmas like `lt_of_le_of_lt` and positivity hold.
+
+#### Case: `R_eq_refl`
+```lean
+| _, _, Step.R_eq_refl a => by
+  simp [mu]
+  apply lt_of_lt_of_le zero_lt_one
+  exact le_add_left 1 (omega ^ (mu a + mu a + 9))
+```
+
+#### Case: `R_rec_succ`
+```lean
+| _, _, Step.R_rec_succ b s n => by
+  simp [mu]
+  -- Unfold and bound RHS dominant term: omega ^ 3 * (mu s + 1) + omega ^ 2 * (omega ^ (mu n + mu s + 6) + ...)
+  -- Show it < omega ^ (omega ^ 5 * (mu n + 1) + mu s + 7) + ... (LHS dominant)
+  have h_exp : mu n + mu s + 6 < omega ^ 5 * (mu n + 1) + mu s + 7 :=
+    -- Bound by adding omega ^ 5 * (mu n + 1) dominating mu n
+    sorry -- Use add_lt_add_of_lt_of_le with opow_mul dominance
+  have h_dom : omega ^ 2 * (omega ^ (mu n + mu s + 6) + 1) < omega ^ (omega ^ 5 * (mu n + 1) + mu s + 7) :=
+    -- Apply mul_lt_opow and opow_lt_opow_left h_exp
+    sorry
+  -- Add remaining terms (omega ^ 3 * ..., omega * ..., constants) using lt_add_of_pos_right
+  calc _ < _ := sorry -- Chain with h_dom and additive bounds
+```
+
+#### Case: `R_eq_diff`
+```lean
+| _, _, Step.R_eq_diff a b => by
+  simp [mu]
+  -- Assume wlog mu a ≥ mu b; bound mu(merge a b) ≤ omega ^ 3 * (mu a + 1) + omega ^ 2 * (mu b + 1) + 1
+  -- Then LHS: omega ^ 4 * (mu(merge a b) + 1) + 1 ≤ omega ^ 7 * (mu a + 1) + omega ^ 6 * (mu b + 1) + omega ^ 4 * 2 + 1
+  have h_bound : omega ^ 7 * (mu a + 1) + omega ^ 6 * (mu b + 1) + omega ^ 4 * 2 + 1 < omega ^ (mu a + mu b + 9) + 1 :=
+    -- Show exponent 7 + log(mu a + 1) < mu a + mu b + 9 for large mu a (use opow_mul_lt_opow_add)
+    sorry -- Induction on mu a + mu b or case on finiteness
+  exact h_bound
+```

@@ -1,0 +1,53 @@
+Based on the file content, I'll provide proof skeletons for the remaining five cases. The strategy is to use the lexicographic order defined by `(kappa, mu)` and leverage the `drop_left` or `drop_right` lemmas depending on whether kappa decreases or stays the same while mu decreases.
+
+Here are the proof skeletons:
+
+```lean
+| _, _, Step.R_int_delta t => by
+  -- Case: integrate (delta t) --> void
+  -- Strategy: kappa decreases to 0 or mu decreases significantly
+  apply drop_left   -- kappa decreases from kappa t to 0
+  simp [kappa]      -- Shows kappa (integrate (delta t)) = kappa t
+  exact Nat.zero_lt_succ (kappa t)  -- 0 < kappa t + 1
+
+| _, _, Step.R_rec_zero b s => by
+  -- Case: recDelta b s void --> b
+  -- Strategy: kappa stays the same, mu decreases
+  apply drop_right
+  · simp [mu]  -- Shows mu b < mu (recDelta b s void)
+    omega       -- Proves 0 < 3 + mu s
+  · simp [kappa] -- Shows kappa equality
+
+| _, _, Step.R_rec_succ b s n => by
+  -- Case: recDelta b s (delta n) --> app s (recDelta b s n)
+  -- Strategy: kappa decreases by at least 1
+  apply drop_left
+  simp [kappa]
+  rw [Nat.max_assoc, Nat.max_comm]
+  exact Nat.lt_succ_self _
+
+| _, _, Step.R_eq_refl a => by
+  -- Case: eqW a a --> void
+  -- Strategy: kappa decreases to 0 or mu decreases
+  apply drop_left   -- kappa decreases from kappa a to 0
+  simp [kappa]      -- Shows kappa (eqW a a) = kappa a
+  exact Nat.zero_lt_succ (kappa a)  -- 0 < kappa a + 1
+
+| _, _, Step.R_eq_diff a b => by
+  -- Case: eqW a b --> integrate (merge a b)
+  -- Strategy: kappa stays the same, mu decreases
+  apply drop_right
+  · simp [mu]  -- Shows mu (integrate (merge a b)) < mu (eqW a b)
+    omega       -- Proves 3 + mu a + mu b < 4 + mu a + mu b
+  · simp [kappa] -- Shows kappa equality
+```
+
+These proof skeletons:
+1. Use the lexicographic order `(kappa, mu)`
+2. Employ `drop_left` when kappa decreases
+3. Employ `drop_right` when kappa remains constant but mu decreases
+4. Use `simp` with the provided simplification lemmas to reduce expressions
+5. Use `omega` for arithmetic inequalities where needed
+6. Maintain the original structure and style of the file
+
+The proofs are designed to be minimal and focused on each specific reduction rule, following the pattern established in the already-proven cases.

@@ -1,0 +1,22 @@
+**No, the helper strategy is not sound as written.**
+
+The two theorems (`kappa_rec_delta_step` and `kappa_rec_succ_drop`) are intended to show that `kappa` strictly decreases under the `R_rec_succ` reduction rule:
+
+```
+Step (recDelta b s (delta n)) (app s (recDelta b s n))
+```
+
+However, both theorems are false in general, as shown by the following counterexample (with `b = void`, `s = void`, `n = delta void` for simplicity; `kappa(void) = 0`):
+
+- `kappa(recDelta void void (delta (delta void))) = max(max(0, 0), kappa(delta void)) + 1 = 0 + 1 = 1`
+- `kappa(recDelta void void (delta void)) = max(max(0, 0), kappa(void)) + 1 = 0 + 1 = 1`
+
+**`kappa_rec_delta_step` fails**: LHS = 1, RHS = 1 + 1 = 2, so `1 ≠ 2`.
+
+**`kappa_rec_succ_drop` fails** (even ignoring the `rw` dependency): LHS `kappa(app void (recDelta void void (delta void))) = max(0, 1) = 1`, RHS = 1, so `1 ≮ 1`.
+
+### Why it fails
+- `kappa(recDelta b s m)` adds `+1` **only if the third argument `m` is immediately `delta _`** (unwinding via `kappa(delta _) = kappa _`).
+- Peeling a `delta` where the inner `n` also starts with `delta` yields **no strict decrease**: both sides stabilize at `max(kappa b, kappa s, inner) + 1`.
+
+The lemmas lack the needed hypothesis (e.g., `¬ ∃ k, n = delta k`) to hold, so they cannot universally support a termination argument for `kappa` under arbitrary traces. Nested `delta`s cause stalls.

@@ -1,0 +1,66 @@
+I'll provide a proof skeleton for the remaining five cases in the `measure_decreases` theorem. The approach uses the lexicographic order on (kappa, mu) and relies on the `drop_left` and `drop_right` lemmas provided in the file.
+
+Here's the proof skeleton:
+
+lean
+-- integrate (delta t) --> void
+| _, _, Step.R_int_delta t => by
+  apply drop_left  -- kappa decreases
+  simp [kappa]
+  -- Show kappa void < kappa (integrate (delta t))
+  -- kappa void = 0, kappa (integrate (delta t)) = kappa t
+  -- Need to show 0 < kappa t (unless kappa t = 0, then use drop_right)
+  sorry
+
+-- recDelta b s void --> b
+| _, _, Step.R_rec_zero b s => by
+  apply drop_right  -- kappa equal, mu decreases
+  · simp [mu]
+    -- Show mu b < mu (recDelta b s void)
+    -- mu (recDelta b s void) = 3 + mu b + mu s
+    -- Need to show mu b < 3 + mu b + mu s
+    sorry
+  · simp [kappa]
+    -- Show kappa b = kappa (recDelta b s void)
+    sorry
+
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+  apply drop_left  -- kappa decreases
+  simp [kappa]
+  -- Show kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))
+  -- kappa (recDelta b s (delta n)) = max (max (kappa b) (kappa s)) (kappa n) + 1
+  -- kappa (app s (recDelta b s n)) = max (kappa s) (kappa (recDelta b s n))
+  sorry
+
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+  apply drop_left  -- kappa decreases
+  simp [kappa]
+  -- Show kappa void < kappa (eqW a a)
+  -- kappa void = 0, kappa (eqW a a) = kappa a
+  -- Need to show 0 < kappa a (unless kappa a = 0, then use drop_right)
+  sorry
+
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+  apply drop_right  -- kappa equal, mu decreases
+  · simp [mu]
+    -- Show mu (integrate (merge a b)) < mu (eqW a b)
+    -- mu (eqW a b) = 4 + mu a + mu b
+    -- mu (integrate (merge a b)) = 1 + mu (merge a b) = 1 + 2 + mu a + mu b
+    -- Need to show 3 + mu a + mu b < 4 + mu a + mu b
+    sorry
+  · simp [kappa]
+    -- Show kappa (integrate (merge a b)) = kappa (eqW a b)
+    sorry
+
+
+Key observations for each case:
+1. For `R_int_delta`: kappa decreases unless kappa t = 0, then mu decreases
+2. For `R_rec_zero`: kappa remains the same or decreases, mu always decreases
+3. For `R_rec_succ`: kappa strictly decreases due to the +1 in the recDelta case
+4. For `R_eq_refl`: Similar to R_int_delta - kappa decreases unless zero
+5. For `R_eq_diff`: kappa remains the same, mu decreases by 1
+
+The `simp` lemmas provided for kappa and mu will be essential for simplifying the expressions in each case. The arithmetic inequalities can typically be resolved with the `omega` tactic as used in the existing proofs.

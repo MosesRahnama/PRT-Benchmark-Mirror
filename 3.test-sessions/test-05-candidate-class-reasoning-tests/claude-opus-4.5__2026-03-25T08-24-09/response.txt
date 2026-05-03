@@ -1,0 +1,34 @@
+## Assessment of Termination Measure Candidates
+
+All three candidates (`mu1`, `mu2`, `mu3`) **fail** as termination measures. Each fails on the same rule: **R_rec_succ**.
+
+### Analysis of R_rec_succ
+
+The rule `recDelta b s (delta n) → app s (recDelta b s n)` is problematic because `s` appears **twice** on the right-hand side (once in `app` and once inside `recDelta`).
+
+| Measure | LHS `mu(recDelta b s (delta n))` | RHS `mu(app s (recDelta b s n))` | Difference |
+|---------|----------------------------------|----------------------------------|------------|
+| mu1     | 2 + b + s + n                    | 2 + b + **2s** + n               | **−s**     |
+| mu2     | 6 + b + s + n                    | 6 + b + **2s** + n               | **−s**     |
+| mu3     | 2 + b + s + n                    | 3 + b + **2s** + n               | **−1 − s** |
+
+For all three measures, the RHS is **≥** the LHS (equality when `s = void` for mu1/mu2, strictly greater for mu3 or when `s ≠ void`).
+
+### Why This Happens
+
+The difference simplifies to `1 − A − mu(s)` where `A` is the `app` constant:
+- **mu1/mu2**: A = 1, so difference = −mu(s) ≤ 0
+- **mu3**: A = 2, so difference = −1 − mu(s) < 0
+
+The consumed `delta` wrapper contributes only +1, but the duplication of `s` costs +mu(s), and an additional `app` node is added.
+
+### Other Rules Pass
+
+All three measures correctly decrease on the remaining seven rules (R_int_delta, R_merge_void_left/right, R_merge_cancel, R_rec_zero, R_eq_refl, R_eq_diff).
+
+### Conclusion
+
+**None of the proposed measures prove termination.** The fundamental issue is structural: R_rec_succ duplicates a subterm (`s`), and no simple additive weight function can compensate. A valid measure would require either:
+1. A multiset/lexicographic ordering accounting for the decreasing `delta` depth
+2. A measure that discounts the step function `s` when inside `recDelta`
+3. Restricting the system to disallow this rule or bounding `s`

@@ -1,0 +1,12 @@
+**Explaining unsoundness of phase ordering**
+
+The standard lexicographic order on pairs of natural numbers is used here to compare terms. A counterexample involves applying a rewrite rule (`R_merge_void_left`) with terms that include phases (`t = recDelta void void (delta void)`). Measuring the left-hand side (LHS) as (0,3) and the right-hand side (RHS) as (1,2), the LHS is less than the RHS under lex order, so the rewrite increases term order, demonstrating unsoundness.
+
+This indicates that some rules can map to arbitrary term variables and cause a phase jump, breaking soundness. A potential fix might involve placing the phase component second, inverting phase mapping, or using a multiset path ordering instead.
+
+Checklist:
+
+- ✅ Describe lex order on Nat×Nat  
+- ✅ Provide counterexample showing rewrite increases term order  
+- ✅ Explain phase jump issue causing unsoundness  
+- ✅ Briefly mention potential fixes without detailed implementation

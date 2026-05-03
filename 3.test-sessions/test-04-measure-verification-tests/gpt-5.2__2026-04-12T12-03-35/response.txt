@@ -1,0 +1,13 @@
+The proposed lexicographic measure `measure t := (phase t, cost t)` in KO7-LLM-Benchmark/test-files/Test-04-Measure-Verification.lean is **not sound as stated** for the rewrite relation `Step`.
+
+- **What works:** For every rule except `R_rec_zero`, `phase` stays `0` and `cost` strictly drops, or `phase` drops from `1` to `0` (for `R_rec_succ`), so a standard lex order (first component, then second) would decrease.
+  - Example: `R_rec_succ` has `phase (recDelta _ _ (delta _)) = 1` but `phase (app _ _) = 0`, so the first component strictly decreases (Test-04-Measure-Verification.lean).
+
+- **Core counterexample (breaks soundness):** `R_rec_zero : Step (recDelta b s void) b` can **increase** the first component `phase` because `b` is unconstrained (Test-04-Measure-Verification.lean).
+  - Let `b := recDelta void void (delta void)` and `s := void`. Then `Step (recDelta b s void) b` by `R_rec_zero`.
+  - `phase (recDelta b s void) = 0` (since the third argument is `void`), but `phase b = 1` (since `b` matches `.recDelta _ _ (.delta _)`).
+  - So `measure b = (1, cost b)` is **not** `<` `measure (recDelta b s void) = (0, 1 + cost b + cost s)` under the usual lexicographic order on `Nat × Nat`. The rewrite step fails to strictly decrease the measure.
+
+- **Extra concern (if you intended full rewriting under contexts):** `Step` is only defined at the top-level. If your “rewrite calculus” is meant to allow rewriting inside subterms (context closure), then the measure as a function of the *whole term root* is also at risk: e.g. rewriting a nested `recDelta _ _ (delta _)` inside a surrounding constructor keeps `phase = 0` at the root but can increase `cost` (notably via `R_rec_succ`), so lex decrease would fail in-context.
+
+Net: as written, the measure only supports a termination argument if you either (a) restrict

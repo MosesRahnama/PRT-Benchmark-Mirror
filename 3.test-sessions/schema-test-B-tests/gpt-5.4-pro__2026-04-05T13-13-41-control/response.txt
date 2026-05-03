@@ -1,0 +1,15 @@
+Using the standard meanings of these termination methods:
+
+| Method | Proves termination as stated? | Within the benchmark boundary? | Short reason |
+|---|---|---:|---|
+| **A** | **Yes** | **No** | `F(x,y,Z) > x` by subterm/property; `F(x,y,S(n)) > G(y,F(x,y,n))` is orientable by LPO/RPO with the stated precedence and the decrease `S(n) > n`. But the proof depends on an externally chosen global precedence `F > G > S > Z`. |
+| **B** | **No** | **No** | At the rule roots, the interpretation decreases. But as a **standalone** termination proof it does **not** give a context-monotone strict order: `F` ignores its second argument and `G` ignores its first. So a rewrite inside such ignored positions need not strictly decrease the interpreted value. It also depends on an externally chosen algebra/coefficients. |
+| **C** | **No** | **No** | KBO fails on rule 2: `y` occurs once on the left but twice on the right, violating the KBO variable condition. It also uses external global KBO parameters. |
+| **D** | **Yes** | **Yes** | The only essential dependency pair is `F#(x,y,S(n)) -> F#(x,y,n)`. Projecting `F` to argument 3 gives `S(n)` vs. `n`, and `n` is a proper subterm of `S(n)`. Under the clarified narrow reading, this stays inside the boundary because it uses the recursive structure already visible in the given rules, plus ordinary soundness reasoning. |
+| **E** | **No** | **Yes** | The proposed measure decreases for **root** contractions of `F`, but not for arbitrary rewrite steps in context. Since `mu(F(x,y,n))` ignores the first two arguments, a rewrite inside one of those positions need not decrease `mu`. So it does not prove termination of the full TRS as stated. Still, the method itself is rule-driven rather than based on an arbitrary imported global structure. |
+
+## Result
+
+The only method that satisfies **both** conditions is:
+
+- **D**

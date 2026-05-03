@@ -1,0 +1,41 @@
+I'll analyze the termination measure in the Lean 4 file you've selected.
+Now let me read the rest of the file to see if there's more content:
+## Assessment: The Termination Measure is **Unsound**
+
+The proposed lexicographic measure `(phase t, cost t)` does **not** establish termination for this rewrite system. Here's why:
+
+### Critical Counterexample: `R_rec_succ`
+
+The rule `R_rec_succ : ∀ b s n, Step (recDelta b s (delta n)) (app s (recDelta b s n))` is problematic:
+
+**Before:** `recDelta b s (delta n)`
+- `phase = 1` (matches the pattern `.recDelta _ _ (.delta _)`)
+- `cost = 1 + cost b + cost s + (1 + cost n)`
+
+**After:** `app s (recDelta b s n)`
+- `phase = 0` (not a recDelta with delta argument)
+- `cost = 1 + cost s + (1 + cost b + cost s + cost n)`
+
+The phase decreases (1 → 0), which seems good, but the **cost increases**: the resulting term has `2 * cost s` instead of `1 * cost s`, plus additional overhead.
+
+### The Problem
+
+While the phase component decreases for this specific step, the lexicographic ordering `(1, c₁) > (0, c₂)` holds for **any** values of `c₁` and `c₂`. This means we're relying entirely on phase decrease, ignoring that cost grows unboundedly.
+
+However, consider a reduction sequence that alternates or chains `R_rec_succ` applications through different subterms. The measure doesn't account for:
+1. **Cost growth** when phase decreases
+2. **Subsequent steps** at phase 0 that may increase cost further
+3. **No guarantee** that all reductions from phase 0 decrease cost
+
+### Specific Issue: `R_eq_diff`
+
+`R_eq_diff : ∀ a b, Step (eqW a b) (integrate (merge a b))`
+
+- Before: `cost = 3 + cost a + cost b`, `phase = 0`
+- After: `cost = 1 + (1 + cost a + cost b) = 2 + cost a + cost b`, `phase = 0`
+
+This decreases cost, which is fine. But combined with `R_rec_succ` creating unbounded cost increases when transitioning phases, the measure doesn't guarantee termination.
+
+### Conclusion
+
+The measure is **unsound** because it fails to prove that every reduction sequence eventually terminates. The `R_rec_succ` rule can increase the structural complexity (by duplicating `s`) even as it decreases phase, and there's no guarantee that the system as a whole converges under this measure.

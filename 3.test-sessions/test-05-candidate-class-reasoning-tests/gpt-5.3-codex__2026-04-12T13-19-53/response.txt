@@ -1,0 +1,17 @@
+Assessment from KO7-LLM-Benchmark/test-files/Test-05-Candidate-Class-Reasoning.lean, without compiling:
+
+- All three candidates (`mu1`, `mu2`, `mu3`) decrease on every rule **except** `R_rec_succ`.
+- `R_rec_succ` requires  
+  `μ(recDelta b s (delta n)) > μ(app s (recDelta b s n))`.
+
+- For `mu1`:  
+  LHS $= 2+\mu_1(b)+\mu_1(s)+\mu_1(n)$,  
+  RHS $= 2+\mu_1(b)+2\mu_1(s)+\mu_1(n)$,  
+  so LHS $-$ RHS $= -\mu_1(s)$ (not strictly decreasing; can increase).
+- For `mu2`: same shape, LHS $-$ RHS $= -\mu_2(s)$ (same failure).
+- For `mu3`:  
+  LHS $= 2+\mu_3(b)+\mu_3(s)+\mu_3(n)$,  
+  RHS $= 3+\mu_3(b)+2\mu_3(s)+\mu_3(n)$,  
+  so LHS $-$ RHS $= -1-\mu_3(s)$ (always strictly increases).
+
+- Verdict: none of the three is a valid global strict termination measure for `Step`; `mu3` is the strongest failure, `mu1`/`mu2` are conditional failures whenever `s` is non-`void`.

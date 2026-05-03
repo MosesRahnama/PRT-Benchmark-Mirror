@@ -1,0 +1,70 @@
+I'll analyze the soundness of the helper strategy by working through the definitions and verifying the claimed equalities.
+
+## Analysis
+
+The two helper theorems form a termination argument for the `R_rec_succ` reduction rule. Let me verify each one:
+
+### Theorem 1: `kappa_rec_delta_step`
+**Claim:** `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`
+
+**Left side calculation:**
+```
+kappa (recDelta b s (delta n))
+```
+This matches the pattern `.recDelta b s (.delta n)` in the definition, so:
+```
+= Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1
+```
+
+**Right side calculation:**
+```
+kappa (recDelta b s n) + 1
+```
+Since `n` is not wrapped in `delta`, this matches the general `recDelta` pattern:
+```
+= [Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)] + 1
+= Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1
+```
+
+**Both sides are equal.** ✓
+
+### Theorem 2: `kappa_rec_succ_drop`
+**Claim:** `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`
+
+**Left side calculation:**
+```
+kappa (app s (recDelta b s n))
+= Nat.max (kappa s) (kappa (recDelta b s n))
+= Nat.max (kappa s) (Nat.max (Nat.max (kappa b) (kappa s)) (kappa n))
+```
+
+To simplify, let `B = kappa b`, `S = kappa s`, `N = kappa n`:
+```
+max S (max (max B S) N)
+```
+
+Since `max B S ≥ S`, we have `max (max B S) N ≥ S`. Therefore:
+```
+max S (max (max B S) N) = max (max B S) N
+```
+
+So: `kappa (app s (recDelta b s n)) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)`
+
+**Right side calculation:**
+```
+kappa (recDelta b s (delta n))
+= Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1
+```
+
+**Comparison:**
+```
+Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) 
+  < 
+Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1
+```
+
+This reduces to `m < m + 1` for any natural number `m`, which is **always true.** ✓
+
+## Conclusion
+
+**The helper strategy is sound.** Both theorems are provable as written. The strategy correctly establishes that when `R_rec_succ` fires (reducing `recDelta b s (delta n)` to `app s (recDelta b s n)`), the measure strictly decreases, which is essential for proving termination of the rewrite system.

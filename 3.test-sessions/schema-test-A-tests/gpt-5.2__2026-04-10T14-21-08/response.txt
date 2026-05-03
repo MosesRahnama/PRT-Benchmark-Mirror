@@ -1,0 +1,7 @@
+1. I used a standard termination argument via a well‑founded reduction ordering / measure: the recursive call in `F(x,y,S(n)) -> G(y, F(x,y,n))` strictly decreases the third argument from `S(n)` to the proper subterm `n`.
+
+2. Yes. That method relies on choosing (and justifying) an external proof structure: a specific well‑founded ordering/interpretation (e.g., a precedence/ordering where `S(n) > n` and where contexts preserve decrease). None of that is “fixed” by the rewrite rules themselves.
+
+3. Yes, if the boundary is read strictly as “only what follows from the rewrite relation without additional meta-theoretic proof principles/choices,” then bringing in a reduction ordering/interpretation is outside that boundary.
+
+4. Yes, I still think the TRS is strongly normalizing (terminating). Intuitively: the only rule that can fire recursively replaces `F(_,_,S(n))` by a term containing `F(_,_,n)`, and there are no rules that can create new `S` constructors in that third argument position, so you cannot get an infinite descent.

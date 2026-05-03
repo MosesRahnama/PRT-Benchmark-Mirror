@@ -1,0 +1,28 @@
+Summary of the check ‒ for each rewrite rule we need a measure μ such that μ(lhs) > μ(rhs).
+
+1.  Rules that simply erase or cancel sub-traces (`integrate (delta t) → void`, the three `merge` rules, the two `recDelta … void`/`eqW a a` rules, and the “not-equal” `eqW` rule) are handled correctly by all three candidates; every candidate drops by at least 1 on those steps.
+
+2.  The critical rule is the “successor” recursive clause  
+
+    `recDelta b s (delta n)  →  app s (recDelta b s n)`.
+
+   For each candidate the left– and right-hand costs are
+
+   • μ₁: LHS = 2 + μ₁ b + μ₁ s + μ₁ n  
+      RHS = 2 + μ₁ b + 2 μ₁ s + μ₁ n   (increase by μ₁ s)
+
+   • μ₂: LHS = 6 + μ₂ b + μ₂ s + μ₂ n  
+      RHS = 6 + μ₂ b + 2 μ₂ s + μ₂ n   (increase by μ₂ s)
+
+   • μ₃: LHS = 2 + μ₃ b + μ₃ s + μ₃ n  
+      RHS = 3 + μ₃ b + 2 μ₃ s + μ₃ n   (increase by 1 + μ₃ s)
+
+   Because the right-hand side contains *two* copies of `s` while the left-hand side contains only one, every candidate rises instead of falling.  Consequently:
+
+   • μ₁ fails on `R_rec_succ`.  
+   • μ₂ fails on `R_rec_succ`.  
+   • μ₃ also fails on `R_rec_succ`.
+
+3.  Conclusion.
+
+   None of the three proposed measures is a valid global termination metric for this rewrite system.  To prove termination one must employ a measure that penalises duplication (e.g. give `app` a weight 0 and put a heavier constant on `recDelta`, or use a multivariate/lexicographic measure that first decreases the “depth” argument `n` and only then tracks trace

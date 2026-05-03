@@ -1,0 +1,102 @@
+That's the full file — 27 lines, no imports. Here is my raw assessment.
+
+---
+
+## Assessment
+
+### What the calculus is
+
+Eight rewrite rules over a freely-generated inductive type `Trace` with 7 constructors. The rules are:
+
+| Rule | LHS | RHS |
+|---|---|---|
+| `R_int_delta` | `integrate(delta t)` | `void` |
+| `R_merge_void_left` | `merge(void, t)` | `t` |
+| `R_merge_void_right` | `merge(t, void)` | `t` |
+| `R_merge_cancel` | `merge(t, t)` | `t` |
+| `R_rec_zero` | `recΔ(b, s, void)` | `b` |
+| `R_rec_succ` | `recΔ(b, s, delta n)` | `app(s, recΔ(b, s, n))` |
+| `R_eq_refl` | `eqW(a, a)` | `void` |
+| `R_eq_diff` | `eqW(a, b)` | `integrate(merge(a, b))` |
+
+`Step` is defined but there is no reduction relation on `app` — applying `app` to anything produces a term that is **stuck forever** under this system.
+
+---
+
+## The critical obstruction
+
+**`R_rec_succ` does not terminate in general.**
+
+The rule expands `recΔ(b, s, delta n)` to `app(s, recΔ(b, s, n))`. The `recΔ` sub-term shrinks (the third argument goes from `delta n` to `n`), but the outer `app(s, −)` wrapper grows. Whether this whole term eventually normalizes depends entirely on what happens when `app` is applied to something — **and there is no rule for `app`** in this system.
+
+So for a term like `recΔ(void, f, delta(delta(void)))`, reduction produces:
+
+```
+recΔ(void, f, delta(delta(void)))
+→  app(f, recΔ(void, f, delta(void)))
+→  app(f, app(f, recΔ(void, f, void)))
+→  app(f, app(f, void))          ← stuck, irreducible
+```
+
+Here the recursion bottoms out because `n` eventually reaches `void` and `R_rec_zero` fires. That particular trace is strongly normalizing. But strong normalization is a property of **all** terms, including `recΔ(b, s, t)` for **arbitrary** `t` that is not of the form `void` or `delta _`. For example:
+
+- `t = merge(delta(void), delta(void))` — no rule matches `recΔ(b, s, merge(...))`.
+- `t = app(f, g)` — same: no rule fires.
+
+Those terms are **stuck immediately**, so trivially in normal form but not via reduction — which means the recursion is **partial**, not total.
+
+---
+
+## The `R_eq_diff` / `R_eq_refl` conflict
+
+`R_eq_refl` rewrites `eqW(a, a) → void`.  
+`R_eq_diff` rewrites `eqW(a, b) → integrate(merge(a, b))`.
+
+Both rules apply to `eqW(a, a)` (since `a = b = a` satisfies the pattern for `R_eq_diff`), creating a **critical pair**:
+
+```
+eqW(a, a)  →R_eq_refl   void
+eqW(a, a)  →R_eq_diff   integrate(merge(a, a))
+             →R_merge_cancel  integrate(a)
+```
+
+These two paths produce `void` and `integrate(a)` respectively, which are distinct for any non-`void` `a`. **The system is not confluent.** That alone does not block strong normalization, but it means the two rules must be treated as a non-deterministic choice and every branch must terminate.
+
+---
+
+## Can strong normalization be established from this calculus alone?
+
+**No, not unconditionally, and not without additional boundary conditions.** Here is why:
+
+1. **`app` has no reduction rule.** Any term containing `app` in a non-`recΔ` position is a normal form. The recursion combinator `recΔ` produces `app`-headed terms that are immediately stuck. Strong normalization holds vacuously for those stuck terms, but the system is not computing anything meaningful via `app` — it is just accumulating irreducible wrappers.
+
+2. **The induction on `recΔ` is only well-founded when the third argument is in the `delta`-chain `delta^n(void)`**. There is no rule that reduces the third argument in any other shape, and no structural rule that guarantees all third arguments are of that form. The calculus has no type system, no guard, and no invariant ensuring that. To prove SN you would need to quantify over **all** ground terms, including `recΔ(b, s, app(f, g))` — which is a normal form, fine — but also `recΔ(b, s, recΔ(b', s', delta(void)))`, where the inner `recΔ` could step first, changing the shape of the third argument mid-reduction. The reduct might then hit a shape that `R_rec_succ` can fire on again. Without a metric that decreases on **every** such interleaving, termination is not obvious.
+
+3. **A standard size/depth measure does not work directly.** `R_rec_succ` increases the total size of the term (wraps in `app`), so a naive size argument fails. A lexicographic measure — e.g., `(depth of third argument of recΔ, total size)` — works **only** if you can show the third argument never grows under any reduction sequence, which requires arguing about all possible reduction paths through the nested sub-terms, effectively requiring a simultaneous induction over all sub-terms. That is a **logical** argument (structural induction on derivations), not something the presented syntax alone guarantees without proof.
+
+---
+
+## Proof roadmap (conditional)
+
+If you restrict the system to **closed terms in which every third argument of `recΔ` is a closed `delta`-chain** (i.e., `delta^n(void)` for some `n`), then strong normalization **is** provable within the boundary:
+
+1. Assign each term a weight $w$ by:
+   - $w(\text{void}) = 0$
+   - $w(\text{delta}(t)) = w(t) + 1$
+   - $w(\text{merge}(s,t)) = w(s) + w(t) + 1$
+   - $w(\text{integrate}(t)) = w(t) + 1$
+   - $w(\text{app}(s,t)) = w(s) + w(t) + 1$
+   - $w(\text{eqW}(a,b)) = w(a) + w(b) + 2$
+   - $w(\text{recΔ}(b,s,n)) = (w(n)+1) \cdot (w(s)+1) + w(b) + 1$
+
+2. Check each rule strictly decreases $w$. For `R_rec_succ`: LHS weight is $(w(\delta n)+1)(w(s)+1)+w(b)+1 = (w(n)+2)(w(s)+1)+w(b)+1$; RHS weight is $w(s) + w(\text{recΔ}(b,s,n)) + 2 = w(s) + (w(n)+1)(w(s)+1)+w(b)+1+2$, which after expansion is strictly less. (Verify algebraically — this works for the restricted case.)
+
+3. Since every reduct is strictly smaller under $w$ and $w$ maps into $\mathbb{N}$, every reduction sequence is finite.
+
+**But this proof applies only on the restricted fragment.** For the full unrestricted calculus as written, no such $w$ exists because `R_rec_succ` can fire on third arguments of arbitrary shape, and the weight argument requires knowing the third argument is a delta-chain to bound the recursion depth.
+
+---
+
+## Summary verdict
+
+**Strong normalization of the full unrestricted system cannot be established from this calculus alone without additional structural assumptions** (e.g., a type discipline, a well-formedness invariant on `recΔ`'s third argument, or a guard condition). The obstruction is not a proof-method limitation — it is a genuine non-termination risk when `recΔ` is applied to third arguments outside the `delta^n(void)` sub-language. On the restricted `delta`-chain fragment, a simple polynomial weight argument closes the proof within the stated boundary.

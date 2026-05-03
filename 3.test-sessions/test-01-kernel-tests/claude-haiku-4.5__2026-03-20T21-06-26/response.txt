@@ -1,0 +1,38 @@
+Looking at the rewrite calculus, I need to analyze whether strong normalization can be proven from the presented rules alone.
+
+## Analysis
+
+**The system has 7 rewrite rules operating on 7 constructors:**
+- Merge operators (void is identity/absorptive element)
+- Delta/integrate inverse pair
+- Recursive definition `recΔ` 
+- Equality test `eqW`
+
+**Key observations:**
+
+The critical rules are:
+1. **Rule 1** (`integrate(delta t) → void`): Removes a `delta`
+2. **Rule 6** (`recΔ b s (delta n) → app s (recΔ b s n)`): Removes a `delta` from the third argument
+3. **Rules 2-5**: Either size-decreasing or structurally stable
+4. **Rules 7-8**: Handle `eqW` nodes (rules 7 removes eqW, rule 8 removes eqW)
+
+## Proof Roadmap for Strong Normalization
+
+**Primary measure:** Count total `delta` constructors in a term
+
+**Key insight:** Rules 1 and 6 are the *only* rules that can eliminate `delta` constructors, and both strictly decrease the `delta`-count:
+- Rule 1: Removes one `delta` by `integrate(delta t) → void`
+- Rule 6: Removes one `delta` from the third argument of `recΔ`
+
+**Proof structure:**
+
+1. **Phase 1** (bound by initial `delta`-count): Apply rules that reduce `delta`-count. After at most $n$ steps (where $n$ = initial count of `delta` nodes), reach a `delta`-free term. Rules 6 and 1 strictly decrease this count by 1 each.
+
+2. **Phase 2** (on `delta`-free terms): Rules 2-5 are all size-decreasing. Rules 7-8 remove `eqW` constructors (finite count).
+
+3. **Lexicographic termination:** Order reductions by $(δ\text{-count}, \text{term-size})$:
+   - Delta-count decreases under rules 1, 6
+   - Size decreases under rules 2-5
+   - For eqW rules: they remove eqW nodes and eventually reach size-stable normal forms
+
+**Conclusion:** **Yes, strong normalization is established.** The `delta`-constructor count provides a well-founded measure that ensures termination. All reduction paths must terminate within a bounded number of steps, making the system strongly normalizing without requiring external axioms.

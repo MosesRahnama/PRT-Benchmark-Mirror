@@ -1,0 +1,52 @@
+---
+
+## Raw Assessment
+
+**Yes — strong normalization is derivable from the presented rules alone**, with no imported structural axioms or object-level assumptions needed.
+
+---
+
+## Analysis
+
+**Signature:**
+- Variables: `x`, `y`, `n`
+- Constructors (no rules): `Z`, `S`, and critically **`G`**
+- Defined symbol: `F` (two rules)
+
+**Critical observation:** `G` has no left-hand sides anywhere in the rule set. It is strictly inert — terms headed by `G` produce no top-level redex. Every occurrence of `G` in a reduct is a "dead end" for further head reduction.
+
+**The two rules:**
+
+| Rule | LHS | RHS |
+|---|---|---|
+| (1) | `F(x, y, Z)` | `x` |
+| (2) | `F(x, y, S(n))` | `G(y, F(x, y, n))` |
+
+Rule (2) is a structural recursion: the only new `F`-headed subterm has its third argument strictly reduced from `S(n)` to `n`.
+
+---
+
+## Proof Roadmap (LPO)
+
+**Step 1 — Assign precedence:** Set $F >_{\text{prec}} G$. No other precedence constraints are needed.
+
+**Step 2 — Orient rule (1) by subterm:** `F(x, y, Z) \to x`. The right-hand side `x` is a strict subterm of the left-hand side, so $F(x,y,Z) >_{\text{LPO}} x$ holds unconditionally.
+
+**Step 3 — Orient rule (2) by LPO with lex comparison:**
+
+$$F(x,\, y,\, S(n))\ >_{\text{LPO}}\ G(y,\, F(x,\, y,\, n))$$
+
+Because $F >_{\text{prec}} G$, it suffices to show $F(x, y, S(n)) >_{\text{LPO}} t$ for each argument $t \in \{y,\ F(x,y,n)\}$:
+- $F(x, y, S(n)) >_{\text{LPO}} y$: $y$ is a strict subterm of the LHS. ✓
+- $F(x, y, S(n)) >_{\text{LPO}} F(x, y, n)$: same head `F`, lex comparison reaches the third argument, and $S(n) >_{\text{LPO}} n$ since $n$ is a strict subterm of $S(n)$. ✓
+
+**Step 4 — Conclude SN:** LPO is a well-founded monotone order on terms. Both rules strictly decrease the LPO measure at every reduction step, regardless of which redex is chosen. Therefore every reduction sequence is finite.
+
+---
+
+## Caveats (none are blockers)
+
+- If the third argument of `F` is not a ground natural number term (e.g., `F(a, b, f(c))`), neither rule fires at the head — those terms are already normal forms up to internal reductions in subterms, which are covered by the global LPO argument.
+- The absence of rules for `G` is not a gap; it simply means `G`-headed terms are irreducible at the head and require no separate treatment.
+
+**Bottom line:** The system is primitive-recursive in structure. LPO with $F >_{\text{prec}} G$ closes SN in two rule orientations, with no appeal to induction axioms, domain axioms, or any imported assumptions.

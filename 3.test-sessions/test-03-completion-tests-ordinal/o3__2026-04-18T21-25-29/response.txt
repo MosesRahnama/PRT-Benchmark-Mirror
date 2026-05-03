@@ -1,0 +1,55 @@
+Below is a lightweight “road-map” style skeleton you can paste in place of each `sorry`.  
+It shows the expected tactic flow and the lemmas you will probably invoke, but deliberately omits the hairy ordinal-arithmetic details you will still need to fill in.
+
+```lean
+-- recDelta b s (delta n) → app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+  -- 1. Unfold both sides and push `simp`.
+  simp [mu]     -- expands both μ-terms
+  -- 2. Open a `have` stating that the big ω⁵-tower in the exponent
+  --    of the LHS dominates any ω³/ω² terms on the RHS.
+  --    You will prove it with `opow_lt_opow` + `add_lt_add_of_lt_of_le`
+  --    (and maybe `mul_le_mul`) after establishing component inequalities.
+  -- have h₁ : _ < _ := by
+  --   -- supply ordinal-arithmetic proof here
+  -- 3. Finish with a `calc` chain using `h₁`
+  --    and monotonicity of addition on ordinals.
+  -- calc
+  --   _ < _ := h₁
+  --   _ < _ := by
+  --     -- final small positivity step
+  -- exact ?_
+  admit           -- remove once you write the real ordinal proof
+
+-- eqW a a → void
+| _, _, Step.R_eq_refl a => by
+  -- After `simp [mu]`, goal is `0 < ω ^ (2 * μ a + 9) + 1`.
+  simp [mu]
+  -- `have hω : (0 : Ordinal) < ω ^ (2 * μ a + 9)` by
+  --   simpa using opow_pos _ omega0_pos
+  -- `exact lt_of_lt_of_le hω (le_add_of_nonneg_right _ (zero_le _))`
+  admit   -- replace with the two-line proof sketched above
+
+-- eqW a b → integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+  simp [mu]
+  -- 1. Introduce abbreviations for the long sub-terms to keep the proof readable.
+  -- let A := μ a; let B := μ b
+  -- 2. Show that `ω ^ (A + B + 9)` strictly dominates
+  --    `ω ^ 4 * (ω ^ 3 * (A + 1) + ω ^ 2 * (B + 1) + 2)`.
+  --    Use `opow_lt_opow` with
+  --      - lower bound `4 + (3 + …)` on RHS exponent
+  --      - obvious inequality `A + B + 9 > 4`.
+  -- 3. Wrap that inequality with `mul_le_mul`, `add_lt_of_lt_of_le`,
+  --    and finally the trailing `+ 1` on both sides.
+  admit   -- fill in ordinal-arithmetic lemma invocations
+```
+
+Hints for the missing arithmetic:
+
+1. `opow_lt_opow` and `opow_le_opow` are the go-to lemmas for showing that a larger exponent (on a fixed base `ω`) yields a larger ordinal.
+2. Use `add_lt_add_of_lt_of_le` and `add_le_add` freely; ordinal addition is monotone on the right.
+3. For products such as `ω ^ k * (μ t + 1)`, you often need `le_mul_right` (or `lt_of_lt_of_le`) after a small “< + 1” lemma like `lt_add_one _`.
+4. Remember `omega0_pos : (0 : Ordinal) < ω`.
+
+Filling in the three `admit`/`sorry` blocks with the suggested tactics should compile cleanly once each domination inequality is proved.

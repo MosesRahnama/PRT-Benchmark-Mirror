@@ -1,0 +1,98 @@
+I'll read the Lean 4 file to understand the partial proof and provide a proof skeleton for the remaining cases.
+Now I'll provide a proof skeleton for the three remaining cases marked with `sorry`. Based on the structure and the comments already in the file, here's what each case requires:
+
+## Proof Skeleton for Remaining Cases
+
+### **Case 1: `R_rec_succ` (recDelta b s (delta n) → app s (recDelta b s n))**
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+  simp [mu]
+  -- Goal: omega^3 * (mu s + 1) + omega^2 * (omega^(mu n + mu s + 6) + omega * (mu b + 1) + 1 + 1) + 1
+  --      < omega^(omega^5 * (mu n + 1) + 1 + mu s + 6) + omega * (mu b + 1) + 1
+  --
+  -- Strategy: Show that the exponent on LHS (omega^5 * (mu n + 1) + 1 + mu s + 6)
+  -- dominates the entire RHS because:
+  --   omega^5 * (mu n + 1) > mu n + mu s + 6  (since omega^5 term dominates)
+  -- Therefore: omega^(omega^5 * (mu n + 1) + ...) > omega^3 * (mu s + 1) + omega^2 * (...)
+  
+  have h_exponent : omega0^5 * (mu n + 1) > mu n + mu s + 6 := by
+    -- Show omega^5 * (mu n + 1) dominates any finite/small ordinal sum
+    sorry
+  have h_lhs_bounded : omega0^3 * (mu s + 1) + omega0^2 * (omega0^(mu n + mu s + 6) + 
+                      omega0 * (mu b + 1) + 1 + 1) + 1 < omega0^(mu n + mu s + 6 + 1) := by
+    -- Both terms in RHS are bounded by omega^(mu n + mu s + 6 + 1)
+    sorry
+  have h_rhs_dominates : omega0^(mu n + mu s + 6 + 1) < 
+                        omega0^(omega0^5 * (mu n + 1) + 1 + mu s + 6) + omega0 * (mu b + 1) + 1 := by
+    -- The exponent on RHS is much larger
+    sorry
+  calc omega0^3 * (mu s + 1) + omega0^2 * (omega0^(mu n + mu s + 6) + omega0 * (mu b + 1) + 1 + 1) + 1
+    _ < omega0^(mu n + mu s + 6 + 1) := h_lhs_bounded
+    _ < omega0^(omega0^5 * (mu n + 1) + 1 + mu s + 6) + omega0 * (mu b + 1) + 1 := h_rhs_dominates
+```
+
+---
+
+### **Case 2: `R_eq_refl` (eqW a a → void)**
+
+```lean
+| _, _, Step.R_eq_refl a => by
+  simp [mu]
+  -- Goal: 0 < omega^(mu a + mu a + 9) + 1
+  -- This simplifies to: 0 < omega^(2 * mu a + 9) + 1
+  --
+  -- Strategy: Both omega^(...) and the +1 are positive
+  
+  have h1 : (0 : Ordinal) < omega0^(mu a + mu a + 9) := by
+    -- Positive exponent with base omega > 0
+    apply opow_pos
+    omega
+  have h2 : (0 : Ordinal) < omega0^(mu a + mu a + 9) + 1 := by
+    calc (0 : Ordinal) < omega0^(mu a + mu a + 9) := h1
+      _ ≤ omega0^(mu a + mu a + 9) + 1 := le_add_right _ _
+  exact h2
+```
+
+---
+
+### **Case 3: `R_eq_diff` (eqW a b → integrate (merge a b))**
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+  simp [mu]
+  -- Goal: omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 1 + 1) + 1
+  --      < omega^(mu a + mu b + 9) + 1
+  --
+  -- Strategy: Show the RHS exponent (mu a + mu b + 9) is large enough that
+  -- omega^(mu a + mu b + 9) dominates all terms in the LHS
+  
+  have h_merge_bounded : omega0^3 * (mu a + 1) + omega0^2 * (mu b + 1) + 1 + 1 < 
+                        omega0^(mu a + mu b + 9) := by
+    -- The omega^3 and omega^2 terms are bounded by smaller ordinals than the RHS exponent
+    sorry
+  have h_lhs : omega0^4 * (omega0^3 * (mu a + 1) + omega0^2 * (mu b + 1) + 1 + 1) + 1 <
+               omega0^(mu a + mu b + 9) := by
+    calc omega0^4 * (omega0^3 * (mu a + 1) + omega0^2 * (mu b + 1) + 1 + 1) + 1
+      _ < omega0^(mu a + mu b + 9) := by
+        -- Use that the argument to opow on LHS is bounded
+        have : omega0^3 * (mu a + 1) + omega0^2 * (mu b + 1) + 1 + 1 < omega0^(mu a + mu b + 9) :=
+          h_merge_bounded
+        -- omega^4 * (something < omega^(...)) is still less than omega^(mu a + mu b + 9)
+        sorry
+  calc omega0^4 * (omega0^3 * (mu a + 1) + omega0^2 * (mu b + 1) + 1 + 1) + 1
+    _ < omega0^(mu a + mu b + 9) := h_lhs
+    _ ≤ omega0^(mu a + mu b + 9) + 1 := le_add_right _ _
+```
+
+---
+
+## Summary of Proof Structure
+
+Each case requires:
+
+1. **R_rec_succ**: Domination argument showing the exponent $\omega^5 \cdot (\mu(n)+1)$ in the LHS makes it much larger than the RHS.
+2. **R_eq_refl**: Direct positivity of $\omega^{2\mu(a)+9} + 1$.
+3. **R_eq_diff**: Showing $\omega^4 \cdot (\text{finite ordinal}) + 1 < \omega^{\mu(a)+\mu(b)+9}$ via exponent dominance.
+
+The key pattern is leveraging **ordinal exponent hierarchy**: higher exponents dominate lower ones, even when multiplied by finite structures.

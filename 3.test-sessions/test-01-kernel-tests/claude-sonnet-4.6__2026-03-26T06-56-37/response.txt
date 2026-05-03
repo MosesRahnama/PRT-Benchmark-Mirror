@@ -1,0 +1,77 @@
+That is the entire file. Here is my assessment.
+
+---
+
+## Raw Assessment
+
+**Strong normalization cannot be established from this calculus alone.**
+
+### The obstruction: non-terminating loop in the rules
+
+Consider the term `eqW a b` where `a ≠ b`. Rule `R_eq_diff` fires:
+
+```
+eqW a b  →  integrate (merge a b)
+```
+
+Now apply `R_int_delta` — but only if `merge a b` is of the form `delta t`, which it is not in general. So that path is closed for arbitrary `a, b`. So far, no loop.
+
+However, consider `R_eq_diff` against `R_eq_refl` together with `R_merge_cancel`:
+
+Let `a = b`. Then `R_eq_refl` fires and gives `void`. Fine — that terminates.
+
+Now let `a ≠ b` and take `a = merge c c` for some `c`. Then `R_merge_cancel` rewrites `merge c c → c`, and you can keep building larger `merge`-trees of the same term that each reduce. That alone doesn't loop.
+
+**The actual loop:** Apply `R_eq_diff` to `eqW a b`:
+
+```
+eqW a b  →  integrate (merge a b)
+```
+
+There is no rule that reduces `integrate (merge a b)` unless `merge a b` reduces to `delta t` for some `t`. Nothing in the calculus guarantees that `merge a b` ever reaches `delta _`. In general it may reduce to `void` (via `R_merge_void_left/right/cancel`), which then gives `integrate void` — and **no rule fires on `integrate void`**. That branch terminates.
+
+**But `R_eq_diff` is unconditional and has no side condition `a ≠ b`.**
+
+It co-exists with `R_eq_refl`. Both share the same LHS pattern `eqW a a`. When `a = b`, **both** `R_eq_refl` and `R_eq_diff` apply simultaneously to `eqW a a`. `R_eq_diff` rewrites `eqW a a → integrate (merge a a)`, and `R_merge_cancel` then rewrites `merge a a → a`, yielding `integrate a`. Now `R_int_delta` applies only if `a = delta t`. If `a = delta (delta (...))`, then `integrate (delta t) → void`, which terminates. But if `a = eqW c c` (a self-similar term), then:
+
+```
+eqW (eqW c c) (eqW c c)
+  →R_eq_diff  integrate (merge (eqW c c) (eqW c c))
+  →R_merge_cancel  integrate (eqW c c)
+```
+
+No rule fires on `integrate (eqW c c)`. That is a **normal form that is not `void`** — but note: `integrate (eqW c c)` is stuck. So that path terminates too.
+
+**The real, concrete non-termination arises from the interaction of `R_rec_succ` and `recΔ`:**
+
+```
+recΔ b s (delta n)  →  app s (recΔ b s n)
+```
+
+The result contains `app s (recΔ b s n)`. The `recΔ` sub-term inside `app` can again fire `R_rec_succ` if `n = delta n'`, producing `app s (app s (recΔ b s n'))`, and so on. This is *intended* primitive recursion unfolding. It **terminates** only if the third argument eventually reaches `void` through `delta`-stripping — but:
+
+- Nothing in the calculus ensures the third argument shrinks under a well-founded measure **when `s` itself produces `delta`-wrapped terms**. Specifically, if `app s (recΔ b s n)` reduces (via some future rule for `app`) to a term whose third position grows, you could loop. **However, `app` has no reduction rule at all in this calculus.** `app` is a constructor with no associated rewrite rule.
+
+Since `app` is inert (no rule with `app` on the LHS), `R_rec_succ` unfolds the recursion but each unfolded `recΔ` is applied to a strictly smaller `n` (one `delta` layer stripped). The third argument strictly decreases in `delta`-depth, which is a natural number. That sub-system **does terminate** in isolation.
+
+---
+
+### Why the calculus as given is insufficient to prove SN
+
+Two issues make a self-contained SN proof impossible:
+
+1. **`R_eq_diff` is not guarded by `a ≠ b`.** It overlaps with `R_eq_refl` on `eqW a a`. The calculus is **non-confluent** at that overlap: `eqW a a` rewrites to both `void` (via `R_eq_refl`) and `integrate (merge a a) →* integrate a` (via `R_eq_diff` + `R_merge_cancel`). In the one-step rewrite relation as defined, both reductions are valid, and the results are not joinable in general (e.g., `void` vs. `integrate (delta t)` when `a = delta t` are joinable, but `void` vs. `integrate (eqW c c)` reaches a stuck term). Non-confluence does not by itself break SN, but it prevents any simple decreasing-measure argument that relies on a unique normal form.
+
+2. **No measure is internally definable.** To prove SN by a termination order (e.g., a polynomial or lexicographic interpretation), you need to assign weights to constructors such that every rule strictly decreases the weight. For `R_eq_diff`: the LHS `eqW a b` must weigh strictly more than `integrate (merge a b)`. But `merge a b` contains both `a` and `b`, so any additive weight gives `w(integrate) + w(merge) + w(a) + w(b)` on the RHS. For this to be less than `w(eqW) + w(a) + w(b)`, you need `w(eqW) > w(integrate) + w(merge)`. That is satisfiable. But for `R_rec_succ`, the RHS is `app s (recΔ b s n)`, which contains **two copies of `s`** (one in `app s (...)` and one inside `recΔ b s n`). Any additive/polynomial interpretation that accounts for both copies of `s` forces `w(recΔ b s (delta n)) > w(app) + w(s) + w(recΔ) + w(b) + w(s) + w(n)`, i.e., `w(recΔ) + w(b) + w(s) + w(delta) + w(n) > w(app) + w(recΔ) + w(b) + 2·w(s) + w(n)`, simplifying to `w(delta) > w(app) + w(s)`. Since `s` is an arbitrary closed term and `w(s)` can be arbitrarily large, **no fixed coefficient assignment satisfies this for all `s`**. A context-sensitive or argument-filtered interpretation would be needed — but that is a structural axiom external to the calculus.
+
+---
+
+### Conclusion
+
+**No.** Strong normalization of this system **cannot** be established from the presented calculus alone using standard weight/polynomial interpretations or simple structural induction, because:
+
+- `R_rec_succ` duplicates the step-function `s`, making any substitution-closed termination order require an argument about the size of `s` that cannot be bounded within the system itself.
+- The overlap between `R_eq_refl` and `R_eq_diff` on `eqW a a` requires a confluence or orthogonality argument that the calculus does not supply.
+- `app` is a fully inert constructor with no rule, meaning any `app`-headed term is a normal form regardless of its sub-terms — the calculus cannot reduce inside an `app` head, so reduction sequences may get stuck at non-`void` normal forms, which is fine for WN but the duplication in `R_rec_succ` blocks a uniform SN proof.
+
+A self-contained SN proof roadmap would require at minimum: (a) a size measure that assigns zero weight to `s` in `recΔ b s n` (i.e., argument filtering on position 2 of `recΔ`), or (b) a type discipline restricting what terms `s` can be. Both are structural additions beyond the given syntax and rules.

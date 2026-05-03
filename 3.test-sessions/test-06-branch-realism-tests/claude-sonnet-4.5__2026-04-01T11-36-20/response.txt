@@ -1,0 +1,75 @@
+Looking at this Lean 4 file, I need to assess whether the two helper theorems for termination are sound. Let me analyze the `kappa` measure and check each theorem.
+
+## Theorem 1: `kappa_rec_delta_step` ✓
+
+This claims:
+```lean
+kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1
+```
+
+**LHS:** By the pattern match for `recDelta b s (.delta n)`:
+```
+Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1
+```
+
+**RHS:** For general `n`, the pattern `recDelta b s n` gives:
+```
+Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)
+```
+So RHS + 1 equals:
+```
+Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1
+```
+
+**LHS = RHS** ✓ This theorem is **sound**.
+
+## Theorem 2: `kappa_rec_succ_drop` ✗
+
+This claims:
+```lean
+kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))
+```
+
+After applying `kappa_rec_delta_step`, the goal becomes:
+```
+kappa (app s (recDelta b s n)) < kappa (recDelta b s n) + 1
+```
+
+**Case 1: When `n` is NOT of the form `delta m`**
+
+- RHS of inequality: `Nat.max (kappa s) (kappa (recDelta b s n))`
+  - Where `kappa (recDelta b s n) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)`
+  - Since this is `≥ kappa s`, we get: `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)`
+- LHS of inequality: `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1`
+- **Result:** `x < x + 1` ✓ Holds.
+
+**Case 2: When `n = delta m` for some `m`**
+
+- `kappa (recDelta b s (delta m)) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1`
+- RHS: `Nat.max (kappa s) (Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1)`
+  - Since the second argument is `> kappa s`, this equals: `Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1`
+- LHS: `kappa (recDelta b s (delta (delta m)))`
+  - The pattern matches with the inner `delta m` as the argument
+  - `= Nat.max (Nat.max (kappa b) (kappa s)) (kappa (delta m)) + 1`
+  - Since `kappa (delta m) = kappa m`:
+  - `= Nat.max (Nat.max (kappa b) (kappa s)) (kappa m) + 1`
+
+**Result:** LHS = RHS, so the inequality **fails**! ✗
+
+### Counterexample:
+
+Let `b = void`, `s = void`, `n = delta void`:
+
+- `kappa (recDelta void void (delta (delta void)))`
+  - `= Nat.max (Nat.max 0 0) (kappa (delta void)) + 1`
+  - `= Nat.max 0 0 + 1 = 1`
+
+- `kappa (app void (recDelta void void (delta void)))`
+  - `= Nat.max 0 (kappa (recDelta void void (delta void)))`
+  - `= Nat.max 0 (Nat.max 0 0 + 1) = 1`
+
+The claim requires `1 < 1`, which is **false**.
+
+## Conclusion
+
+The helper strategy is **NOT sound**. While `kappa_rec_delta_step` is correct, `kappa_rec_succ_drop` fails when the argument `n` is itself a `delta`-wrapped term. In such cases, both sides of the inequality have equal measure, violating the strict decrease required for well-founded termination.

@@ -1,0 +1,43 @@
+## Assessment of Termination Measure Candidates
+
+I've analyzed the three proposed termination measures (`mu1`, `mu2`, `mu3`) for the rewrite system. Here's my assessment:
+
+### **Candidate `mu1`: FAILS**
+
+This measure assigns uniform low weights and fails on **R_rec_succ**:
+- LHS: `recDelta b s (delta n)` → `1 + μ₁(b) + μ₁(s) + μ₁(delta n)` = `1 + μ₁(b) + μ₁(s) + 1 + μ₁(n)`
+- RHS: `app s (recDelta b s n)` → `1 + μ₁(s) + μ₁(recDelta b s n)` = `1 + μ₁(s) + 1 + μ₁(b) + μ₁(s) + μ₁(n)`
+
+Simplifying: LHS = `2 + μ₁(b) + μ₁(s) + μ₁(n)` vs RHS = `2 + μ₁(b) + 2μ₁(s) + μ₁(n)`
+
+**RHS ≥ LHS**, violating termination.
+
+### **Candidate `mu2`: VALID ✓**
+
+This measure uses strategic higher weights and succeeds on all rewrite rules:
+
+- **R_int_delta**: `integrate (delta t)` → `void` gives `3 + μ₂(t) → 0` ✓
+- **R_merge_void_left/right**: `merge void t` → `t` gives `2 + μ₂(t) → μ₂(t)` ✓
+- **R_merge_cancel**: `merge t t` → `t` gives `2 + 2μ₂(t) → μ₂(t)` ✓
+- **R_rec_zero**: `recDelta b s void` → `b` gives `5 + μ₂(b) + μ₂(s) → μ₂(b)` ✓
+- **R_rec_succ**: LHS = `5 + μ₂(b) + μ₂(s) + 1 + μ₂(n)` vs RHS = `1 + μ₂(s) + 5 + μ₂(b) + μ₂(s) + μ₂(n)` → `6 + μ₂(b) + μ₂(s) + μ₂(n)` strictly decreases from `6 + μ₂(b) + 2μ₂(s) + μ₂(n)` **Wait, let me recalculate...**
+
+Actually: RHS = `1 + μ₂(s) + (5 + μ₂(b) + μ₂(s) + μ₂(n))` = `6 + μ₂(b) + 2μ₂(s) + μ₂(n)` which equals LHS. This is **problematic**.
+
+Let me reconsider - **mu2 actually FAILS** on R_rec_succ as well.
+
+### **Candidate `mu3`: VALID ✓**
+
+This measure uses a different weight distribution:
+
+- **R_rec_succ** check: 
+  - LHS: `1 + μ₃(b) + μ₃(s) + (1 + μ₃(n))` = `2 + μ₃(b) + μ₃(s) + μ₃(n)`
+  - RHS: `2 + μ₃(s) + (1 + μ₃(b) + μ₃(s) + μ₃(n))` = `3 + μ₃(b) + 2μ₃(s) + μ₃(n)`
+  
+  For strict decrease: `2 + μ₃(b) + μ₃(s) + μ₃(n) > 3 + μ₃(b) + 2μ₃(s) + μ₃(n)` requires `μ₃(s) < -1`, which is **impossible**.
+
+**mu3 FAILS** on R_rec_succ.
+
+### **Conclusion**
+
+All three candidates **FAIL** to establish termination. The critical issue is **R_rec_succ**, which introduces a recursive call alongside additional structure (`app`), making it difficult to assign weights that guarantee strict decrease. A valid termination measure would need to assign much higher weight to the `delta` constructor or use a lexicographic/multiset ordering instead of simple additive measures.

@@ -1,0 +1,24 @@
+I will read test-files/Test-01-Kernel.lean to identify the syntax and rewrite rules of the calculus.
+Based on the contents of
+, here is the assessment of strong normalization (SN) for this rewrite system.
+
+### Raw Assessment: No
+Strong normalization **cannot** be established for this system from the presented calculus alone. The primary obstacle is the rule `R_eq_diff`, which creates a loop/non-terminating expansion when applied to distinct terms.
+
+### Reason for Failure
+The rule `R_eq_diff` states:
+`Step (eqW a b) (integrate (merge a b))` 
+
+When $a \neq b$, an `eqW` term reduces to a structure containing $a$ and $b$. However, the system lacks any rules to "consume" or "reduce" the `merge` or `integrate` constructors in a way that guarantees a reduction in term complexity unless specific structural identities are met (like `R_merge_cancel` or `R_merge_void`). 
+
+Crucially, if one were to define a term that embeds an `eqW` within its own sub-terms (facilitated by the `app` or `recΔ` constructors), the system allows for recursive expansions that do not strictly decrease any standard measure (size, height, or weight). Specifically:
+1. **Divergence via `R_eq_diff`**: In a first-order system without types or guards, `eqW a b` where $a$ and $b$ are complex terms can lead to an increase in term size.
+2. **Infinite Expansion**: Without a rule to reduce `integrate (merge a b)` back to a "smaller" state or a ground value in the general case, the term can persist or expand if combined with `recΔ`.
+
+### Logical Boundary
+While the `recΔ` rules (`R_rec_zero` and `R_rec_succ`) resemble primitive recursion on the `delta` (successor) structure—which is typically SN—the `eqW` rules introduce a form of "definitional search" or "trace expansion" that is not well-founded.
+
+To establish SN, you would require at least one of the following (which are outside your specified boundary):
+- **Structural Induction on a Well-Ordering**: An assumption that terms have a strictly decreasing weight under the `R_eq_diff` transformation.
+- **Side Conditions**: A guard on `R_eq_diff` to prevent it from firing in contexts that form cycles.
+- **Type System**: A termination argument based on a hierarchy (like Girard's Candidates or Oridinal notations) that is not present in this raw syntax.

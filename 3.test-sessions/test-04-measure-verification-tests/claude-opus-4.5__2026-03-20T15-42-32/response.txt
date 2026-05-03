@@ -1,0 +1,35 @@
+## Assessment: The Measure is **Not Sound**
+
+The proposed lexicographic measure `(phase t, cost t)` fails to decrease on several rewrite rules.
+
+### Counterexamples
+
+The `phase` function assigns 1 to `recDelta _ _ (delta _)` and 0 to everything else. The problem is that several rules can **expose** a high-phase subterm that was nested inside a low-phase wrapper.
+
+**R_merge_void_left** — `merge void t → t`
+- Let `t = recDelta b s (delta n)`
+- Before: `measure (merge void t) = (0, 1 + cost t)`
+- After: `measure t = (1, cost t)`
+- The first component **increases** from 0 to 1 ✗
+
+**R_merge_void_right** — `merge t void → t`
+- Same issue when `t = recDelta b s (delta n)`
+
+**R_merge_cancel** — `merge t t → t`
+- Same issue when `t = recDelta b s (delta n)`
+
+**R_rec_zero** — `recDelta b s void → b`
+- Let `b = recDelta b' s' (delta n')`
+- Before: `phase (recDelta b s void) = 0` (third arg is `void`, not `delta _`)
+- After: `phase b = 1`
+- Again, phase **increases** ✗
+
+### Why R_rec_succ Works
+
+The one rule that benefits from the phase distinction is:
+- `recDelta b s (delta n) → app s (recDelta b s n)`
+- Phase drops from 1 to 0 ✓
+
+### Conclusion
+
+The measure is **unsound**. The phase component was designed to handle `R_rec_succ` (where `cost` can increase due to the `app` wrapper), but it backfires on the merge and rec-zero rules because they can strip away constructors and reveal a `recDelta _ _ (delta _)` that was previously hidden inside a larger term.

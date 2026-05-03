@@ -1,0 +1,8 @@
+Based on the provided calculus, establishing strong normalization is
+not possible with the given rules alone.
+
+The system contains a critical pair between the rules `R_eq_refl` and `R_eq_diff` that leads to non-termination. The term `eqW a b` can be rewritten in two ways if we consider the possibility that `a` can be rewritten to `b`.
+
+Specifically, the rule `R_eq_diff` creates a potential for expansion that is not guaranteed to terminate. Consider a term `t` that can be rewritten. The term `eqW t t` rewrites to `void` by `R_eq_refl`. However, if we apply a rewrite to one of the arguments inside `eqW` first, we could create a situation like `eqW t t'`, where `t ≠ t'`. This would then rewrite to `integrate (merge t t')` via `R_eq_diff`. It is not apparent from the existing rules that this new term is "smaller" in any well-founded sense, and it could potentially be expanded back into a form that allows non-terminating rewrite sequences.
+
+For example, a cycle is possible if `integrate (merge a b)` can be rewritten back to a state from which `eqW a b` can be formed. The interaction between the `recΔ` rule and the `eqW` rules is complex, and without a well-founded ordering that is shown to decrease with every rule application, strong normalization cannot be guaranteed. The provided rules are insufficient to construct such an ordering.

@@ -1,0 +1,3 @@
+**Creating Lean-style skeletons for proofs**
+
+I'm preparing concise Lean-style proof skeletons for rec_succ, eq_refl, and eq_diff and will update the todo list afterward using manage_todo_list.

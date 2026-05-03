@@ -1,0 +1,58 @@
+Based on the provided Lean 4 code, I'll assess the soundness of the helper strategy and theorems:
+
+### Analysis of `kappa_rec_delta_step` Theorem
+```lean
+theorem kappa_rec_delta_step (b s n : Trace) :
+  kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1 := by
+  sorry
+```
+
+**Soundness Assessment:**
+1. The theorem claims that for any traces `b`, `s`, and `n`:
+   ```
+   κ(recDelta b s (delta n)) = κ(recDelta b s n) + 1
+   ```
+2. From the `kappa` definition:
+   - `κ(recDelta b s (delta n)) = max(max(κb, κs), κn) + 1`
+   - `κ(recDelta b s n) = max(max(κb, κs), κn)` (when `n` is not a `delta`)
+3. The equality holds **only if `n` is not a `delta` constructor**. If `n` is itself a `delta` (e.g., `n = delta m`), then:
+   - Left side: `κ(recDelta b s (delta (delta m))) = max(max(κb, κs), κm) + 1`
+   - Right side: `κ(recDelta b s (delta m)) + 1 = [max(max(κb, κs), κm) + 1] + 1`
+4. **Conclusion:** The theorem is **unsound** as stated. It needs the precondition that `n` is not a `delta` trace.
+
+### Analysis of `kappa_rec_succ_drop` Theorem
+```lean
+theorem kappa_rec_succ_drop (b s n : Trace) :
+  kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+  rw [kappa_rec_delta_step]
+  sorry
+```
+
+**Soundness Assessment:**
+1. The theorem claims:
+   ```
+   κ(app s (recDelta b s n)) < κ(recDelta b s (delta n))
+   ```
+2. From `kappa` definitions:
+   - Left: `κ(app s (recDelta b s n)) = max(κs, κ(recDelta b s n))`
+   - Right: `κ(recDelta b s (delta n)) = max(max(κb, κs), κn) + 1`
+3. The inequality holds because:
+   - `max(κs, κ(recDelta b s n)) ≤ max(κs, max(max(κb, κs), κn))`
+   - `max(κs, max(max(κb, κs), κn)) = max(κb, κs, κn)`
+   - `max(κb, κs, κn) < max(κb, κs, κn) + 1`
+4. **Conclusion:** This theorem is **sound** as long as `kappa_rec_delta_step` holds. However, since `kappa_rec_delta_step` is unsound, this theorem's proof is incomplete.
+
+### Summary of Soundness
+1. **`kappa_rec_delta_step`**: Unsound without precondition that `n` is not a `delta` trace.
+2. **`kappa_rec_succ_drop`**: Conditionally sound, but depends on the unsound `kappa_rec_delta_step`.
+
+### Recommended Fix
+To make the helper strategy sound:
+1. Add a precondition to `kappa_rec_delta_step`:
+   ```lean
+   theorem kappa_rec_delta_step (b s n : Trace) (h : ¬ (∃ m, n = delta m)) :
+     kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1 := ...
+   ```
+2. Adjust `kappa_rec_succ_drop` to use this precondition.
+
+The current implementation is mathematically valid only for non-`delta` arguments to `recDelta`, but the theorems don't enforce this constraint.

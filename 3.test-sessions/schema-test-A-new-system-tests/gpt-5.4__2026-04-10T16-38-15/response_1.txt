@@ -1,0 +1,7 @@
+My assessment is yes: strong normalization should be establishable from the rewrite system in KO7-LLM-Benchmark/test-files/Schema-Test-A-New-System.trs alone, with no need to import extra structural axioms or object-level assumptions.
+
+The key reason is that the only recursive rule,
+$F(x,y,S(n)) \to G(F(x,y,n))$,
+strictly decreases the third argument from $S(n)$ to $n$. There is no rule for $G$, $S$, or $Z$, and no rule duplicates the recursive call or rebuilds a larger third argument. The base case
+$F(x,y,Z) \to x$
+also does not create a new recursive obligation at the same or greater size. So every reduction path can only peel off finitely many $S$ constructors before reaching the base case, and after that only already-existing subterms remain. In standard termination terms, this is a straightforward terminating primitive-recursion-style TRS, and a standard ordering such as a recursive path ordering can orient both rules.

@@ -1,0 +1,73 @@
+No.
+
+Under the usual lexicographic decrease on `measure : Trace → Nat × Nat` with
+
+$$
+\text{measure}(t) = (\text{phase}(t), \text{cost}(t)),
+$$
+
+the measure is **not** strictly decreasing for all `Step` rules.
+
+### Main obstruction
+`phase` only detects a **top-level** term of the form
+
+`recDelta _ _ (delta _)`
+
+so rules that remove an outer constructor can **expose** such a term and make `phase` go from `0` to `1`.
+
+### Concrete counterexample
+Let
+
+`u := recDelta void void (delta void)`.
+
+Then:
+
+- `phase u = 1`
+- `cost u = 2`
+- so `measure u = (1, 2)`
+
+But `Step.R_merge_void_left` gives:
+
+`Step (merge void u) u`
+
+and
+
+- `phase (merge void u) = 0`
+- `cost (merge void u) = 1 + 0 + 2 = 3`
+- so `measure (merge void u) = (0, 3)`
+
+Hence the step is
+
+$$
+(0,3) \to (1,2),
+$$
+
+which is **not** a decrease in lex order with the first component primary.
+
+The same issue affects:
+
+- `R_merge_void_right`
+- `R_merge_cancel`
+- `R_rec_zero`
+
+whenever the exposed result has `phase = 1`.
+
+### Why `cost` cannot be primary instead
+If one tries to read the pair as “cost first, then phase”, `R_rec_succ` breaks it:
+
+`recDelta b s (delta n) → app s (recDelta b s n)`
+
+with
+
+$$
+\text{cost(lhs)} = 2 + cost(b) + cost(s) + cost(n)
+$$
+
+$$
+\text{cost(rhs)} = 2 + cost(b) + 2\,cost(s) + cost(n).
+$$
+
+So if `cost s > 0`, the cost **increases**.
+
+### Verdict
+The proposed measure is **not sound** as a global lexicographic termination measure for `Step`. It fixes `R_rec_succ`, but other rules can expose a `recDelta ... (delta ...)` redex and increase the first component.

@@ -1,0 +1,50 @@
+## Analysis
+
+The file defines a structural measure `kappa` on `Trace` terms with a **special-case pattern** for `recDelta` that adds 1 when the third argument is a `delta`:
+
+```lean
+| .recDelta b s (.delta n) => Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1
+| .recDelta b s n => Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)
+```
+
+---
+
+### Theorem 1: `kappa_rec_delta_step`
+
+**Claim:** $\kappa(\texttt{recDelta}\ b\ s\ (\texttt{delta}\ n)) = \kappa(\texttt{recDelta}\ b\ s\ n) + 1$
+
+**Counterexample:** Let $b = s = \texttt{void}$ and $n = \texttt{delta void}$.
+
+| Side | Computation |
+|------|-------------|
+| LHS | $\kappa(\texttt{recDelta void void (delta (delta void))}) = \max(\max(0,0), \kappa(\texttt{delta void})) + 1 = 0 + 1 = 1$ |
+| RHS | $\kappa(\texttt{recDelta void void (delta void)}) + 1 = (\max(\max(0,0), 0) + 1) + 1 = 2$ |
+
+$1 \ne 2$, so **the theorem is false**.
+
+The issue: when $n$ has head constructor `delta`, **both** sides of the equation match the special-case pattern, causing the +1 to be applied twice on the RHS but only once on the LHS.
+
+---
+
+### Theorem 2: `kappa_rec_succ_drop`
+
+**Claim:** $\kappa(\texttt{app}\ s\ (\texttt{recDelta}\ b\ s\ n)) < \kappa(\texttt{recDelta}\ b\ s\ (\texttt{delta}\ n))$
+
+**Counterexample:** Same instantiation $b = s = \texttt{void}$, $n = \texttt{delta void}$.
+
+| Side | Computation |
+|------|-------------|
+| RHS | $\kappa(\texttt{recDelta void void (delta (delta void))}) = 1$ (as above) |
+| LHS | $\kappa(\texttt{app void (recDelta void void (delta void))}) = \max(0, \kappa(\texttt{recDelta void void (delta void)})) = \max(0, 1) = 1$ |
+
+$1 \not< 1$, so **the theorem is false**.
+
+---
+
+## Conclusion
+
+**The helper strategy is unsound.** Both theorems fail when $n$ itself has head constructor `delta`. The `kappa` function's case-split on line 1 creates a discontinuity: the intended invariant $\kappa(\texttt{recDelta}\ b\ s\ (\texttt{delta}\ n)) = \kappa(\texttt{recDelta}\ b\ s\ n) + 1$ only holds when $n$ does **not** match `.delta _`.
+
+To fix this, either:
+1. Add an explicit side condition (e.g., `∀ m, n ≠ delta m`), or  
+2. Redefine `kappa` to count `delta` depth uniformly rather than using a top-level pattern match.

@@ -1,0 +1,81 @@
+I'll provide a proof skeleton for the remaining five cases in the `measure_decreases` theorem from the provided Lean 4 file. I won't modify the file or run any tools, as requested.
+
+Below is a skeleton for completing the proofs for the remaining cases marked with `sorry`. Each case will focus on showing that the lexicographic measure decreases, either by a drop in `kappa` or a drop in `mu` when `kappa` ties.
+
+- **integrate (delta t) → void** (`R_int_delta`):
+  - Here, `kappa` of the result is 0 (since `void` has `kappa` 0), and the starting `kappa` is that of `t` (since `integrate` and `delta` are transparent to `kappa`). Since `kappa t` could be any natural number (including 0), we need to check if `kappa` decreases or ties.
+  - If `kappa t = 0`, then `kappa` ties, and we need to show `mu` decreases. `mu` of `void` is 0, and `mu` of `integrate (delta t)` is `1 + mu t`, which is at least 1, so `mu` decreases.
+  - If `kappa t > 0`, then `kappa` decreases from a positive value to 0, which is a lexicographic decrease.
+  - Thus, we can handle both scenarios by checking if `kappa` decreases; if it ties (i.e., `kappa t = 0`), then `mu` decreases.
+
+- **recDelta b s void → b** (`R_rec_zero`):
+  - `kappa` of the starting term `recDelta b s void` is `max(max(kappa b, kappa s), kappa void) = max(kappa b, kappa s)`, since `kappa void = 0`.
+  - `kappa` of the result is `kappa b`.
+  - Since `max(kappa b, kappa s) ≥ kappa b`, `kappa` either ties or decreases. If `kappa s ≤ kappa b`, then `kappa` ties; otherwise, it decreases.
+  - For `mu`, the starting term has `mu = 3 + mu b + mu s + mu void = 3 + mu b + mu s`, and the result has `mu b`, so `mu` decreases by at least 3 + `mu s`.
+  - Thus, if `kappa` ties (i.e., `kappa s ≤ kappa b`), `mu` still decreases.
+
+- **recDelta b s (delta n) → app s (recDelta b s n)** (`R_rec_succ`):
+  - `kappa` of the starting term is `max(max(kappa b, kappa s), kappa n) + 1`, due to the `delta` wrapper on `n`.
+  - `kappa` of the result is `max(kappa s, kappa (recDelta b s n))`, where `kappa (recDelta b s n) = max(max(kappa b, kappa s), kappa n)`, so overall `kappa` of result is `max(kappa s, max(max(kappa b, kappa s), kappa n)) = max(max(kappa b, kappa s), kappa n)`.
+  - Thus, `kappa` decreases by 1, which ensures a lexicographic decrease.
+
+- **eqW a a → void** (`R_eq_refl`):
+  - `kappa` of the starting term is `max(kappa a, kappa a) = kappa a`.
+  - `kappa` of the result is 0.
+  - If `kappa a > 0`, `kappa` decreases; if `kappa a = 0`, `kappa` ties, but `mu` decreases from `4 + mu a + mu a = 4 + 2 * mu a` to 0.
+  - Thus, we can handle this similarly to `R_int_delta`.
+
+- **eqW a b → integrate (merge a b)** (`R_eq_diff`):
+  - `kappa` of the starting term is `max(kappa a, kappa b)`.
+  - `kappa` of the result is `kappa (merge a b) = max(kappa a, kappa b)`, since `integrate` is transparent.
+  - Thus, `kappa` ties.
+  - For `mu`, starting term has `mu = 4 + mu a + mu b`, and result has `mu = 1 + (2 + mu a + mu b) = 3 + mu a + mu b`, so `mu` decreases by 1.
+
+Here is the proof skeleton for the remaining cases:
+
+```lean4
+-- integrate (delta t) --> void
+| _, _, Step.R_int_delta t => by
+  have hk : kappa void ≤ kappa (integrate (delta t)) := by simp [kappa]
+  by_cases hkt : kappa t = 0
+  · have hmu : mu void < mu (integrate (delta t)) := by simp [mu]
+    rw [hkt] at hk; simp [kappa] at hk
+    exact drop_right hmu hk
+  · have hk' : kappa void < kappa (integrate (delta t)) := by
+      simp [kappa]; omega
+    exact drop_left hk'
+
+-- recDelta b s void --> b
+| _, _, Step.R_rec_zero b s => by
+  have hmu : mu b < mu (recDelta b s void) := by simp [mu]; omega
+  have hk : kappa b ≤ kappa (recDelta b s void) := by simp [kappa]; omega
+  by_cases hk_eq : kappa b = kappa (recDelta b s void)
+  · exact drop_right hmu hk_eq
+  · have hk' : kappa b < kappa (recDelta b s void) := by omega
+    exact drop_left hk'
+
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+  have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+    simp [kappa]; omega
+  exact drop_left hk
+
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+  have hk : kappa void ≤ kappa (eqW a a) := by simp [kappa]; omega
+  by_cases hka : kappa a = 0
+  · have hmu : mu void < mu (eqW a a) := by simp [mu]; omega
+    rw [hka] at hk; simp [kappa] at hk
+    exact drop_right hmu hk
+  · have hk' : kappa void < kappa (eqW a a) := by simp [kappa]; omega
+    exact drop_left hk'
+
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+  have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by simp [mu]; omega
+  have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by simp [kappa]
+  exact drop_right hmu hk
+```
+
+This skeleton provides the structure for proving that each step decreases the lexicographic measure, using `drop_left` when `kappa` decreases and `drop_right` when `kappa` ties and `mu` decreases. You can use this as a guide to complete the proofs in the file.

@@ -1,0 +1,27 @@
+Let me analyze this carefully.
+
+The `kappa` measure:
+- `void` → 0
+- `delta t` → `kappa t`
+- `integrate t` → `kappa t`
+- `merge a b` → `max(kappa a, kappa b)`
+- `app a b` → `max(kappa a, kappa b)`
+- `recDelta b s (delta n)` → `max(max(kappa b, kappa s), kappa n) + 1`
+- `recDelta b s n` (catch-all, n ≠ delta _) → `max(max(kappa b, kappa s), kappa n)`
+
+
+- `eqW a b` → `max(kappa a, kappa b)`
+
+Now I'm checking the theorem `kappa_rec_delta_step`, which claims that applying `kappa` to a recursive delta with a delta-wrapped argument adds 1 compared to the unwrapped version. The left side gives me `max(max(kappa b, kappa s), kappa n) + 1` directly from the definition, and I need to verify this equals the right side, which is `kappa (recDelta b s n) + 1`.
+
+For the base case where `n = void`, both sides simplify to `max(kappa b, kappa s) + 1`, so that checks out. When `n = delta m`, the left side becomes `max(max(kappa b, kappa s), kappa m) + 1`, but the right side evaluates to `max(max(kappa b, kappa s), kappa m) + 2`, which means they don't match—there's a discrepancy here that needs resolving.
+
+So `kappa_rec_delta_step` doesn't hold in general. Now I'm looking at a different theorem, `kappa_rec_succ_drop`, which claims that applying `s` to `recDelta b s n` produces a smaller kappa value than `recDelta b s (delta n)`. This corresponds to the rewrite rule that reduces `recDelta b s (delta n)` to `app s (recDelta b s n)`, and I need to verify that kappa actually decreases under this transformation.
+
+Let me work through the kappa values directly. Setting `B = kappa b`, `S = kappa s`, and `N = kappa n`, the left side gives `max(S, kappa (recDelta b s n))` while the right side is `max(max(B, S), N) + 1`. The issue is that `n` is universally quantified here, so I need to handle the general case rather than just when `n` has the form `delta m`.
+
+Looking at `kappa_rec_succ_drop` more carefully, the inputs `b`, `s`, and `n` are all arbitrary traces, which means `n` could itself be `delta m` for some `m`. The proof tries to apply `rw [kappa_rec_delta_step]`, but if that lemma is actually false, then the entire rewrite is unsound. Let me verify whether `kappa_rec_succ_drop` itself holds.
+
+I need to check if `max(S, kappa(recDelta b s n)) < max(max(B, S), N) + 1` where `B = kappa b`, `S = kappa s`, `N = kappa n`. When `n` is not a delta, the inequality holds with room to spare. But when `n = delta m`, the left side becomes `max(max(B,S), kappa m) + 1` and the right side is also `max(max(B,S), kappa m) + 1`, making them equal—so the strict inequality fails. This means `kappa_rec_succ_drop` is false in that case too.
+
+Both lemmas are unsound. I can construct a concrete counterexample with `b = void`, `s = void`, `n = delta void` where the measure doesn't strictly decrease as required.

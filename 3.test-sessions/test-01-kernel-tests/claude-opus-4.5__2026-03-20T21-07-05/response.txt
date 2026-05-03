@@ -1,0 +1,25 @@
+## Assessment
+
+**Yes**, strong normalization can be established from this calculus alone without importing additional axioms.
+
+### Key Observations
+
+1. **No constructor amplification**: No rule's RHS introduces new `eqW` or `recΔ` constructors. Rule 6 preserves one `recΔ` but strictly decreases its third argument.
+
+2. **Bounded duplication**: Rule 6 (`recΔ b s (delta n) → app s (recΔ b s n)`) duplicates `s`, but primitive recursion on a structurally decreasing third argument bounds the number of unfoldings.
+
+3. **The `R_eq_diff` overlap is harmless**: Rule 8 applies even when `a = b`, but it cannot create infinite chains—it replaces one `eqW` with `integrate (merge a b)`, strictly decreasing the `eqW` count.
+
+4. **`app` is inert**: No rule reduces `app`, so accumulated applications are normal forms and don't contribute to divergence.
+
+### Proof Roadmap
+
+Use a lexicographic measure on:
+
+1. **Multiset of recΔ "recursion heights"**: For each `recΔ b s n`, count the maximum `delta`-depth of `n`. Rule 6 strictly decreases this for the active recΔ; Rule 5 eliminates the recΔ entirely.
+
+2. **Count of `eqW` nodes**: Rules 7 and 8 both eliminate exactly one `eqW` without creating new ones.
+
+3. **Standard size/complexity**: For Rules 1–4, which eliminate `integrate`/`merge` patterns without touching `recΔ` or `eqW`.
+
+Each rewrite step strictly decreases this measure in the lexicographic ordering on (ℕ^multiset × ℕ × ℕ), which is well-founded. The duplication in Rule 6 is handled because duplicated subterms contribute to the *same* multiset entry (the enclosing recΔ's height), not new entries—once the outer recΔ terminates, duplicated internal work is bounded by induction on smaller terms.

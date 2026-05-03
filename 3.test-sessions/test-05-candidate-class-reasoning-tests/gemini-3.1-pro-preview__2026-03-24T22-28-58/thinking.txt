@@ -1,0 +1,23 @@
+**Contemplating Rule Applications**
+
+I've been trying to grasp the implications of these `Step` rules, specifically how they chain together. Focusing on `R_int_delta` initially to understand its interplay with the `merge` rules, and how these rules can be applied to simplify expressions. I'm moving on to consider the broader picture of how the `Step` rules can be employed.
+
+
+**Evaluating Metric Applications**
+
+I'm now focusing on the `mu` metrics and how they behave with the `Step` rules. The goal is to establish a connection between these metrics and the trace simplifications. I'm looking at how each `mu` function interacts with the `Step` rules, and how it reduces complexity. The plan is to classify the behavior of each `mu` with the `Step` rules.
+
+
+**Investigating Metric Behavior**
+
+I'm now carefully examining the `mu` metrics concerning the `R_rec_succ` rule. It seems clear now that the application of `R_rec_succ` *cannot* decrease the value of `mu1`, `mu2`, or `mu3`. Specifically, I have worked out that the `mu` value of the LHS is never greater than that of the RHS. This is a critical observation for the simplification strategy.
+
+
+**Refining Simplification Strategy**
+
+I've been meticulously analyzing the properties of the `mu` metrics, specifically how they change with each `Step` rule application. I've realized, critically, that the existing `mu` functions *do not* always strictly decrease during rule application, particularly for `R_rec_succ`. This means I need to adjust or create new metrics to ensure progress during simplification. Now, the `CandidateAudit` definition is undergoing close scrutiny.
+
+
+**Revising Candidate Metrics**
+
+I'm now carefully analyzing the behavior of the existing `mu` metrics with respect to the rewrite rules, with the `R_rec_succ` rule in the spotlight. I've confirmed that the given `mu` functions *fail* to strictly decrease, mainly due to the structure of `R_rec_succ`. This means I'm revisiting the definition of `mu` with a focus on addressing these shortcomings. Each candidate's deficiencies are being assessed.

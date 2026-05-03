@@ -1,0 +1,27 @@
+The calculus presented in the file defines a first-order rewrite system over the `Trace` type, with rewrite rules specified by the `Step` relation. Here's an assessment of whether strong normalization can be established:
+
+### Key Observations:
+1. **Rewrite Rules**:
+   - The rules are simple and deterministic, with no explicit variable binding or external memory.
+   - Rules like `R_int_delta`, `R_merge_void_left`, and `R_merge_void_right` simplify terms, while others like `R_rec_succ` and `R_eq_diff` introduce recursion or more complex terms.
+
+2. **Potential for Termination**:
+   - Some rules (e.g., `R_rec_succ`) introduce recursive structures, which could lead to infinite rewriting unless constrained.
+   - The system lacks explicit structural axioms or measures to ensure that recursion decreases in a well-founded manner.
+
+3. **Strong Normalization**:
+   - To prove strong normalization, one typically constructs a well-founded measure or ordering that decreases with each rewrite step.
+   - The given rules do not provide an obvious measure or guarantee that terms become "simpler" in all cases. For example:
+     - `R_rec_succ` expands the term by introducing `app` and another `recΔ`.
+     - `R_eq_diff` introduces `integrate` and `merge`, potentially increasing term complexity.
+
+### Conclusion:
+From the presented calculus alone, **strong normalization cannot be established** without additional structural axioms or assumptions. The lack of a clear, well-founded measure or ordering that decreases with every rewrite step is the primary obstacle.
+
+### Proof Roadmap:
+A proof of strong normalization would require:
+1. Defining a well-founded measure on `Trace` terms (e.g., based on term size, depth, or a custom complexity metric).
+2. Showing that every rewrite step decreases this measure.
+3. Verifying that no infinite descending chains exist under this measure.
+
+However, the current system does not provide the tools or guarantees needed to construct such a measure.

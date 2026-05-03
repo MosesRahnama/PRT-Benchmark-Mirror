@@ -1,0 +1,4 @@
+1. A syntactic size/measure argument (counting nested `S` constructors on the third argument of `F`).
+2. Yes (choice of well-founded ordering/measure on term structure and the assumption that finite terms yield finite descent).
+3. Yes.
+4. Yes (standard first-order TRS on finite terms).

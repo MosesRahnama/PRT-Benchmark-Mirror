@@ -1,0 +1,100 @@
+## Proof Skeleton for Remaining Cases
+
+The file has three remaining `sorry` cases. Here are proof skeletons:
+
+---
+
+### Case 1: `R_rec_succ` (line 130-142)
+
+**Goal**: `mu (app s (recDelta b s n)) < mu (recDelta b s (delta n))`
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- Key: LHS exponent = omega^5*(mu n + 1) + 1 + mu s + 6 
+    -- contains omega^5*(mu n + 1), dominating RHS
+    --
+    -- Strategy:
+    -- 1. Show omega^5*(mu n + 1) > mu n + mu s + 6 + 2  (exponent comparison)
+    -- 2. Use Ordinal.opow_lt_opow_right to get tower dominance
+    -- 3. Conclude omega^(big exponent) dominates omega^3*... + omega^2*...
+    have exp_lhs : omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6 
+                 > mu n + mu s + 6 := by
+      calc mu n + mu s + 6 
+        _ < omega0 ^ 5 * (mu n + 1) := ‹by ordinal arithmetic›
+        _ ≤ omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6 := le_add_right _ _
+    have tower_dom : omega0 ^ (omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6) 
+                   > omega0 ^ 3 * (mu s + 1) 
+                   + omega0 ^ 2 * (omega0 ^ (mu n + mu s + 6) + omega0 * (mu b + 1) + 2) := by
+      -- omega^(omega^5*...) dominates any finite polynomial in lower omega powers
+      ‹apply opow dominance lemmas›
+    calc mu (app s (recDelta b s n)) 
+      _ = omega0 ^ 3 * (mu s + 1) + omega0 ^ 2 * (mu (recDelta b s n) + 1) + 1 := rfl
+      _ < omega0 ^ (omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6) + omega0 * (mu b + 1) + 1 := by
+          ‹combine inequalities›
+      _ = mu (recDelta b s (delta n)) := rfl
+```
+
+---
+
+### Case 2: `R_eq_refl` (line 144-148)
+
+**Goal**: `0 < omega^(mu a + mu a + 9) + 1`
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- Positivity: omega^e + 1 > 0 for any ordinal e
+    exact add_pos_right _ one_pos
+    -- Alternative: Ordinal.pos_iff_ne_zero.mpr (by omega_pos_lemmas)
+```
+
+This is the simplest case—just a positivity argument.
+
+---
+
+### Case 3: `R_eq_diff` (line 150-162)
+
+**Goal**: `mu (integrate (merge a b)) < mu (eqW a b)`
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- LHS = omega^4 * (omega^3*(mu a + 1) + omega^2*(mu b + 1) + 2) + 1
+    -- RHS = omega^(mu a + mu b + 9) + 1
+    --
+    -- Strategy:
+    -- 1. Bound the LHS exponent: omega^3*(mu a + 1) + omega^2*(mu b + 1) + 2 < omega^(mu a + mu b + 5)
+    --    (or similar ordinal bound)
+    -- 2. Then omega^4 * ‹that› < omega^(4 + mu a + mu b + 5) = omega^(mu a + mu b + 9)
+    -- 3. Use Ordinal.opow_add and Ordinal.opow_mul lemmas
+    
+    have merge_bound : omega0 ^ 3 * (mu a + 1) + omega0 ^ 2 * (mu b + 1) + 2 
+                     < omega0 ^ (mu a + mu b + 5) := by
+      -- Polynomial in omega^2, omega^3 is bounded by omega^(linear in mu a, mu b)
+      ‹ordinal polynomial bound›
+    have lhs_bound : omega0 ^ 4 * (omega0 ^ 3 * (mu a + 1) + omega0 ^ 2 * (mu b + 1) + 2) 
+                   < omega0 ^ (mu a + mu b + 9) := by
+      calc omega0 ^ 4 * (omega0 ^ 3 * (mu a + 1) + omega0 ^ 2 * (mu b + 1) + 2)
+        _ < omega0 ^ 4 * omega0 ^ (mu a + mu b + 5) := by ‹mul_lt_mul using merge_bound›
+        _ = omega0 ^ (4 + mu a + mu b + 5) := by rw [← opow_add]
+        _ = omega0 ^ (mu a + mu b + 9) := by ring_nf
+    calc mu (integrate (merge a b))
+      _ = omega0 ^ 4 * (mu (merge a b) + 1) + 1 := rfl
+      _ < omega0 ^ (mu a + mu b + 9) + 1 := by ‹apply lhs_bound, add 1 to both sides›
+      _ = mu (eqW a b) := rfl
+```
+
+---
+
+### Summary of Required Lemmas
+
+All three cases need standard ordinal arithmetic facts from `Mathlib.SetTheory.Ordinal`:
+
+| Lemma | Purpose |
+|-------|---------|
+| `Ordinal.opow_pos` | ω^e > 0 |
+| `Ordinal.opow_add` | ω^(a+b) = ω^a * ω^b |
+| `Ordinal.opow_lt_opow_right` | e < f → ω^e < ω^f (for ω > 1) |
+| `Ordinal.mul_lt_mul_of_pos_left` | Monotonicity of ordinal multiplication |
+| `add_pos_right`, `one_pos` | Positivity for `R_eq_refl` |

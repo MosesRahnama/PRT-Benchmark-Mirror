@@ -1,0 +1,105 @@
+I'll provide a proof skeleton for the three remaining cases in the Lean 4 file. Here's the structured approach to complete the ordinal arithmetic proofs:
+
+```lean4
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+  simp [mu]
+  let ω := omega0
+  let μn := mu n
+  let μs := mu s
+  let μb := mu b
+  
+  -- Key insight: The exponent ω^(ω^5*(μn+1)) dominates all other terms
+  have lhs_components_lt : 
+    ω ^ (3 : Ordinal) * (μs + 1) < ω ^ (ω ^ (5 : Ordinal) * (μn + 1)) ∧
+    ω ^ (2 : Ordinal) * (ω ^ (μn + μs + 6) + ω * (μb + 1) + 2) < ω ^ (ω ^ (5 : Ordinal) * (μn + 1)) := by
+    constructor
+    · -- Prove first component is dominated
+      apply opow_mul_lt_opow
+      · exact lt_of_lt_of_le (by norm_num) (mul_le_mul_left' (le_add_of_nonneg_right (by simp)) _)
+      · simp
+    · -- Prove second component is dominated
+      apply opow_mul_lt_opow
+      · exact lt_of_lt_of_le (by norm_num) (mul_le_mul_left' (le_add_of_nonneg_right (by simp)) _)
+      · apply lt_of_lt_of_le _ (le_add_left (le_refl _) _)
+        apply add_lt_add_of_lt_of_le
+        · apply opow_lt_opow_right omega_isLimit
+          apply add_lt_add_left
+          apply add_lt_add_left
+          exact lt_add_one (μn + μs + 6)
+        · apply le_add_right
+
+  -- Combine components using ordinal arithmetic properties
+  have lhs_lt : lhs < ω ^ (ω ^ (5 : Ordinal) * (μn + 1)) := by
+    rw [←add_assoc, ←add_assoc]
+    apply add_lt_add_of_lt_of_le
+    · exact lhs_components_lt.left
+    · apply add_lt_add_of_lt_of_le
+      · exact lhs_components_lt.right
+      · norm_num
+
+  -- Show RHS dominates the exponential term
+  have rhs_ge : ω ^ (ω ^ (5 : Ordinal) * (μn + 1)) ≤ rhs := by
+    apply le_trans _ (le_add_left _ _)
+    apply opow_le_opow_left _ omega0_pos
+    apply le_trans (le_add_right _ _)
+    simp only [add_le_add_iff_left]
+    apply le_add_of_nonneg_right
+    simp
+
+  exact lt_of_lt_of_le lhs_lt rhs_ge
+
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+  simp [mu]
+  apply add_pos_right
+  exact opow_pos _ omega0_pos
+
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+  simp [mu]
+  let ω := omega0
+  let μa := mu a
+  let μb := mu b
+
+  -- Decompose RHS exponential
+  have rhs_decomp : ω^(μa + μb + 9) = ω^4 * ω^(μa + μb + 5) := by
+    rw [←opow_add]
+    congr; ring
+
+  -- Show inner expression is bounded
+  have inner_bound : 
+    ω ^ (3 : Ordinal) * (μa + 1) + ω ^ (2 : Ordinal) * (μb + 1) + 2 < ω^(μa + μb + 5) := by
+    apply add_lt_add
+    · apply opow_mul_lt_opow
+      · exact lt_add_of_le_of_lt (zero_le _) (by norm_num)
+      · apply le_add_left
+    · apply add_lt_add
+      · apply opow_mul_lt_opow
+        · exact lt_add_of_le_of_lt (zero_le _) (by norm_num)
+        · apply le_add_right
+      · norm_num
+
+  -- Final comparison
+  have : ω ^ 4 * (ω ^ 3 * (μa + 1) + ω ^ 2 * (μb + 1) + 2) + 1 < ω^(μa + μb + 9) + 1 := by
+    rw [rhs_decomp]
+    apply add_lt_add_right
+    apply mul_lt_mul_of_pos_left inner_bound
+    exact opow_pos _ omega0_pos
+    
+  exact this
+```
+
+This proof skeleton:
+1. Uses ordinal arithmetic properties from Mathlib
+2. Breaks down complex comparisons into manageable components
+3. Leverages the fact that higher exponentials dominate lower ones
+4. Uses careful bounding of additive terms
+5. Maintains the existing proof structure and style
+
+The key insights are:
+- For recursive cases: The exponential term in RHS dominates all LHS components
+- For equality cases: The reflection case is trivial by positivity, while the difference case requires decomposing the exponential
+- All proofs rely on ordinal properties like `opow_lt_opow` and `add_lt_add`
+
+You'll need to fill in minor details and import any missing ordinal arithmetic lemmas, but this provides the complete structural framework for the proofs.

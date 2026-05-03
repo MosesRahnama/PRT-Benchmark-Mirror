@@ -1,0 +1,62 @@
+## Assessment
+
+**Yes — strong normalization is provable from this calculus alone.**
+
+---
+
+### The one genuine obstacle
+
+`R_rec_succ` duplicates `s`:
+
+```
+recΔ(b, s, delta(n))  →  app(s, recΔ(b, s, n))
+```
+
+Raw term size is not a valid measure (`s` is copied; `R_eq_diff` also grows size by 1). Nevertheless, no loop is possible.
+
+---
+
+### Termination proof: polynomial interpretation
+
+Define `W : Trace → ℕ` by structural recursion (legal since `Trace` is inductive, so all terms are finite):
+
+| Constructor | `W(t)` |
+|---|---|
+| `void` | `1` |
+| `delta(t)` | `W(t) + 1` |
+| `integrate(t)` | `W(t) + 1` |
+| `merge(t₁,t₂)` | `W(t₁) + W(t₂) + 1` |
+| `app(t₁,t₂)` | `W(t₁) + W(t₂) + 1` |
+| `eqW(t₁,t₂)` | `W(t₁) + W(t₂) + 3` |
+| `recΔ(b,s,n)` | `(W(s)+2)·W(n) + W(b) + 1` |
+
+Verify strict decrease `W(lhs) > W(rhs)` for every rule (letting lowercase letters denote `W`-values of the matched subterms, all ≥ 1):
+
+| Rule | LHS weight | RHS weight | Δ |
+|---|---|---|---|
+| `R_int_delta` | `n+2` | `1` | `n+1 > 0` ✓ |
+| `R_merge_void_left` | `t+2` | `t` | `2 > 0` ✓ |
+| `R_merge_void_right` | `t+2` | `t` | `2 > 0` ✓ |
+| `R_merge_cancel` | `2t+1` | `t` | `t+1 > 0` ✓ |
+| `R_rec_zero` | `(s+2)·1 + b+1 = s+b+3` | `b` | `s+3 > 0` ✓ |
+| `R_rec_succ` | `(s+2)(n+1)+b+1` | `s + [(s+2)n+b+1] + 1` | exactly `1 > 0` ✓ |
+| `R_eq_refl` | `2a+3` | `1` | `2a+2 > 0` ✓ |
+| `R_eq_diff` | `a+b+3` | `(a+b+1)+1 = a+b+2` | exactly `1 > 0` ✓ |
+
+Every step strictly decreases `W(t) ∈ ℕ`. By well-foundedness of `<` on `ℕ`, no infinite reduction sequence exists. □
+
+---
+
+### What the proof uses
+
+- The syntax and rules as given (nothing added).
+- Structural recursion on `Trace` to define `W` — already encoded in Lean 4's `inductive` declaration.
+- `<` on `ℕ` is well-founded — standard mathematics, not an object-level axiom of the calculus.
+
+No extra rewrite rules, guards, side-conditions, confluence, or hidden assumptions are required.
+
+---
+
+### One caveat worth noting
+
+`R_eq_diff` and `R_eq_refl` overlap on `eqW(a,a)`, making the system **non-confluent** (they yield `void` vs. `integrate(merge(a,a))`). This is irrelevant to SN — the polynomial bound holds regardless of which branch is taken.

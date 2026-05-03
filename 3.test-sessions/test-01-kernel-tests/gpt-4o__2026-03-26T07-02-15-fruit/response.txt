@@ -1,0 +1,20 @@
+The calculus presented in the file defines a first-order rewrite system with the following characteristics:
+
+1. **Syntax**: The `Trace` type defines a tree-like structure with constructors (`plum`, `grape`, `mango`, `peach`, `pear`, `banana`, `cherry`) that can be combined recursively.
+2. **Rewrite Rules**: The `Step` relation specifies a set of rewrite rules that operate on `Trace` terms. These rules are:
+   - Local and pattern-based (e.g., `R_mango_grape`, `R_peach_plum_left`).
+   - Finite in number and without external guards or side conditions, except for `R_cherry_diff`, which depends on inequality (`a ≠ b`).
+
+### Assessment of Strong Normalization
+Strong normalization means that every sequence of rewrites eventually terminates, regardless of the order in which rules are applied.
+
+#### Challenges:
+- **Non-Terminating Patterns**: Some rules (e.g., `R_apple_orange`) introduce new terms (`pear` and `banana`) that are structurally larger than the input. This suggests the possibility of infinite rewrite sequences.
+- **Structural Growth**: Rules like `R_cherry_diff` and `R_apple_orange` can increase the depth or size of terms, making it difficult to establish a well-founded measure that decreases with every rewrite step.
+- **Lack of Structural Axioms**: Without additional structural axioms (e.g., associativity, commutativity, or well-foundedness of constructors), it is unclear how to define a termination metric that decreases consistently across all rules.
+
+#### Conclusion:
+From the presented calculus alone, strong normalization cannot be established. The rewrite rules allow for potential growth in term size and complexity, and no inherent mechanism ensures termination. A proof of strong normalization would require additional assumptions or structural properties not derivable from the given rules.
+
+### Proof Roadmap:
+A proof of strong normalization would typically involve defining a well-founded measure (e.g., term size, depth, or a lexicographic combination) that decreases with every rewrite step. However, the current system lacks the structural guarantees needed to construct such a measure.

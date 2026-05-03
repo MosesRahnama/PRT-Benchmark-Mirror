@@ -1,0 +1,4 @@
+1. A measure/termination ordering on the number of `S` constructors in the third argument of `F` (plus term size).  
+2. Yes (choice of specific well-founded measure/ordering on constructors and implicit numeric structure).  
+3. Yes.  
+4. Yes.

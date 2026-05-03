@@ -1,0 +1,181 @@
+I've read the file. Let me analyze the structure and provide proof skeletons for the five remaining cases.
+
+## Analysis
+
+The file defines:
+- **Trace**: A term language with 7 constructors
+- **Step**: 8 reduction rules
+- **Two measures**: `kappa` (recursion depth) and `mu` (weighted structural size)
+- **LexOrder**: Lexicographic order on `(kappa, mu)`
+
+Three cases are proved (merge rules). Five remain:
+1. `R_int_delta`: `integrate (delta t) → void`
+2. `R_rec_zero`: `recDelta b s void → b`
+3. `R_rec_succ`: `recDelta b s (delta n) → app s (recDelta b s n)`
+4. `R_eq_refl`: `eqW a a → void`
+5. `R_eq_diff`: `eqW a b → integrate (merge a b)`
+
+---
+
+## Proof Skeletons
+
+### Case 1: `R_int_delta` — `integrate (delta t) → void`
+
+```lean
+-- integrate (delta t) --> void
+-- kappa(integrate (delta t)) = kappa t
+-- kappa(void) = 0
+-- mu(integrate (delta t)) = 1 + mu t
+-- mu(void) = 0
+-- Strategy: kappa drops (if kappa t > 0) or ties (if kappa t = 0), mu always drops
+| _, _, Step.R_int_delta t => by
+    simp only [measure, kappa, mu]
+    -- measure void = (0, 0)
+    -- measure (integrate (delta t)) = (kappa t, 1 + mu t)
+    -- Case split on kappa t:
+    --   if kappa t = 0: kappa ties, mu drops (0 < 1 + mu t)
+    --   if kappa t > 0: kappa drops
+    rcases Nat.eq_or_lt_of_le (Nat.zero_le _) with h | h
+    · -- kappa t = 0
+      simp only [h]
+      apply Prod.Lex.right
+      omega
+    · -- 0 < kappa t
+      apply Prod.Lex.left
+      exact h
+```
+
+---
+
+### Case 2: `R_rec_zero` — `recDelta b s void → b`
+
+```lean
+-- recDelta b s void --> b
+-- kappa(recDelta b s void) = max (max (kappa b) (kappa s)) 0 = max (kappa b) (kappa s)
+-- kappa(b) = kappa b
+-- mu(recDelta b s void) = 3 + mu b + mu s
+-- mu(b) = mu b
+-- Strategy: kappa ties or drops (max >= kappa b), mu always drops by 3 + mu s
+| _, _, Step.R_rec_zero b s => by
+    simp only [measure, kappa, mu]
+    -- measure b = (kappa b, mu b)
+    -- measure (recDelta b s void) = (max (kappa b) (kappa s), 3 + mu b + mu s)
+    -- kappa(b) <= kappa(recDelta b s void) always
+    -- mu(b) < mu(recDelta b s void) always (by 3 + mu s)
+    rcases Nat.le_total (kappa b) (kappa s) with hkb | hkb
+    · -- kappa b <= kappa s, so max = kappa s >= kappa b
+      -- kappa may drop or tie
+      by_cases heq : kappa b = kappa s
+      · -- kappa ties
+        simp only [heq, Nat.max_eq_right hkb]
+        apply Prod.Lex.right
+        omega
+      · -- kappa drops (kappa b < kappa s)
+        simp only [Nat.max_eq_right hkb]
+        apply Prod.Lex.left
+        omega
+    · -- kappa s <= kappa b, so max = kappa b, kappa ties
+      simp only [Nat.max_eq_left hkb]
+      apply Prod.Lex.right
+      omega
+```
+
+---
+
+### Case 3: `R_rec_succ` — `recDelta b s (delta n) → app s (recDelta b s n)`
+
+```lean
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+-- kappa(recDelta b s (delta n)) = max (max (kappa b) (kappa s)) (kappa n) + 1
+-- kappa(app s (recDelta b s n)) = max (kappa s) (max (max (kappa b) (kappa s)) (kappa n))
+--                               = max (kappa b) (kappa s) (kappa n)
+-- Strategy: kappa drops by exactly 1!
+| _, _, Step.R_rec_succ b s n => by
+    simp only [measure, kappa, mu]
+    -- measure (recDelta b s (delta n)) = (max (max (kappa b) (kappa s)) (kappa n) + 1, ...)
+    -- measure (app s (recDelta b s n)) = (max (kappa s) (max (max (kappa b) (kappa s)) (kappa n)), ...)
+    -- Key insight: kappa drops by 1
+    -- Let K = max (kappa b) (kappa s) (kappa n)
+    -- LHS kappa = K + 1, RHS kappa = K
+    apply Prod.Lex.left
+    -- Need to show: kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))
+    -- i.e., max (kappa s) (max (max (kappa b) (kappa s)) (kappa n)) < max (max (kappa b) (kappa s)) (kappa n) + 1
+    -- This follows from max_le_add_one and Nat.lt_succ_self
+    have h1 : max (kappa s) (max (max (kappa b) (kappa s)) (kappa n)) 
+           ≤ max (max (kappa b) (kappa s)) (kappa n) := by
+      -- max (kappa s) X ≤ X when kappa s ≤ X
+      -- and X = max (max (kappa b) (kappa s)) (kappa n) >= kappa s
+      apply Nat.max_le
+      · -- kappa s <= max (max (kappa b) (kappa s)) (kappa n)
+        apply Nat.le_max_of_le_right
+        apply Nat.le_max_left
+      · -- max (max (kappa b) (kappa s)) (kappa n) <= itself
+        apply Nat.le_refl
+    have h2 : max (max (kappa b) (kappa s)) (kappa n) 
+           < max (max (kappa b) (kappa s)) (kappa n) + 1 := Nat.lt_succ_self _
+    -- Now chain: RHS kappa <= K < K + 1 = LHS kappa
+    calc max (kappa s) (max (max (kappa b) (kappa s)) (kappa n))
+        ≤ max (max (kappa b) (kappa s)) (kappa n) := h1
+      _ < max (max (kappa b) (kappa s)) (kappa n) + 1 := h2
+```
+
+---
+
+### Case 4: `R_eq_refl` — `eqW a a → void`
+
+```lean
+-- eqW a a --> void
+-- kappa(eqW a a) = kappa a
+-- kappa(void) = 0
+-- mu(eqW a a) = 4 + 2 * mu a
+-- mu(void) = 0
+-- Strategy: kappa drops (if kappa a > 0) or ties (if kappa a = 0), mu always drops
+| _, _, Step.R_eq_refl a => by
+    simp only [measure, kappa, mu]
+    -- measure void = (0, 0)
+    -- measure (eqW a a) = (kappa a, 4 + 2 * mu a)
+    rcases Nat.eq_or_lt_of_le (Nat.zero_le _) with h | h
+    · -- kappa a = 0
+      simp only [h]
+      apply Prod.Lex.right
+      omega
+    · -- 0 < kappa a
+      apply Prod.Lex.left
+      exact h
+```
+
+---
+
+### Case 5: `R_eq_diff` — `eqW a b → integrate (merge a b)`
+
+```lean
+-- eqW a b --> integrate (merge a b)
+-- kappa(eqW a b) = max (kappa a) (kappa b)
+-- kappa(integrate (merge a b)) = kappa (merge a b) = max (kappa a) (kappa b)
+-- kappa ties!
+-- mu(eqW a b) = 4 + mu a + mu b
+-- mu(integrate (merge a b)) = 1 + mu (merge a b) = 1 + 2 + mu a + mu b = 3 + mu a + mu b
+-- mu drops by 1
+-- Strategy: kappa ties, mu drops → drop_right
+| _, _, Step.R_eq_diff a b => by
+    simp only [measure, kappa, mu]
+    -- measure (eqW a b) = (max (kappa a) (kappa b), 4 + mu a + mu b)
+    -- measure (integrate (merge a b)) = (max (kappa a) (kappa b), 3 + mu a + mu b)
+    -- kappa ties exactly, mu drops by 1
+    apply Prod.Lex.right
+    omega
+```
+
+---
+
+## Summary Table
+
+| Rule | κ Change | μ Change | Strategy |
+|------|----------|----------|----------|
+| `R_int_delta` | drops or ties | drops | case split on `kappa t = 0` |
+| `R_rec_zero` | ties or drops | drops by `3 + μ s` | case split on `κ b ≤ κ s` |
+| `R_rec_succ` | **drops by 1** | (irrelevant) | `drop_left` directly |
+| `R_eq_refl` | drops or ties | drops | case split on `kappa a = 0` |
+| `R_eq_diff` | **ties exactly** | drops by 1 | `drop_right` directly |
+
+The key insight is that `R_rec_succ` is the only rule where κ *must* decrease strictly (by exactly 1), while `R_eq_diff` is the simplest case where κ ties exactly and only μ decreases.

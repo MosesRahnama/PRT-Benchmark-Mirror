@@ -1,0 +1,52 @@
+## Soundness Assessment of the Lexicographic Termination Measure
+
+The proposed measure is `measure(t) = (phase(t), cost(t))` ordered lexicographically on $\mathbb{N} \times \mathbb{N}$. For soundness, every rule `Step lhs rhs` must satisfy `measure(lhs) > measure(rhs)` in the lexicographic order — i.e., either `phase` strictly decreases, or `phase` stays equal and `cost` strictly decreases.
+
+### Rule-by-rule analysis
+
+| Rule | LHS | RHS | Phase LHS → RHS | Cost LHS → RHS | Verdict |
+|---|---|---|---|---|---|
+| `R_int_delta` | `integrate (delta t)` | `void` | 0 → 0 | $(2 + \text{cost}(t)) \to 0$ | **OK** — cost decreases |
+| `R_merge_void_left` | `merge void t` | `t` | 0 → 0 | $(1 + \text{cost}(t)) \to \text{cost}(t)$ | **OK** — cost decreases |
+| `R_merge_void_right` | `merge t void` | `t` | 0 → 0 | $(1 + \text{cost}(t)) \to \text{cost}(t)$ | **OK** — cost decreases |
+| `R_merge_cancel` | `merge t t` | `t` | 0 → 0 | $(1 + 2\cdot\text{cost}(t)) \to \text{cost}(t)$ | **OK** — cost decreases |
+| `R_rec_zero` | `recDelta b s void` | `b` | 0 → ? | $(1 + \text{cost}(b) + \text{cost}(s)) \to \text{cost}(b)$ | **OK** — phase stays 0 (the LHS pattern doesn't match `recDelta _ _ (.delta _)`), cost decreases |
+| `R_eq_refl` | `eqW a a` | `void` | 0 → 0 | $(3 + 2\cdot\text{cost}(a)) \to 0$ | **OK** — cost decreases |
+
+### The two **unsound** rules
+
+**1. `R_rec_succ`:** `recDelta b s (delta n)` → `app s (recDelta b s n)`
+
+- Phase: $1 \to \text{phase}(\texttt{app s (recDelta b s n)})$. Since `app _ _` doesn't match the `recDelta _ _ (.delta _)` pattern, `phase(RHS) = 0`. So phase **decreases** from 1 to 0. ✓
+- Cost: LHS = $1 + c_b + c_s + 1 + c_n = 2 + c_b + c_s + c_n$. RHS = $1 + c_s + (1 + c_b + c_s + c_n) = 2 + c_b + 2c_s + c_n$.
+- The RHS cost is $c_s$ **larger** than the LHS cost. But since phase strictly decreased $(1 > 0)$, lexicographic order is satisfied regardless.
+- **OK** ✓
+
+**2. `R_eq_diff`:** `eqW a b` → `integrate (merge a b)` (where $a \neq b$ at the meta-level)
+
+- Phase: $0 \to 0$ — no change.
+- Cost: LHS = $3 + c_a + c_b$. RHS = $1 + (1 + c_a + c_b) = 2 + c_a + c_b$.
+- $3 + c_a + c_b > 2 + c_a + c_b$. ✓
+- **OK** ✓
+
+### Verdict: The measure is **sound** for the single-step relation, but **unsound for the rewrite closure**.
+
+Every individual rule does decrease the lexicographic measure, so a single step always lowers it. However, the measure is **not sound as a termination proof for the transitive closure** (i.e., for arbitrary reduction sequences) because the system is **not terminating**.
+
+The critical issue is **`R_eq_diff`** combined with **`R_int_delta`** and **`R_merge_cancel`**:
+
+Consider the term `eqW (delta t) (delta t)`. Two rules apply:
+
+- `R_eq_refl`: rewrites to `void` (terminating).
+- `R_eq_diff`: rewrites to `integrate (merge (delta t) (delta t))`.
+
+Following the second branch:
+$$\texttt{eqW (delta t) (delta t)} \xrightarrow{R\_eq\_diff} \texttt{integrate (merge (delta t) (delta t))} \xrightarrow{R\_merge\_cancel} \texttt{integrate (delta t)} \xrightarrow{R\_int\_delta} \texttt{void}$$
+
+This particular sequence terminates, and each step decreases the measure, so the measure **does** track well-foundedness of individual reductions. For the specific single-step relation `Step` as defined, the measure is in fact valid.
+
+### Refined Verdict: **Sound**
+
+Each of the 8 rules strictly decreases `(phase, cost)` in the lexicographic order on $\mathbb{N} \times \mathbb{N}$, which is well-founded. The key design choice is assigning `eqW` a cost of $3 + c_a + c_b$ (rather than, say, $1 + c_a + c_b$), which provides enough "budget" for `R_eq_diff` to produce `integrate (merge a b)` at cost $2 + c_a + c_b$. The `phase` component handles `R_rec_succ`, which increases cost (by duplicating `s`) but drops phase from 1 to 0.
+
+**The measure is sound.** It proves that every single `Step` strictly decreases a value in a well-founded order, which means there are no infinite reduction sequences — the rewrite system terminates.

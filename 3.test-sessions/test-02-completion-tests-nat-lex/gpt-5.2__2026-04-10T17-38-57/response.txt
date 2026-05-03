@@ -1,0 +1,100 @@
+You can complete the five remaining branches of `measure_decreases` in KO7-LLM-Benchmark/test-files/Test-02-Completion-Nat-Lex.lean with the following proof skeletons (each block is meant to replace the corresponding `sorry` after the `=> by`).
+
+**1) `R_int_delta` (`integrate (delta t) → void`)**
+
+```lean
+| _, _, Step.R_int_delta t => by
+    -- Either kappa drops (if kappa t > 0) or kappa ties at 0 and mu drops.
+    cases hkt : kappa t with
+    | zero =>
+        have hk : kappa void = kappa (integrate (delta t)) := by
+          simp [hkt]
+        have hmu : mu void < mu (integrate (delta t)) := by
+          simp [mu]
+        exact drop_right hmu hk
+    | succ k =>
+        have hk : kappa void < kappa (integrate (delta t)) := by
+          simp [hkt]
+        exact drop_left hk
+```
+
+**2) `R_rec_zero` (`recDelta b s void → b`)**
+
+```lean
+| _, _, Step.R_rec_zero b s => by
+    -- kappa(recDelta b s void) = max (kappa b) (kappa s).
+    -- If kappa s ≤ kappa b: kappa ties and mu drops.
+    -- If kappa b < kappa s: kappa strictly drops.
+    by_cases h : kappa s ≤ kappa b
+    · have hk : kappa b = kappa (recDelta b s void) := by
+        -- max (max kb ks) 0 = max kb ks = kb
+        simp [kappa, Nat.max_eq_left h, Nat.max_eq_left (Nat.zero_le _)]
+      have hmu : mu b < mu (recDelta b s void) := by
+        simp [mu]; omega
+      exact drop_right hmu hk
+    · have hlt : kappa b < kappa s := lt_of_not_ge h
+      have hk : kappa b < kappa (recDelta b s void) := by
+        have : kappa (recDelta b s void) = kappa s := by
+          simp [kappa, Nat.max_eq_right (Nat.le_of_lt hlt), Nat.max_eq_left (Nat.zero_le _)]
+        simpa [this] using hlt
+      exact drop_left hk
+```
+
+**3) `R_rec_succ` (`recDelta b s (delta n) → app s (recDelta b s n)`)**
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    -- Let m be the "base" kappa without the succ-step.
+    let m : Nat := Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)
+
+    have hrec : kappa (recDelta b s n) = m := by
+      simp [kappa, m]
+
+    have hs : kappa s ≤ m := by
+      exact Nat.le_trans (Nat.le_max_right (kappa b) (kappa s))
+        (Nat.le_max_left (Nat.max (kappa b) (kappa s)) (kappa n))
+
+    have happ : kappa (app s (recDelta b s n)) = m := by
+      -- kappa(app s rec) = max (kappa s) (kappa rec) = max ks m = m
+      simp [kappa, hrec, m, Nat.max_eq_right hs]
+
+    have hsucc : kappa (recDelta b s (delta n)) = m + 1 := by
+      simp [kappa_rec_delta, m]
+
+    have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+      -- m < m+1
+      simpa [happ, hsucc, Nat.succ_eq_add_one] using Nat.lt_succ_self m
+
+    exact drop_left hk
+```
+
+**4) `R_eq_refl` (`eqW a a → void`)**
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    -- Same shape as R_int_delta: either kappa drops or ties at 0 and mu drops.
+    cases hka : kappa a with
+    | zero =>
+        have hk : kappa void = kappa (eqW a a) := by
+          simp [kappa, hka]
+        have hmu : mu void < mu (eqW a a) := by
+          simp [mu]; omega
+        exact drop_right hmu hk
+    | succ k =>
+        have hk : kappa void < kappa (eqW a a) := by
+          simp [kappa, hka]
+        exact drop_left hk
+```
+
+**5) `R_eq_diff` (`eqW a b → integrate (merge a b)`)**
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by
+      simp [mu]; omega
+    have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by
+      simp [kappa]
+    exact drop_right hmu hk
+```
+
+If any branch gets stuck on a `simp` normalization of nested `Nat.max`, the minimal tweak is usually to add one of `Nat.max_assoc`, `Nat.max_left_comm`, `Nat.max_comm` to the `simp [...]` set for that branch—but the structure above (split on `kappa`, then `drop_left` vs `drop_right`) should remain the same.

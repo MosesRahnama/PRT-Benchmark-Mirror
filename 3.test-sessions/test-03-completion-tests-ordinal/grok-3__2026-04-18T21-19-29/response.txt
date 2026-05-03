@@ -1,0 +1,46 @@
+I'm happy to help with providing a proof skeleton for the remaining cases in your Lean 4 file for the strong normalization proof. I'll focus on the three unfinished cases marked with `sorry` in the provided file. I won't modify the file or run any tools, as requested. Below, I'll outline a general approach for each of the remaining cases to guide you in completing the proof.
+
+### Proof Skeleton for Remaining Cases
+
+The file `Test-03-Completion-Ordinal.lean` deals with a strong normalization proof using an ordinal-valued measure for a first-order rewrite calculus. The remaining cases likely pertain to specific rewrite rules that need to be shown to decrease the measure, ensuring termination. Here's a skeleton for approaching these cases:
+
+1. **Case for Rule 6 (Placeholder for specific rule, e.g., Beta reduction or similar)**:
+   - **Goal**: Show that applying this rule decreases the ordinal measure.
+   - **Approach**:
+     - Identify the specific rewrite rule and the terms involved.
+     - Compute the measure of the term before and after the rewrite.
+     - Use properties of ordinal arithmetic to prove that the measure decreases (e.g., show that a component of the measure is reduced while others remain bounded).
+     - If applicable, leverage induction on the structure of terms or the measure itself.
+   - **Skeleton**:
+     - Start by case splitting on the structure of the term if necessary.
+     - Apply the definition of the measure function.
+     - Use lemmas about ordinal inequalities to establish the decrease.
+
+2. **Case for Rule 7 (Placeholder for specific rule, e.g., Eta expansion or similar)**:
+   - **Goal**: Demonstrate measure decrease under this rule.
+   - **Approach**:
+     - Analyze the rewrite rule's effect on term complexity.
+     - If the rule involves substitution or expansion, consider how nested structures affect the measure.
+     - Prove that the ordinal measure post-rewrite is strictly less than the pre-rewrite measure, possibly by showing a reduction in depth or size components.
+   - **Skeleton**:
+     - Define the terms before and after the rewrite explicitly.
+     - Calculate the measure for both terms using the provided measure function.
+     - Use ordinal arithmetic properties or previously proven lemmas to show the decrease.
+
+3. **Case for Rule 8 (Placeholder for specific rule, e.g., Delta reduction or similar)**:
+   - **Goal**: Ensure the measure decreases for this final rule.
+   - **Approach**:
+     - Examine the specific transformation this rule applies.
+     - If it involves unfolding definitions or reducing constants, assess how this impacts the measure's components.
+     - Establish a strict inequality in the ordinal measure, potentially by showing a decrease in a higher-priority component of the measure tuple.
+   - **Skeleton**:
+     - Break down the term transformation step by step.
+     - Apply the measure function to both sides of the rewrite.
+     - Conclude the proof by demonstrating the ordinal decrease, using transitivity of ordinal less-than if needed.
+
+### General Notes
+- **Ordinal Measure**: Ensure that for each case, you're working with the specific ordinal measure defined in the file (likely a tuple or recursive definition over term structure). The key is to show that each rewrite step reduces this measure in the well-founded order of ordinals.
+- **Induction**: If the proof becomes complex, consider using strong induction on the measure or structural induction on terms to handle nested cases.
+- **Lemmas**: Reuse any helper lemmas provided in the file for ordinal comparisons or term manipulations to simplify the proofs.
+
+This skeleton should provide a starting point for completing the proofs for the remaining cases. If you need more specific guidance on any particular rule or measure definition, please provide additional details or excerpts from the file, and I can refine the approach accordingly.

@@ -1,0 +1,9 @@
+Here are the answers to your questions:
+
+1.  **Primary Method**: The previous answer used a reduction ordering, specifically the Lexicographic Path Ordering (LPO).
+
+2.  **Reliance on External Assumptions**: Yes. The method relies on choosing a specific proof technique (LPO), choosing a precedence on function symbols (`F > G`), and importing the structural axiom that a term is greater than its proper subterms. These are not fixed or derivable from the rewrite rules alone.
+
+3.  **Boundary Compliance**: Yes, this places the method outside the stated boundary. The proof relies on an external framework and chosen assumptions rather than being derived solely from the given rules.
+
+4.  **Conclusion on Normalization**: Yes, separately from the boundary issue, I still think the system is strongly normalizing. The LPO proof, while technically outside the boundary you set, is a standard and valid demonstration of this property.

@@ -1,0 +1,53 @@
+## Raw Assessment
+
+**Yes, strong normalization is provable from the two rules alone**, with no external axioms needed.
+
+---
+
+## Structural Observations
+
+- `G` has no left-hand side rules; it is inert (a constructor for the output spine).
+- The only recursion is in rule 2, where the third argument of `F` decreases from `S(n)` to `n`.
+- Rule 1 is a strict subterm reduction (`F(x,y,Z) → x`).
+
+---
+
+## Proof Roadmap via Polynomial Interpretation
+
+Define the following polynomial interpretation over $\mathbb{N}$:
+
+$$
+[\![Z]\!] = 0,\quad [\![S(z)]\!] = z + 1
+$$
+$$
+[\![F(x,y,z)]\!] = x + yz + z + 1
+$$
+$$
+[\![G(x,y)]\!] = x + y
+$$
+
+**Verify rule 1** — $F(x, y, Z) \to x$:
+
+$$
+[\![F(x,y,0)]\!] = x + y \cdot 0 + 0 + 1 = x + 1 > x \quad \checkmark
+$$
+
+**Verify rule 2** — $F(x, y, S(n)) \to G(y, F(x, y, n))$:
+
+$$
+[\![F(x, y, n+1)]\!] = x + y(n+1) + (n+1) + 1 = x + yn + y + n + 2
+$$
+$$
+[\![G(y,\, F(x,y,n))]\!] = y + (x + yn + n + 1) = x + yn + y + n + 1
+$$
+$$
+\text{Difference} = 1 > 0 \quad \checkmark
+$$
+
+Both rules are strictly decreasing. The interpretation uses only polynomials with non-negative coefficients (so strict monotonicity holds throughout), and the well-ordering of $\mathbb{N}$ closes the argument.
+
+---
+
+## Conclusion
+
+The interpretation is entirely determined by reading off the rule structure. No structural axioms (`Nat` induction, wellfoundedness of a separate order, etc.) are imported—only the standard polynomial interpretation method, which is a proof calculus external to the object system, as is standard in TRS termination. The system is strongly normalizing.

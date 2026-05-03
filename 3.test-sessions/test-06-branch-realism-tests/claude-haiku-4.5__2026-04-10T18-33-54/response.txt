@@ -1,0 +1,31 @@
+## Assessment: The Helper Strategy is Sound
+
+The two helper theorems correctly establish a termination argument for the rewrite rule `R_rec_succ`. Here's the analysis:
+
+### Theorem 1: `kappa_rec_delta_step`
+**Claim:** `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`
+
+This is **correct**. By definition:
+- `kappa (recDelta b s (delta n)) = max(max(kappa b, kappa s), kappa n) + 1` (special case)
+- `kappa (recDelta b s n) + 1 = max(max(kappa b, kappa s), kappa n) + 1` (general case, then +1)
+
+Both sides are identical.
+
+### Theorem 2: `kappa_rec_succ_drop`
+**Claim:** `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`
+
+This is **correct**. The rewrite rule `R_rec_succ` reduces `recDelta b s (delta n)` → `app s (recDelta b s n)`.
+
+Computing the measures:
+- **LHS:** `kappa (app s (recDelta b s n)) = max(kappa s, kappa (recDelta b s n)) = max(kappa s, max(max(kappa b, kappa s), kappa n))`
+  
+  Since the inner max already contains `kappa s`, this simplifies to: `max(max(kappa b, kappa s), kappa n)`
+
+- **RHS:** `kappa (recDelta b s (delta n)) = max(max(kappa b, kappa s), kappa n) + 1`
+
+Therefore: `max(max(kappa b, kappa s), kappa n) < max(max(kappa b, kappa s), kappa n) + 1` ✓
+
+This inequality always holds (every natural number is strictly less than its successor).
+
+### Conclusion
+The helper strategy is **sound**. The measure `kappa` strictly decreases by exactly 1 on applying `R_rec_succ`, ensuring termination. The special `+1` case in the `recDelta` definition precisely encodes when the third argument becomes syntactically `delta n`, making the measure strictly decrease when that rule applies.

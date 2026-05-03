@@ -1,0 +1,92 @@
+## Assessment of Termination Measures for First-Order Rewrite Calculus
+
+### Calculus Overview
+
+The `Trace` type defines terms with constructors:
+- `void`, `delta`, `integrate`, `merge`, `app`, `recDelta`, `eqW`
+
+The `Step` relation defines 8 rewrite rules:
+1. **R_int_delta**: `integrate(delta(t)) → void`
+2. **R_merge_void_left**: `merge(void, t) → t`
+3. **R_merge_void_right**: `merge(t, void) → t`
+4. **R_merge_cancel**: `merge(t, t) → t`
+5. **R_rec_zero**: `recDelta(b, s, void) → b`
+6. **R_rec_succ**: `recDelta(b, s, delta(n)) → app(s, recDelta(b, s, n))`
+7. **R_eq_refl**: `eqW(a, a) → void`
+8. **R_eq_diff**: `eqW(a, b) → integrate(merge(a, b))`
+
+---
+
+### Analysis of Each Measure
+
+#### **mu1** — FAILS ❌
+
+| Rule | LHS | RHS | Verdict |
+|------|-----|-----|---------|
+| R_int_delta | `2 + μ₁(t)` | `0` | ✓ |
+| R_merge_void_* | `1 + μ₁(t)` | `μ₁(t)` | ✓ |
+| R_merge_cancel | `1 + 2μ₁(t)` | `μ₁(t)` | ✓ |
+| R_rec_zero | `1 + μ₁(b) + μ₁(s)` | `μ₁(b)` | ✓ |
+| **R_rec_succ** | `2 + μ₁(b) + μ₁(s) + μ₁(n)` | `2 + μ₁(b) + 2μ₁(s) + μ₁(n)` | **✗ RHS ≥ LHS** |
+| R_eq_refl | `3 + 2μ₁(a)` | `0` | ✓ |
+| R_eq_diff | `3 + μ₁(a) + μ₁(b)` | `2 + μ₁(a) + μ₁(b)` | ✓ |
+
+**Failure on R_rec_succ**: The RHS contains `app(s, recDelta(b, s, n))`. The measure counts `s` twice (once in `app`, once in `recDelta`), making RHS ≥ LHS.
+
+---
+
+#### **mu2** — FAILS ❌
+
+| Rule | LHS | RHS | Verdict |
+|------|-----|-----|---------|
+| R_int_delta | `3 + μ₂(t)` | `0` | ✓ |
+| R_merge_void_* | `2 + μ₂(t)` | `μ₂(t)` | ✓ |
+| R_merge_cancel | `2 + 2μ₂(t)` | `μ₂(t)` | ✓ |
+| R_rec_zero | `5 + μ₂(b) + μ₂(s)` | `μ₂(b)` | ✓ |
+| **R_rec_succ** | `6 + μ₂(b) + μ₂(s) + μ₂(n)` | `6 + μ₂(b) + 2μ₂(s) + μ₂(n)` | **✗ RHS ≥ LHS** |
+| R_eq_refl | `5 + 2μ₂(a)` | `0` | ✓ |
+| R_eq_diff | `5 + μ₂(a) + μ₂(b)` | `4 + μ₂(a) + μ₂(b)` | ✓ |
+
+**Same failure pattern**: Higher coefficients on `recDelta` and `app` don't help because `s` still appears twice on RHS.
+
+---
+
+#### **mu3** — FAILS ❌
+
+| Rule | LHS | RHS | Verdict |
+|------|-----|-----|---------|
+| R_int_delta | `3 + μ₃(t)` | `0` | ✓ |
+| R_merge_void_* | `1 + μ₃(t)` | `μ₃(t)` | ✓ |
+| R_merge_cancel | `1 + 2μ₃(t)` | `μ₃(t)` | ✓ |
+| R_rec_zero | `1 + μ₃(b) + μ₃(s)` | `μ₃(b)` | ✓ |
+| **R_rec_succ** | `2 + μ₃(b) + μ₃(s) + μ₃(n)` | `3 + μ₃(b) + 2μ₃(s) + μ₃(n)` | **✗ RHS ≥ LHS** |
+| R_eq_refl | `4 + 2μ₃(a)` | `0` | ✓ |
+| R_eq_diff | `4 + μ₃(a) + μ₃(b)` | `3 + μ₃(a) + μ₃(b)` | ✓ |
+
+**Same structural failure**: The coefficient swap (lower on `recDelta`, higher on `app`) still doesn't address the fundamental issue.
+
+---
+
+### Root Cause
+
+All three measures fail on **R_rec_succ**. The critical observation:
+
+```
+recDelta(b, s, delta(n)) → app(s, recDelta(b, s, n))
+```
+
+The RHS contains `s` **structurally twice**:
+1. As the first argument of `app`
+2. Inside `recDelta(b, s, n)`
+
+Since each measure is additive over subterms, the RHS measure includes `μ(s)` at least twice, while the LHS only includes it once. No additive measure can work here.
+
+---
+
+### What Would Work
+
+A valid termination proof requires either:
+
+1. **Lexicographic measure**: `(size(n), size(term))` where the first component decreases on `delta(n) → n` in the recursive argument
+2. **Polynomial measure with negative coefficients**: Not expressible in this simple additive form
+3. **Structural recursion on the third argument**: The `n` argument decreases structurally (`delta(n)` → `n`), but the measure must prioritize this over the growth elsewhere

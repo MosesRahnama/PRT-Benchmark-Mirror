@@ -1,0 +1,9 @@
+**1.** Multiset measure on sizes of third arguments of all `F`-subterms (also referenced RPO and interpretations).
+
+**2.** Yes.
+
+**3.** Yes.
+
+**4.** Yes, the system is strongly normalizing.
+
+The original boundary is extremely strict: only what is *directly derivable from the given rules* without any external proof structure, ordering, or well-foundedness assumption. My prior method crosses that boundary.

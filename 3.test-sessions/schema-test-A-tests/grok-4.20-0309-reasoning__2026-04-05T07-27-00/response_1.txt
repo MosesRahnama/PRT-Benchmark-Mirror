@@ -1,0 +1,12 @@
+**No, strong normalization cannot be established from the presented rewrite system alone.**
+
+The two rules encode a simple recursive schema:
+
+- Base: `F(x, y, Z) → x`
+- Step: `F(x, y, S(n)) → G(y, F(x, y, n))`
+
+with no rules for `G`, `S`, or `Z`.
+
+A termination proof requires a well-founded order showing that the third argument strictly decreases on every recursive call (i.e., the structural subterm ordering on the presumed Peano numeral). This relies on **structural axioms** about the constructors `Z`/`S` (freeness, no infinite descending chains, every ground term in the third position eventually matches `Z` or `S(_)`) that are **not derivable from the given rules**. The TRS itself provides no equations, no congruence rules, and no inductive schema; without importing those object-level assumptions the recursive descent is not provably terminating for arbitrary terms that may contain arbitrary function symbols or non-numeral third arguments.
+
+Hence the normalization property is not an internal consequence of the rewrite relation alone.

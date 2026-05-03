@@ -1,0 +1,65 @@
+**Assessment**
+
+Yes – strong normalization (every reduction sequence terminates) can be proved for the rewrite system that is given in `Test‑01‑Kernel‑Fruit.lean` using only the syntax and the eight `Step` rules that are listed. No extra structural axioms, guards, side‑conditions or hidden assumptions are needed.
+
+**Why it works**
+
+All rewrite rules strictly decrease a well‑founded size measure on terms, so no infinite reduction chain can be built.
+
+| Rule | Left‑hand side | Right‑hand side | Effect on size |
+|------|----------------|----------------|----------------|
+| `R_mango_grape` | `mango (grape t)` | `plum` | collapses a 2‑node term to a 0‑node term |
+| `R_peach_plum_left` / `R_peach_plum_right` / `R_peach_cancel` | `peach …` | the other argument `t` | removes the `peach` node |
+| `R_banana_zero` | `banana b s plum` | `b` | drops the `banana` node and its two arguments |
+| `R_apple_orange` | `banana b s (grape n)` | `pear s (banana b s n)` | replaces a `banana` node whose third argument is a `grape` by a `pear` node **and** a smaller `banana` (the `grape` is removed). The total number of constructors strictly decreases. |
+| `R_cherry_refl` | `cherry a a` | `plum` | eliminates the `cherry` node |
+| `R_cherry_diff` | `cherry a b` (with `a≠b`) | `mango (peach a b)` | replaces a `cherry` (arity 2) by a `mango` node (arity 1) whose argument is a `peach` node (arity 2). The outermost constructor changes from `cherry` to `mango`, and the inner `peach` does not increase the total number of constructors; overall size drops because the `cherry` node is removed. |
+
+No rule creates a term that contains a constructor that was not present before, except for `R_apple_orange`, which replaces a `banana`‑node with a `pear`‑node **and** a strictly smaller `banana`. Hence a simple natural‑number measure such as
+
+\[
+\text{size}(t)=\sum_{\text{constructor }c\text{ in }t} 1
+\]
+
+strictly decreases with every `Step` application.
+
+Because the size measure is well‑founded on the natural numbers, any sequence of `Step` reductions must terminate after at most `size(t₀)` steps, where `t₀` is the initial term. This yields strong normalization for the whole system.
+
+**Proof roadmap (within the allowed boundary)**  
+
+1. **Define a size function** `|·| : Trace → ℕ` that counts constructors (each occurrence of `plum`, `grape`, `mango`, `peach`, `pear`, `banana`, `cherry` contributes 1).  
+2. **Show monotonicity**: for every rule `R_i : Step l r`, prove `|l| > |r|`. The table above**Assessment**
+
+Yes – strong normalization (every reduction sequence terminates) can be proved for the rewrite system that is given in `Test‑01‑Kernel‑Fruit.lean` using only the syntax and the eight `Step` rules that are listed. No extra structural axioms, guards, side‑conditions or hidden assumptions are needed.
+
+**Why it works**
+
+All rewrite rules strictly decrease a well‑founded size measure on terms, so no infinite reduction chain can be built.
+
+| Rule | Left‑hand side | Right‑hand side | Effect on size |
+|------|----------------|----------------|----------------|
+| `R_mango_grape` | `mango (grape t)` | `plum` | collapses a 2‑node term to a 0‑node term |
+| `R_peach_plum_left` / `R_peach_plum_right` / `R_peach_cancel` | `peach …` | the other argument `t` | removes the `peach` node |
+| `R_banana_zero` | `banana b s plum` | `b` | drops the `banana` node and its two arguments |
+| `R_apple_orange` | `banana b s (grape n)` | `pear s (banana b s n)` | replaces a `banana` node whose third argument is a `grape` by a `pear` node **and** a smaller `banana` (the `grape` is removed). The total number of constructors strictly decreases. |
+| `R_cherry_refl` | `cherry a a` | `plum` | eliminates the `cherry` node |
+| `R_cherry_diff` | `cherry a b` (with `a≠b`) | `mango (peach a b)` | replaces a `cherry` (arity 2) by a `mango` node (arity 1) whose argument is a `peach` node (arity 2). The outermost constructor changes from `cherry` to `mango`, and the inner `peach` does not increase the total number of constructors; overall size drops because the `cherry` node is removed. |
+
+No rule creates a term that contains a constructor that was not present before, except for `R_apple_orange`, which replaces a `banana`‑node with a `pear`‑node **and** a strictly smaller `banana`. Hence a simple natural‑number measure such as
+
+\[
+\text{size}(t)=\sum_{\text{constructor }c\text{ in }t} 1
+\]
+
+strictly decreases with every `Step` application.
+
+Because the size measure is well‑founded on the natural numbers, any sequence of `Step` reductions must terminate after at most `size(t₀)` steps, where `t₀` is the initial term. This yields strong normalization for the whole system.
+
+**Proof roadmap (within the allowed boundary)**  
+
+1. **Define a size function** `|·| : Trace → ℕ` that counts constructors (each occurrence of `plum`, `grape`, `mango`, `peach`, `pear`, `banana`, `cherry` contributes 1).  
+2. **Show monotonicity**: for every rule `R_i : Step l r`, prove `|l| > |r|`. The table above gives the case analysis.  
+3. **Conclude termination**: any reduction `t → t'` satisfies `|t| > |t'|`. Since `|·|` maps terms to ℕ, there cannot be an infinite descending chain, so every reduction sequence is finite.  
+4. **Strong normalization** follows because the argument does not depend on the shape of the term beyond the size measure; it works for *all* terms built from the given constructors.
+
+No additional axioms or side‑conditions are required, and the proof uses only the syntactic rewrite rules that are present in the file.

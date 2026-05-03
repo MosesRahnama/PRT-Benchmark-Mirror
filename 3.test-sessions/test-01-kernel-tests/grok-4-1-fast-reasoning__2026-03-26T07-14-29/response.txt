@@ -1,0 +1,25 @@
+**Yes, strong normalization can be established from the presented calculus alone.**
+
+### Short Proof Roadmap
+Define `size : Trace → Nat` structurally:  
+`size void := 0`  
+`size (C ts) := 1 + ∑ (size t) for t ∈ ts` (derivable via `SizeOf` or manual recursion).
+
+Prove `∀ t, Acc Step t` by **structural induction on `size t`** (standard well-founded induction on `Nat`):
+
+- **Irreducible case**: Root constructor ≠ `integrate (delta _)`, `merge` (special args), `recΔ` (special arg), `eqW`. Vacuous: no `t'`, so `Acc t`.
+- **Reducible cases** (exhaustive on rules): `Step t t'` implies `Acc t'`:
+  | Rule | `size(t') ≶ size(t)` | Justification |
+  |------|----------------------|---------------|
+  | `R_int_delta` | `<` | `2 + size t → 0` |
+  | `R_merge_void_{l/r}`, `R_merge_cancel` | `<` | Removes `merge`/`void`; `1 + size t(+t) → size t` |
+  | `R_rec_zero` | `<` | `1 + size b + size s → size b` |
+  | `R_rec_succ` | `>` possible | `t' = app s (recΔ b s n)`: root `app` (no rule) → irreducible → `Acc t'` |
+  | `R_eq_refl` | `<` | `1 + 2·size a → 0` |
+  | `R_eq_diff` | `>` possible | `t' = integrate (merge a b)`: arg `merge _ _ ≠ delta _` → no `R_int_delta` → irreducible → `Acc t'` |
+
+By i.h. (`size(t') < size(t)` cases) or direct irreducibility, `Acc t'`. Thus `Acc t`.
+
+This uses only `Inductive` syntax, `Prop` rules, `Nat`/`Acc` (built-in), and induction (meta-rule for datatypes). No extra axioms/rules/assumptions. 
+
+SN follows: every `t` reaches normal form (`¬∃ t', Step t t'`) in finitely many steps (chains length ≤ `size t`).

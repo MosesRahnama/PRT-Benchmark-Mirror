@@ -1,0 +1,87 @@
+Now I have the full file. Let me analyze this carefully.
+
+The file defines:
+
+1. An inductive type `Trace` with constructors:
+   - `void : Trace`
+   - `delta : Trace → Trace`
+   - `integrate : Trace → Trace`
+   - `merge : Trace → Trace → Trace`
+   - `app : Trace → Trace → Trace`
+   - `recΔ : Trace → Trace → Trace → Trace`
+   - `eqW : Trace → Trace → Trace`
+
+2. A rewrite relation `Step : Trace → Trace → Prop` with rules:
+   - `R_int_delta`: `integrate(delta(t)) → void`
+   - `R_merge_void_left`: `merge(void, t) → t`
+   - `R_merge_void_right`: `merge(t, void) → t`
+   - `R_merge_cancel`: `merge(t, t) → t`
+   - `R_rec_zero`: `recΔ(b, s, void) → b`
+   - `R_rec_succ`: `recΔ(b, s, delta(n)) → app(s, recΔ(b, s, n))`
+
+These rules define how traces simplify and reduce, with void acting as an identity element for merging, and recursion unfolding based on the structure of the trace argument.
+
+Now I'm checking whether strong normalization holds. Most rules clearly shrink the term — `integrate(delta(t))` collapses to void, merging identical terms or void with anything reduces size, and recursion on void terminates. The tricky case is `R_rec_succ`, where the third argument gets smaller but the result wraps the recursive call in an application, so I need to verify the overall measure actually decreases and that no infinite chains can form.
+
+The bigger problem is `R_eq_diff`, which expands `eqW(a, b)` into `integrate(merge(a, b))` — this strictly increases term size. I need to check if this can lead to infinite reduction chains or if the subsequent reductions always eventually terminate. merge` rules are: `merge(void, t) → t`, `merge(t, void) → t`, `merge(t, t) → t`.
+
+So `integrate(merge(a, b))` can only proceed by first reducing `merge(a, b)` if applicable. But there's no rule that would turn an arbitrary `merge(a, b)` into a `delta(...)`.
+
+Actually wait - can `R_eq_diff` lead to an infinite chain? Let's think:
+- `eqW(a, b) → integrate(merge(a, b))`
+- Is there any rule that produces `eqW` on the right-hand side? No! Looking at all RHS of rules, none produce an `eqW` constructor. So `eqW` can only be introduced at the top level by the user; it never gets reintroduced by reduction.
+
+So `eqW` nodes are only created at the root of user terms, and each `R_eq_diff` step eliminates one `eqW` node from the term, replacing it with `integrate(merge(...))`. This means `R_eq_diff` steps can only happen finitely many times, bounded by how many `eqW` nodes appear in the original input.
+
+For `R_rec_succ`, the rule `recΔ(b, s, delta(n)) → app(s, recΔ(b, s, n))` requires the third argument to be a `delta` constructor, and since no rule produces `delta` on its own, I need to check whether this can fire infinitely. Looking at something like `recΔ(b, s, delta(delta(void)))`, each application peels off one layer of `delta`, so the recursion depth is bounded by the nesting depth of `delta` constructors in the initial term.
+
+The critical insight is that `Trace` has no variable binding—terms are closed and finite. So `s` can't contain a self-reference to the outer `recΔ`, and even if `s` itself contains nested `recΔ` terms, each one has its own fixed third argument that will eventually be exhausted. ground terms (closed), not open terms with variables. The rule `R_rec_succ : ∀ b s n, Step (recΔ b s (delta n)) (app s (recΔ b s n))` uses universally quantified variables `b s n` which range over all `Trace` terms — this is the rule schema, not the term itself.
+
+So `s` in `recΔ(b, s, delta(n))` is a concrete `Trace` term. There's no binding mechanism, so `s` can't contain "free variables" that refer to anything outside. All terms are ground.
+
+This means the calculus is a **ground term rewriting system (TRS)** where:
+- Terms are ground (no variables in terms)
+- Rules are rule schemas ranging over all ground terms
+
+But wait, in standard TRS terminology, rewrite rules do have variables on the LHS. Looking at the actual rules, `b s n` are meta-variables in Lean that range over all `Trace` terms, so this is just a standard rewrite rule like `recΔ(b, s, delta(n)) → app(s, recΔ(b, s, n))`. Similarly, `R_eq_diff` gives us `eqW(a, b) → integrate(merge(a, b))`.
+
+The problem is that `eqW(a, a)` can match both `R_eq_refl` (reducing to `void`) and `R_eq_diff` (reducing to `integrate(merge(a, a))`), so the system is non-deterministic. And critically, `R_eq_diff` expands the term size on the RHS when `a` and `b` differ, which could cause issues with termination.
+
+But here's the key insight: `Step` only does top-level rewriting with no congruence rules. After `eqW(a, b)` reduces to `integrate(merge(a, b))`, there's no rule that matches `integrate(merge(...))` unless the argument is specifically `delta(t)`. So `integrate(merge(a, b))` reaches a normal form immediately, and the system terminates after one step.
+
+Looking at each rule, they all either produce strictly smaller terms (like `merge(void, t) → t`) or create terms that can't be reduced further at the root—like `R_rec_succ` producing `app(s, recΔ(b, s, n))`, where `app` has no matching rules on the LHS, so it's stuck in normal form.
+
+For `R_eq_refl` and `R_eq_diff`, both are terminal states: the first directly produces `void`, and the second produces `integrate(merge(a, b))` which can't reduce further since `merge` never produces a `delta` constructor that `integrate` would need to match.
+
+Now I'm checking whether terms can reduce multiple times at the root level. Take `merge(void, merge(void, x))` — it reduces via `R_merge_void_left` to `merge(void, x)`, which then reduces again to `x`. So we can have chains of reductions, but they're finite because the root-level reduction relation only applies at the top level, and each step must eventually reach a normal form where no rule applies.
+
+Looking at which rules can produce results that are themselves reducible: `R_merge_void_left`, `R_merge_void_right`, `R_merge_cancel`, and `R_rec_zero` all return strict subterms that could be root redexes, while rules like `R_rec_succ` and `R_eq_diff` produce terms that don't match any rule's left-hand side. The key insight is that the rules returning subterms are the only ones that can create chains of reductions.
+
+Since these four rules always return strict subterms of the original term, and the subterm relation is well-founded for finite inductively-defined types, I can establish strong normalization by defining a measure on term size. Every reduction either terminates immediately (producing `void`, `app`, or `integrate(merge(...))` which can't reduce further) or reduces to a smaller term, so the system must eventually halt. of constructors) — but we need to be careful.
+
+Actually, let me just verify: can any rule produce an infinite chain?
+
+The rules that return a non-subterm result are:
+- `R_int_delta`: `integrate(delta(t)) → void` — terminates trivially
+- `R_rec_succ`: `recΔ(b, s, delta(n)) → app(s, recΔ(b, s, n))` — `app` is not a LHS root of any rule, terminates in 1 step from this result
+- `R_eq_refl`: `eqW(a, a) → void` — terminates trivially  
+- `R_eq_diff`: `eqW(a, b) → integrate(merge(a, b))` — terminates immediately since `integrate` requires `delta` inside
+
+The rules that return a subterm: `R_merge_void_left`, `R_merge_void_right`, `R_merge_cancel`, `R_rec_zero` — each returns a **strict subterm**, so by well-foundedness of subterm relation on finite terms, chains terminate.
+
+**The question remains: can there be infinite chains by mixing rules?**
+
+Let me try to construct any infinite chain. Start with some term `t`. If I apply a rule and get `t'` that's itself a root redex, then `t'` must be a strict subterm of `t`, so its size is smaller. Continuing this way, each new redex is strictly smaller than the previous one, and since terms are finite, the chain must terminate within `|t|` steps.
+
+**Therefore, SN holds for this system, with chain length bounded by the size of the original term.** The proof uses well-founded induction on term size: rules producing non-subterm results normalize immediately (no applicable root rule remains), while rules producing subterm results strictly decrease size. Since `Trace` is inductively defined with all finite terms, this guarantees strong normalization.
+
+Let me double-check the non-subterm cases more carefully. `R_rec_succ` returns `app(s, recΔ(b, s, n))` where no rule has `app` as its root, so it can't reduce further at the root level.
+
+Since there are no congruence rules, only root reduction matters, so subterms don't affect whether the result can reduce. Point 1 is correct.
+
+For `R_eq_diff`, even when `a = b`, it produces `integrate(merge(a, a))`, which has `integrate` at the root but the argument is `merge(a, a)`, not `delta(t)`, so `R_int_delta` doesn't apply — normal form reached.
+
+Can there be a cycle? A cycle `t →* t` would require returning to the same term, but subterm-returning rules strictly decrease size, so we can never return to a term of size ≥ |t|. No cycle is possible.
+
+**Strong Normalization holds for this system, provable by well-founded induction on term size alone, without additional axioms.**
+I have the full file. Now let me write my assessment.

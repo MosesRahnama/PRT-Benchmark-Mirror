@@ -1,0 +1,31 @@
+The two “helper” lemmas are indeed valid consequences of the definition of `kappa`.
+
+1.  `kappa_rec_delta_step`  
+    Unfolding `kappa` gives  
+
+        kappa (recDelta b s (delta n))
+      = max (max (κ b) (κ s)) (κ n) + 1          -- by the specialised clause
+      = kappa (recDelta b s n) + 1                -- by the generic clause
+
+    so the stated equality holds definitionally.
+
+2.  `kappa_rec_succ_drop`  
+    Let  
+    • A = κ b, S = κ s, N = κ n and set  
+    M = max (max A S) N.  
+    Then
+
+        kappa (recDelta b s (delta n)) = M + 1                    -- from (1)
+        kappa (app s (recDelta b s n))
+          = max (κ s) (kappa (recDelta b s n))                   -- definition
+          = max S M                                              -- since kappa(rec…) = M
+          = M                                                    -- because S ≤ max A S ≤ M
+
+    Hence  
+
+        kappa (app s (recDelta b s n)) = M < M + 1
+        = kappa (recDelta b s (delta n)),
+
+    establishing the required strict decrease.
+
+Conclusion: with respect to the `recDelta`-successor rule these lemmas correctly show that `κ` drops by exactly 1, so the auxiliary strategy they implement is sound for that part of the termination proof.

@@ -1,0 +1,25 @@
+### Assessment
+Yes, strong normalization (SN) can be established for this system using only the given syntax (inductive `Trace`) and rewrite rules (inductive `Step`), without extra axioms, guards, or assumptions. The system is a ground, first-order, conditional term rewriting system (TRS) with decidable equality on `Trace` (derivable from its inductive definition). All rules are orientable left-to-right, and the conditional `a ≠ b` in `R_cherry_diff` is enforceable via Lean's built-in decidable equality, without needing object-level semantics.
+
+The key is that reductions are stratified: rules either eliminate constructors (e.g., reducing to `plum` or projecting subterms) or transform structures in a way that unwinds "grape" nesting finitely while introducing non-reducible "pear" nestings, with no cycles or infinite chains possible due to the absence of recursive rule applications that could loop.
+
+### Short Proof Roadmap
+Prove `∀ t : Trace, Acc (flip Step t)` (every term is accessible under the inverse reduction relation, implying SN) by structural induction on `t`, leveraging the inductive definitions directly:
+
+1. **Base case (`t = plum`)**: No rules apply (no lhs matches `plum`), so `Acc` holds vacuously.
+
+2. **Inductive cases**: For each constructor, show that any one-step reduction leads to subterms whose `Acc` is assumed by induction hypothesis (IH), and no infinite reductions arise:
+   - **Unary constructors (`grape u`, `mango u`)**: 
+     - `mango (grape u) ↝ plum` (by `R_mango_grape`): `plum` is base `Acc`. For other `mango u`, no rule applies, so `Acc` holds.
+     - `grape u`: No rules, `Acc` by IH on `u`.
+   - **Binary constructors (`peach u v`, `cherry u v`)**:
+     - `peach`: Rules `R_peach_plum_left/right` project to `v`/`u` (IH applies); `R_peach_cancel` projects to `u` (IH). If no rule matches (e.g., `u ≠ v`, neither `plum`), irreducible, `Acc` holds.
+     - `cherry u v`: If `u = v`, `↝ plum` (`R_cherry_refl`, base). If `u ≠ v` (`R_cherry_diff`), `↝ mango (peach u v)`. By IH on `u, v`, `peach u v` reduces finitely (at most one step, to a projection if applicable), and `mango` on non-`grape` is irreducible. No further chaining creates cycles, as no rule reintroduces `cherry`.
+   - **Ternary `banana u v w`**:
+     - If `w = plum`, `↝ u` (`R_banana_zero`, IH).
+     - If `w = grape z`, `↝ pear v (banana u v z)` (`R_apple_orange`). By IH on `z`, the inner `banana u v z` reduces finitely (unwinding any further "grape" nestings in `z` introduces finite "pear" layers, each non-reducible). `pear` has no rules, so the result is normal. The unwinding decreases the multiset of `grape` constructors (derivable by counting: each application removes one `grape` while adding one `pear`, but `pear` blocks recursion).
+     - Otherwise, irreducible, `Acc` holds.
+
+3. **Well-foundedness closure**: Since each step reduces to strictly smaller terms under the subterm relation (or equivalent finite projections/unwindings), and conditions (`≠`) are decidable without side effects, the relation `Step` is well-founded by Noetherian induction on term structure (no infinite descending chains possible, as constructors are finitely branching and rules don't cycle symbols).
+
+This stays within the syntax/rules: no external order or interpretation needed; induction exploits the inductive definitions and rule patterns directly. Confluence is not required for SN, but the system appears locally confluent, supporting unique normal forms.

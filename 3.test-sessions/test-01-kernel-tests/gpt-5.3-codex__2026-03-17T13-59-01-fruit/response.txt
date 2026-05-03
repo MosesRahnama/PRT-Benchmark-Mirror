@@ -1,0 +1,40 @@
+## Raw assessment
+
+Yes — **strong normalization is establishable from the calculus as presented, with no extra axioms/rules/guards**.
+
+## Why this stays within your boundary
+
+A clean route is to use a **standard simplification order**, e.g. **LPO/RPO**, on the given first-order signature only.
+
+Choose a precedence such as:
+\[
+\texttt{banana} \succ \texttt{pear} \succ \texttt{cherry} \succ \texttt{mango} \succ \texttt{peach} \succ \texttt{grape} \succ \texttt{plum}
+\]
+with **lex status on `banana`** (so \((b,s,\texttt{grape}\ n) > (b,s,n)\)).
+
+Then each rule orients left-to-right:
+
+- `mango (grape t) -> plum` (root decreases by precedence)
+- `peach plum t -> t`, `peach t plum -> t`, `peach t t -> t` (collapse to subterm)
+- `banana b s plum -> b` (subterm)
+- `banana b s (grape n) -> pear s (banana b s n)`  
+  - LHS \(>\) `s` (subterm)
+  - LHS \(>\) `banana b s n` via lex on 3rd arg since `grape n > n`
+  - and `banana > pear`, so LHS \(>\) whole RHS
+- `cherry a a -> plum` (precedence)
+- `cherry a b -> mango (peach a b)` (with `cherry > mango`, and LHS \(>\) `peach a b`)
+
+Since LPO/RPO is well-founded on finite first-order terms, no infinite rewrite sequence exists.  
+Your conditional premise \(a \ne b\) only **restricts** applicability of `R_cherry_diff`, so it cannot create nontermination if the oriented system is terminating.
+
+## Short proof roadmap (boundary-respecting)
+
+1. Fix an LPO/RPO precedence and status as above.
+2. Check each rewrite rule is strictly decreasing under that order.
+3. Conclude SN by well-foundedness of LPO/RPO (no imported object-level assumptions needed).
+
+## Updated checklist
+
+- ✅ Analyze rewrite rules for loops  
+- ✅ Check orientation by standard order  
+- ✅ Deliver bounded raw assessment

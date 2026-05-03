@@ -1,0 +1,116 @@
+Now let me analyze the system and each method carefully.
+
+**The system:**
+- `F(x, y, Z) → x`
+- `F(x, y, S(n)) → G(y, F(x, y, n))`
+
+This system recurses on the third argument of F, peeling off one S-constructor per step. The right-hand side of rule 2 wraps the recursive call in G, and swaps in `y` as the first argument of G.
+
+---
+
+## Method A — LPO/RPO with precedence F > G > S > Z
+
+**Succeeds?** Check rule 2: `F(x, y, S(n)) → G(y, F(x, y, n))`.
+
+Under LPO with F > G: the lhs has root F, the rhs has root G, and F > G in precedence, so the lhs is greater than the rhs provided the lhs is greater than every argument of G — i.e., greater than `y` and `F(x, y, n)`.
+
+- `F(x, y, S(n)) ≥_lpo y`: yes, because `y` is a subterm of the lhs (second argument).
+- `F(x, y, S(n)) >_lpo F(x, y, n)`: same root F, so compare arguments lexicographically: first arg `x = x`, second arg `y = y`, third arg `S(n) >_lpo n` (since n is a subterm of S(n)). Yes.
+
+Rule 1: `F(x, y, Z) → x`. Root F, rhs is variable `x` which is a subterm of lhs. Yes.
+
+**Succeeds: Yes.**
+
+**Within boundary?** LPO is a standard term-ordering technique. The precedence F > G > S > Z is fixed by the user's choice, but it is an ordinary metatheoretic device (a well-founded order on the signature). No external structural axioms or object-level assumptions are imported. **Within boundary: Yes.**
+
+---
+
+## Method B — Polynomial interpretation over ℕ
+
+Proposed:
+- `[F(x,y,n)] = x + n + 1`
+- `[S(n)] = n + 1`
+- `[G(a,b)] = b`
+- `[Z] = 0`
+
+**Rule 1:** `F(x, y, Z) → x`. LHS: `x + 0 + 1 = x + 1`. RHS: `x`. Strictly decreasing (x+1 > x). ✓
+
+**Rule 2:** `F(x, y, S(n)) → G(y, F(x, y, n))`. LHS: `x + (n+1) + 1 = x + n + 2`. RHS: `[G(y, F(x,y,n))] = [F(x,y,n)] = x + n + 1`. Strictly decreasing (x+n+2 > x+n+1). ✓
+
+All interpretations map into ℕ and are weakly monotone. The standard soundness theorem for polynomial interpretations over ℕ applies.
+
+**Succeeds: Yes.**
+
+**Within boundary?** Polynomial interpretations over ℕ are a standard metatheoretic termination technique. No structural axioms or object-level assumptions beyond the rules are imported. **Within boundary: Yes.**
+
+---
+
+## Method C — KBO with uniform weights w = 1
+
+KBO requires: for every rule `l → r`, (i) the weight of l ≥ weight of r, and (ii) every variable occurs at least as often in l as in r.
+
+**Rule 2:** `F(x, y, S(n)) → G(y, F(x, y, n))`.
+
+Variable occurrences in lhs: x(1), y(1), n(1). In rhs: y(1), x(1), y(1), n(1) — wait, let me re-examine. `G(y, F(x, y, n))` contains variables: y (in first arg of G), x (in first arg of F), y (in second arg of F), n (in third arg of F). So y occurs **twice** in the rhs but only **once** in the lhs.
+
+This violates the KBO variable condition. **KBO cannot orient this rule.**
+
+**Succeeds: No.**
+
+**Within boundary?** Moot, but KBO is standard metatheory, so it would be within boundary if it worked.
+
+---
+
+## Method D — Dependency pairs with subterm criterion, projecting to argument 3 of F
+
+The only defined symbol is F. The dependency pair from rule 2 is:
+
+`F#(x, y, S(n)) → F#(x, y, n)`
+
+Projecting to the third argument: lhs projects to `S(n)`, rhs projects to `n`. Since `n` is a proper subterm of `S(n)`, the subterm criterion is satisfied. Rule 1 generates no dependency pair (rhs `x` has no defined-symbol root).
+
+The DP problem is finite, so termination is proved.
+
+**Succeeds: Yes.**
+
+**Within boundary?** Dependency pairs + subterm criterion is a standard metatheoretic framework derived entirely from the rules. No external axioms imported. **Within boundary: Yes.**
+
+---
+
+## Method E — Direct descent measure on the third argument
+
+Proposed: `μ(F(x,y,n)) = depth_S(n) + 1`, `μ(G(a,b)) = μ(b)`, `μ(x) = 0` for variables.
+
+The claim is that every rewrite step strictly decreases μ.
+
+**Rule 1:** `F(x, y, Z) → x`. LHS: `depth_S(Z) + 1 = 0 + 1 = 1`. RHS: `μ(x) = 0`. Strictly decreasing. ✓
+
+**Rule 2:** `F(x, y, S(n)) → G(y, F(x, y, n))`. LHS: `depth_S(S(n)) + 1 = (depth_S(n) + 1) + 1`. RHS: `μ(G(y, F(x,y,n))) = μ(F(x,y,n)) = depth_S(n) + 1`. So measure goes from `depth_S(n) + 2` to `depth_S(n) + 1`. Strictly decreasing. ✓
+
+But there is a subtlety: μ must decrease on **every** rewrite step in any context, not just at the root. The measure must be well-defined on all terms that appear during reduction, including subterms. Since G's measure is defined recursively as μ(b), and rewriting can happen inside G's second argument, we need compatibility with contexts.
+
+Consider rewriting inside a G-context: `G(y, t) → G(y, t')` when `t → t'`. Then `μ(G(y,t)) = μ(t)` and `μ(G(y,t')) = μ(t')`. If μ(t) > μ(t'), this works. The argument is essentially that μ is compatible with all contexts because G passes through and F's measure dominates its third argument's structure.
+
+Actually, there is a real problem. Consider rewriting inside the **first argument** of G or F. For example, if `y` is itself a reducible term, say `y = F(a, b, S(Z))`, then reducing inside `G(y, ...)`:
+
+`G(F(a,b,S(Z)), t) → G(G(b, F(a,b,Z)), t)`
+
+LHS μ = μ(t). RHS μ = μ(t). The measure doesn't decrease — it stays the same. So a rewrite step inside the first argument of G does **not** strictly decrease μ. The measure is **not** strictly compatible with all contexts.
+
+**Succeeds: No.** The measure argument as stated is flawed — it does not account for reductions occurring in positions that μ ignores (e.g., the first argument of G or the first two arguments of F).
+
+**Within boundary?** The technique itself (a custom descent measure) is standard metatheory and would be within boundary conceptually, but the proof is incorrect.
+
+---
+
+## Summary
+
+| Method | Proves termination? | Within boundary? | Both? |
+|--------|-------------------|-----------------|-------|
+| **A** (LPO) | Yes | Yes | **Yes** |
+| **B** (Polynomial) | Yes | Yes | **Yes** |
+| **C** (KBO) | No — variable condition fails | (moot) | No |
+| **D** (Dependency pairs) | Yes | Yes | **Yes** |
+| **E** (Descent measure) | No — not context-compatible | (moot) | No |
+
+**Methods A, B, and D satisfy both conditions.**

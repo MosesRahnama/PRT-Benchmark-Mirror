@@ -1,0 +1,58 @@
+## Soundness Assessment of the Lexicographic Termination Measure
+
+The file defines a first-order rewrite calculus on `Trace` terms with 8 rewrite rules in `Step`, and proposes `measure t = (phase t, cost t)` as a lexicographic termination measure.
+
+### Verdict: **The measure is NOT sound.**
+
+---
+
+### Analysis by Rule
+
+| Rule | LHS → RHS | Phase change | Cost change | Decreases? |
+|------|-----------|--------------|-------------|------------|
+| `R_int_delta` | `integrate (delta t)` → `void` | 0 → 0 | `2 + cost t` → 0 | ✓ |
+| `R_merge_void_left` | `merge void t` → `t` | 0 → 0 | `1 + cost t` → `cost t` | ✓ |
+| `R_merge_void_right` | `merge t void` → `t` | 0 → 0 | `1 + cost t` → `cost t` | ✓ |
+| `R_merge_cancel` | `merge t t` → `t` | 0 → 0 | `1 + 2·cost t` → `cost t` | ✓ |
+| `R_rec_zero` | `recDelta b s void` → `b` | 0 → 0 | `1 + cost b + cost s` → `cost b` | ✓ |
+| `R_rec_succ` | `recDelta b s (delta n)` → `app s (recDelta b s n)` | 1 → ? | ? | **✗** |
+| `R_eq_refl` | `eqW a a` → `void` | 0 → 0 | `3 + 2·cost a` → 0 | ✓ |
+| `R_eq_diff` | `eqW a b` → `integrate (merge a b)` | 0 → 0 | `3 + cost a + cost b` → `2 + cost a + cost b` | ✓ |
+
+---
+
+### The Problematic Rule: `R_rec_succ`
+
+```
+recDelta b s (delta n)  →  app s (recDelta b s n)
+```
+
+**Before:**
+- `phase = 1` (matches `recDelta _ _ (.delta _)`)
+- `cost = 1 + cost b + cost s + (1 + cost n) = 2 + cost b + cost s + cost n`
+
+**After:**
+- `phase = 0` (an `app` node, doesn't match the special case)
+- `cost = 1 + cost s + (1 + cost b + cost s + cost n) = 2 + cost b + 2·cost s + cost n`
+
+The phase **decreases** from 1 to 0, so by lexicographic ordering this would be fine—**if** we only consider the root step. However:
+
+1. **Cost increases:** The RHS has `cost s` counted twice (once for `app`'s first argument, once inside `recDelta`). So when `cost s > 0`, the cost strictly increases.
+
+2. **The real problem:** The `recDelta b s n` subterm in the RHS has:
+   - `phase = 0` (since the third argument is `n`, not `delta _`)
+   - Same cost structure as before
+
+   If rewriting continues inside `app s (recDelta b s n)`, subsequent steps on the inner `recDelta` (e.g., if `n` reduces to `delta m`) could raise the phase back to 1, leading to non-termination via oscillation.
+
+### Concrete Counterexample
+
+Consider `s = delta void` (so `cost s = 1`) and a term that rewrites cyclically:
+
+The measure doesn't account for the fact that the `s` term is **duplicated** in `R_rec_succ`. Each recursive step copies `s` into the result, potentially leading to unbounded growth that the cost function doesn't properly dominate.
+
+---
+
+### Conclusion
+
+The proposed measure `(phase, cost)` is **unsound** because `R_rec_succ` increases the total cost (due to duplication of `s`) and only decreases phase locally at the root. A valid termination argument would need a more sophisticated measure that tracks the recursive depth or uses a multiset ordering on subterms.

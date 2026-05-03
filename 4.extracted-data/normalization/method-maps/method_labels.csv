@@ -1,0 +1,602 @@
+primary_method,standardized_method_name,method_class
+"(d, n) lexicographic measure",lexicographic_measure,direct_measure
+Acc induction on size,accessibility_induction,structural_induction
+Acc structural induction,structural_induction,structural_induction
+Dependency pair method,dependency_pairs,transformed_calls
+Dependency pairs method,dependency_pairs,transformed_calls
+Informal analysis of decreasing successor depth,direct_measure,direct_measure
+Informal measure argument,direct_measure,direct_measure
+Informal semantic analysis,direct_measure,direct_measure
+Informal structural analysis,structural_descent,structural_descent
+LPO,lpo,path_order
+LPO / MPO,path_order_generic,path_order
+LPO / RPO,path_order_generic,path_order
+LPO with precedence F > G,lpo,path_order
+LPO/RPO,path_order_generic,path_order
+LPO/RPO / polynomial interpretation,lpo,path_order
+LPO/RPO reduction ordering,path_order_generic,path_order
+Lexicographic / Recursive Path Ordering,lpo,path_order
+Lexicographic Ordering / Structural Induction,path_order_generic,path_order
+Lexicographic Path Order (LPO),lpo,path_order
+Lexicographic Path Ordering,lpo,path_order
+Lexicographic Path Ordering (LPO),lpo,path_order
+Lexicographic Path Ordering (LPO) / Interpretation Function,lpo,path_order
+Lexicographic Path Ordering (LPO) / Polynomial Interpretation,lpo,path_order
+Lexicographic Path Ordering (LPO) / Recursive Path Ordering (RPO),lpo,path_order
+Lexicographic Path Ordering / Recursive Path Ordering,lpo,path_order
+Lexicographic Recursive Path Ordering (RecPO),rpo,path_order
+Lexicographic path ordering,lpo,path_order
+Lexicographic polynomial interpretation,polynomial_interpretation,polynomial
+Lexicographic/Recursive Path Ordering,lpo,path_order
+Lexicographic/recursive path ordering,lpo,path_order
+Lexicographical Path Ordering (LPO),lpo,path_order
+"M(t) = (is-redex(t), |t|)",lexicographic_measure,direct_measure
+Measure-based lexicographic termination,lexicographic_measure,direct_measure
+Multiset extension of term sizes,multiset_measure,direct_measure
+Multiset measure,multiset_measure,direct_measure
+Multiset measure on S-depths,multiset_measure,direct_measure
+Multiset measure on sizes of third arguments,multiset_measure,direct_measure
+Noetherian induction,noetherian_induction,structural_induction
+Polynomial Interpretation,polynomial_interpretation,polynomial
+Polynomial Interpretation over the natural numbers,polynomial_interpretation,polynomial
+Polynomial interpretation,polynomial_interpretation,polynomial
+Polynomial interpretation / weight function,polynomial_interpretation,polynomial
+Polynomial interpretation / weight function on the structure of terms,polynomial_interpretation,polynomial
+Polynomial interpretation / well-founded ordering,polynomial_interpretation,polynomial
+Polynomial interpretation / well-founded ordering on the size of the third argument,polynomial_interpretation,polynomial
+Polynomial interpretation over the natural numbers,polynomial_interpretation,polynomial
+Polynomial interpretation over ℕ,polynomial_interpretation,polynomial
+Polynomial interpretation over ℕ with a well-foundedness argument,polynomial_interpretation,polynomial
+RPO with precedence F > G,rpo,path_order
+RPO/LPO / S-nesting depth interpretation,rpo,path_order
+Recursive Path Order (RPO),rpo,path_order
+Recursive Path Ordering,rpo,path_order
+Recursive Path Ordering (RPO),rpo,path_order
+Recursive/lexicographic path ordering (RPO/LPO),rpo,path_order
+S-chain depth,s_chain_depth_measure,direct_measure
+S-count measure,s_count_measure,direct_measure
+S-depth measure,s_depth_measure,direct_measure
+S-nesting depth measure,s_nesting_depth_measure,direct_measure
+Semantic measure-based argument,direct_measure,direct_measure
+Semantic/structural reasoning,structural_descent,structural_descent
+Structural descent / polynomial interpretation,structural_descent,structural_descent
+Structural induction,structural_induction,structural_induction
+Structural induction on successor-depth,structural_induction,structural_induction
+Structural induction on the third argument,structural_induction,structural_induction
+Structural induction on the third argument of F,structural_induction,structural_induction
+Structural recursion,structural_recursion,structural_descent
+Structural recursion on the third argument,structural_recursion,structural_descent
+Structural recursion termination proof,structural_recursion,structural_descent
+Syntactic measure/structural decrease,direct_measure,direct_measure
+Syntactic multiset measure,multiset_measure,direct_measure
+Tait computability method,tait_computability,structural_induction
+Tait computability predicate method,tait_computability,structural_induction
+Tait's method,tait_computability,structural_induction
+Termination measure,direct_measure,direct_measure
+Termination measure (S-nesting depth reduction order) + well-foundedness appeal,s_nesting_depth_measure,direct_measure
+accessibility / structural recursion,accessibility_induction,structural_induction
+accessibility proof by Trace.rec case analysis,accessibility_induction,structural_induction
+accessibility proof by structural induction on Trace,accessibility_induction,structural_induction
+accessibility proof by structural induction on Trace with finite grape-unwinding argument,accessibility_induction,structural_induction
+accessibility proof by structural induction on terms,accessibility_induction,structural_induction
+accessibility proof by structural induction on terms with banana third-argument chain-depth descent,accessibility_induction,structural_induction
+accessibility proof using Acc and structural induction,accessibility_induction,structural_induction
+active-constructor measure,direct_measure,direct_measure
+analysis of recursive structure,structural_descent,structural_descent
+argument measure,direct_measure,direct_measure
+banana-depth plus grape-count measure,lexicographic_measure,direct_measure
+compatible well-founded order via custom numeric interpretation measure,path_order_generic,path_order
+complete induction on lexicographic measure of peel-rank banana-count and size,induction_argument,structural_induction
+complete induction with root-constructor case analysis,induction_argument,structural_induction
+complexity measure based on S-depth,s_depth_measure,direct_measure
+computability predicate,tait_computability,structural_induction
+computability predicate (reducibility candidates) method,tait_computability,structural_induction
+constructor precedence measure,path_order_generic,path_order
+constructor precedence ordering,path_order_generic,path_order
+constructor precedence plus lexicographic subterm ordering,lpo,path_order
+constructor-based recursion,structural_recursion,structural_descent
+constructor-count measure,direct_measure,direct_measure
+constructor-precedence measure,direct_measure,direct_measure
+constructor-precedence well-founded measure argument,direct_measure,direct_measure
+constructor-precedence with lexicographic subterm ordering,lpo,path_order
+constructor-size measure with bounded two-step decrease argument,direct_measure,direct_measure
+constructor-size measure with per-rule decrease checks,direct_measure,direct_measure
+contextual TRS termination via simplification ordering,path_order_generic,path_order
+count of S constructors,s_count_measure,direct_measure
+custom lexicographic measure,lexicographic_measure,direct_measure
+custom multiset-based measure,multiset_measure,direct_measure
+custom well-founded measure,direct_measure,direct_measure
+decreasing measure,direct_measure,direct_measure
+decreasing measure (count of S in third argument),direct_measure,direct_measure
+decreasing measure (height of third argument),third_argument_height_measure,direct_measure
+decreasing measure / termination ordering,direct_measure,direct_measure
+decreasing measure argument,direct_measure,direct_measure
+decreasing measure on the third argument of `F`,direct_measure,direct_measure
+decreasing well-founded measure,direct_measure,direct_measure
+decreasing-measure / well-founded ordering,direct_measure,direct_measure
+decreasing-measure argument,direct_measure,direct_measure
+decreasing-measure argument on occurrences of `F`,direct_measure,direct_measure
+decreasing‑measure,direct_measure,direct_measure
+decreasing‑measure argument,direct_measure,direct_measure
+decreasing‑measure proof,direct_measure,direct_measure
+delta-count descent argument,delta_count_measure,direct_measure
+delta-count lexicographic measure,lexicographic_measure,direct_measure
+delta-count measure,direct_measure,direct_measure
+delta-depth structural descent,structural_descent,structural_descent
+demonstrating a non-terminating reduction sequence by substitution,objection_or_non_method,objection
+dependency graph analysis,dependency_pairs,transformed_calls
+dependency pair method,dependency_pairs,transformed_calls
+dependency pair method / size-based interpretation,dependency_pairs,transformed_calls
+dependency pairs,dependency_pairs,transformed_calls
+dependency pairs / matrix interpretations,dependency_pairs,transformed_calls
+dependency pairs with lexicographic measure,dependency_pairs,transformed_calls
+dependency pairs with size-based interpretation,dependency_pairs,transformed_calls
+depth / total S count measure,direct_measure,direct_measure
+depth measure on third argument,direct_measure,direct_measure
+descending-measure termination argument,direct_measure,direct_measure
+global variant m(t),lexicographic_measure,direct_measure
+grape-nesting depth measure,lexicographic_measure,direct_measure
+height of third argument,third_argument_height_measure,direct_measure
+induction on lexicographic measure over eqW-count and recΔ-delta-depth complexity,induction_argument,structural_induction
+induction on peeling depth,induction_argument,structural_induction
+induction on peeling depth with secondary size induction,induction_argument,structural_induction
+induction on size,induction_argument,structural_induction
+induction on term size,induction_argument,structural_induction
+induction on term size over root-rewriting cases,induction_argument,structural_induction
+induction on term size with irreducible-expansion case split,induction_argument,structural_induction
+induction on term size with root-constructor case split,induction_argument,structural_induction
+induction on term size with root-only increasing-step isolation,induction_argument,structural_induction
+induction on term structure,induction_argument,structural_induction
+inductive analysis,structural_induction,structural_induction
+inductive analysis and structural termination,structural_induction,structural_induction
+informal analysis,direct_measure,direct_measure
+informal analysis of decreasing successor depth,direct_measure,direct_measure
+informal analysis of reduction sequences,direct_measure,direct_measure
+informal analysis of the rewrite rules,direct_measure,direct_measure
+informal argument assuming the third argument represents natural numbers,direct_measure,direct_measure
+informal decreasing-measure argument,direct_measure,direct_measure
+informal measure argument,direct_measure,direct_measure
+informal measure/structural-recursion argument,direct_measure,direct_measure
+informal reasoning about potential infinite descent,direct_measure,direct_measure
+informal semantic analysis,direct_measure,direct_measure
+informal structural analysis,structural_descent,structural_descent
+informal structural analysis of recursion,structural_descent,structural_descent
+informal structural decrease,structural_descent,structural_descent
+informal structural descent,structural_descent,structural_descent
+informal structural induction,structural_induction,structural_induction
+informal structural-descent argument,structural_descent,structural_descent
+informal structural/measure argument,structural_descent,structural_descent
+informal structural/semantic argument,structural_descent,structural_descent
+informal structural/shape-based reasoning,structural_descent,structural_descent
+informal syntactic argument,direct_measure,direct_measure
+informal termination analysis,direct_measure,direct_measure
+informal termination argument based on decreasing S-count,s_count_measure,direct_measure
+informal well-founded descent argument,direct_measure,direct_measure
+informal well-founded measure,direct_measure,direct_measure
+intuitive analysis based on pattern matching and reduction sequences,direct_measure,direct_measure
+lexicographic measure,lexicographic_measure,direct_measure
+"lexicographic measure (#grape, size)",lexicographic_measure,direct_measure
+"lexicographic measure (C, G, S)",lexicographic_measure,direct_measure
+"lexicographic measure (E, D, S)",lexicographic_measure,direct_measure
+"lexicographic measure (c(t), d(t), s(t))",lexicographic_measure,direct_measure
+"lexicographic measure (c, g, s)",lexicographic_measure,direct_measure
+"lexicographic measure (cnt₁, cnt₂, cnt₃)",lexicographic_measure,direct_measure
+"lexicographic measure (d, s)",lexicographic_measure,direct_measure
+"lexicographic measure (depth, weighted size)",lexicographic_measure,direct_measure
+"lexicographic measure (e, d, |t|)",lexicographic_measure,direct_measure
+"lexicographic measure (eqCount, recArgSizeSum, size)",lexicographic_measure,direct_measure
+"lexicographic measure (eqW, δrec, size)",lexicographic_measure,direct_measure
+"lexicographic measure (g(t), s(t))",lexicographic_measure,direct_measure
+"lexicographic measure (g, c, s)",lexicographic_measure,direct_measure
+"lexicographic measure (g, s)",lexicographic_measure,direct_measure
+"lexicographic measure (grape-stack length, size)",lexicographic_measure,direct_measure
+"lexicographic measure (max_peel_rank, #bananas, size)",lexicographic_measure,direct_measure
+"lexicographic measure (n₁, n₂, n₃, n₄)",lexicographic_measure,direct_measure
+"lexicographic measure (occ cherry, occ grape, |t|)",lexicographic_measure,direct_measure
+"lexicographic measure (rank, size)",lexicographic_measure,direct_measure
+"lexicographic measure (recΔ-third-arg multiset, eqW count, size)",multiset_measure,direct_measure
+"lexicographic measure (redex depth, constructor count)",lexicographic_measure,direct_measure
+"lexicographic measure (size, banana-grape flag)",lexicographic_measure,direct_measure
+"lexicographic measure (size, unfolding depth)",lexicographic_measure,direct_measure
+"lexicographic measure (term size, structural depth)",lexicographic_measure,direct_measure
+"lexicographic measure (trace-height, syntactic-size)",lexicographic_measure,direct_measure
+"lexicographic measure (unfolding depth, weighted size)",lexicographic_measure,direct_measure
+"lexicographic measure (Δ, σ)",lexicographic_measure,direct_measure
+"lexicographic measure (δ(t), |t|)",lexicographic_measure,direct_measure
+"lexicographic measure (δ, ε, σ)",lexicographic_measure,direct_measure
+lexicographic measure / well-founded ordering,lexicographic_measure,direct_measure
+lexicographic measure argument,lexicographic_measure,direct_measure
+lexicographic measure on banana depth cherry weight and total size,lexicographic_measure,direct_measure
+lexicographic measure on banana third-argument grape-depth,lexicographic_measure,direct_measure
+lexicographic measure on banana third-argument grape-nesting depth,lexicographic_measure,direct_measure
+lexicographic measure on banana-third-arg grape count and size,lexicographic_measure,direct_measure
+lexicographic measure on banana-third-arg grape depth cherry count and size,lexicographic_measure,direct_measure
+lexicographic measure on banana-third-argument grape-depth and term size,lexicographic_measure,direct_measure
+lexicographic measure on cherry count grape count and size,lexicographic_measure,direct_measure
+lexicographic measure on cherry-count banana-argument grape-depth sum and size,lexicographic_measure,direct_measure
+lexicographic measure on cherry-count grape-count and size,lexicographic_measure,direct_measure
+lexicographic measure on delta count and term size,lexicographic_measure,direct_measure
+lexicographic measure on delta depth and term size,lexicographic_measure,direct_measure
+lexicographic measure on delta nesting depth and node count,lexicographic_measure,direct_measure
+lexicographic measure on delta-count and size,lexicographic_measure,direct_measure
+lexicographic measure on delta-count eqW-count and residual constructor count,lexicographic_measure,direct_measure
+lexicographic measure on delta-count eqW-count and size,lexicographic_measure,direct_measure
+lexicographic measure on delta-depth eqW count and term size,lexicographic_measure,direct_measure
+lexicographic measure on eqCount recArgSizeSum and size,lexicographic_measure,direct_measure
+lexicographic measure on eqCount recΔ-arg size and term size,lexicographic_measure,direct_measure
+lexicographic measure on eqW count delta count merge count recΔ count integrate count and size,lexicographic_measure,direct_measure
+lexicographic measure on eqW count recΔ argument depth and size,lexicographic_measure,direct_measure
+lexicographic measure on eqW count recΔ delta-prefix depth and size,lexicographic_measure,direct_measure
+lexicographic measure on eqW recΔ-δ patterns and size,lexicographic_measure,direct_measure
+lexicographic measure on eqW-count and recΔ third-argument size,lexicographic_measure,direct_measure
+lexicographic measure on eqW-count recΔ delta-depth and size,lexicographic_measure,direct_measure
+lexicographic measure on eqW-count recΔ-delta-layers and node count,lexicographic_measure,direct_measure
+lexicographic measure on grape banana cherry counts and term size,lexicographic_measure,direct_measure
+lexicographic measure on grape count and size,lexicographic_measure,direct_measure
+lexicographic measure on grape count and structural size,lexicographic_measure,direct_measure
+lexicographic measure on grape count banana+cherry count and size,lexicographic_measure,direct_measure
+lexicographic measure on grape count cherry count and size,lexicographic_measure,direct_measure
+lexicographic measure on grape count tree size and cherry count,lexicographic_measure,direct_measure
+lexicographic measure on grape depth and term size,lexicographic_measure,direct_measure
+lexicographic measure on grape depth banana count and weighted size,lexicographic_measure,direct_measure
+lexicographic measure on grape-count and size,lexicographic_measure,direct_measure
+lexicographic measure on grape-count cherry-count and constructor size,lexicographic_measure,direct_measure
+lexicographic measure on grape-depth and active constructor count,lexicographic_measure,direct_measure
+lexicographic measure on grape-depth and term size,lexicographic_measure,direct_measure
+lexicographic measure on grape-in-banana depth and size,lexicographic_measure,direct_measure
+lexicographic measure on non-plum count depth and subtree-size sum,lexicographic_measure,direct_measure
+lexicographic measure on recΔ argument structure and weighted size,lexicographic_measure,direct_measure
+lexicographic measure on recΔ delta-depth and size,lexicographic_measure,direct_measure
+lexicographic measure on recΔ delta-height multiset eqW-count and size,multiset_measure,direct_measure
+lexicographic measure on recΔ height eqW count and size,lexicographic_measure,direct_measure
+lexicographic measure on recΔ third-argument multiset and size,multiset_measure,direct_measure
+lexicographic measure on recΔ-argument delta-depth and term size,lexicographic_measure,direct_measure
+lexicographic measure on recΔ-delta-count and size,lexicographic_measure,direct_measure
+lexicographic measure on redex-depth and constructor count with structural induction,structural_induction,structural_induction
+lexicographic measure on root activity rank and size,lexicographic_measure,direct_measure
+lexicographic measure on root-redex flag and term size,lexicographic_measure,direct_measure
+lexicographic measure on size and grape-position count,lexicographic_measure,direct_measure
+lexicographic measure on size and recΔ-argument delta count,lexicographic_measure,direct_measure
+lexicographic measure on size and recΔ-argument delta-chain weight,lexicographic_measure,direct_measure
+lexicographic measure on structural size and delta-depth,lexicographic_measure,direct_measure
+lexicographic measure on term depth and weighted constructor size,lexicographic_measure,direct_measure
+lexicographic measure on trace-height and syntactic size,lexicographic_measure,direct_measure
+lexicographic measure on weighted grape size and structural size,lexicographic_measure,direct_measure
+lexicographic measure with active-constructor count and size,lexicographic_measure,direct_measure
+lexicographic measure μ,lexicographic_measure,direct_measure
+"lexicographic measure μ(t) = (e(t), c(t))",lexicographic_measure,direct_measure
+"lexicographic measure ⟨size, δ-count in recΔ third arguments⟩",lexicographic_measure,direct_measure
+lexicographic multicomponent measure over root redex counters and recΔ delta-chain length,lexicographic_measure,direct_measure
+lexicographic multiset measure with term size fallback,multiset_measure,direct_measure
+lexicographic order,lexicographic_measure,direct_measure
+lexicographic ordering,lexicographic_measure,direct_measure
+lexicographic ordering with structural induction,structural_induction,structural_induction
+lexicographic pair,lexicographic_measure,direct_measure
+"lexicographic pair (multiset(ℕ), ℕ, ℕ)",multiset_measure,direct_measure
+lexicographic pair measure,lexicographic_measure,direct_measure
+"lexicographic pair ψ(t) = (r(t), φ(t))",lexicographic_measure,direct_measure
+lexicographic path order,lpo,path_order
+lexicographic path ordering,lpo,path_order
+lexicographic path ordering (LPO),lpo,path_order
+lexicographic path ordering / recursive path ordering,lpo,path_order
+lexicographic path ordering or multiset path ordering,lpo,path_order
+lexicographic path ordering or recursive path ordering,lpo,path_order
+lexicographic polynomial interpretation,polynomial_interpretation,polynomial
+lexicographic polynomial interpretation on cherry-count grape-count and size,polynomial_interpretation,polynomial
+lexicographic termination measure,lexicographic_measure,direct_measure
+lexicographic tuple,lexicographic_measure,direct_measure
+"lexicographic tuple (d, e, m)",lexicographic_measure,direct_measure
+lexicographic tuple measure,lexicographic_measure,direct_measure
+lexicographic tuple measure on delta-count eqW-count and merge-count,lexicographic_measure,direct_measure
+lexicographic weight argument,lexicographic_measure,direct_measure
+lexicographic well-founded measure over delta eqW merge counts,lexicographic_measure,direct_measure
+lexicographic well-founded measure over recΔ-argument size multiset eqW count and term size,multiset_measure,direct_measure
+lexicographic well-founded order on term size and recΔ unfolding depth,path_order_generic,path_order
+lexicographic well-founded ordering with recΔ-depth and weighted size components,path_order_generic,path_order
+lexicographic-weight termination ordering,path_order_generic,path_order
+lexicographic/path ordering,path_order_generic,path_order
+lexicographic/recursive path ordering,lpo,path_order
+lexicographical path ordering,lpo,path_order
+measure,direct_measure,direct_measure
+measure / well-foundedness of natural numbers,direct_measure,direct_measure
+measure M(t),direct_measure,direct_measure
+measure definition,direct_measure,direct_measure
+measure function,direct_measure,direct_measure
+measure function counting `S` constructors,direct_measure,direct_measure
+measure function on third argument,direct_measure,direct_measure
+measure on banana depth,lexicographic_measure,direct_measure
+measure-based argument,direct_measure,direct_measure
+measure-based argument / well-founded induction,direct_measure,direct_measure
+measure-based termination,direct_measure,direct_measure
+measure-based termination argument,direct_measure,direct_measure
+measure/termination ordering,direct_measure,direct_measure
+meta-level termination proof / termination ordering,path_order_generic,path_order
+monotone algebra interpretation,interpretation_argument,polynomial
+multicomponent measure,direct_measure,direct_measure
+multiset S-depth measure,multiset_measure,direct_measure
+multiset measure,multiset_measure,direct_measure
+multiset measure on term sizes,multiset_measure,direct_measure
+multiset of S-depths,multiset_measure,direct_measure
+multiset of S-depths of third arguments of F-subterms,multiset_measure,direct_measure
+multiset of nat-depths,multiset_measure,direct_measure
+multiset of recursion depths,multiset_measure,direct_measure
+multiset of recursion depths of third arguments of F-subterms,multiset_measure,direct_measure
+multiset of recΔ third-argument sizes,multiset_measure,direct_measure
+multiset of sizes,multiset_measure,direct_measure
+multiset of sizes of third arguments of F-subterms,multiset_measure,direct_measure
+multiset path ordering,path_order_generic,path_order
+multiset path-ordering over lexicographic product of recΔ delta-height and constructor multiset,multiset_measure,direct_measure
+"multiset(ℕ), ℕ, ℕ lexicographic measure",multiset_measure,direct_measure
+multivariate well-founded measure,direct_measure,direct_measure
+natural-number / polynomial interpretation,polynomial_interpretation,polynomial
+natural-number interpretation,interpretation_argument,polynomial
+natural-number interpretation measure,interpretation_argument,polynomial
+natural-number measure,direct_measure,direct_measure
+natural-number weight,weight_measure,direct_measure
+natural-number weight interpretation,interpretation_argument,polynomial
+natural-number weight measure,weight_measure,direct_measure
+nesting depth of S,direct_measure,direct_measure
+nesting-depth measure,direct_measure,direct_measure
+non-terminating reduction sequence by substitution,objection_or_non_method,objection
+number of S constructors,s_count_measure,direct_measure
+numeric reduction ordering,path_order_generic,path_order
+objection: requires structural assumptions about naturals domain,objection_or_non_method,objection
+objection: requires structural axioms about Z/S constructors,objection_or_non_method,objection
+objection: requires well-foundedness of natural number structure,objection_or_non_method,objection
+ordinal interpretation,ordinal_interpretation,polynomial
+ordinal interpretation below epsilon-zero,ordinal_interpretation,polynomial
+ordinal valuation,ordinal_interpretation,polynomial
+ordinal-valued interpretation method,interpretation_argument,polynomial
+orthogonality / Noetherian induction,noetherian_induction,structural_induction
+orthogonality / nesting depth,direct_measure,direct_measure
+path-ordering termination proof,path_order_generic,path_order
+polynomial interpretation,polynomial_interpretation,polynomial
+polynomial interpretation / monotone algebra,polynomial_interpretation,polynomial
+polynomial interpretation / reduction measure,polynomial_interpretation,polynomial
+polynomial interpretation / well-founded measure argument,polynomial_interpretation,polynomial
+polynomial interpretation / well-founded ordering,polynomial_interpretation,polynomial
+polynomial interpretation into $\mathbb{N}$,polynomial_interpretation,polynomial
+polynomial interpretation into naturals,polynomial_interpretation,polynomial
+polynomial interpretation over naturals,polynomial_interpretation,polynomial
+polynomial interpretation over positive integers,polynomial_interpretation,polynomial
+polynomial interpretation over positive naturals,polynomial_interpretation,polynomial
+polynomial interpretation over the natural numbers,polynomial_interpretation,polynomial
+polynomial interpretation with contextual extension,polynomial_interpretation,polynomial
+polynomial interpretation with exponential banana weight,polynomial_interpretation,polynomial
+polynomial interpretation with monotone weight function,polynomial_interpretation,polynomial
+polynomial interpretation with size induction,induction_argument,structural_induction
+polynomial interpretations,polynomial_interpretation,polynomial
+polynomial interpretations and recursive path orderings,polynomial_interpretation,polynomial
+"polynomial interpretations, well-founded measures, and recursive path orderings",polynomial_interpretation,polynomial
+polynomial measure over naturals,polynomial_interpretation,polynomial
+polynomial termination measure,polynomial_interpretation,polynomial
+polynomial-exponential interpretation,polynomial_interpretation,polynomial
+polynomial-interpretation termination proof,polynomial_interpretation,polynomial
+polynomial/exponential interpretation,polynomial_interpretation,polynomial
+primitive recursion,primitive_recursion,structural_descent
+primitive recursive function,primitive_recursion,structural_descent
+primitive recursive pattern,primitive_recursion,structural_descent
+primitive recursive scheme,primitive_recursion,structural_descent
+primitive recursive structure,primitive_recursion,structural_descent
+primitive-recursion-style / recursive path ordering,primitive_recursion,structural_descent
+primitive-recursive interpretation + recursive path ordering,rpo,path_order
+pure structural recursion,structural_recursion,structural_descent
+qualitative analysis,direct_measure,direct_measure
+qualitative analysis of the rewrite rules,direct_measure,direct_measure
+recursion on successor structure,structural_recursion,structural_descent
+recursive definition on third argument,structural_recursion,structural_descent
+recursive path order,rpo,path_order
+recursive path ordering,rpo,path_order
+recursive path ordering (F > G),rpo,path_order
+recursive path ordering (RPO),rpo,path_order
+recursive path ordering / lexicographic path ordering,rpo,path_order
+recursive path ordering or lexicographic path ordering,lpo,path_order
+recursive path ordering with delta-depth witness,rpo,path_order
+recursive structure / dependency graph analysis,dependency_pairs,transformed_calls
+recursive-path ordering (RPO),rpo,path_order
+recursive-structure analysis,structural_descent,structural_descent
+recursive-structure non-termination analysis,objection_or_non_method,objection
+recursive/lexicographic path ordering,rpo,path_order
+reduction ordering / lexicographic path ordering,path_order_generic,path_order
+reduction-ordering argument (LPO/RPO-style),path_order_generic,path_order
+root-level redex measure,direct_measure,direct_measure
+root-only normal form argument,structural_descent,structural_descent
+root-only normal-form / subterm argument,structural_descent,structural_descent
+root-only reduction,structural_descent,structural_descent
+root-only reduction analysis,structural_descent,structural_descent
+root-only reduction chain bound argument,structural_descent,structural_descent
+root-only relation / LPO-RPO,lpo,path_order
+root-only relation / polynomial interpretation,polynomial_interpretation,polynomial
+root-only rewrite relation,structural_descent,structural_descent
+root-only rewriting case analysis,structural_descent,structural_descent
+root-only size argument,direct_measure,direct_measure
+root-only size induction,structural_induction,structural_induction
+root-only structural argument,structural_descent,structural_descent
+root-only structural induction,structural_induction,structural_induction
+root-only structural termination argument by head-case analysis,structural_descent,structural_descent
+root-only well-founded measure,direct_measure,direct_measure
+root-oriented constructor complexity measure argument,direct_measure,direct_measure
+root-pattern reduction analysis with no-cycle argument,structural_descent,structural_descent
+root-priority rank measure,direct_measure,direct_measure
+root-step analysis with lexicographic measure on root recΔ redex count and size,lexicographic_measure,direct_measure
+root-step case analysis by rule heads,structural_descent,structural_descent
+root-step case analysis with bounded recursion depth,structural_descent,structural_descent
+root-step case analysis with proper-subterm descent,structural_descent,structural_descent
+root-step case analysis with structural induction on size,structural_induction,structural_induction
+root-step case split with proper-subterm descent,structural_descent,structural_descent
+root-step measure on redex flag and constructor size,direct_measure,direct_measure
+root-step relation,structural_descent,structural_descent
+root-step termination by immediate-stop and subterm-return cases,structural_descent,structural_descent
+root-step termination by proper-subterm descent and immediate normal forms,structural_descent,structural_descent
+root-step termination by rule-shape analysis,structural_descent,structural_descent
+root-step termination by rule-shape case analysis,structural_descent,structural_descent
+root-step termination measure on redex flag and size,direct_measure,direct_measure
+root-step well-founded measure on redex flag and size,direct_measure,direct_measure
+semantic (interpretation-based) termination proof,interpretation_argument,polynomial
+semantic argument based on interpreting the `S`/`Z` constructors as natural numbers with a well-founded ordering,natural_number_interpretation,polynomial
+semantic argument based on natural number interpretation,direct_measure,direct_measure
+semantic measure-based argument,direct_measure,direct_measure
+semantic termination argument,direct_measure,direct_measure
+semantic termination proof,direct_measure,direct_measure
+semantic termination proof via a custom well-founded measure,direct_measure,direct_measure
+simple measure,direct_measure,direct_measure
+simple well-founded measure,direct_measure,direct_measure
+simplification order / structural induction,path_order_generic,path_order
+simplification ordering (LPO/RPO),path_order_generic,path_order
+simulating reduction sequences,direct_measure,direct_measure
+size + grape-count measure,lexicographic_measure,direct_measure
+size function,direct_measure,direct_measure
+size measure,direct_measure,direct_measure
+size measure / interpretation function,interpretation_argument,polynomial
+size measure on the third argument,direct_measure,direct_measure
+size measure on third argument,direct_measure,direct_measure
+size measure on third argument of F,direct_measure,direct_measure
+size measure on third argument of outermost F,direct_measure,direct_measure
+size of third argument,direct_measure,direct_measure
+size-based induction proving Acc Step for all terms,induction_argument,structural_induction
+size-based induction with increasing-rule irreducibility argument,induction_argument,structural_induction
+size-based rule classification with terminal increasing cases,direct_measure,direct_measure
+size-based structural induction over root cases,structural_induction,structural_induction
+size-based structural induction with root-constructor case split,structural_induction,structural_induction
+size-decreasing measure,direct_measure,direct_measure
+size/height induction under root-step rewriting,induction_argument,structural_induction
+size‑decrease measure,direct_measure,direct_measure
+standard simplification order (LPO/RPO),path_order_generic,path_order
+strictly decreasing recursion on third argument,structural_recursion,structural_descent
+strong induction on banana-grape depth measure,induction_argument,structural_induction
+strong induction on lexicographic measure,induction_argument,structural_induction
+strong induction on measure,induction_argument,structural_induction
+strong induction on term size,induction_argument,structural_induction
+strong induction on term size under root-step relation,induction_argument,structural_induction
+strong induction on term size with root-only rule classification,induction_argument,structural_induction
+structural accessibility proof by constructor cases,accessibility_induction,structural_induction
+structural analysis,structural_descent,structural_descent
+structural analysis of recursion depth,structural_descent,structural_descent
+structural analysis of the rewrite rules,structural_descent,structural_descent
+structural argument based on decreasing successor depth,direct_measure,direct_measure
+structural complexity measure,direct_measure,direct_measure
+structural complexity measure with induction roadmap,induction_argument,structural_induction
+structural decrease,structural_descent,structural_descent
+structural decrease of S-depth / multiset measure,structural_descent,structural_descent
+structural decrease on third argument,structural_descent,structural_descent
+structural depth measure,direct_measure,direct_measure
+structural descent,structural_descent,structural_descent
+structural descent (decreasing successor depth),structural_descent,structural_descent
+structural descent on n,structural_descent,structural_descent
+structural descent on the third argument,structural_descent,structural_descent
+structural descent on third argument,structural_descent,structural_descent
+structural descent on third argument (depth),structural_descent,structural_descent
+structural descent on third argument (successor depth),structural_descent,structural_descent
+structural induction,structural_induction,structural_induction
+structural induction (Acc),structural_induction,structural_induction
+structural induction / Simplification Order,structural_induction,structural_induction
+structural induction / subterm ordering,structural_induction,structural_induction
+structural induction argument,structural_induction,structural_induction
+structural induction on Acc,structural_induction,structural_induction
+structural induction on Trace,structural_induction,structural_induction
+structural induction on Trace / Acc,structural_induction,structural_induction
+structural induction on Trace / size,structural_induction,structural_induction
+structural induction on Trace under root-only Step,structural_induction,structural_induction
+structural induction on Trace under root-step relation,structural_induction,structural_induction
+structural induction on Trace with root-step rule case split,structural_induction,structural_induction
+structural induction on Trace.rec,structural_induction,structural_induction
+structural induction on a measure,structural_induction,structural_induction
+structural induction on complexity,structural_induction,structural_induction
+structural induction on size,structural_induction,structural_induction
+structural induction on size / Acc,structural_induction,structural_induction
+structural induction on term constructors,structural_induction,structural_induction
+structural induction on term size with one-step increasing-rule terminality,structural_induction,structural_induction
+structural induction on term structure,structural_induction,structural_induction
+structural induction on terms,structural_induction,structural_induction
+structural induction on terms to normal forms,structural_induction,structural_induction
+structural induction on terms with finite-chain bound over nondeterministic Step,structural_induction,structural_induction
+structural induction on traces,structural_induction,structural_induction
+structural induction proving Acc for all terms,structural_induction,structural_induction
+structural induction with delta-height measure,structural_induction,structural_induction
+structural induction with maximum reduction-length bound,structural_induction,structural_induction
+structural induction with measure on delta-depth constructor-count and chain length,structural_induction,structural_induction
+structural measure,direct_measure,direct_measure
+structural measure on banana-depth and grape count in banana third arguments,lexicographic_measure,direct_measure
+structural measure on eqW count delta count and recΔ argument depth,direct_measure,direct_measure
+structural recursion,structural_recursion,structural_descent
+structural recursion analysis,structural_recursion,structural_descent
+structural recursion analysis on recΔ argument,structural_recursion,structural_descent
+structural recursion measure,structural_recursion,structural_descent
+structural size measure,direct_measure,direct_measure
+structural termination argument,structural_descent,structural_descent
+structural/measure argument,structural_descent,structural_descent
+structurally decreasing recursive schema,structural_recursion,structural_descent
+subterm criterion,subterm_criterion,transformed_calls
+subterm ordering,structural_descent,structural_descent
+sum-of-depths measure on third arguments of F-subterms,direct_measure,direct_measure
+syntactic analysis,direct_measure,direct_measure
+syntactic decrease on third argument,structural_descent,structural_descent
+syntactic measure,direct_measure,direct_measure
+syntactic multiset measure,multiset_measure,direct_measure
+syntactic size/measure argument,direct_measure,direct_measure
+syntactic termination analysis,direct_measure,direct_measure
+term size classification,direct_measure,direct_measure
+term-size argument,direct_measure,direct_measure
+term-size argument with rule-type partition,direct_measure,direct_measure
+term-size partition into peeling and non-peeling rule classes,direct_measure,direct_measure
+term-size proof with non-decreasing-rule terminality argument,direct_measure,direct_measure
+terminating recursion on third argument,structural_recursion,structural_descent
+termination argument based on natural number interpretation,direct_measure,direct_measure
+termination argument based on structural decrease,structural_descent,structural_descent
+termination interpretation,interpretation_argument,polynomial
+termination measure,direct_measure,direct_measure
+termination measure counting S constructors,direct_measure,direct_measure
+termination ordering,path_order_generic,path_order
+termination ordering argument (LPO/RPO-style),path_order_generic,path_order
+termination-by-measure/ordering roadmap,direct_measure,direct_measure
+termination-ordering argument (LPO/RPO),path_order_generic,path_order
+termination/measure argument,direct_measure,direct_measure
+third-argument size measure,direct_measure,direct_measure
+two-phase measure on eqW-count and recΔ delta-depth,direct_measure,direct_measure
+weight (polynomial) interpretation,polynomial_interpretation,polynomial
+weight measure,weight_measure,direct_measure
+well-founded decreasing measure,direct_measure,direct_measure
+well-founded descent,direct_measure,direct_measure
+well-founded descent argument,direct_measure,direct_measure
+well-founded induction,induction_argument,structural_induction
+well-founded induction on root-step reduction structure,induction_argument,structural_induction
+well-founded interpretation,interpretation_argument,polynomial
+well-founded measure,direct_measure,direct_measure
+well-founded measure (size of third argument),direct_measure,direct_measure
+well-founded measure / lexicographic descent argument,lexicographic_measure,direct_measure
+well-founded measure / structural descent,direct_measure,direct_measure
+well-founded measure based on counting the nesting depth of `S` constructors in the third argument of `F`,direct_measure,direct_measure
+well-founded measure based on structural complexity,direct_measure,direct_measure
+well-founded measure on banana-third-argument grape-stack length,lexicographic_measure,direct_measure
+well-founded measure on grape-count and constructor-size,lexicographic_measure,direct_measure
+well-founded measure on recΔ delta-depth and size,direct_measure,direct_measure
+well-founded measure on successor depth,direct_measure,direct_measure
+well-founded measure on third argument,direct_measure,direct_measure
+well-founded measure μ,lexicographic_measure,direct_measure
+well-founded monotone algebra,direct_measure,direct_measure
+well-founded monotone algebra interpretation,interpretation_argument,polynomial
+well-founded multivariate measure,direct_measure,direct_measure
+well-founded natural-number interpretation,interpretation_argument,polynomial
+well-founded order on third argument,path_order_generic,path_order
+well-founded ordering,path_order_generic,path_order
+well-founded ordering argument,path_order_generic,path_order
+well-founded ordering via lexicographic size and structural depth measures,path_order_generic,path_order
+well-founded recursion,direct_measure,direct_measure
+well-founded recursion / lexicographic ordering,lexicographic_measure,direct_measure
+well-founded reduction ordering / measure,path_order_generic,path_order
+well-founded simplification order (LPO/RPO),path_order_generic,path_order
+well-founded structural measure with induction,induction_argument,structural_induction
+well-founded term ordering / lexicographic path ordering,path_order_generic,path_order
+well-founded weight function,weight_measure,direct_measure
+well-founded weight interpretation,interpretation_argument,polynomial
+well‑founded decreasing measure termination argument,direct_measure,direct_measure
+well‑founded syntactic measure / interpretation,direct_measure,direct_measure
+well‑founded “decreasing measure” termination argument,direct_measure,direct_measure
+"μ(t) = (D(t), S(t))",lexicographic_measure,direct_measure
+"μ(t) = (g(t), b(t), c(t), |t|)",lexicographic_measure,direct_measure
+"μ(t) = (g(t), c(t), s(t))",lexicographic_measure,direct_measure
+"μ(t) = (grape_banana_depth(t), size(t))",lexicographic_measure,direct_measure
+"μ(t) = (recΔ-delta-count(t), size(t))",lexicographic_measure,direct_measure
+"μ(t) = (|eqW|_t, Σ δ-depth(recΔ_3), |t|)",lexicographic_measure,direct_measure
+"μ(t) = (δ(t), |t|)",lexicographic_measure,direct_measure
+"μ(t) = (δ(t), ε(t), σ(t))",lexicographic_measure,direct_measure

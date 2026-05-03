@@ -1,0 +1,155 @@
+A workable skeleton is below. Four of the five remaining branches should close with the current definitions; `R_rec_succ` has one genuine obstruction.
+
+```lean
+-- integrate (delta t) --> void
+| _, _, Step.R_int_delta t => by
+    by_cases hk0 : kappa t = 0
+    · have hmu : mu void < mu (integrate (delta t)) := by
+        simp [mu]
+      have hk : kappa void = kappa (integrate (delta t)) := by
+        simp [kappa, hk0]
+      exact drop_right hmu hk
+    · have hk : kappa void < kappa (integrate (delta t)) := by
+        have : 0 < kappa t := Nat.pos_of_ne_zero hk0
+        simpa [kappa] using this
+      exact drop_left hk
+
+-- recDelta b s void --> b
+| _, _, Step.R_rec_zero b s => by
+    by_cases hs : kappa s ≤ kappa b
+    · have hmu : mu b < mu (recDelta b s void) := by
+        simp [mu]
+        omega
+      have hk : kappa b = kappa (recDelta b s void) := by
+        simp [kappa, Nat.max_eq_left hs]
+      exact drop_right hmu hk
+    · have hsb : kappa b < kappa s := Nat.lt_of_not_ge hs
+      have hmax : Nat.max (kappa b) (kappa s) = kappa s :=
+        Nat.max_eq_right (Nat.le_of_lt hsb)
+      have hk : kappa b < kappa (recDelta b s void) := by
+        simp [kappa, hmax, hsb]
+      exact drop_left hk
+
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    by_cases hk0 : kappa a = 0
+    · have hmu : mu void < mu (eqW a a) := by
+        simp [mu]
+      have hk : kappa void = kappa (eqW a a) := by
+        simp [kappa, hk0]
+      exact drop_right hmu hk
+    · have hk : kappa void < kappa (eqW a a) := by
+        have : 0 < kappa a := Nat.pos_of_ne_zero hk0
+        simpa [kappa] using this
+      exact drop_left hk
+
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by
+      simp [mu]
+      omega
+    have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by
+      simp [kappa]
+    exact drop_right hmu hk
+```
+
+For `R_rec_succ`, the natural skeleton is a split on `n`:
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    cases n with
+    | void =>
+        have hs_le :
+            kappa s ≤ Nat.max (Nat.max (kappa b) (kappa s)) (kappa void) := by
+          exact le_trans (Nat.le_max_right _ _) (Nat.le_max_left _ _)
+        have hk :
+            kappa (app s (recDelta b s void)) <
+              kappa (recDelta b s (delta void)) := by
+          simp [kappa, Nat.max_eq_right hs_le]
+        exact drop_left hk
+
+    | integrate n' =>
+        have hs_le :
+            kappa s ≤ Nat.max (Nat.max (kappa b) (kappa s)) (kappa (integrate n')) := by
+          exact le_trans (Nat.le_max_right _ _) (Nat.le_max_left _ _)
+        have hk :
+            kappa (app s (recDelta b s (integrate n'))) <
+              kappa (recDelta b s (delta (integrate n'))) := by
+          simp [kappa, Nat.max_eq_right hs_le]
+        exact drop_left hk
+
+    | merge n₁ n₂ =>
+        have hs_le :
+            kappa s ≤ Nat.max (Nat.max (kappa b) (kappa s)) (kappa (merge n₁ n₂)) := by
+          exact le_trans (Nat.le_max_right _ _) (Nat.le_max_left _ _)
+        have hk :
+            kappa (app s (recDelta b s (merge n₁ n₂))) <
+              kappa (recDelta b s (delta (merge n₁ n₂))) := by
+          simp [kappa, Nat.max_eq_right hs_le]
+        exact drop_left hk
+
+    | app n₁ n₂ =>
+        have hs_le :
+            kappa s ≤ Nat.max (Nat.max (kappa b) (kappa s)) (kappa (app n₁ n₂)) := by
+          exact le_trans (Nat.le_max_right _ _) (Nat.le_max_left _ _)
+        have hk :
+            kappa (app s (recDelta b s (app n₁ n₂))) <
+              kappa (recDelta b s (delta (app n₁ n₂))) := by
+          simp [kappa, Nat.max_eq_right hs_le]
+        exact drop_left hk
+
+    | recDelta b' s' n' =>
+        have hs_le :
+            kappa s ≤ Nat.max (Nat.max (kappa b) (kappa s)) (kappa (recDelta b' s' n')) := by
+          exact le_trans (Nat.le_max_right _ _) (Nat.le_max_left _ _)
+        have hk :
+            kappa (app s (recDelta b s (recDelta b' s' n'))) <
+              kappa (recDelta b s (delta (recDelta b' s' n'))) := by
+          simp [kappa, Nat.max_eq_right hs_le]
+        exact drop_left hk
+
+    | eqW n₁ n₂ =>
+        have hs_le :
+            kappa s ≤ Nat.max (Nat.max (kappa b) (kappa s)) (kappa (eqW n₁ n₂)) := by
+          exact le_trans (Nat.le_max_right _ _) (Nat.le_max_left _ _)
+        have hk :
+            kappa (app s (recDelta b s (eqW n₁ n₂))) <
+              kappa (recDelta b s (delta (eqW n₁ n₂))) := by
+          simp [kappa, Nat.max_eq_right hs_le]
+        exact drop_left hk
+
+    | delta n' =>
+        -- obstruction with the current measure:
+        -- kappa (app s (recDelta b s (delta n')))
+        --   = kappa (recDelta b s (delta (delta n')))
+        -- and mu goes in the wrong direction.
+        --
+        -- So this subcase will not close using only the present
+        -- `(kappa, mu)` lex measure.
+        sorry
+```
+
+The key point is the last subcase. For `n = delta n'`:
+
+$$
+\kappa(\operatorname{app}\ s\ (\operatorname{recDelta}\ b\ s\ (\delta n')))
+=
+\kappa(\operatorname{recDelta}\ b\ s\ (\delta(\delta n')))
+$$
+
+while
+
+$$
+\mu(\operatorname{app}\ s\ (\operatorname{recDelta}\ b\ s\ (\delta n')))
+>
+\mu(\operatorname{recDelta}\ b\ s\ (\delta(\delta n')))
+$$
+
+so neither `drop_left` nor `drop_right` applies there.
+
+So the completion plan is:
+
+1. Fill the four easy cases exactly as above.
+2. Split `R_rec_succ` by `cases n`.
+3. Close every non-`delta` subcase with `drop_left`.
+4. Treat the `delta` subcase as the place where the measure must be strengthened or the rule restricted.

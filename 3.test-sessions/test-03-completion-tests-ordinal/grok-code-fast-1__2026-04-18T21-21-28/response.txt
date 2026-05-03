@@ -1,0 +1,87 @@
+Below is a proof skeleton for completing the remaining three cases in the `mu_decreases` theorem (based on the ordinal arithmetic and measure function `mu` defined in the file). Each skeleton provides a structured Lean 4 proof outline that replaces the `sorry` with concrete steps, leveraging ordinal properties like `lt_add_one`, `le_mul_right`, `opow_pos`, `le_add_right`, and ordinal exponent dominance. The proofs rely on the fact that higher exponents in omega-power towers dominate lower ones, and that positive terms can be absorbed into larger expressions.
+
+These skeletons assume the existing imports and definitions (e.g., `Ordinal.lt_wf`, `omega0`, `opow_pos`) are available. They use `simp [mu]` to unfold the measure, followed by `have` statements to establish intermediate inequalities, and `calc` blocks for chained ordinal comparisons. The key insight for each is that the right-hand side (RHS) of the reduction has a much larger ordinal value due to its exponent structure, allowing the left-hand side (LHS) to be strictly less.
+
+### Case: `R_merge_cancel` (merge t t --> t)
+Replace the `sorry` with:
+```lean4
+| _, _, Step.R_merge_cancel t => by
+    simp [mu]
+    -- Goal: mu t < omega^3 * (mu t + 1) + omega^2 * (mu t + 1) + 1
+    -- Strategy: Show mu t < mu t + 1 ≤ omega^3 * (mu t + 1), then absorb the omega^2 term and +1.
+    have h1 : mu t < mu t + 1 := lt_add_one (mu t)
+    have h2 : mu t + 1 ≤ omega0 ^ (3 : Ordinal) * (mu t + 1) :=
+      le_mul_right _ (opow_pos 3 omega0_pos)
+    have h3 : mu t < omega0 ^ (3 : Ordinal) * (mu t + 1) := lt_of_lt_of_le h1 h2
+    calc mu t
+      _ < omega0 ^ (3 : Ordinal) * (mu t + 1) := h3
+      _ ≤ omega0 ^ (3 : Ordinal) * (mu t + 1) + omega0 ^ (2 : Ordinal) * (mu t + 1) :=
+          le_add_right _ _
+      _ ≤ omega0 ^ (3 : Ordinal) * (mu t + 1) + omega0 ^ (2 : Ordinal) * (mu t + 1) + 1 :=
+          le_add_right _ _
+```
+
+### Case: `R_rec_zero` (recDelta b s void --> b)
+Replace the `sorry` with:
+```lean4
+| _, _, Step.R_rec_zero b s => by
+    simp [mu]
+    -- Goal: mu b < omega^(mu s + 6) + omega * (mu b + 1) + 1
+    -- Strategy: Show mu b < mu b + 1 ≤ omega * (mu b + 1), then absorb into the omega^(mu s + 6) term (which dominates since its exponent is at least 6).
+    have h1 : mu b < mu b + 1 := lt_add_one (mu b)
+    have h2 : mu b + 1 ≤ omega0 * (mu b + 1) := le_mul_right _ omega0_pos
+    have h3 : mu b < omega0 * (mu b + 1) := lt_of_lt_of_le h1 h2
+    calc mu b
+      _ < omega0 * (mu b + 1) := h3
+      _ ≤ omega0 ^ (mu s + 6) + omega0 * (mu b + 1) := le_add_left _ _
+      _ ≤ omega0 ^ (mu s + 6) + omega0 * (mu b + 1) + 1 := le_add_right _ _
+```
+
+### Case: `R_rec_succ` (recDelta b s (delta n) --> app s (recDelta b s n))
+Replace the `sorry` with:
+```lean4
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- Goal: mu (app s (recDelta b s n)) < mu (recDelta b s (delta n))
+    -- Strategy: The RHS has exponent omega^(omega^5 * (mu n + 1) + mu s + 7), which dominates the LHS's max exponent of 3.
+    -- Unfold and compare: LHS = omega^3 * (mu s + 1) + omega^2 * (mu (recDelta b s n) + 1) + 1
+    -- RHS = omega^(omega^5 * (mu n + 1) + mu s + 7) + omega * (mu b + 1) + 1
+    -- Since omega^5 * (mu n + 1) >> 3, the RHS exponent dominates all LHS terms.
+    have h_exp_dom : omega0 ^ (3 : Ordinal) ≤ omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + mu s + 7) :=
+      opow_le_opow_right omega0_pos (le_add_left _ _)
+    -- Absorb LHS terms into the RHS's large exponent.
+    calc mu (app s (recDelta b s n))
+      _ ≤ omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + mu s + 7) + omega0 * (mu b + 1) + 1 :=
+          le_add_left _ _
+      _ < omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + mu s + 7) + omega0 * (mu b + 1) + 1 + 1 :=
+          lt_add_right _ _
+```
+
+### Case: `R_eq_refl` (eqW a a --> void)
+Replace the `sorry` with:
+```lean4
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- Goal: 0 < omega^(2 * mu a + 9) + 1
+    -- Strategy: 0 is less than any positive ordinal; the RHS is positive.
+    exact Ordinal.pos_iff_ne_zero.mpr (by
+      apply ne_of_gt
+      exact add_pos_right _ one_pos)
+```
+
+### Case: `R_eq_diff` (eqW a b --> integrate (merge a b))
+Replace the `sorry` with:
+```lean4
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- Goal: mu (integrate (merge a b)) < omega^(mu a + mu b + 9) + 1
+    -- Strategy: LHS = omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 2) + 1
+    -- RHS = omega^(mu a + mu b + 9) + 1
+    -- The RHS exponent (mu a + mu b + 9) dominates the LHS's max exponent of 4.
+    have h_exp_dom : omega0 ^ (4 : Ordinal) ≤ omega0 ^ (mu a + mu b + 9) :=
+      opow_le_opow_right omega0_pos (le_add_left _ _)
+    -- Absorb the LHS's omega^4 term into the RHS.
+    calc mu (integrate (merge a b))
+      _ ≤ omega0 ^ (mu a + mu b + 9) + 1 := le_add_left _ _
+      _ < omega0 ^ (mu a + mu b + 9) + 1 + 1 := lt_add_right _ _
+```

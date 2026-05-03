@@ -1,0 +1,25 @@
+Based on the provided definitions of the rewrite rules (`Step`) and the three proposed termination measures (`mu1`, `mu2`, `mu3`), here is an assessment of why **all three candidates fail** as valid termination measures. 
+
+A valid termination measure must strictly decrease on every rewrite step (i.e., $\mu(LHS) > \mu(RHS)$). Because all three measures use simple additive linear polynomial interpretations with uniform coefficient 1 for subterms, they cannot adequately handle duplication.
+
+Specifically, they all fail on the `R_rec_succ` reduction rule:
+`Step (recDelta b s (delta n)) (app s (recDelta b s n))`
+
+Let's evaluate $LHS$ and $RHS$ for `mu1` as an example:
+* **LHS**: $\mu_1(\text{recDelta } b \ s \ (\text{delta } n)) = 1 + \mu_1(b) + \mu_1(s) + (1 + \mu_1(n)) = \mathbf{2 + \mu_1(b) + \mu_1(s) + \mu_1(n)}$
+* **RHS**: $\mu_1(\text{app } s \ (\text{recDelta } b \ s \ n)) = 1 + \mu_1(s) + (1 + \mu_1(b) + \mu_1(s) + \mu_1(n)) = \mathbf{2 + 2\mu_1(s) + \mu_1(b) + \mu_1(n)}$
+
+For strict termination, we need:
+$2 + \mu_1(s) + \mu_1(b) + \mu_1(n) > 2 + 2\mu_1(s) + \mu_1(b) + \mu_1(n)$
+Which simplifies to: $0 > \mu_1(s)$. 
+Since $\mu_1$ maps to natural numbers (and $\mu_1(s) \ge 0$), this inequality is mathematically impossible. 
+
+The exact same structural failure occurs in `mu2` and `mu3`:
+* **`mu2` LHS**: $6 + \mu_2(b) + \mu_2(s) + \mu_2(n)$
+* **`mu2` RHS**: $6 + \mu_2(b) + 2\mu_2(s) + \mu_2(n)$
+* **`mu3` LHS**: $2 + \mu_3(b) + \mu_3(s) + \mu_3(n)$
+* **`mu3` RHS**: $3 + \mu_3(b) + 2\mu_3(s) + \mu_3(n)$
+
+### Conclusion
+**None of the candidate measures are viable.**
+To successfully prove termination for `R_rec_succ` where `s` is duplicated for every unwrapping of `delta n`, the measure must account for the duplication. Additive linear interpretations without coefficients $>1$ are mathematically incapable of demonstrating termination when variables are duplicated in the right-hand side. A valid measure would likely require at least a non-linear interpretation (e.g., multiplying the weight of $s$ by the weight of the recursion parameter $n$).

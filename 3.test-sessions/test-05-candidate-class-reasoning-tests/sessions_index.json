@@ -1,0 +1,870 @@
+{
+  "extraction_date": "2026-04-13T23:04:15.035598+00:00",
+  "total_sessions": 108,
+  "sessions": [
+    {
+      "slug": "claude-haiku-4.5__2026-03-25T08-23-44",
+      "source": "copilot",
+      "model": "copilot/claude-haiku-4.5",
+      "session_id": "5e1215b0-77f5-42d7-a233-00846acba40a",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "claude-haiku-4.5__2026-03-25T08-44-17",
+      "source": "copilot",
+      "model": "copilot/claude-haiku-4.5",
+      "session_id": "c8ab714c-cc41-4a6b-bf38-c2bc943314aa",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "claude-haiku-4.5__2026-04-12T12-10-10",
+      "source": "copilot",
+      "model": "copilot/claude-haiku-4.5",
+      "session_id": "51053b04-78e4-4a47-9b85-e62de269356e",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "claude-haiku-4.5__2026-04-12T12-10-19",
+      "source": "copilot",
+      "model": "copilot/claude-haiku-4.5",
+      "session_id": "ee13fdab-9e60-4ab7-923c-b836023d36d3",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "claude-opus-4.5__2026-03-25T08-23-58",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.5",
+      "session_id": "663433ba-f4aa-4033-adfb-89bc2592c8a3",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "claude-opus-4.5__2026-03-25T08-24-09",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.5",
+      "session_id": "8826cbfb-2a77-4d1e-80fd-67f14d1e48af",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "claude-opus-4.5__2026-04-12T12-10-23",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.5",
+      "session_id": "f81a577e-26b7-4c32-92df-cb8894e2c69c",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "claude-opus-4.5__2026-04-12T12-10-32",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.5",
+      "session_id": "72bace5f-b66c-4a07-aed2-169c1f61dbf9",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "claude-opus-4.6__2026-03-24T22-28-24",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.6",
+      "session_id": "de452e63-6c4b-4b29-a4cd-df4fa74d7d53",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "claude-opus-4.6__2026-03-25T08-24-12",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.6",
+      "session_id": "4dbef336-2733-461b-a7a9-20e0af9f2f5d",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "claude-opus-4.6__2026-04-12T12-11-15",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.6",
+      "session_id": "c8caf940-c4e3-46a1-8ddd-dcd5ce52210b",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "claude-opus-4.6__2026-04-12T12-11-31",
+      "source": "copilot",
+      "model": "copilot/claude-opus-4.6",
+      "session_id": "d41e6367-3259-4243-b703-498baba3010c",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4.5__2026-03-25T08-24-37",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.5",
+      "session_id": "31844eb2-587d-4819-93b6-dcb706718529",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4.5__2026-03-25T08-24-54",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.5",
+      "session_id": "edbfd20b-b3e8-473e-8ab0-a838acbcc2aa",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4.5__2026-04-12T12-10-59",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.5",
+      "session_id": "8edb379c-24fd-41e7-bf4c-8561abfd1ddb",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4.5__2026-04-12T12-11-11",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.5",
+      "session_id": "f53ab6a3-443d-4f76-b5f3-26fd30c6f798",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4.6__2026-04-12T12-11-37",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.6",
+      "session_id": "4a4f8991-8336-42eb-ab22-be5cc0795b33",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4.6__2026-04-12T16-10-47",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.6",
+      "session_id": "e13d63b2-7ad5-470e-bba2-8f7a90be0024",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4.6__2026-04-13T21-23-27",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.6",
+      "session_id": "b63fd90d-9a40-4831-9cfc-44e745fde62e",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4.6__2026-04-13T23-03-00",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4.6",
+      "session_id": "05707f3a-78b2-4f03-a683-34a1028ff484",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4__2026-03-25T08-24-23",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4",
+      "session_id": "f6c3b535-3c4d-499d-a30e-2f4d466447a6",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4__2026-03-25T08-24-33",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4",
+      "session_id": "81841859-f92e-4df8-b5ef-e2bf3e086d08",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4__2026-04-12T12-10-36",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4",
+      "session_id": "783ec7cd-f24a-4af6-bb63-ec57a97357a4",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "claude-sonnet-4__2026-04-12T12-10-52",
+      "source": "copilot",
+      "model": "copilot/claude-sonnet-4",
+      "session_id": "6fe4fae4-d92c-415f-8325-74bbbdbf58a1",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "deepseek-r1-0528__2026-03-24T22-30-07",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-r1-0528",
+      "session_id": "d6e54565-0dce-4456-b5ac-623d5538b221",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "deepseek-r1-0528__2026-03-25T08-25-21",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-r1-0528",
+      "session_id": "791254c5-4a9a-473f-a8a1-e8a45e408006",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "deepseek-r1-0528__2026-04-12T12-10-04",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-r1-0528",
+      "session_id": "4eb0b985-fadd-498b-943e-9122fa01391b",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "deepseek-r1-0528__2026-04-12T13-16-27",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-r1-0528",
+      "session_id": "882bab62-c29f-47b2-97d8-642c222acb13",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "deepseek-v3.2__2026-03-24T22-29-57",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-v3.2",
+      "session_id": "24ebb8c2-3605-4d38-bfb5-1d0305f2bd05",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "deepseek-v3.2__2026-03-25T08-25-07",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-v3.2",
+      "session_id": "79d5224d-4097-4639-9abc-bdc4451fdd7f",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "deepseek-v3.2__2026-04-12T13-17-12",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-v3.2",
+      "session_id": "b88e3edb-9d67-478f-8cb9-98a4db4fa004",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "deepseek-v3.2__2026-04-12T13-17-22",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/deepseek/deepseek-v3.2",
+      "session_id": "ff333c0f-11f8-48e5-901e-562ccfb6eaaf",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gemini-2.5-pro__2026-03-24T22-28-49",
+      "source": "copilot",
+      "model": "copilot/gemini-2.5-pro",
+      "session_id": "fe424381-3394-4446-ac84-ef5cf59527c4",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gemini-2.5-pro__2026-04-12T13-17-27",
+      "source": "copilot",
+      "model": "copilot/gemini-2.5-pro",
+      "session_id": "d05da312-ee45-414f-9fe2-6990fea0c603",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gemini-2.5-pro__2026-04-12T13-17-43",
+      "source": "copilot",
+      "model": "copilot/gemini-2.5-pro",
+      "session_id": "d410d986-cbc9-4dd3-82d4-f2b857aaf58c",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gemini-2.5-pro__2026-04-13T21-11-04",
+      "source": "copilot",
+      "model": "copilot/gemini-2.5-pro",
+      "session_id": "bcbc76e0-b3ca-4b2c-92ab-2533d3b454e3",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gemini-3-flash-preview__2026-03-24T22-29-10",
+      "source": "copilot",
+      "model": "copilot/gemini-3-flash-preview",
+      "session_id": "2fc9a65b-a815-4290-9ca7-8662d677bc5d",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gemini-3-flash-preview__2026-03-25T08-25-52",
+      "source": "copilot",
+      "model": "gemini/Google/models/gemini-3-flash-preview",
+      "session_id": "ea637d39-2b4a-46b2-8e93-78e5689d7f3f",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gemini-3-flash-preview__2026-04-12T13-17-47",
+      "source": "copilot",
+      "model": "copilot/gemini-3-flash-preview",
+      "session_id": "1ea12610-6e53-478a-9051-7c3f98ed4e45",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gemini-3-flash-preview__2026-04-12T13-17-59",
+      "source": "copilot",
+      "model": "copilot/gemini-3-flash-preview",
+      "session_id": "12e4c92a-84e2-4aa1-9cbf-8e15275ca6b2",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gemini-3.1-pro-preview__2026-03-24T22-28-58",
+      "source": "copilot",
+      "model": "copilot/gemini-3.1-pro-preview",
+      "session_id": "6e2fd66f-35e7-4da0-ad9a-8a7cb2947da4",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gemini-3.1-pro-preview__2026-03-25T08-26-57",
+      "source": "copilot",
+      "model": "copilot/gemini-3.1-pro-preview",
+      "session_id": "054706a8-36bc-4e0c-afdc-158a3337b719",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gemini-3.1-pro-preview__2026-04-12T12-12-25",
+      "source": "copilot",
+      "model": "copilot/gemini-3.1-pro-preview",
+      "session_id": "fe3fe95e-177b-4a52-a75f-da269bb012e7",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gemini-3.1-pro-preview__2026-04-12T13-18-07",
+      "source": "copilot",
+      "model": "copilot/gemini-3.1-pro-preview",
+      "session_id": "47ea6e6e-47a3-4e37-9e35-b99d3df8efd2",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "glm-5__2026-03-24T22-30-19",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/z-ai/glm-5",
+      "session_id": "5482eb12-a9c0-42fc-8ea1-fe488c765255",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "glm-5__2026-03-25T08-27-10",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/z-ai/glm-5",
+      "session_id": "ce6d964b-62e2-4c55-bf6d-9a32f7e29293",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "glm-5__2026-04-12T12-12-43",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/z-ai/glm-5",
+      "session_id": "3a874e65-6de4-4ae9-8095-c9deb2194078",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "glm-5__2026-04-12T12-12-53",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/z-ai/glm-5",
+      "session_id": "687c9ad1-382b-4935-9eed-4c24c28b851f",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-4o__2026-03-25T08-27-37",
+      "source": "copilot",
+      "model": "copilot/gpt-4o",
+      "session_id": "a82b8e0c-c71b-4fd7-92bf-87dc53fc0227",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-4o__2026-03-25T08-27-49",
+      "source": "copilot",
+      "model": "copilot/gpt-4o",
+      "session_id": "c9f4c957-41b9-4b77-bd62-6a6a363b693b",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-4o__2026-04-12T12-12-56",
+      "source": "copilot",
+      "model": "copilot/gpt-4o",
+      "session_id": "c2188647-2263-42d3-a9f3-6aa5208014ed",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-4o__2026-04-12T13-19-01",
+      "source": "copilot",
+      "model": "copilot/gpt-4o",
+      "session_id": "8513bdb7-c0bb-449d-bd2b-9f07723d48dd",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.2-codex__2026-03-25T08-28-52",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2-codex",
+      "session_id": "e8e0facd-236f-4168-8fab-be510d61596a",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.2-codex__2026-03-25T08-29-07",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2-codex",
+      "session_id": "a35d33bd-27e4-42dc-be7a-dc70084f4638",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.2-codex__2026-04-12T15-37-51",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2-codex",
+      "session_id": "91de046b-1bfd-46a7-8e3a-d9b429bd56fe",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.2-codex__2026-04-12T15-38-37",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2-codex",
+      "session_id": "6a094581-f7bc-4a65-8d74-7474ed64a3dc",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.2__2026-03-24T22-29-48",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2",
+      "session_id": "60f12b7d-36b2-4390-ae4a-b18851b0cf0e",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.2__2026-04-11T21-21-23",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2",
+      "session_id": "fffd6d5e-08c7-4cd7-8358-19a476114161",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.2__2026-04-12T13-19-50",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2",
+      "session_id": "5a8b93b2-5e15-4acd-b572-e9cafcc61e65",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.2__2026-04-12T13-28-53",
+      "source": "copilot",
+      "model": "copilot/gpt-5.2",
+      "session_id": "2f1a3287-84c6-4eef-bfa1-91e85e29879b",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.3-codex__2026-03-25T08-29-23",
+      "source": "copilot",
+      "model": "copilot/gpt-5.3-codex",
+      "session_id": "2a542157-752b-43f4-87b6-bd6d7ee454f1",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.3-codex__2026-03-25T09-36-11",
+      "source": "copilot",
+      "model": "copilot/gpt-5.3-codex",
+      "session_id": "798fdb0a-8470-4a59-8aa7-161d4107eb5b",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.3-codex__2026-04-12T13-19-53",
+      "source": "copilot",
+      "model": "copilot/gpt-5.3-codex",
+      "session_id": "b0953f66-df3b-4cae-97b4-8cc9a2745985",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.3-codex__2026-04-12T13-20-00",
+      "source": "copilot",
+      "model": "copilot/gpt-5.3-codex",
+      "session_id": "4d235ba5-14d3-49cb-a7a3-2c9890f782a1",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.4-pro__2026-03-25T08-25-29",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-5.4-pro",
+      "session_id": "45bd72ac-cfde-4063-94b7-265606b30378",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.4-pro__2026-03-25T08-25-38",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-5.4-pro",
+      "session_id": "1d577f83-4205-41d0-8bfe-d907780e6470",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.4-pro__2026-04-12T13-19-19",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-5.4-pro",
+      "session_id": "ef68bc62-545d-4e89-8819-6b809a55642d",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.4-pro__2026-04-12T13-19-37",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-5.4-pro",
+      "session_id": "08888ff9-77fd-4b68-b9fd-bc32d7d685c0",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.4__2026-03-24T22-28-41",
+      "source": "copilot",
+      "model": "copilot/gpt-5.4",
+      "session_id": "ab5803b8-9f87-41e8-a035-0019cf4f77bc",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.4__2026-03-25T08-46-35",
+      "source": "copilot",
+      "model": "copilot/gpt-5.4",
+      "session_id": "bd2be7d2-6945-4c3d-81cf-de916f5d9ac5",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.4__2026-04-12T13-20-16",
+      "source": "copilot",
+      "model": "copilot/gpt-5.4",
+      "session_id": "1ab2f4e4-3d08-4597-b640-78e33183e9af",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-5.4__2026-04-13T21-11-26",
+      "source": "copilot",
+      "model": "copilot/gpt-5.4",
+      "session_id": "0797a0c5-17f6-480f-8ce5-eb062d56391e",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-oss-120b__2026-03-25T08-29-31",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-oss-120b",
+      "session_id": "86ff91a3-14a6-4704-8f66-f545700ba5d2",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-oss-120b__2026-03-25T08-29-39",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-oss-120b",
+      "session_id": "3119cfc4-ccfc-4a04-9cc8-f86b5c293ea7",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-oss-120b__2026-04-12T12-14-08",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-oss-120b",
+      "session_id": "2661973d-e190-4f77-8e76-b27ec1965499",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "gpt-oss-120b__2026-04-12T12-14-23",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/openai/gpt-oss-120b",
+      "session_id": "9d43f7ff-34cd-417a-a3b1-134b397289c5",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "grok-3__2026-03-24T22-28-14",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-3",
+      "session_id": "0a1a8fb6-dc4e-423c-99ef-268adfcef420",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "grok-3__2026-03-25T08-30-56",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-3",
+      "session_id": "d08fee6b-2bde-453a-b611-e4aafd9a9862",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "grok-3__2026-04-12T12-14-28",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-3",
+      "session_id": "1c060e09-5fdf-4dfb-874d-9bf6bae76ebd",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "grok-3__2026-04-12T12-14-41",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-3",
+      "session_id": "fefc0488-155f-4c56-8d58-2cec2b4dc341",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "grok-4-0709__2026-03-25T08-36-15",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-0709",
+      "session_id": "0fdfad6e-5295-4094-96bf-411158abf408",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "grok-4-0709__2026-03-25T08-36-23",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-0709",
+      "session_id": "fe615969-82f9-41e8-a8a4-e753c171d7cb",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "grok-4-0709__2026-04-12T12-14-46",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-0709",
+      "session_id": "9f9b7e7a-fde0-4df5-8601-d34b36378bd3",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "grok-4-0709__2026-04-12T12-14-59",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-0709",
+      "session_id": "616ce70e-ba9b-4e04-ab1a-121b77da0e6d",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "grok-4-1-fast-reasoning__2026-03-25T08-37-16",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-1-fast-reasoning",
+      "session_id": "ffb44df7-bfc1-4863-b6a5-0a58215540d6",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "grok-4-1-fast-reasoning__2026-03-25T08-37-24",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-1-fast-reasoning",
+      "session_id": "6a75be64-ff0b-4353-9b91-b914ae472262",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "grok-4-1-fast-reasoning__2026-04-12T12-15-32",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-1-fast-reasoning",
+      "session_id": "c0a36a7c-b5a3-4484-b778-30fb4b8882c4",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "grok-4-1-fast-reasoning__2026-04-12T12-15-44",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-1-fast-reasoning",
+      "session_id": "cb0563d6-a8f3-4e09-a4d4-bce17d9c0ea5",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "grok-4-fast-reasoning__2026-03-24T22-28-07",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-fast-reasoning",
+      "session_id": "b267316f-6afe-425a-9cd9-f6a79228fe6f",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "grok-4-fast-reasoning__2026-03-25T08-36-52",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-fast-reasoning",
+      "session_id": "fbb4274e-029e-4485-9d30-deaada1540f0",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "grok-4-fast-reasoning__2026-04-12T12-15-06",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-fast-reasoning",
+      "session_id": "2c78dc7d-fb5f-4768-ae1f-f3d3c4cd9edc",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "grok-4-fast-reasoning__2026-04-12T12-15-23",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4-fast-reasoning",
+      "session_id": "3057740c-7489-4c67-9409-d7cfd73ba3ad",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "grok-4.20-0309-reasoning__2026-03-24T22-30-30",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4.20-0309-reasoning",
+      "session_id": "db39e9d2-d26c-4443-92b3-2cd09a01a3b4",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "grok-4.20-0309-reasoning__2026-03-25T09-37-29",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4.20-0309-reasoning",
+      "session_id": "a911637d-9aa2-402c-a681-7bc9e07b0089",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "grok-4.20-0309-reasoning__2026-04-13T21-11-56",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4.20-0309-reasoning",
+      "session_id": "acd99b9d-c463-4bca-aa48-c7471bd363f7",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "grok-4.20-0309-reasoning__2026-04-13T21-12-26",
+      "source": "copilot",
+      "model": "xai/grok 3/grok-4.20-0309-reasoning",
+      "session_id": "287fd223-8f29-4454-a7a6-e90187c69109",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "grok-code-fast-1__2026-03-25T08-37-44",
+      "source": "copilot",
+      "model": "copilot/grok-code-fast-1",
+      "session_id": "6b09ed32-32f0-4bb6-8a35-f7e77e9a47e5",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "grok-code-fast-1__2026-03-25T08-37-56",
+      "source": "copilot",
+      "model": "copilot/grok-code-fast-1",
+      "session_id": "fb4f4493-b9f4-4f84-bfd9-9e231c92901c",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "grok-code-fast-1__2026-04-12T13-20-33",
+      "source": "copilot",
+      "model": "copilot/grok-code-fast-1",
+      "session_id": "655ee5da-4e10-40d5-b4a4-40ff13386249",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "grok-code-fast-1__2026-04-12T13-20-45",
+      "source": "copilot",
+      "model": "copilot/grok-code-fast-1",
+      "session_id": "875f3728-d126-478c-aaca-907b2cc31b99",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "o3__2026-03-24T22-29-24",
+      "source": "copilot",
+      "model": "openai/OpenAI 2/o3",
+      "session_id": "dfee34f2-f58e-46fe-bff5-2e5a1314ce43",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "o3__2026-03-25T08-38-02",
+      "source": "copilot",
+      "model": "openai/OpenAI 2/o3",
+      "session_id": "d72145b4-1fc7-48b4-8e74-ff87ffaf1628",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "o3__2026-04-12T12-16-12",
+      "source": "copilot",
+      "model": "openai/OpenAI 2/o3",
+      "session_id": "e5c33145-d89e-4d6b-a85a-b0487b6d795a",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "o3__2026-04-12T12-16-22",
+      "source": "copilot",
+      "model": "openai/OpenAI 2/o3",
+      "session_id": "cbb15862-8a5a-4809-b069-9721d13ea217",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "qwen3-max-thinking__2026-03-25T08-39-19",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/qwen/qwen3-max-thinking",
+      "session_id": "69a86ad9-d392-4f83-aa64-5755036976c0",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "qwen3-max-thinking__2026-03-25T08-39-27",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/qwen/qwen3-max-thinking",
+      "session_id": "a6038f46-b35a-4724-b788-56e646ccb624",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "qwen3-max-thinking__2026-04-12T12-12-07",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/qwen/qwen3-max-thinking",
+      "session_id": "bfcd89cf-ef88-417b-a9c1-8f58def09b02",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    },
+    {
+      "slug": "qwen3-max-thinking__2026-04-12T12-12-18",
+      "source": "copilot",
+      "model": "openrouter/OpenRouter/qwen/qwen3-max-thinking",
+      "session_id": "f3985438-1c74-4c4b-a68e-486230e8a2e1",
+      "benchmark_type": "test-05-candidate-class-reasoning",
+      "matched_prompt_file": "Test-05-Candidate-Class-Reasoning-prompt.txt"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+**Assessment of the three termination measure candidates (mu1, mu2, mu3) for the Step relation:**
+
+All three measures are **invalid** as termination measures because they fail to strictly decrease on **R_rec_succ**: `recDelta b s (delta n) → app s (recDelta b s n)`.
+
+- **mu1**: μ(lhs) = 2 + μ(b) + μ(s) + μ(n) ≤ μ(rhs) = 2 + μ(b) + 2μ(s) + μ(n), with equality if μ(s) = 0.
+- **mu2**: μ(lhs) = 6 + μ(b) + μ(s) + μ(n) ≤ μ(rhs) = 6 + μ(b) + 2μ(s) + μ(n), with equality if μ(s) = 0.
+- **mu3**: μ(lhs) = 2 + μ(b) + μ(s) + μ(n) < μ(rhs) = 3 + μ(b) + 2μ(s) + μ(n).
+
+They decrease on all other rules (R_int_delta, R_merge_*, R_rec_zero, R_eq_*). No measure is well-founded for the relation.

@@ -1,0 +1,13 @@
+**Defining Data Structures**
+
+I've just finished reviewing the Lean file, specifically `Test-01-Kernel-Fruit.lean`. My focus is currently on the `Trace` type and the `Step` relation defined within it. The tree-like nature of the `Trace` type is particularly interesting, especially in the context of the rewrite rules dictated by the `Step` relation.
+
+
+**Examining Normalization Properties**
+
+Okay, I'm now focused on proving strong normalization. I've broken down each rewrite rule, carefully assessing its effect on the term size. The rules `R_mango_grape`, `R_peach_plum_left`, `R_peach_plum_right`, `R_peach_cancel`, and `R_banana_zero` are all size-decreasing, which is promising. Now, I'm analyzing the rule `R_apple_orange`, since it seems like the most problematic.
+
+
+**Investigating the `R_apple_orange` Rule**
+
+I'm now deeply immersed in the `R_apple_orange` rule. I've calculated the size of both sides and, based on the constructor counts, it appears the rule maintains size. Therefore, strong normalization isn't immediately obvious, and a more intricate argument will be needed. I'm considering potential invariants that are preserved across the rewrite.

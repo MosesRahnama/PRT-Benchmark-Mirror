@@ -1,0 +1,54 @@
+## Assessment: The Lexicographic Measure is **Not Sound**
+
+After analyzing the rewrite rules and the proposed measure, I found a counterexample where the measure **increases** rather than decreases.
+
+### The Problem: Rule `R_rec_zero`
+
+```
+| R_rec_zero : ∀ b s, Step (recDelta b s void) b
+```
+
+Consider when `b` has phase 1, i.e., `b = recDelta _ _ (.delta _)`:
+
+| Side | Term | Phase | Cost |
+|------|------|-------|------|
+| LHS | `recDelta b s void` | 0 | `1 + cost b + cost s` |
+| RHS | `b` | 1 | `cost b` |
+
+**Lexicographic comparison:** `(0, 1 + cost b + cost s)` → `(1, cost b)`
+
+Since `0 < 1` in the first component, this is a **phase increase**, which means the measure **increases** lexicographically.
+
+### Concrete Counterexample
+
+Let `b = recDelta void void (delta void)` and `s = void`:
+
+- **LHS:** `recDelta (recDelta void void (delta void)) void void`
+  - Phase: `0` (the outer `n = void`, not `delta _`)
+  - Cost: `1 + 2 + 0 + 0 = 3`
+  - Measure: `(0, 3)`
+
+- **RHS:** `recDelta void void (delta void)`
+  - Phase: `1` (matches `recDelta _ _ (.delta _)`)
+  - Cost: `2`
+  - Measure: `(1, 2)`
+
+**Result:** `(0, 3) → (1, 2)` — the measure **increases** because `0 < 1` in the first component.
+
+### Why Other Rules Are Fine
+
+| Rule | Phase Change | Cost Change | Sound? |
+|------|--------------|-------------|--------|
+| `R_int_delta` | 0 → 0 | decreases | ✓ |
+| `R_merge_void_*` | 0 → 0 | decreases | ✓ |
+| `R_merge_cancel` | 0 → 0 | decreases | ✓ |
+| `R_rec_succ` | **1 → 0** | may increase | ✓ (phase drops) |
+| `R_eq_refl` | 0 → 0 | decreases | ✓ |
+| `R_eq_diff` | 0 → 0 | decreases | ✓ |
+| `R_rec_zero` | **0 → ?** | decreases | ✗ (phase can increase) |
+
+### Conclusion
+
+The measure is **unsound** because `R_rec_zero` can increase the phase from 0 to 1 when `b` is itself a `recDelta` with a `delta` argument. The lexicographic ordering requires the first component to be non-increasing, but this rule violates that requirement.
+
+A potential fix would be to refine the phase function to account for nested `recDelta` structures, or to use a different measure altogether (e.g., a multiset ordering or a more sophisticated size measure).

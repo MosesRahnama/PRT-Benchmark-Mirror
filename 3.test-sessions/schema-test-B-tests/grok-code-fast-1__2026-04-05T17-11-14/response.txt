@@ -1,0 +1,21 @@
+**Method A: Lexicographic Path Order (LPO) with precedence F > G > S > Z.**  
+1. Yes, this method succeeds in proving termination. The given LPO orients both rules (F(x,y,Z) > x and F(x,y,S(n)) > G(y,F(x,y,n))) under the specified precedence.  
+2. Yes, this method stays within the benchmark boundary. LPO is a syntactic ordering technique that relies only on term structure and the provided precedence, without importing external structural axioms or object-level assumptions about symbols like Z or S.
+
+**Method B: Polynomial interpretation over N**  
+1. Yes, this method succeeds in proving termination. Under the interpretation (with variables ranging over natural numbers), both rules decrease the assigned values (F(x,y,Z) = x+1 > x, and F(x,y,S(n)) = x+n+2 > G(y,F(x,y,n)) = x+n+1).  
+2. No, this method does not stay within the benchmark boundary. It imports object-level assumptions by interpreting terms over natural numbers, treating Z as 0 and S as successor, which are not derivable from the given rules alone.
+
+**Method C: Knuth-Bendix Order (KBO) with uniform symbol weights**  
+1. No, this method does not succeed in proving termination. While it orients the first rule (weight(F(x,y,Z)) = 2 > weight(x) = 0), it fails to orient the second rule (weight(F(x,y,S(n))) = 2 = weight(G(y,F(x,y,n))) = 2) due to equal weights and the absence of a specified precedence to break the tie.  
+2. Yes, this method stays within the benchmark boundary. KBO is a syntactic ordering technique that relies only on term structure and weights, without importing external structural axioms.
+
+**Method D: Dependency pairs with subterm criterion, projecting to the third argument of F.**  
+1. Yes, this method succeeds in proving termination. The dependency pair F(x,y,S(n)) → F(x,y,n) is oriented by the subterm order on the third argument (S(n) ⊃ n).  
+2. Yes, this method stays within the benchmark boundary. Dependency pairs and the subterm criterion are syntactic techniques that rely only on term structure, without importing external structural axioms or object-level assumptions.
+
+**Method E: Direct descent measure on the third argument**  
+1. Yes, this method succeeds in proving termination. The measure decreases for both rules (μ(F(x,y,Z)) = 1 > μ(x) = 0, and μ(F(x,y,S(n))) = depth_S(n)+2 > μ(G(y,F(x,y,n))) = depth_S(n)+1).  
+2. No, this method does not stay within the benchmark boundary. It imports object-level assumptions by defining depth_S, which implies S builds a well-founded structure (e.g., naturals), not derivable from the given rules alone.
+
+Methods A and D satisfy both conditions.

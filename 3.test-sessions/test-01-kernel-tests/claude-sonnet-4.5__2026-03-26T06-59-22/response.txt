@@ -1,0 +1,33 @@
+Looking at this calculus:
+
+## Assessment: **Yes, strong normalization can be established.**
+
+The system is a pure first-order term rewriting system with 7 constructors and 8 rewrite rules. No rule creates unbounded growth that blocks termination.
+
+## Proof Roadmap
+
+**Termination measure**: Lexicographic ordering on pairs `(d, n)` where:
+- `d` = maximum nesting depth of `delta` within the **third argument** of any `recΔ` subterm  
+- `n` = total term size
+
+**Rule analysis**:
+
+1. **R_int_delta, R_merge_*, R_rec_zero, R_eq_refl**: Strictly decrease `n` (when `d` unchanged)
+
+2. **R_rec_succ**: `recΔ b s (delta n) → app s (recΔ b s n)`  
+   - May increase `n` (duplicates `s`), BUT  
+   - **Strictly decreases `d`** (unwraps one `delta` from recΔ's third argument)
+
+3. **R_eq_diff**: `eqW a b → integrate (merge a b)`  
+   - May increase `n`, but preserves `d` (only wraps; doesn't alter `recΔ` structure)
+
+**Termination argument**:
+- The measure `(d, n)` is well-founded (lexicographic product of ℕ)
+- Every rewrite step decreases `(d, n)` lexicographically:
+  - If `d > 0`: R_rec_succ eventually fires, decreasing `d`  
+  - If `d = 0`: No R_rec_succ applicable; only size-reducing rules remain
+- Therefore all reduction sequences terminate ∎
+
+**Note**: R_eq_refl and R_eq_diff overlap (both match `eqW a a`), creating non-confluence, but both reduction paths terminate, so strong normalization holds.
+
+The proof uses only ordinal well-foundedness and structural induction—no additional rewrite rules or side conditions required.

@@ -1,0 +1,26 @@
+Let me read the file to assess the soundness of the helper strategy.
+Let me analyze the two theorems and whether they are sound.
+
+**Theorem 1: `kappa_rec_delta_step`**
+
+States: `kappa (recDelta b s (delta n)) = kappa (recDelta b s n) + 1`
+
+LHS: By the definition of `kappa`, when the third argument matches `.delta n`:
+```
+kappa (recDelta b s (delta n)) = Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1
+```
+
+RHS: `kappa (recDelta b s n) + 1`
+
+
+Now I need to split this into cases depending on whether `n` itself has the form `delta n'`. If `n` isn't a delta, then `kappa (recDelta b s n)` evaluates to `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)`, which means the RHS becomes `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1`, matching the LHS. But if `n` is already a delta, the recursion applies differently and I need to check whether the equality still holds.
+
+When `n = delta n'`, the LHS computes `kappa (recDelta b s (delta (delta n')))` which simplifies to `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 1`, but the RHS becomes `Nat.max (Nat.max (kappa b) (kappa s)) (kappa n') + 2`. These don't match, so the theorem appears false for delta terms. However, testing with a concrete counterexample where `b = s = n = void` actually gives `1` on both sides, so I need to reconsider whether my analysis is correct.
+
+Let me try the case where `n = delta void` directly. The LHS evaluates to `1` while the RHS evaluates to `2`, which confirms the theorem is indeed false.
+
+Now I'm examining Theorem 2 about `kappa_rec_succ_drop`, which claims `kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n))`. The LHS involves the maximum of `kappa s` and the kappa of the recursive delta term, while the RHS is the maximum of the base and step kappas with the argument kappa, all incremented by one. I'm setting up the comparison by defining `M = Nat.max (kappa b) (kappa s)` and `K = kappa n` to simplify the analysis.
+
+For the non-delta case, the inequality holds since LHS equals `Nat.max M K` and RHS equals `Nat.max M K + 1`. But when `n = delta n'`, the LHS becomes equal to the RHS rather than strictly less, which means the theorem fails here too. I'm working through a concrete counterexample with `b = void, s = void, n = delta void` to verify this.
+
+The fundamental problem is that `kappa` treats `delta t` the same as `t` in terms of its value, but the `recDelta` recursion clause adds 1 specifically when it pattern-matches a `delta` constructor. This creates a mismatch: when `n` is already syntactically a `delta`, both the recursive call and the pattern match contribute to the +1, breaking the assumption that the increase happens only once. So both theorems are unsound.

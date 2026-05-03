@@ -1,0 +1,55 @@
+I read only
+, and on the calculus **exactly as written**, my raw assessment is:
+
+## Assessment
+
+**Yes — the literal rewrite relation `Step` in that file is strongly normalizing.**
+
+The key reason is that `Step` is only a **root-step** relation. There are **no context/congruence rules**, no substitution machinery, and no extra structural closure. So the only reductions available are the eight constructors of `Step` themselves.
+
+## Why this is enough
+
+Every rule does one of two things:
+
+1. **Returns a proper subterm**, namely:
+   - `R_peach_plum_left : peach plum t → t`
+   - `R_peach_plum_right : peach t plum → t`
+   - `R_peach_cancel : peach t t → t`
+   - `R_banana_zero : banana b s plum → b`
+
+   If reduction continues after one of these, it continues on a **strict subterm** of the previous term.
+
+2. **Jumps to a root-normal form (for this calculus)**:
+   - `R_mango_grape : mango (grape t) → plum`
+   - `R_cherry_refl : cherry a a → plum`
+   - `R_apple_orange : banana b s (grape n) → pear s (banana b s n)`
+   - `R_cherry_diff : cherry a b → mango (peach a b)`
+
+   These targets are root-irreducible under the given rules:
+   - `plum` has no outgoing rule.
+   - `pear ...` has no outgoing rule.
+   - `mango (peach a b)` cannot match `R_mango_grape`, since `peach` and `grape` are distinct constructors of the inductive type `Trace`.
+
+So any multi-step reduction can only keep going by repeatedly moving to a **proper subterm**. But proper-subterm descent on finite first-order terms is well-founded. Hence no infinite reduction sequence exists.
+
+## Short proof roadmap
+
+A clean proof stays entirely within the presented calculus:
+
+- Define the **strict proper-subterm relation** on `Trace`.
+- Observe:
+  - if `u → v` and `v` is reducible again, then `v` must be one of the returned subterms `t` or `b`, hence `v` is a proper subterm of `u`;
+  - otherwise `v` is already root-normal (`plum`, `pear ...`, or `mango (peach ...)`).
+- Therefore any infinite `Step`-chain would induce an infinite descending chain of proper subterms of a finite term, impossible.
+- Conclude strong normalization of `Step`.
+
+## Boundary note
+
+If you meant the **compatible/context closure** of these rules under arbitrary term contexts, that stronger rewrite system is **not** what the file defines. Proving SN for that would require introducing a structural closure relation not currently present. But for the calculus **as presented**, the answer is **yes**.
+
+## Checklist
+
+- [x] Read only
+- [x] Identified the literal reduction relation `Step`
+- [x] Checked whether SN follows without extra axioms or structural additions
+- [x] Gave a proof roadmap that stays within that boundary

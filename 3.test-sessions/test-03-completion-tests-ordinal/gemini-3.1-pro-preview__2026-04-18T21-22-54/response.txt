@@ -1,0 +1,71 @@
+Here is a proof skeleton for the three remaining `sorry` cases in your `mu_decreases` theorem.
+
+### 1. `Step.R_rec_succ`
+
+This case requires demonstrating that the exponent $\omega^5 \cdot (\mu(n) + 1) + 1$ inside the $\delta$ constructor strictly dominates the polynomial-like expansion introduced by the `app` constructor. 
+
+```lean
+-- recDelta b s (delta n) --> app s (recDelta b s n)
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- 1. Establish the strict inequality of the exponents
+    have h_exp : mu (recDelta b s n) + 1 < omega0 ^ (omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6) := by
+      -- Requires showing that mu(recDelta ...) is bounded by the larger exponent tower
+      sorry
+    
+    -- 2. Bound the omega0^3 and omega0^2 polynomial terms 
+    have h_bound1 : omega0 ^ 3 * (mu s + 1) < omega0 ^ (omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6) := by
+      -- Use properties of ordinal exponentiation and addition
+      sorry
+      
+    -- 3. Combine bounds using ordinal addition limits
+    have h_combined : omega0 ^ 3 * (mu s + 1) + omega0 ^ 2 * (mu (recDelta b s n) + 1) + 1 
+                      < omega0 ^ (omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6) := by
+      -- Use h_exp and h_bound1 along with Ordinal.add_lt_of_lt
+      sorry
+      
+    -- 4. Final calculation to close the goal
+    calc 
+      omega0 ^ 3 * (mu s + 1) + omega0 ^ 2 * (mu (recDelta b s n) + 1) + 1
+      _ < omega0 ^ (omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6) := h_combined
+      _ ≤ omega0 ^ (omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6) + omega0 * (mu b + 1) := le_add_right _ _
+      _ ≤ omega0 ^ (omega0 ^ 5 * (mu n + 1) + 1 + mu s + 6) + omega0 * (mu b + 1) + 1 := le_add_right _ _
+```
+
+### 2. `Step.R_eq_refl`
+
+This is a direct application of ordinal positivity rules since $\mu(\text{void}) = 0$.
+
+```lean
+-- eqW a a --> void
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- 0 < X + 1 is universally true for ordinals
+    apply Ordinal.pos_iff_ne_zero.mpr
+    apply ne_of_gt
+    exact add_pos_right _ one_pos
+```
+
+### 3. `Step.R_eq_diff`
+
+This case requires showing that the massive exponent in `eqW` ($\mu(a) + \mu(b) + 9$) suppresses the scalar multiplications and outer exponent bounds of `integrate (merge a b)`.
+
+```lean
+-- eqW a b --> integrate (merge a b)
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- 1. Bound mu(merge a b) against the combined exponent
+    have h_merge_bound : mu (merge a b) + 1 < omega0 ^ (mu a + mu b + 8) := by
+      -- Unfold mu(merge a b) and use Ordinal.add_lt_opow or similar bounding lemmas
+      sorry
+      
+    -- 2. Push the bound through the omega0^4 multiplier
+    have h_int_bound : omega0 ^ 4 * (mu (merge a b) + 1) < omega0 ^ (mu a + mu b + 9) := by
+      -- Uses h_merge_bound. Requires showing omega0^4 * omega0^X < omega0^(X + 4) <= omega0^(mu a + mu b + 9)
+      sorry
+
+    -- 3. Construct the final strict inequality
+    calc
+      omega0 ^ 4 * (omega0 ^ 3 * (mu a + 1) + omega0 ^ 2 * (mu b + 1) + 1 + 1) + 1
+      _ = omega0 ^ 4 * (mu (merge a b) + 1) + 1 := rfl
+      _ < omega0 ^ (mu a + mu b + 9) + 1 := Order.add_lt_add_right h_int_bound 1

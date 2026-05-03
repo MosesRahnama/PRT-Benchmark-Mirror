@@ -1,0 +1,28 @@
+Raw assessment  
+Yes – the rules as written admit a direct termination proof, so strong-normalization (hence `∀ t, Acc Step t`) can be derived in Lean without adding any new rules, guards, or non-syntactic axioms.
+
+Sketch of a proof inside the given calculus  
+
+1. Define two simple structural measures on a trace  
+   • g : Trace → ℕ = number of `grape` constructors in the term  
+   • s : Trace → ℕ = total size (number of constructor nodes)
+
+   Use the lexicographic product `(g t, s t)` ordered by `<` on `ℕ × ℕ`, which is well-founded.
+
+2. Verify decrease for every rule (informally):  
+   R₁ `mango (grape t)        → plum`               g ↓ by 1, s ↓  
+   R₂ `peach plum t           → t`                  g =, s ↓  
+   R₃ `peach t plum           → t`                  g =, s ↓  
+   R₄ `peach t t              → t`                  g =, s ↓  
+   R₅ `banana b s plum        → b`                  g =, s ↓  
+   R₆ `banana b s (grape n)   → pear s (banana b s n)`  
+        • `g` decreases by one (the outermost `grape` disappears)  
+        • `g` is the primary component, so any possible increase in size caused by duplicating `s` is irrelevant – the pair still decreases.  
+   R₇ `cherry a a             → plum`               g =, s ↓  
+   R₈ `cherry a b (a ≠ b)     → mango (peach a b)`  g =, s ↓
+
+3. Because every one-step reduction strictly lowers the well-founded measure, there cannot be an infinite descending chain; hence `Step` is well-founded.
+
+4. Strong normalization follows immediately (every reduction sequence is finite). No side conditions beyond the explicit `a ≠ b` proof are required, and no external axioms or additional rules are introduced.
+
+Therefore the calculus, exactly as presented, is already strongly normalizing.

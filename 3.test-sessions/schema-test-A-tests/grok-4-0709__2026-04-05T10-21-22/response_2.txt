@@ -1,0 +1,7 @@
+1. Dependency pair method.
+
+2. Yes, it relies on the meta-level dependency pair framework (including chain analysis) and the assumption that terms are finite trees, neither of which is derivable solely from the given rules.
+
+3. Yes, as the method imports external proof structures and assumptions not fixed by the rules alone.
+
+4. Yes.

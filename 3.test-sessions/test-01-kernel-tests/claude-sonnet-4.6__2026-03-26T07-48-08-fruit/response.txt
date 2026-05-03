@@ -1,0 +1,65 @@
+## Assessment
+
+**Yes — strong normalization is provable from this calculus alone, with no external imports needed.**
+
+---
+
+### Critical structural observation
+
+`Step` has **no congruence rules**. Every constructor of `Step` matches a pattern at the *root* of the term only. Reduction is therefore root-only, not a full context closure. SN of root-only rewriting is the claim.
+
+---
+
+### RHS inventory (what each rule produces)
+
+| Rule | LHS root | RHS | RHS root-reducible? |
+|---|---|---|---|
+| R_mango_grape | `mango` | `plum` | **No** (NF) |
+| R_peach_plum_left | `peach` | `t` (proper subterm) | depends on `t` |
+| R_peach_plum_right | `peach` | `t` (proper subterm) | depends on `t` |
+| R_peach_cancel | `peach` | `t` (proper subterm) | depends on `t` |
+| R_banana_zero | `banana` | `b` (proper subterm) | depends on `b` |
+| R_apple_orange | `banana` | `pear s (banana b s n)` | **No** — `pear` root has no rule |
+| R_cherry_refl | `cherry` | `plum` | **No** (NF) |
+| R_cherry_diff | `cherry` | `mango (peach a b)` | **No** — `R_mango_grape` needs `grape` inside, not `peach` |
+
+The only rules whose RHS might itself be reducible are the three `peach`-rules and `R_banana_zero`, but in every case the RHS is a **strict subterm** of the LHS.
+
+---
+
+### Proof roadmap (stays within the boundary)
+
+**Measure**: `size : Trace → ℕ` defined by the standard structural recursion on the `Trace` inductive — constructor node count. This is derivable from the definition of `Trace` with no external import.
+
+**Claim**: For every `t : Trace`, the longest `Step`-sequence from `t` is finite.
+
+**Proof** by strong induction on `size t`:
+
+- *Base* (`t = plum`, size 1): no rule applies. Chain length 0. ✓
+- *Inductive step*: assume all terms of smaller size are SN.
+  - If no root rule applies: chain length 0. ✓
+  - R_mango_grape, R_cherry_refl → `plum` (size 1, NF). Chain length 1. ✓
+  - R_apple_orange → `pear s (banana b s n)`. Root is `pear`; no rule has `pear` as LHS root. Chain length 1. ✓
+  - R_cherry_diff → `mango (peach a b)`. `R_mango_grape` requires `grape` as the inner constructor; `peach ≠ grape` by constructor distinctness of `Trace`. NF. Chain length 1. ✓
+  - R_peach_plum_left/right/cancel → result is a proper subterm `t'`, so `size t' < size t`. By IH, `t'` is SN. Chain length ≤ 1 + max-chain(`t'`) < ∞. ✓
+  - R_banana_zero → result is proper subterm `b`, same argument. ✓
+
+Every case terminates finitely. $\square$
+
+---
+
+### What this proof uses
+
+1. The `Trace` inductive type (which supplies size, structural ordering, constructor distinctness).
+2. The `Step` rules exactly as written.
+3. Standard strong induction on `ℕ` — available from Lean's core logic, not an extra axiom.
+
+**Nothing else is required.** No guard conditions, no external termination oracle, no strengthened ruleset.
+
+---
+
+### One honest caveat
+
+This proof handles `Step` as defined — root-only reduction with no congruence closure. If the *intended* system implicitly includes full context reduction (reduce inside subterms), SN is not derivable from what is written, because `R_apple_orange` strictly increases term size (`pear s (banana b s n)` contains an extra copy of `s`) and would fire repeatedly inside nested contexts. In that case, SN would require either a monotone measure that accounts for the `s`-duplication (e.g., a weighted polynomial interpretation) or an explicit claim that the system is not context-closed — neither of which is present in the file. The presented syntax alone is insufficient to bridge that gap without additional assumptions.
+
+As *written*, the calculus is SN. If context closure was intended, that boundary is not crossable from what is given.

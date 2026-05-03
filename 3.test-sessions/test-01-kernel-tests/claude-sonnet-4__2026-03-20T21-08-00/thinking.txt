@@ -1,0 +1,69 @@
+Now I can see the rewrite calculus. Let me understand what's presented:
+
+**Data Structure:**
+- `Trace` is an inductive type with constructors:
+  - `void` (base case)
+  - `delta` (some kind of successor/increment)
+  - `integrate` (some operation)
+  - `merge` (binary operation)
+  - `app` (application, binary)
+  - `recΔ` (recursion with 3 arguments: base, step, argument)
+  - `eqW` (equality witness, binary)
+
+**Rewrite Rules:**
+1. `R_int_delta`: `integrate (delta t) → void`
+2. `R_merge_void_left`: `merge void t → t` (left identity)
+3. `R_merge_void_right`: `merge t void → t` (right identity)
+4. `R_merge_cancel`: `merge t t → t` (idempotent)
+5. `R_rec_zero`: `recΔ b s void → b` (recursion base case)
+6. `R_rec_succ`: `recΔ b s (delta n) → app s (recΔ b s n)` (recursion step)
+7. `R_eq_refl`: `eqW a a → void` (reflexivity gives void)
+8. `R_eq_diff`: `eqW a b → integrate (merge a b)` (non-reflexive case)
+
+This looks like a first-order term rewriting system. For strong normalization, I need to assess:
+
+1. **Termination**: All rewrite sequences eventually terminate
+2. **Confluence**: Different reduction paths lead to the same result
+3. **No infinite reduction chains**
+
+Let me analyze each rule:
+
+**Size Analysis:**
+- `R_int_delta`: `integrate (delta t) → void` - reduces size significantly
+- `R_merge_void_left/right`: `merge void t → t` - reduces size
+
+
+- `R_merge_cancel`: `merge t t → t` - reduces size
+- `R_rec_zero`: `recΔ b s void → b` - eliminates recΔ and void
+- `R_rec_succ`: `recΔ b s (delta n) → app s (recΔ b s n)` - This is potentially problematic! The right side contains `recΔ b s n` where `n` is the argument stripped of its outer `delta`, but we also introduce `app s ...`, so the total size might not decrease.
+- `R_eq_refl`: `eqW a a → void` - eliminates the equality witness
+- `R_eq_diff`: `eqW a b → integrate (merge a b)` - this could potentially increase or maintain size depending on `a` and `b`
+
+The most concerning rule is `R_rec_succ` because it introduces new structure (`app`) while recursing. However, the recursion argument `n` is strictly smaller than `delta n`. I need to check whether `R_eq_diff` and interactions between rules could create cycles or unbounded growth. The system has no variable binding and a finite set of constructors, which are positive signs, but most rules clearly decrease term size except for the two potentially problematic ones.
+Good, so the file only contains the inductive types and rewrite rules I saw. Now let me provide my assessment.
+
+**Assessment of Strong Normalization:**
+
+The system consists of:
+- A term algebra `Trace` with 7 constructors
+- 8 rewrite rules forming a term rewriting system
+
+**Analysis:**
+
+**Positive indicators for strong normalization:**
+1. **Structural recursion**: The `R_rec_succ` rule recurses on a structurally smaller term (`n` vs `delta n`)
+2. **Size-reducing rules**: Most rules (`R_int_delta`, `R_merge_*`, `R_rec_zero`, `R_eq_refl`) clearly reduce term size
+3. **Finite constructors**: No infinite generation of new symbols
+4. **No variable binding**: Eliminates a major source of complexity
+
+**Potential concerns:**
+1. **R_rec_succ complexity**: `recΔ b s (delta n) → app s (recΔ b s n)` introduces `app` while recursing
+2. **R_eq_diff growth**: `eqW a b → integrate (merge a b)` can create larger terms
+3. **Interaction complexity**: New terms created by one rule could interact with others
+
+**Key insight**: This looks like it could be strongly normalizing, but the proof would require a careful lexicographic or multiset ordering that accounts for:
+- Structural decrease in recursion arguments  
+- Overall term complexity management
+- Interaction between `app`, `integrate`, and `merge`
+
+Let me formulate my assessment:

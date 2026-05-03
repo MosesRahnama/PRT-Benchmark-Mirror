@@ -1,0 +1,23 @@
+**Raw Assessment:**
+
+**Yes**, strong normalization (SN) for the presented system can be established purely from the given syntax and rewrite rules, without any external structural axioms or hidden assumptions.
+
+**Reasoning & Short Proof Roadmap:**
+
+1. **Calculus Scope:** The `Step` inductive relation currently only defines root-level rewrites (there are no congruence rules recursively extending `Step` to subterms like `app`, `delta`, etc.). Therefore, in the exact calculus presented, any term reduces strictly at the root and very rapidly reaches normal form.
+2. **Polynomial Interpretation (Even with Context Closure):** Even if we implicitly assume the standard contextual closure extending `Step` to arbitrary subterms, the system is strictly strongly normalizing. This can be proven by mapping every term to a strictly positive integer polynomial measure that decreases with every rewrite step:
+   * `[void] = 1`
+   * `[delta t] = [t] + 1`
+   * `[integrate t] = [t] + 1`
+   * `[merge a b] = [a] + [b] + 1`
+   * `[app a b] = [a] + [b] + 1`
+   * `[eqW a b] = [a] + [b] + 4`
+   * `[recΔ b s t] = [t] * ([s] + 1) + [b]`
+
+We can verify that the measure strictly decreases across every rewrite rule:
+* **`R_int_delta`**: `[integrate (delta t)]` $( [t] + 2 )$ > `[void]` $(1)$
+* **`R_merge_cancel`**: `[merge t t]` $( 2[t] + 1 )$ > `[t]` (since $t \ge 1$)
+* **`R_rec_succ`**: `[recΔ b s (delta n)]` $( ([n]+1)([s]+1) + [b] = [n][s] + [n] + [s] + 1 + [b] )$ > `[app s (recΔ b s n)]` $( [s] + n + [b] + 1 = [n][s] + [n] + [s] + 1 + [b] )$, wait—adjusting the multiplier slightly ensures strict inequality for the recursion tree. For example, using `[recΔ b s t] = [t] * ([s] + 2) + [b]` works immediately.
+* **`R_eq_diff`**: `[eqW a b]` $( [a] + [b] + 4 )$ > `[integrate (merge a b)]` $( [a] + [b] + 2 )$
+
+Because all rules strictly and monotonically decrease the well-founded polynomial measure, infinite rewrite sequences are strictly impossible, thus proving Strong Normalization.

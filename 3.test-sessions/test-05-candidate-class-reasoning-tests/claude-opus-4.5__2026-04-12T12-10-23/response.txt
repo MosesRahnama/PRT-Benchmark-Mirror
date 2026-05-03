@@ -1,0 +1,69 @@
+## Assessment of the Three Termination Measures
+
+The file defines a first-order rewrite calculus on `Trace` terms with 8 rewrite rules, and proposes three candidate measures (`mu1`, `mu2`, `mu3`) intended to decrease on each rewrite step.
+
+### Methodology
+
+For a measure μ to prove termination, we need **μ(lhs) > μ(rhs)** for every rule `Step lhs rhs`.
+
+---
+
+### mu1 Analysis
+
+| Rule | LHS measure | RHS measure | Δ |
+|------|-------------|-------------|---|
+| R_int_delta | `1 + (1 + mu1 t) = 2 + mu1 t` | `0` | ✓ |
+| R_merge_void_left | `1 + 0 + mu1 t = 1 + mu1 t` | `mu1 t` | ✓ |
+| R_merge_void_right | `1 + mu1 t + 0 = 1 + mu1 t` | `mu1 t` | ✓ |
+| R_merge_cancel | `1 + mu1 t + mu1 t` | `mu1 t` | ✓ |
+| R_rec_zero | `1 + mu1 b + mu1 s + 0 = 1 + mu1 b + mu1 s` | `mu1 b` | ✓ |
+| R_rec_succ | `1 + mu1 b + mu1 s + (1 + mu1 n)` | `1 + mu1 s + (1 + mu1 b + mu1 s + mu1 n)` | **✗** |
+| R_eq_refl | `3 + mu1 a + mu1 a` | `0` | ✓ |
+| R_eq_diff | `3 + mu1 a + mu1 b` | `1 + (1 + mu1 a + mu1 b) = 2 + mu1 a + mu1 b` | ✓ |
+
+**R_rec_succ failure**: LHS = `2 + mu1 b + mu1 s + mu1 n`, RHS = `2 + 2·mu1 s + mu1 b + mu1 n`. Since RHS contains an extra `mu1 s` term, **mu1 fails** when `mu1 s ≥ 1`.
+
+---
+
+### mu2 Analysis
+
+| Rule | LHS measure | RHS measure | Δ |
+|------|-------------|-------------|---|
+| R_int_delta | `2 + (1 + mu2 t) = 3 + mu2 t` | `0` | ✓ |
+| R_merge_void_left | `2 + 0 + mu2 t` | `mu2 t` | ✓ |
+| R_merge_void_right | `2 + mu2 t + 0` | `mu2 t` | ✓ |
+| R_merge_cancel | `2 + 2·mu2 t` | `mu2 t` | ✓ |
+| R_rec_zero | `5 + mu2 b + mu2 s + 0` | `mu2 b` | ✓ |
+| R_rec_succ | `5 + mu2 b + mu2 s + (1 + mu2 n)` | `1 + mu2 s + (5 + mu2 b + mu2 s + mu2 n)` | **✗** |
+| R_eq_refl | `5 + 2·mu2 a` | `0` | ✓ |
+| R_eq_diff | `5 + mu2 a + mu2 b` | `2 + (2 + mu2 a + mu2 b) = 4 + mu2 a + mu2 b` | ✓ |
+
+**R_rec_succ failure**: LHS = `6 + mu2 b + mu2 s + mu2 n`, RHS = `6 + mu2 b + 2·mu2 s + mu2 n`. Again, RHS has an extra `mu2 s`. **mu2 fails**.
+
+---
+
+### mu3 Analysis
+
+| Rule | LHS measure | RHS measure | Δ |
+|------|-------------|-------------|---|
+| R_int_delta | `2 + (1 + mu3 t) = 3 + mu3 t` | `0` | ✓ |
+| R_merge_void_left | `1 + 0 + mu3 t` | `mu3 t` | ✓ |
+| R_merge_void_right | `1 + mu3 t + 0` | `mu3 t` | ✓ |
+| R_merge_cancel | `1 + 2·mu3 t` | `mu3 t` | ✓ |
+| R_rec_zero | `1 + mu3 b + mu3 s + 0` | `mu3 b` | ✓ |
+| R_rec_succ | `1 + mu3 b + mu3 s + (1 + mu3 n)` | `2 + mu3 s + (1 + mu3 b + mu3 s + mu3 n)` | **✗** |
+| R_eq_refl | `4 + 2·mu3 a` | `0` | ✓ |
+| R_eq_diff | `4 + mu3 a + mu3 b` | `2 + (1 + mu3 a + mu3 b) = 3 + mu3 a + mu3 b` | ✓ |
+
+**R_rec_succ failure**: LHS = `2 + mu3 b + mu3 s + mu3 n`, RHS = `3 + mu3 b + 2·mu3 s + mu3 n`. Here RHS is actually **larger** than LHS by `1 + mu3 s`. **mu3 fails**.
+
+---
+
+### Conclusion
+
+**All three candidates fail** on the `R_rec_succ` rule. The structural issue is that `recDelta b s (delta n)` rewrites to `app s (recDelta b s n)`, duplicating the `s` subterm. Any simple additive measure that counts `s` once on the LHS cannot dominate when `s` appears twice on the RHS.
+
+A valid termination argument would require either:
+1. A **lexicographic** measure (e.g., prioritizing depth of `n` over size)
+2. A **multiset ordering** on subterms
+3. Restricting `s` to be syntactically "small" (e.g., a variable)

@@ -1,0 +1,152 @@
+Now I have the complete picture. The file contains a partial strong normalization proof for a first-order rewrite calculus with 8 rules. Three cases are proved (merge rules), and five cases are marked `sorry`. I'll provide a proof skeleton for the remaining five cases.
+
+## Proof Skeleton for Remaining Cases
+
+Here's a proof skeleton for the five remaining cases:
+
+### 1. `R_int_delta : forall t, Step (integrate (delta t)) void`
+
+```lean
+| _, _, Step.R_int_delta t => by
+    -- Strategy: Show kappa decreases or stays same and mu decreases
+    -- kappa(integrate (delta t)) = kappa(t) (by simp)
+    -- kappa(void) = 0
+    -- Need to compare kappa(t) and 0
+    
+    -- Case 1: If kappa(t) > 0, then kappa decreases
+    -- Case 2: If kappa(t) = 0, then kappa ties and mu decreases
+    
+    by_cases hk : kappa t > 0
+    · -- kappa decreases case
+      have hk_lt : kappa kappa (integrate (delta t)) := by
+        simp [kappa] at hk ⊢
+        omega
+      exact drop_left hk_lt
+    · -- kappa ties case
+      have hk_eq : kappa void = kappa (integrate (delta t)) := by
+        simp [kappa]
+        omega
+      have hmu_lt : mu void < mu (integrate (delta t)) := by
+        simp [mu]
+        omega
+      exact drop_right hmu_lt hk_eq
+```
+
+### 2. `R_rec_zero : forall b s, Step (recDelta b s void) b`
+
+```lean
+| _, _, Step.R_rec_zero b s => by
+    -- Strategy: Compare kappa(recDelta b s void) and kappa(b)
+    -- kappa(recDelta b s void) = max(max(kappa b, kappa s), 0)
+    -- Need to show this is ≥ kappa b
+    
+    -- Case 1: If max(max(kappa b, kappa s), 0) > kappa b, then kappa decreases
+    -- Case 2: If they're equal, then mu decreases
+    
+    have hk_rec : kappa (recDelta b s void) = Nat.max (Nat.max (kappa b) (kappa s)) 0 := by
+      simp [kappa]
+    
+    by_cases hk : kappa b < kappa (recDelta b s void)
+    · -- kappa decreases case
+      exact drop_left hk
+    · -- kappa ties or increases case (but should only be ties)
+      have hk_eq : kappa b = kappa (recDelta b s void) := by
+        omega
+      have hmu_lt : mu b < mu (recDelta b s void) := by
+        simp [mu]
+        omega
+      exact drop_right hmu_lt hk_eq
+```
+
+### 3. `R_rec_succ : forall b s n, Step (recDelta b s (delta n)) (app s (recDelta b s n))`
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    -- This is the most complex case due to recursion depth
+    -- kappa(recDelta b s (delta n)) = max(max(kappa b, kappa s), kappa n) + 1
+    -- kappa(app s (recDelta b s n)) = max(kappa s, kappa (recDelta b s n))
+    -- where kappa(recDelta b s n) = max(max(kappa b, kappa s), kappa n)
+    
+    -- Strategy: Show kappa decreases by at least 1
+    
+    have hk_left : kappa (recDelta b s (delta n)) = 
+        Nat.max (Nat.max (kappa b) (kappa s)) (kappa n) + 1 := by
+      simp [kappa]
+    
+    have hk_right : kappa (app s (recDelta b s n)) = 
+        Nat.max (kappa s) (Nat.max (Nat.max (kappa b) (kappa s)) (kappa n)) := by
+      simp [kappa]
+    
+    -- Key inequality: max(s, max(max(b, s), n)) ≤ max(max(b, s), n)
+    -- Therefore kappa decreases by at least 1
+    
+    have hk_lt : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+      simp [kappa]
+      omega
+    
+    exact drop_left hk_lt
+```
+
+### 4. `R_eq_refl : forall a, Step (eqW a a) void`
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    -- Strategy: Similar to R_int_delta
+    -- kappa(eqW a a) = max(kappa a, kappa a) = kappa a
+    -- kappa(void) = 0
+    
+    by_cases hk : kappa a > 0
+    · -- kappa decreases case
+      have hk_lt : kappa void < kappa (eqW a a) := by
+        simp [kappa]
+        omega
+      exact drop_left hk_lt
+    · -- kappa ties case
+      have hk_eq : kappa void = kappa (eqW a a) := by
+        simp [kappa]
+        omega
+      have hmu_lt : mu void < mu (eqW a a) := by
+        simp [mu]
+        omega
+      exact drop_right hmu_lt hk_eq
+```
+
+### 5. `R_eq_diff : forall a b, Step (eqW a b) (integrate (merge a b))`
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    -- Strategy: Compare kappa measures
+    -- kappa(eqW a b) = max(kappa a, kappa b)
+    -- kappa(integrate (merge a b)) = kappa(merge a b) = max(kappa a, kappa b)
+    -- So kappa ties
+    
+    have hk_eq : kappa (integrate (merge a b)) = kappa (eqW a b) := by
+      simp [kappa]
+    
+    -- Now show mu decreases
+    have hmu_lt : mu (integrate (merge a b mu (eqW a b) := by
+      simp [mu]
+      omega
+    
+    exact drop_right hmu_lt hk_eq
+```
+
+## Key Observations for Completing the Proofs:
+
+1. **Use the simplification lemmas**: All `kappa_*` and `mu_*` lemmas marked with `@[simp]` can be used with `simp` to simplify expressions.
+
+2. **Understand the measure definitions**:
+   - `kappa` counts recursion depth (adds +1 for `recDelta` with `delta` argument)
+   - `mu` counts weighted structural size
+
+3. **Lexicographic order strategy**:
+   - First try to show `kappa` decreases (`drop_left`)
+   - If `kappa` stays the same, show `mu` decreases (`drop_right`)
+
+4. **Use `omega` for arithmetic**: The `omega` tactic is useful for solving linear arithmetic inequalities.
+
+5. **Case analysis**: Use `by_cases` to handle different scenarios (e.g., whether `kappa t > 0`).
+
+The most challenging case is `R_rec_succ` because it involves the recursive definition where `kappa` adds +1 for `recDelta` with `delta` argument. The key insight is that moving from `recDelta b s (delta n)` to `app s (recDelta b s n)` reduces the recursion depth by exactly 1.
+
+This skeleton provides the structure and reasoning for each case. The actual proofs would need to fill in the arithmetic details using `simp` and `omega`.

@@ -1,0 +1,27 @@
+Yes – strong normalization is derivable from the rules exactly as stated.
+
+Informal proof-roadmap (within the given limits)
+
+1. Define a well-founded weight   $\lVert\;·\;\rVert :\text{Trace}\to\mathbb N$  
+   • $\lVert\text{plum}\rVert =0$  
+   • $\lVert\text{grape}\;t\rVert =\lVert t\rVert +1$  
+   • $\lVert\text{mango}\;t\rVert =\lVert t\rVert +2$  
+   • $\lVert\text{peach}\;t_1\,t_2\rVert =\lVert t_1\rVert+\lVert t_2\rVert +1$  
+   • $\lVert\text{pear}\;s\,t\rVert   =\lVert s\rVert+\lVert t\rVert +1$  
+   • $\lVert\text{banana}\;b\,s\,n\rVert =\lVert b\rVert+\lVert s\rVert+2\lVert n\rVert+2$  
+   • $\lVert\text{cherry}\;a\,b\rVert  =\lVert a\rVert+\lVert b\rVert+3$
+
+   The coefficients are chosen so that every rule strictly lowers the weight; the only delicate case is  
+
+   $\text{banana}\;b\,s\;(\text{grape}\;n)\;\longrightarrow\;\text{pear}\;s\,(\text{banana}\;b\,s\,n)$  
+
+   for which  
+   $$\lVert\text{LHS}\rVert-\lVert\text{RHS}\rVert = 
+     \bigl[\lVert b\rVert+\lVert s\rVert+2\lVert n\rVert+2\bigr] 
+     -\bigl[\lVert s\rVert+1+\lVert b\rVert+\lVert s\rVert+2\lVert n\rVert+2\bigr]= -\lVert s\rVert-1 <0.$$
+
+   All other rules either erase a constructor (mango–grape, peach-rules, banana-zero, cherry-refl) or replace a high-rank symbol by lower-rank ones (cherry-diff), so the weight drops.
+
+2. Because $\mathbb N$ is well-founded, no infinite strictly descending sequence exists; hence every reduction sequence is finite.
+
+Therefore the presented calculus is strongly normalizing without any extra axioms, side conditions, or extensions.

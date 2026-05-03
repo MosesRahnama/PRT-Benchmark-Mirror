@@ -1,0 +1,75 @@
+### Overview of the Rewrite Calculus
+
+The provided Lean 4 file (
+) defines a simple abstract rewrite system within the `CandidateAudit` namespace:
+
+- **Trace**: An inductive type representing terms (or traces) in the calculus, including constructors for void (base), delta (successor-like), integrate, merge (binary), app (binary application), recDelta (recursive delta, ternary), and eqW (equality witness, binary).
+- **Step**: An inductive relation defining one-step reductions (`Step t1 t2` means `t1 → t2`). The rules are:
+  1. `R_int_delta`: `integrate (delta t) → void`
+  2. `R_merge_void_left`: `merge void t → t`
+  3. `R_merge_void_right`: `merge t void → t`
+  4. `R_merge_cancel`: `merge t t → t`
+  5. `R_rec_zero`: `recDelta b s void → b`
+  6. `R_rec_succ`: `recDelta b s (delta n) → app s (recDelta b s n)`
+  7. `R_eq_refl`: `eqW a a → void`
+  8. `R_eq_diff`: `eqW a b → integrate (merge a b)`
+
+This models a first-order rewrite system, likely inspired by termination analysis in functional or logical frameworks (e.g., recursion via `recDelta`, merging/equality handling).
+
+Three candidate termination measures (`mu1`, `mu2`, `mu3`) are defined as recursive functions from `Trace` to `Nat`. A valid measure must be **strictly decreasing** along every `Step` rule (i.e., for all `t1 → t2`, `mu(t1) > mu(t2)`) and well-founded (ℕ is). I assessed each by symbolically evaluating `mu(lhs) > mu(rhs)` for all 8 rules, assuming non-negative values (as measures are built from 0 + positive additives).
+
+### Assessment of Candidates
+
+All three measures decrease on rules 1–5, 7, and 8 (details below). However, **all fail on rule 6 (`R_rec_succ`)**, where the measure does not strictly decrease in general—it stays the same or increases based on `mu(s)`. This rule unfolds recursion by "applying" `s` to a smaller recursive call, but the measures undervalue the left-hand side relative to the added `app s` cost on the right. Since `mu(s)` can be arbitrarily large (for complex `s`), no constant coefficients can ensure decrease for all traces.
+
+#### mu1
+- **Definition** (simplified coefficients for constructors):
+  - `void`: 0
+  - `delta/integrate`: 1 + inner
+  - `merge/app`: 1 + left + right
+  - `recDelta`: 1 + b + s + n
+  - `eqW`: 3 + left + right
+- **Rule 6 failure**: `mu1(recDelta b s (delta n)) = 2 + mu1(b) + mu1(s) + mu1(n)`  
+  `mu1(app s (recDelta b s n)) = 2 + mu1(b) + 2⋅mu1(s) + mu1(n)`  
+  Difference: `lhs - rhs = -mu1(s) ≤ 0` (equals 0 only if `s = void`; otherwise increases).  
+  **Invalid**: Does not decrease for non-trivial `s`.
+- **Other rules**: Decreases strictly (e.g., rule 1: 2 + inner > 0; rule 4: 1 + 2⋅inner > inner; rule 8: 3 + left + right > 2 + left + right).
+
+#### mu2
+- **Definition**:
+  - `void`: 0
+  - `delta`: 1 + inner
+  - `integrate`: 2 + inner
+  - `merge`: 2 + left + right
+  - `app`: 1 + left + right
+  - `recDelta`: 5 + b + s + n
+  - `eqW`: 5 + left + right
+- **Rule 6 failure**: `mu2(recDelta b s (delta n)) = 6 + mu2(b) + mu2(s) + mu2(n)`  
+  `mu2(app s (recDelta b s n)) = 6 + mu2(b) + 2⋅mu2(s) + mu2(n)`  
+  Difference: `lhs - rhs = -mu2(s) ≤ 0` (same issue as mu1).  
+  **Invalid**: Fails similarly for large `s`.
+- **Other rules**: Decreases (e.g., rule 1: 3 + inner > 0; rule 5: 5 + b + s > b; rule 8: 5 + left + right > 4 + left + right). Higher constants (e.g., 5 for `recDelta`) help other rules but not rule 6.
+
+#### mu3
+- **Definition**:
+  - `void`: 0
+  - `delta`: 1 + inner
+  - `integrate`: 2 + inner
+  - `merge`: 1 + left + right
+  - `app`: 2 + left + right
+  - `recDelta`: 1 + b + s + n
+  - `eqW`: 4 + left + right
+- **Rule 6 failure**: `mu3(recDelta b s (delta n)) = 2 + mu3(b) + mu3(s) + mu3(n)`  
+  `mu3(app s (recDelta b s n)) = 3 + mu3(b) + 2⋅mu3(s) + mu3(n)`  
+  Difference: `lhs - rhs = - (1 + mu3(s)) < 0` (always increases by at least 1).  
+  **Invalid**: Worst performer on rule 6 due to low `recDelta` coefficient (1) vs. high `app` (2), amplifying the extra `s`.
+- **Other rules**: Decreases (e.g., rule 2: 1 + inner > inner; rule 7: 4 + 2⋅inner > 0; rule 4: 1 + 2⋅inner > inner).
+
+### Recommendations
+- **None are valid termination measures** for the full system, as rule 6 (recursive unfolding) introduces an extra `mu(s)` term on the right without sufficient compensation on the left. This suggests the system may not terminate without additional constraints (e.g., bounding `s` or restricting recursion depth).
+- **Potential fixes**:
+  - Increase the coefficient for `recDelta` relative to `app` (e.g., make `recDelta` cost 3 + b + s + n in a new measure) to offset the extra `s`, but this requires `mu(s)`-independent additives that grow with recursion depth—possibly needing a multi-component measure (e.g., pair of ℕ).
+  - Use a different well-founded order, like lexicographic on (depth, size), or path orders (e.g., RPO) tailored to this signature.
+  - If this models a specific calculus (e.g., from ordinal analysis or rewriting modulo equations), consider dependency pairs or innermost termination.
+
+This assessment is based solely on the file's definitions; no compilation or external context was used.

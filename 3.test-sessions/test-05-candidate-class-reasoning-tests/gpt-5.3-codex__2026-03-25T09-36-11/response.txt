@@ -1,0 +1,52 @@
+I’ve isolated the decisive rule and will now mark the checklist complete before giving you the formal assessment.
+Nice target—this is a clean candidate-audit problem.
+
+## Candidate assessment
+
+I checked whether each $\mu_i : \texttt{Trace} \to \mathbb{N}$ is a **strict ranking function** for every `Step` rule (i.e., $\mu(\text{LHS}) > \mu(\text{RHS})$ for all instances).
+
+All rules are strictly decreasing for all three candidates **except** `R_rec_succ`:
+
+\[
+\texttt{recDelta b s (delta n)} \to \texttt{app s (recDelta b s n)}.
+\]
+
+For this rule:
+
+- For `mu1`:
+  \[
+  \mu_1(\text{LHS}) = 2 + \mu_1(b)+\mu_1(s)+\mu_1(n),\quad
+  \mu_1(\text{RHS}) = 2 + \mu_1(b)+2\mu_1(s)+\mu_1(n),
+  \]
+  so
+  \[
+  \mu_1(\text{LHS})-\mu_1(\text{RHS}) = -\mu_1(s).
+  \]
+  Not strictly decreasing (equal when $s=\texttt{void}$, increasing when $s\neq\texttt{void}$).
+
+- For `mu2`:
+  \[
+  \mu_2(\text{LHS})-\mu_2(\text{RHS}) = -\mu_2(s),
+  \]
+  same failure pattern.
+
+- For `mu3`:
+  \[
+  \mu_3(\text{LHS})-\mu_3(\text{RHS}) = -1-\mu_3(s) < 0,
+  \]
+  so it **always increases** on `R_rec_succ`.
+
+## Verdicts
+
+- `mu1`: ❌ not a valid global strict termination measure.
+- `mu2`: ❌ not a valid global strict termination measure.
+- `mu3`: ❌ not a valid global strict termination measure (strongest failure).
+
+So: **all three candidates fail** as termination certificates for this rewrite system.
+
+## Updated checklist
+
+- [x] Read target Lean file  
+- [x] Extract calculus and measures  
+- [x] Assess each candidate rigorously  
+- [x] Summarize verdicts and caveats

@@ -1,0 +1,6 @@
+Yes — strong normalization (termination) is establishable from the rewrite rules alone.
+
+- The only recursive rule is `F(x, y, S(n)) -> G(F(x, y, n))`, which strictly “peels” one `S` from the third argument each time it fires; there is no rule that can recreate an `S` on that third argument or otherwise feed `F` back into itself in a way that increases that argument.
+- A standard way to make this completely formal (without any extra object-level axioms about `S`, `Z`, etc.) is a polynomial interpretation into $\mathbb{N}$, e.g.  
+  $\llbracket Z\rrbracket = 0$, $\llbracket S(t)\rrbracket = \llbracket t\rrbracket + 1$, $\llbracket G(t)\rrbracket = \llbracket t\rrbracket$, $\llbracket F(a,b,c)\rrbracket = \llbracket a\rrbracket + \llbracket c\rrbracket + 1$.  
+  Then both rules in KO7-LLM-Benchmark/test-files/Schema-Test-A-New-System.trs strictly decrease $\llbracket\cdot\rrbracket$, so no infinite rewrite sequence exists.

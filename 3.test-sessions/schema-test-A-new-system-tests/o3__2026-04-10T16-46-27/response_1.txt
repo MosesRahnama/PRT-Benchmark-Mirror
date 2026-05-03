@@ -1,0 +1,18 @@
+Yes – strong normalization follows from the two rules alone.
+
+Reasoning (sketch):
+
+1. Define a well-founded measure on terms.
+   • Give weight 0 to constructors `Z`, `G`, variables, and all arguments except the third of `F`.  
+   • For a term `F(u,v,t)` let its weight be `1 + weight(t)`; all other term forms keep the sum of their sub-weights.
+
+2. Rule 1
+   F(x, y, Z) → x  
+   strictly decreases the weight, because the left side contributes `1` while the right side does not.
+
+3. Rule 2  
+   F(x, y, S(n)) → G(F(x, y, n))  
+   removes one outer `S` from the third argument of `F`, so the inner `F` has strictly smaller weight than the original.  
+   Adding the wrapper `G` does not change the weight (it is assigned 0), so the overall weight drops.
+
+4. No other symbols rewrite, hence every step strictly lowers the global weight; an infinite descending sequence is impossible. All reduction sequences therefore terminate, i.e. the system is strongly normalizing without requiring any additional axioms or assumptions.

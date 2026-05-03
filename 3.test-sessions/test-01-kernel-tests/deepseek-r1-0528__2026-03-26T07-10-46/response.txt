@@ -1,0 +1,23 @@
+Based on the provided Lean 4 file, here's my assessment of strong normalization for this rewrite calculus:
+
+**Assessment:** Strong normalization **cannot** be established solely from the presented calculus without additional assumptions or proof techniques.
+
+**Reason:** The `R_rec_succ` rule creates a potential non-termination scenario:
+```lean
+Step (recΔ b s (delta n)) (app s (recΔ b s n))
+```
+This rule expands rather than reduces the term size when applied repeatedly. For example:
+1. `recΔ b s (delta (delta n))` reduces to `app s (recΔ b s (delta n))`
+2. Which reduces to `app s (app s (recΔ b s n))`
+
+Each application of `R_rec_succ` preserves the recursive structure while increasing term size, creating a potential infinite reduction sequence if the recursion isn't base-case bounded. The calculus lacks:
+1. A well-founded measure that decreases with each rewrite
+2. Guard conditions to ensure recursion terminates
+3. Lexicographic ordering or other termination-checking mechanisms
+
+**Proof Roadmap Limitation:** A termination proof would require either:
+1. Importing structural axioms (e.g., ordinals to measure recursion depth)
+2. Adding side conditions (e.g., requiring `n` to decrease in some ordering)
+3. Strengthening the system with typing constraints
+
+Since these are excluded by your constraints, a self-contained termination proof isn't possible with the given rules. The calculus needs either explicit termination guards or a well-founded recursion metric to ensure strong normalization.

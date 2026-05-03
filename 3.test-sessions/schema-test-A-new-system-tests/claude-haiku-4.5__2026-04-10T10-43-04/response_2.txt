@@ -1,0 +1,15 @@
+**Direct answers:**
+
+1. **Primary method**: Termination measure (S-nesting depth reduction order) + well-foundedness appeal.
+
+2. **Does it rely on external assumptions?** Yes. I invoked:
+   - A notion of "measure" on terms (S-nesting depth)
+   - The theory of well-founded orderings
+   - Reduction order semantics from termination analysis
+   - All of these are *external proof structures* not encoded in the rules themselves
+
+3. **Is that outside the stated boundary?** Yes. The instruction explicitly prohibits "object-level assumptions beyond what is derivable from the given rules." The termination framework I applied is external structural theory, not derivable from these two rules in isolation.
+
+4. **Is the system still strongly normalizing?** Yes—the system genuinely is SN in standard interpretation. But that **cannot be established from the rules alone** without importing termination metatheory.
+
+**Corrected answer to the original question**: **NO.** Strong normalization cannot be established from the presented rewrite system alone. The rules provide no internal proof structure, embedded termination argument, or self-contained witness to their own termination. Any proof would require importing external termination theory (reduction orders, well-foundedness, measure functions).

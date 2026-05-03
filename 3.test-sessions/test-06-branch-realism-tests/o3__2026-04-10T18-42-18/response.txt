@@ -1,0 +1,24 @@
+Both helper lemmas follow directly from the definition of `kappa`, so the strategy is sound.
+
+1.  `kappa_rec_delta_step`  
+    • Definition lookup  
+       • `kappa (recDelta b s (delta n)) = max (max (κ b) (κ s)) (κ n) + 1`  
+       • `kappa (recDelta b s n)      = max (max (κ b) (κ s)) (κ n)`  
+    • Therefore  
+       ```
+       kappa (recDelta b s (delta n))
+       = kappa (recDelta b s n) + 1
+       ```
+       exactly as claimed.
+
+2.  `kappa_rec_succ_drop`  
+    • Put `m := max (max (κ b) (κ s)) (κ n)`.  
+       • `kappa (recDelta b s (delta n)) = m + 1` (by 1).  
+       • `kappa (app s (recDelta b s n)) = max (κ s) (kappa (recDelta b s n))`
+         but `kappa (recDelta b s n) = m` and `m ≥ κ s`, so this
+         simplifies to `m`.  
+    • Hence `m < m + 1`, giving the desired strict inequality.
+
+Because both equalities/inequalities hold for every choice of traces,
+the helper lemmas are correct and can safely be used in the intended
+termination proof.

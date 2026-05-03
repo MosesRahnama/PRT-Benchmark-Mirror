@@ -1,0 +1,60 @@
+For each of the five remaining `sorry` cases in the `measure_decreases` theorem, the proof skeleton follows the same pattern as the three completed cases: establish that the lexicographic measure `(kappa, mu)` decreases strictly from the source term to the target term. This is done by either:
+
+- Showing a strict decrease in `kappa` (left component of the lex order), which immediately gives `LexOrder` decrease via `drop_left`.
+- Or showing `kappa` remains equal and `mu` decreases strictly (right component), giving `LexOrder` decrease via `drop_right`.
+
+The proofs rely on the `@[simp]` lemmas for `kappa` and `mu`, along with basic arithmetic (e.g., `omega` for inequalities). Below is a proof skeleton for each case, including the key inequalities to establish and the appropriate `drop_left` or `drop_right` application. These are structured as direct replacements for the `sorry` placeholders.
+
+### Case: `Step.R_int_delta t` (integrate (delta t) --> void)
+```
+| _, _, Step.R_int_delta t => by
+  -- kappa decreases from kappa t to 0 (unless kappa t = 0, in which case it ties)
+  -- mu decreases from 1 + mu t to 0
+  cases Nat.lt_or_eq 0 (kappa t) with
+  | inl hk => exact drop_left hk  -- kappa decreases strictly
+  | inr hk => 
+    have hmu : mu void < mu (integrate (delta t)) := by simp [mu]; omega
+    exact drop_right hmu hk  -- kappa ties, mu decreases
+```
+
+### Case: `Step.R_rec_zero b s` (recDelta b s void --> b)
+```
+| _, _, Step.R_rec_zero b s => by
+  -- kappa decreases from max(kappa b, kappa s) to kappa b (unless kappa s ≤ kappa b, in which case it ties)
+  -- mu decreases from 3 + mu b + mu s to mu b
+  cases Nat.lt_or_le (kappa b) (kappa s) with
+  | inl hk => exact drop_left hk  -- kappa decreases strictly
+  | inr hk => 
+    have hmu : mu b < mu (recDelta b s void) := by simp [mu]; omega
+    exact drop_right hmu (by simp [kappa]; omega)  -- kappa ties, mu decreases
+```
+
+### Case: `Step.R_rec_succ b s n` (recDelta b s (delta n) --> app s (recDelta b s n))
+```
+| _, _, Step.R_rec_succ b s n => by
+  -- kappa decreases strictly from max(kappa b, kappa s, kappa n) + 1 to max(kappa b, kappa s, kappa n)
+  have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by simp [kappa]; omega
+  exact drop_left hk
+```
+
+### Case: `Step.R_eq_refl a` (eqW a a --> void)
+```
+| _, _, Step.R_eq_refl a => by
+  -- kappa decreases from kappa a to 0 (unless kappa a = 0, in which case it ties)
+  -- mu decreases from 4 + 2 * mu a to 0
+  cases Nat.lt_or_eq 0 (kappa a) with
+  | inl hk => exact drop_left hk  -- kappa decreases strictly
+  | inr hk => 
+    have hmu : mu void < mu (eqW a a) := by simp [mu]; omega
+    exact drop_right hmu hk  -- kappa ties, mu decreases
+```
+
+### Case: `Step.R_eq_diff a b` (eqW a b --> integrate (merge a b))
+```
+| _, _, Step.R_eq_diff a b => by
+  -- kappa ties at max(kappa a, kappa b)
+  -- mu decreases from 4 + mu a + mu b to 3 + mu a + mu b
+  have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by simp [mu]; omega
+  have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by simp [kappa]
+  exact drop_right hmu hk
+```

@@ -1,0 +1,32 @@
+## Assessment
+
+**Yes, strong normalization can be established from the presented calculus using standard methods.**
+
+### Key Observation
+
+The system admits a **polynomial interpretation** over ℕ that strictly decreases under every rule:
+
+```
+⟦plum⟧         = 1
+⟦grape t⟧      = ⟦t⟧ + 1
+⟦mango t⟧      = ⟦t⟧ + 1
+⟦peach s t⟧    = ⟦s⟧ + ⟦t⟧ + 1
+⟦pear s t⟧     = ⟦s⟧ + ⟦t⟧
+⟦banana b s n⟧ = ⟦b⟧ + 2^⟦n⟧ · ⟦s⟧
+⟦cherry a b⟧   = ⟦a⟧ + ⟦b⟧ + 3
+```
+
+### Proof Roadmap
+
+1. **Verify all rules decrease strictly:**
+   - Rules 1–5, 7 decrease by simple arithmetic (each involves removing structure or collapsing arguments)
+   - **R_apple_orange** (the non-trivial case): `2^(⟦n⟧+1)·⟦s⟧ > ⟦s⟧·(1 + 2^⟦n⟧)` holds since `2^⟦n⟧ > 1` when `⟦n⟧ ≥ 1`
+   - **R_cherry_diff**: `⟦a⟧ + ⟦b⟧ + 3 > ⟦a⟧ + ⟦b⟧ + 2`
+
+2. **Conclude SN:** Since ⟦·⟧ maps all terms into ℕ⁺ and every rewrite step strictly decreases this measure, no infinite reduction sequence exists.
+
+### Note on `R_cherry_diff`
+
+The rule carries a side condition (`a ≠ b`), but this is a **syntactic guard** already present in your calculus—not something the proof introduces. Syntactic inequality on ground first-order terms is decidable by structural comparison, so this doesn't require importing external axioms. The polynomial interpretation handles both branches (refl and diff) uniformly.
+
+**Verdict:** SN is provable within standard term-rewriting methodology (polynomial interpretation) without strengthening the system.

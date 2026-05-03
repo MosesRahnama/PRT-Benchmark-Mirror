@@ -1,0 +1,109 @@
+**The system:**
+- R1: `F(x, y, Z) → x`
+- R2: `F(x, y, S(n)) → G(y, F(x, y, n))`
+
+G has no rules, so it is irreducible. The only defined symbol is F. Below I evaluate each method against (1) proof validity and (2) boundary compliance.
+
+---
+
+## Method A — LPO with precedence F > G > S > Z
+
+**Proof validity:** Check each rule.
+
+- R1: `F(x, y, Z) →_lpo x`. x is a subterm of the left side → holds by the subterm case of LPO. ✓  
+- R2: `F(x, y, S(n)) →_lpo G(y, F(x, y, n))`. Since F > G, it suffices to show the left side is >_lpo each argument of G:  
+  - Left >_lpo y: y is a subterm of the left. ✓  
+  - Left >_lpo F(x, y, n): same top symbol F, so compare lexicographically. First two args match; third: S(n) >_lpo n because n is a proper subterm of S(n). ✓
+
+**Boundary:** LPO operates entirely on the signature and rules as given. No external axioms. ✓
+
+**Verdict: passes both conditions.**
+
+---
+
+## Method B — Polynomial interpretation
+
+**Proof validity:** Evaluate both rules.
+
+- R1: `[F(x, y, Z)] = x + 0 + 1 = x + 1 > x`. ✓  
+- R2: `[F(x, y, S(n))] = x + (n+1) + 1 = x + n + 2`. `[G(y, F(x, y, n))] = [F(x, y, n)] = x + n + 1`. Then x + n + 2 > x + n + 1. ✓
+
+The interpretation maps every rewrite step to a strictly decreasing natural number.
+
+**Boundary:** The interpretation is defined using only the symbols in the signature. No structural axioms are imported. ✓
+
+**Verdict: passes both conditions.**
+
+---
+
+## Method C — KBO with uniform weights w = 1
+
+**Proof validity:** KBO requires the *variable condition*: every variable must occur at least as often in the left-hand side as in the right-hand side.
+
+Check R2: `F(x, y, S(n)) → G(y, F(x, y, n))`
+
+- Variable y occurs **once** on the left.  
+- Variable y occurs **twice** on the right (as the first argument of G, and as the second argument of the inner F).
+
+The variable condition fails for y. KBO cannot orient R2.
+
+**Verdict: fails condition 1. Does not prove termination.**
+
+---
+
+## Method D — Dependency pairs with subterm criterion on the third argument of F
+
+**Proof validity:** The only defined symbol is F. From R2, the unique dependency pair is:
+
+> F#(x, y, S(n)) → F#(x, y, n)
+
+Apply the subterm criterion with projection π(F#(x, y, n)) = n (third argument):
+
+- π(left) = S(n)  
+- π(right) = n  
+- n is a proper subterm of S(n), so S(n) >_subterm n strictly. ✓
+
+The DP problem is solved by the subterm criterion alone; no further processor is needed.
+
+**Boundary:** The dependency pair transformation and the subterm criterion operate solely on the rules and the syntactic structure of the given signature. No object-level assumptions are imported. ✓
+
+**Verdict: passes both conditions.**
+
+---
+
+## Method E — Direct descent measure on the third argument
+
+**Proof validity:** The stated measure is:
+
+> μ(F(x, y, n)) = depth_S(n) + 1  
+> μ(G(a, b)) = μ(b)  
+> μ(x) = 0 for variables
+
+The argument is that every rewrite step strictly decreases μ. This fails.
+
+**Counterexample:** Let a, b, c be irreducible constants. Consider the ground term F(F(a, b, S(Z)), c, Z). By R1 (with x = F(a, b, S(Z)), y = c):
+
+> F(F(a, b, S(Z)), c, Z) → F(a, b, S(Z))
+
+- μ(left) = depth_S(Z) + 1 = 0 + 1 = **1**  
+- μ(right) = depth_S(S(Z)) + 1 = 1 + 1 = **2**
+
+μ increases from 1 to 2 across a valid rewrite step. The measure as defined is not monotonically decreasing.
+
+The root cause: the measure ignores the complexity of the first argument x, which is transferred verbatim to the result of R1. When x itself contains F-terms with deep third arguments, their cost is hidden in the left-hand side but exposed in the right-hand side.
+
+**Verdict: fails condition 1. Does not prove termination as stated.**
+
+---
+
+## Summary
+
+| Method | Proves termination? | Within boundary? | Satisfies both? |
+|--------|--------------------|--------------------|-----------------|
+| A (LPO) | Yes | Yes | **Yes** |
+| B (Polynomial) | Yes | Yes | **Yes** |
+| C (KBO uniform) | No — variable condition fails for y in R2 | — | No |
+| D (DP + subterm) | Yes | Yes | **Yes** |
+| E (Direct descent) | No — measure increases at R1 when x contains F-subterms | — | No |
+
+**Methods A, B, and D satisfy both conditions.**

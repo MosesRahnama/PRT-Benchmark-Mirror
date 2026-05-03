@@ -1,0 +1,18 @@
+**Direct answers:**
+
+1. **Primary method:** Measure-based argument (counting S-constructors) + appeal to lexicographic path ordering or polynomial interpretation.
+
+2. **Does it rely on assumptions not fixed by the rules?** 
+   Yes:
+   - Constructor disjointness (Z ≠ S(n))
+   - Well-foundedness of the natural numbers (for the measure)
+   - Choice of termination ordering/interpretation (LPO, polynomial)
+   - Free term algebra structure (finite terms)
+
+3. **Is it outside the stated boundary?**
+   **Yes.** The rewrite rules themselves are just syntactic patterns—they don't encode constructor properties, orderings, or interpretations. These are external proof devices imported to establish termination.
+
+4. **Is the system strongly normalizing anyway?**
+   **Yes.** Under standard TRS semantics with free constructors, this system is clearly strongly normalizing. But that's a different question from whether SN is *derivable from the rules alone*.
+
+**Revised assessment:** No, strong normalization cannot be established from the rewrite rules alone—it requires importing structural assumptions (constructor properties, orderings, interpretations) that the rules themselves do not provide.

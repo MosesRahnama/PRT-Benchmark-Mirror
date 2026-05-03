@@ -1,0 +1,82 @@
+### Proof Skeletons for Remaining Cases
+
+Below, I provide proof skeletons for the five remaining cases in the `measure_decreases` theorem. Each skeleton follows the structure of the proved cases (using `drop_left` or `drop_right` based on whether `kappa` strictly decreases or ties while `mu` decreases). These are based on analyzing the definitions of `kappa` and `mu` for each rule. I've included key lemmas and conditions to prove the lexicographic decrease, but left tactical details (e.g., exact `simp` or `omega` invocations) as placeholders for completion.
+
+These skeletons can replace the corresponding `sorry` in the file (though per instructions, I am not modifying the file itself).
+
+#### Case: `R_int_delta` (integrate (delta t) → void)
+```lean
+| _, _, Step.R_int_delta t => by
+    -- kappa: lhs = kappa t, rhs = 0 (may decrease if kappa t > 0, else ties)
+    -- mu: lhs = 1 + mu t, rhs = 0 (always decreases by at least 1)
+    -- Cases: if kappa t > 0, drop left (0 < kappa t); else ties and drop right (0 < 1 + mu t)
+    cases Nat.eq_zero_or_pos (kappa t) with
+    | inl hk_zero =>
+      have hk : kappa void = kappa (integrate (delta t)) := by simp [hk_zero]
+      have hmu : mu void < mu (integrate (delta t)) := by simp; omega  -- or exact Nat.zero_lt_one_add _
+      exact drop_right hmu hk
+    | inr hk_pos =>
+      have hk : kappa void < kappa (integrate (delta t)) := by simp [hk_pos]
+      exact drop_left hk
+```
+
+#### Case: `R_rec_zero` (recDelta b s void → b)
+```lean
+| _, _, Step.R_rec_zero b s => by
+    -- kappa: lhs = max (max (kappa b) (kappa s)) 0 = max (kappa b) (kappa s)
+    --        rhs = kappa b (decreases if kappa s > kappa b, else ties)
+    -- mu: lhs = 3 + mu b + mu s, rhs = mu b (decreases by at least 3 if mu s = 0)
+    -- Cases: compare kappa s and kappa b
+    cases Nat.lt_or_le (kappa b) (kappa s) with
+    | inl h_lt =>  -- kappa decreases: kappa b < max (kappa b) (kappa s) = kappa s
+      have hk : kappa b < kappa (recDelta b s void) := by simp [Nat.max_eq_right h_lt.le]
+      exact drop_left hk
+    | inr h_le =>  -- kappa ties at max = kappa b
+      have hk : kappa b = kappa (recDelta b s void) := by simp [Nat.max_eq_left h_le]
+      have hmu : mu b < mu (recDelta b s void) := by simp; omega  -- decreases by 3 + mu s >= 3
+      exact drop_right hmu hk
+```
+
+#### Case: `R_rec_succ` (recDelta b s (delta n) → app s (recDelta b s n))
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    -- kappa: lhs = max (max (kappa b) (kappa s)) (kappa n) + 1
+    --        rhs = max (kappa s) (kappa (recDelta b s n)) <= max (max (kappa b) (kappa s)) (kappa n) (strictly < lhs due to +1 peel-off)
+    -- mu: lhs = 3 + mu b + mu s + mu n
+    --     rhs = 1 + mu s + (3 + mu b + mu s + mu n) = 4 + mu b + 2 * mu s + mu n (> lhs, so must rely on kappa decrease)
+    -- Prove kappa rhs < kappa lhs (induction on n or max analysis)
+    have hk : kappa (app s (recDelta b s n)) < kappa (recDelta b s (delta n)) := by
+      simp [Nat.max_assoc]  -- unfold and show max ks (max (max kb ks) (kappa n)) < max (max kb ks) (kappa n) + 1
+      apply Nat.lt_succ_of_le
+      apply Nat.le_max_right  -- or more detailed max inequalities
+    exact drop_left hk
+```
+
+#### Case: `R_eq_refl` (eqW a a → void)
+```lean
+| _, _, Step.R_eq_refl a => by
+    -- kappa: lhs = max (kappa a) (kappa a) = kappa a, rhs = 0 (decreases if kappa a > 0, else ties)
+    -- mu: lhs = 4 + 2 * mu a, rhs = 0 (always decreases by at least 4)
+    -- Similar to R_int_delta: cases on kappa a
+    cases Nat.eq_zero_or_pos (kappa a) with
+    | inl hk_zero =>
+      have hk : kappa void = kappa (eqW a a) := by simp [hk_zero]
+      have hmu : mu void < mu (eqW a a) := by simp; omega  -- 0 < 4 + 2 * mu a >= 4
+      exact drop_right hmu hk
+    | inr hk_pos =>
+      have hk : kappa void < kappa (eqW a a) := by simp [hk_pos]
+      exact drop_left hk
+```
+
+#### Case: `R_eq_diff` (eqW a b → integrate (merge a b))
+```lean
+| _, _, Step.R_eq_diff a b => by
+    -- kappa: lhs = max (kappa a) (kappa b)
+    --        rhs = kappa (merge a b) = max (kappa a) (kappa b) (ties, integrate transparent)
+    -- mu: lhs = 4 + mu a + mu b
+    --     rhs = 1 + (2 + mu a + mu b) = 3 + mu a + mu b (decreases by 1)
+    -- Always kappa ties, mu drops strictly
+    have hmu : mu (integrate (merge a b)) < mu (eqW a b) := by simp; omega  -- 3 + ... < 4 + ...
+    have hk : kappa (integrate (merge a b)) = kappa (eqW a b) := by simp
+    exact drop_right hmu hk
+```

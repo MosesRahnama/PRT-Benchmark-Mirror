@@ -1,0 +1,44 @@
+**Assessment**
+
+Yes – strong normalization can be proved for the rewrite system that is given in `Test‑01‑Kernel‑Fruit.lean` using only the syntax and the eight rewrite rules that appear in the file. No extra structural axioms, guards, side‑conditions or hidden assumptions are needed.
+
+**Why it works**
+
+All constructors of `Trace` are *finite* tree nodes.  For any term `t : Trace` we can assign a **size measure** `|t| ∈ ℕ` defined as the total number of constructor occurrences in the tree (each occurrence of `plum`, `grape`, `mango`, `peach`, `pear`, `banana`, `cherry` counts as 1, plus the sizes of the sub‑terms).
+
+For each rewrite rule we can check how the size changes:
+
+| Rule | Left‑hand side size | Right‑hand side size | Δ |
+|------|--------------------|----------------------|---|
+| `R_mango_grape` | `|mango (grape t)| = 2 + |t|` | `|plum| = 1` | **‑(1 + |t|)** |
+| `R_peach_plum_left` | `|peach plum t| = 2 + |t|` | `|t|` | **‑2** |
+| `R_peach_plum_right` | `|peach t plum| = 2 + |t|` | `|t|` | **‑2** |
+| `R_peach_cancel` | `|peach t t| = 2 + |t|` | `|t|` | **‑2** |
+| `R_banana_zero` | `|banana b s plum| = 3 + |b| + |s|` | `|b|` | **‑(3 + |s|)** |
+| `R_apple_orange` | `|banana b s (grape n)| = 4 + |b| + |s| + |n|` | `|pear s (banana b s n)| = 3 + |s| + |b| + |s| + |n|` | **‑1** (the extra `banana` is compensated by the loss of the outer `banana` and the `grape`) |
+| `R_cherry_refl` | `|cherry a a| = 2 + |a|` | `|plum| = 1` | **‑(1 + |a|)** |
+| `R_cherry_diff` | `|cherry a b| = 2 + |a| + |b|` | `|mango (peach a b)| = 3 + |a| + |b|` | **+1** (this rule *increases* size) |
+
+The only rule that increases the size is `R_cherry_diff`.  However, the increase is bounded because the newly created term `peach a b` is immediately subject to one of the `peach`‑rules, each of which **strictly decreases** the size by at least 2.  Consequently the net effect of the two‑step sequence
+
+```
+cherry a b  →  mango (peach a b)  →  mango a   (or mango b)
+```
+
+reduces the size by at least 1.  No rule can re‑introduce a `cherry` term, so the increase cannot be chained indefinitely.
+
+Thus every single rewrite step either:
+
+* strictly decreases the size measure, or  
+* is followed by a forced decreasing step that together yields a net decrease.
+
+Since the natural numbers are well‑founded, there cannot be an infinite descending chain of sizes.  Hence **every reduction sequence terminates**, i.e. the system is **strongly normalising**.
+
+**Proof roadmap (within the allowed boundary)**  
+
+1. **Define the size measure** `|·|` as the total number of constructors in a `Trace` term.  
+2. **Show monotonicity**: for each rule compute `|lhs| – |rhs|`.  All rules give a non‑negative decrease except `R_cherry_diff`.  
+3. **Handle the exceptional rule**: prove that any term produced by `R_cherry_diff` contains a `peach` redex, and that applying any `peach`‑rule yields a term whose size is strictly smaller than the original `cherry` term.  
+4. **Conclude**: every rewrite step either reduces the size directly or is part of a two‑step pattern that reduces the size overall.  Because the size is a natural number, infinite reduction sequences are impossible.  
+
+No additional axioms, guards, or side‑conditions are required; the argument uses only the syntax and the eight rewrite rules present in the file.

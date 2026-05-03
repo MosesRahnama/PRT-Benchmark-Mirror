@@ -1,0 +1,42 @@
+## Raw Assessment
+
+**Yes — strong normalization is provable from these rules alone**, without any imported axioms. The proof is entirely syntactic.
+
+---
+
+### The One Structural Observation Worth Flagging
+
+Rule 2 **duplicates** `y`: the right-hand side `G(y, F(x, y, n))` places `y` both as the first argument of `G` and inside the recursive `F`. A naive "count F-symbols" measure therefore fails — if `y` itself contains `F`-redexes, applying rule 2 copies them. However, duplication does not block SN here, and a standard ordering handles it cleanly.
+
+---
+
+### Proof Roadmap via Recursive Path Ordering (RPO)
+
+**Step 1 — Precedence.** Set $F \succ G$ (one constraint is sufficient; $S$ and $Z$ need not be ordered relative to anything since they never appear as left-hand side roots).
+
+**Step 2 — Verify rule 1.**
+
+$$F(x,\, y,\, Z) \to x$$
+
+$x$ is a strict subterm of the left-hand side, so the LHS $\succ_{\text{rpo}}$ the RHS by the **subterm property** of every simplification ordering. ✓
+
+**Step 3 — Verify rule 2.**
+
+$$F(x,\, y,\, S(n)) \to G(y,\, F(x,\, y,\, n))$$
+
+Since $F \succ G$, RPO requires the LHS to be strictly greater than **each argument** of the right-hand side:
+
+- **LHS $\succ_{\text{rpo}}$ y**: $y$ is a proper subterm of the LHS — subterm property. ✓  
+- **LHS $\succ_{\text{rpo}}$ $F(x, y, n)$**: same root $F$, compare arguments **lexicographically**: $x = x$, $y = y$, then $S(n)$ vs $n$. Since $n$ is a proper subterm of $S(n)$, we get $S(n) \succ_{\text{rpo}} n$. ✓
+
+**Step 4 — Conclude.** RPO is a well-founded simplification ordering on ground terms (stable under substitution and monotone). Both rules are strictly decreasing in $\succ_{\text{rpo}}$, so no infinite rewrite sequence exists. $\blacksquare$
+
+---
+
+### Why No External Assumptions Are Needed
+
+- `G` has **no rules** — it is a normal-form constructor (stuck symbol); its presence on the right-hand side raises no termination obligation.
+- `S` and `Z` have no rules — they serve only as structural witnesses for the decreasing third argument, but RPO uses them purely syntactically.
+- The two left-hand sides are **disjoint** (third argument `Z` vs `S(n)`), so there are no critical pairs; the system is orthogonal and the argument is self-contained.
+
+The entire proof uses only the RPO criterion applied to the two rules as written.

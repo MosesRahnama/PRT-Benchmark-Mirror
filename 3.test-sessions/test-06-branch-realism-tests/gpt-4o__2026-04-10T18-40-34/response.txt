@@ -1,0 +1,33 @@
+The file defines a first-order rewrite calculus with the `Trace` type, rewrite rules (`Step`), a structural measure `kappa`, and two helper theorems (`kappa_rec_delta_step` and `kappa_rec_succ_drop`) intended for a termination argument.
+
+### Analysis of the Helper Strategy
+
+1. **Structural Measure `kappa`**:
+   - `kappa` assigns a natural number to each `Trace` term, with recursive definitions for constructors like `merge`, `app`, and `recDelta`.
+   - The measure is designed to decrease under specific rewrite rules, ensuring progress toward termination.
+
+2. **Helper Theorems**:
+   - `kappa_rec_delta_step`: States that `kappa (recDelta b s (delta n))` is exactly one greater than `kappa (recDelta b s n)`. This aligns with the recursive structure of `recDelta` and the definition of `kappa`.
+   - `kappa_rec_succ_drop`: Claims that `kappa (app s (recDelta b s n))` is strictly less than `kappa (recDelta b s (delta n))`. This uses `kappa_rec_delta_step` and the rewrite rule `R_rec_succ`.
+
+3. **Soundness of the Strategy**:
+   - The termination argument relies on `kappa` being a well-founded measure that decreases with each rewrite step.
+   - For `R_rec_succ`, the decrease is justified by `kappa_rec_succ_drop`, which depends on `kappa_rec_delta_step`.
+   - Both theorems are plausible given the structure of `kappa` and the rewrite rules, but their proofs are incomplete (`sorry` placeholders). Without these proofs, the soundness of the strategy cannot be fully verified.
+
+4. **Calculations**:
+   - For `recDelta b s (delta n)`:
+     $$
+     \kappa(\text{recDelta } b \, s \, (\delta n)) = \max(\max(\kappa(b), \kappa(s)), \kappa(n)) + 1
+     $$
+   - For `app s (recDelta b s n)`:
+     $$
+     \kappa(\text{app } s \, (\text{recDelta } b \, s \, n)) = \max(\kappa(s), \kappa(\text{recDelta } b \, s \, n))
+     $$
+   - The decrease in `kappa` follows if:
+     $$
+     \max(\kappa(s), \kappa(\text{recDelta } b \, s \, n)) < \max(\max(\kappa(b), \kappa(s)), \kappa(n)) + 1
+     $$
+
+### Conclusion
+The helper strategy appears sound in principle, as the structural measure `kappa` is well-defined and decreases under the rewrite rules. However, the incomplete proofs leave the termination argument unverified. To confirm soundness, the `sorry` placeholders must be resolved with rigorous proofs.

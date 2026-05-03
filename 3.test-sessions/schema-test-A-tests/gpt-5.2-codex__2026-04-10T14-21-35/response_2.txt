@@ -1,0 +1,4 @@
+1. Informal structural/semantic argument about the third argument decreasing on $n$ as a natural number, and the absence of constraints on terms.  
+2. Yes. It relied on a natural-number interpretation / well-foundedness assumption not fixed by the rules.  
+3. Yes, that puts that method outside the stated boundary.  
+4. From the rules alone (no structural axioms), I do not think strong normalization is established.

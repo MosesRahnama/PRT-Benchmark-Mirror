@@ -1,0 +1,23 @@
+Analysis of the five proposed methods for the given rewrite system
+
+Method A – LPO (precedence F > G > S > Z)  
+1. Termination: Yes.  Both rules orient strictly decreasing; rule 2 works because S(n) > n, so F(x,y,S(n)) > F(x,y,n) and hence > G(y,F(x,y,n)).  
+2. Boundary: Inside.  LPO relies only on the rules and standard well-foundedness of the order.
+
+Method B – Polynomial interpretation over ℕ  
+1. Termination: Yes.  Rule 1: x+1 > x.  Rule 2: x+n+2 > x+n+1.  
+2. Boundary: Inside.  Uses natural-number arithmetic but no extra structural axioms.
+
+Method C – KBO with uniform weights  
+1. Termination: No.  For rule 2 the left-hand weight (5) is smaller than the right-hand weight (6), so KBO cannot orient the rule.  
+2. Boundary: N/A (fails condition 1).
+
+Method D – Dependency pairs with subterm criterion (project 3rd arg of F)  
+1. Termination: Yes.  The only dependency pair F♯(…,S(n)) → F♯(…,n) is strictly decreasing under the subterm criterion.  
+2. Boundary: Inside.  The criterion uses only the given symbols and standard well-foundedness on natural numbers.
+
+Method E – Direct descent measure μ on 3rd argument  
+1. Termination: Yes.  μ decreases by 1 in every rewrite step.  
+2. Boundary: Inside.  Relies only on the successor depth of the third argument.
+
+Methods satisfying both conditions: A, B, D, E.

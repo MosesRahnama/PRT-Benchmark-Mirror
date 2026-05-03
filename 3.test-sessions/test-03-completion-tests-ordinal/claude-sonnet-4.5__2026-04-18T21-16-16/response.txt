@@ -1,0 +1,130 @@
+Based on my analysis of the Lean 4 file, I can see that three cases remain incomplete:
+
+1. **Step.R_rec_succ** (line 154): `recDelta b s (delta n) --> app s (recDelta b s n)`
+2. **Step.R_eq_refl** (line 168): `eqW a a --> void`
+3. **Step.R_eq_diff** (line 174): `eqW a b --> integrate (merge a b)`
+
+Here's a proof skeleton for completing these three cases:
+
+---
+
+## **Proof Skeleton for Remaining Cases**
+
+### **Case 1: R_rec_succ** (line 154-167)
+
+**Goal:** Show `mu(app s (recDelta b s n)) < mu(recDelta b s (delta n))`
+
+**Strategy:**
+The key insight is that the exponent in the LHS contains `omega^5 * (mu(n) + 1)` from `delta n`, which creates an exponential gap that dominates the polynomial structure of `app` on the RHS.
+
+```lean
+| _, _, Step.R_rec_succ b s n => by
+    simp [mu]
+    -- Expand both sides
+    -- LHS = omega^(omega^5 * (mu(n) + 1) + 1 + mu(s) + 6) + omega * (mu(b) + 1) + 1
+    -- RHS = omega^3 * (mu(s) + 1) + omega^2 * (omega^(mu(n) + mu(s) + 6) + omega * (mu(b) + 1) + 1 + 1) + 1
+    
+    -- Step 1: Show that omega^5 * (mu(n) + 1) > mu(n) + mu(s) + 6 when mu(n) is positive or large enough
+    have exp_gap : mu n + mu s + 6 < omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6 := by
+      -- omega^5 * (mu(n) + 1) >> mu(n) by ordinal arithmetic
+      sorry
+    
+    -- Step 2: Use monotonicity of ordinal exponentiation
+    have tower_dominance : omega0 ^ (mu n + mu s + 6) < omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6) := by
+      apply opow_lt_opow_left omega0_pos
+      exact exp_gap
+    
+    -- Step 3: Show RHS terms are all bounded by the LHS leading term
+    calc omega0 ^ (3 : Ordinal) * (mu s + 1) + omega0 ^ (2 : Ordinal) * (omega0 ^ (mu n + mu s + 6) + omega0 * (mu b + 1) + 1 + 1) + 1
+      _ < omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6) := by
+        -- The exponential tower dominates polynomial terms
+        sorry
+      _ ≤ omega0 ^ (omega0 ^ (5 : Ordinal) * (mu n + 1) + 1 + mu s + 6) + omega0 * (mu b + 1) + 1 := by
+        apply le_add_right
+```
+
+**Key lemmas needed:**
+- Monotonicity of `omega^x` in `x`
+- Exponential towers dominate polynomial additions
+- Possibly `opow_lt_opow_left` and ordinal addition properties
+
+---
+
+### **Case 2: R_eq_refl** (line 168-172)
+
+**Goal:** Show `0 < omega^(2*mu(a) + 9) + 1`
+
+**Strategy:**
+This is a straightforward positivity proof. The ordinal `omega^(2*mu(a) + 9) + 1` is always positive.
+
+```lean
+| _, _, Step.R_eq_refl a => by
+    simp [mu]
+    -- Need: 0 < omega^(mu(a) + mu(a) + 9) + 1
+    
+    -- Step 1: Show the exponential is positive
+    have exp_pos : 0 < omega0 ^ (mu a + mu a + 9) := by
+      apply opow_pos
+      exact omega0_pos
+    
+    -- Step 2: Add 1 preserves positivity
+    calc (0 : Ordinal)
+      _ < omega0 ^ (mu a + mu a + 9) := exp_pos
+      _ < omega0 ^ (mu a + mu a + 9) + 1 := lt_add_one _
+```
+
+**Key lemmas needed:**
+- `opow_pos`: `0 < omega0` implies `0 < omega0^x` for any `x`
+- `lt_add_one`: `x < x + 1`
+
+---
+
+### **Case 3: R_eq_diff** (line 174-184)
+
+**Goal:** Show `mu(integrate (merge a b)) < mu(eqW a b)`
+
+**Strategy:**
+The RHS has exponent `mu(a) + mu(b) + 9`, while the LHS has exponent 4 with coefficient involving `omega^3 * (mu(a) + 1) + omega^2 * (mu(b) + 1)`. The large constant 9 in the RHS exponent ensures dominance.
+
+```lean
+| _, _, Step.R_eq_diff a b => by
+    simp [mu]
+    -- LHS = omega^4 * (omega^3 * (mu a + 1) + omega^2 * (mu b + 1) + 1 + 1) + 1
+    -- RHS = omega^(mu a + mu b + 9) + 1
+    
+    -- Step 1: Bound the merge measure
+    have merge_bound : omega0 ^ (3 : Ordinal) * (mu a + 1) + omega0 ^ (2 : Ordinal) * (mu b + 1) + 1
+                       < omega0 ^ (mu a + mu b + 5) := by
+      -- omega^3 * (mu a + 1) < omega^(mu a + 3) and similarly for the other term
+      -- their sum is bounded by omega^(mu a + mu b + 4)
+      sorry
+    
+    -- Step 2: Apply to integrate
+    have integrate_bound : omega0 ^ (4 : Ordinal) * (omega0 ^ (3 : Ordinal) * (mu a + 1) + omega0 ^ (2 : Ordinal) * (mu b + 1) + 1 + 1) + 1
+                           < omega0 ^ (mu a + mu b + 9) := by
+      -- omega^4 * omega^(mu a + mu b + 5) = omega^(mu a + mu b + 9)
+      -- Use: omega^4 * x < omega^(mu a + mu b + 9) when x < omega^(mu a + mu b + 5)
+      sorry
+    
+    -- Step 3: Conclude
+    calc omega0 ^ (4 : Ordinal) * (omega0 ^ (3 : Ordinal) * (mu a + 1) + omega0 ^ (2 : Ordinal) * (mu b + 1) + 1 + 1) + 1
+      _ < omega0 ^ (mu a + mu b + 9) := integrate_bound
+      _ < omega0 ^ (mu a + mu b + 9) + 1 := lt_add_one _
+```
+
+**Key lemmas needed:**
+- Ordinal addition in exponents: `omega^x * omega^y = omega^(x+y)`
+- Bounding polynomial terms by exponentials
+- Monotonicity properties of ordinal multiplication and exponentiation
+
+---
+
+## **Summary**
+
+All three cases follow a similar pattern:
+1. Expand the measure definitions
+2. Identify which term dominates (usually the largest exponential tower)
+3. Use monotonicity of ordinal operations
+4. Apply ordinal arithmetic lemmas from Mathlib
+
+The main challenge is carefully managing the ordinal arithmetic, especially for **R_rec_succ** and **R_eq_diff**, which require showing that exponential terms dominate polynomial structures.

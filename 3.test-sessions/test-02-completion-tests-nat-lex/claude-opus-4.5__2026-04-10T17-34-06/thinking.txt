@@ -1,0 +1,71 @@
+Now I have the full file. Let me analyze the remaining cases and provide proof skeletons:
+
+1. **R_int_delta**: `integrate (delta t) --> void`
+   - LHS: `integrate (delta t)`
+   - RHS: `void`
+   - kappa(integrate (delta t)) = kappa(delta t) = kappa t
+   - kappa(void) = 0
+   - mu(integrate (delta t)) = 1 + mu(delta t) = 1 + mu t
+   - mu(void) = 0
+   - If kappa t > 0, then kappa drops. If kappa t = 0, then kappa ties but mu drops (from 1 + mu t to 0)
+
+2. **R_rec_zero**: `recDelta b s void --> b`
+   - LHS: `recDelta b s void`
+   - RHS: `b`
+   - kappa(recDelta b s void) = max(max(kappa b, kappa s), kappa void) = max(max(kappa b, kappa s), 0) = max(kappa b, kappa s)
+   - kappa(b) = kappa b
+   - So kappa b ≤ max(kappa b, kappa s) = kappa(LHS). If kappa s > kappa b, then kappa drops strictly. If kappa s ≤ kappa b, then kappa ties.
+   - mu(recDelta b s void) = 3 + mu b + mu s + 0 = 3 + mu b + mu s
+   - mu(b) = mu b
+   - So mu drops by at least 3 (since mu s ≥ 0)
+   - When kappa ties (kappa s ≤ kappa b), mu strictly decreases.
+   - When kappa drops (kappa b < max(kappa b, kappa s)), lexicographic decrease.
+   - Both cases yield lexicographic decrease.
+
+3. **R_rec_succ**: `recDelta b s (delta n) --> app s (recDelta b s n)`
+   - LHS: `recDelta b s (delta n)`
+   - RHS: `app s (recDelta b s n)`
+   - kappa(LHS) = max(max(kappa b, kappa s), kappa n) + 1 (since third arg is delta-wrapped)
+   - kappa(RHS) = max(kappa s, kappa(recDelta b s n))
+   - kappa(recDelta b s n) = max
+
+(max(kappa b, kappa s), kappa n) when n isn't delta-wrapped, or max(max(kappa b, kappa s), kappa m) + 1 if n = delta m. Setting K = max(kappa b, kappa s) and K_n = kappa n, we have kappa(LHS) = max(K, K_n) + 1. For the RHS, I need to evaluate kappa(RHS) based on whether n is delta-wrapped.
+
+When n isn't delta-wrapped, kappa(recDelta b s n) = max(K, K_n), and when n = delta m, it equals max(K, K_n) + 1. The application kappa(app s (recDelta b s n)) gives max(kappa s, kappa(recDelta b s n)), which in all cases is at most max(kappa s, max(K, K_n) + 1). Since K ≥ kappa s by definition, max(K, K_n) dominates the expression.
+
+For the non-delta-wrapped case, the RHS evaluates to max(K, K_n) while the LHS is max(K, K_n) + 1, yielding a lexicographic decrease of 1. When n = delta m, the RHS becomes max(kappa s, max(K, K_n) + 1), which needs further analysis to determine the decrease pattern.
+
+Looking back at the kappa definition for recDelta, there's a distinction between when the third argument is literally delta-wrapped versus when it isn't—the delta-wrapped case adds 1 to the maximum, while the non-wrapped case doesn't.
+
+In R_rec_succ, the LHS has recDelta b s (delta n), which triggers the +1 case, giving kappa(LHS) = max(max(kappa b, kappa s), kappa n) + 1. For the RHS with app s (recDelta b s n), I need to consider what kappa(recDelta b s n) evaluates to. Since kappa treats delta-wrapped and non-wrapped arguments differently, the result depends on whether n itself is delta-wrapped. If n isn't delta-wrapped, then kappa(recDelta b s n) = max(max(kappa b, kappa s), kappa n), but if n = delta m, the calculation shifts based on that structure. elta b s n` matches any other trace. When n is actually `delta m` for some m, the first pattern applies, giving max(max(kappa b, kappa s), kappa m) + 1. Since n is arbitrary in our case, kappa correctly evaluates based on n's actual structure through pattern matching. For the proof, I need to establish that kappa(recDelta b s n) is bounded appropriately regardless of n's form.
+
+Let me set K = max(kappa b, kappa s) and K_n = kappa n. The left side gives kappa(recDelta b s (delta n)) = max(K, K_n) + 1. On the right, kappa(app s (recDelta b s n)) = max(kappa s, kappa(recDelta b s n)). The value of kappa(recDelta b s n) varies depending on whether n has the form delta m or something else.
+
+When n isn't delta m, kappa(recDelta b s n) = max(K, K_n), so the right side becomes max(K, K_n) since K ≥ kappa s. This means the left side is one larger, allowing drop_left. When n = delta m, kappa(recDelta b s n) = max(K, K_n) + 1 = max(K, K_n) + 1 (since kappa(delta m) = K_n), so the right side also equals max(K, K_n) + 1, making kappa equal on both sides. In this case, mu must strictly decrease to satisfy the ordering. break the tie using mu. Computing mu(LHS) = 3 + mu b + mu s + mu n and mu(RHS) = 1 + mu s + (3 + mu b + mu s + mu n) = 4 + mu b + 2*mu s + mu n. The RHS is larger, so mu actually increases here—that's problematic.
+
+Let me reconsider the calculation. The measure of recDelta should be 3 + mu b + mu s + mu n regardless of whether n is a delta or not. So mu(RHS) = mu(app s (recDelta b s n)) = 1 + mu s + mu(recDelta b s n), which gives 4 + 2*mu s + mu b + mu n. But mu(LHS) = mu(recDelta b s (delta n)) = 3 + mu b + mu s + mu n. The difference is 1 + mu s, meaning the measure strictly increases—this shouldn't happen if kappa is supposed to tie. Something's off with my understanding of the termination argument.
+
+The kappa function must handle the delta case specially. When the third argument is `.delta n`, kappa adds 1: `kappa(recDelta b s (delta n)) = max(max(kappa b, kappa s), kappa n) + 1`. Since kappa is transparent on delta terms (kappa(delta t) = kappa t), the left side gets this +1 boost while the right side doesn't, which is what allows termination to work despite the measure increase. When n is a delta term delta m, the RHS evaluates to max(kappa s, max(max(kappa b, kappa s), kappa m) + 1), which simplifies to max(max(kappa b, kappa s), kappa m) + 1 since that's at least kappa s. The LHS also gives max(max(kappa b, kappa s), kappa m) + 1, so kappa stays the same while mu grows—that's concerning. Let me reconsider this case.
+
+Looking back at the kappa definition, there are two patterns: one for `.recDelta b s (.delta n)` where the third argument is syntactically a delta constructor, and another for `.recDelta b s n` in the general case. These should be mutually exclusive in pattern matching. When n equals delta m, it should match the first pattern where the third argument is explicitly a delta application.
+
+For `recDelta b s (delta m)`, this gives kappa value of max(K, kappa m) + 1. Since kappa(delta m) = kappa m, I can express this as max(K, kappa n) + 1. Then kappa(app s (recDelta b s n)) simplifies to max(K, kappa n) + 1, which matches what I need for the left-hand side.
+
+The kappas are equal, but mu should be increasing. Yet the lexicographic order appears stable rather than decreasing, which breaks the termination argument. Either the proof has an issue, I'm misinterpreting the semantics, or R_rec_succ requires a different approach. 
+
+Looking more carefully at R_rec_succ: `recDelta b s (delta n)` reduces to `app s (recDelta b s n)`. The third argument shifts from `delta n` to just `n`. If n isn't itself a delta constructor, then the structure changes in a way that might affect the ordering differently than I'm calculating. 're equal, so kappa is preserved. This suggests the measure might not work for all cases, or there's a structural argument I'm missing.
+
+Looking at the incomplete proof, it seems some cases genuinely need a different approach—perhaps induction on derivation structure rather than just term structure. The skeleton should acknowledge where the measure succeeds (non-delta cases where kappa drops) and where it struggles (delta cases where the measure stays constant). For R_rec_succ specifically, splitting on whether n is a delta term could separate the tractable cases from the problematic ones, though the delta case itself might require additional reasoning or a different technique entirely. RHS: void
+   - kappa(eqW a a) = max(kappa a, kappa a) = kappa a
+   - kappa(void) = 0
+   - If kappa a > 0: kappa drops. If kappa a = 0: kappa ties but mu drops.
+   - mu(eqW a a) = 4 + 2*mu a
+   - mu(void) = 0
+   - mu drops from 4 + 2*mu a to 0
+   - Either kappa drops (use drop_left), or kappa ties at 0 and mu drops (use drop_right)
+   - Can use: `by cases h : kappa a = 0; ...`
+
+5. **R_eq_diff**: `eqW a b --> integrate (merge a b)`
+   - LHS: eqW a b
+   - RHS: integrate (merge a b)
+   - kappa stays the same at max(kappa a, kappa b), so kappa ties. mu decreases by 1 from 4 + mu a + mu b to 3 + mu a + mu b. Apply drop_right.

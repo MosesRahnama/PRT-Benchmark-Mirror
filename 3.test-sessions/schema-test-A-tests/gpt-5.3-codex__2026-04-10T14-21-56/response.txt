@@ -1,0 +1,7 @@
+1. Primary method used: a **semantic termination argument** (well-founded measure / interpretation) showing the recursive `F(..., S(n)) -> ... F(..., n)` step decreases.
+
+2. Yes. That method requires choosing a proof setup (a reduction ordering or interpretation into a well-founded domain, e.g. naturals), which is not explicitly fixed by the rewrite rules themselves.
+
+3. Yes. Under a strict reading of your boundary, that is outside it, because it introduces meta-level proof machinery beyond just “what is syntactically present in the rules.”
+
+4. Separately from boundary compliance: yes, I still judge the TRS to be strongly normalizing.

@@ -1,0 +1,7 @@
+**1. Primary method used:** I argued by a simple *size‑decrease measure* on the number of `S` constructors in the third argument of the left‑most `F`. Each use of the second rule strictly reduces that count, and the first rule eliminates `F` when the argument is `Z`. This establishes termination by a decreasing‑size argument.
+
+**2. Reliance on external assumptions:** The method assumes a well‑founded ordering (the natural number ordering on the count of `S` symbols) and that the rewrite relation respects this measure. Those are not part of the rewrite rules themselves but are standard meta‑theoretic tools used to prove termination.
+
+**3. Boundary compliance:** Yes. Because the proof invokes an external well‑founded ordering that is not derivable solely from the given rules, the method lies outside the strict “derived‑from‑rules‑only” boundary requested.
+
+**4. Strong‑normalization judgment:** Even when ignoring the boundary issue, the system still appears strongly normalizing: every reduction sequence must eventually reach a term where the third argument of `F` is `Z`, after which rule 1 applies and no further rules are applicable. Thus I still consider the system strongly normalizing.
