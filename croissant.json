@@ -136,8 +136,8 @@
       "name": "schema-test-A-tests.csv",
       "contentUrl": "https://raw.githubusercontent.com/MosesRahnama/PRT-Benchmark-Mirror/main/4.extracted-data/csv/schema-test-A-tests.csv",
       "encodingFormat": "text/csv",
-      "contentSize": "133864",
-      "sha256": "a8eb0c87e15e70397b25301b1be908e75b6f2992b9fc341c089414cf44e2f948",
+      "contentSize": "133738 bytes",
+      "sha256": "86da5666158e07ce8811327a71b263f6d2e36179e09299b9edc1c28dbd838c7d",
       "description": "Adjudicated extracted CSV for Schema A sessions."
     },
     {
@@ -146,8 +146,8 @@
       "name": "schema-test-A-new-system-tests.csv",
       "contentUrl": "https://raw.githubusercontent.com/MosesRahnama/PRT-Benchmark-Mirror/main/4.extracted-data/csv/schema-test-A-new-system-tests.csv",
       "encodingFormat": "text/csv",
-      "contentSize": "116897",
-      "sha256": "f735449aa3222c9ce7f09774c5fce1cb60678eb6ed1bb2a3a341212b8c329731",
+      "contentSize": "116788 bytes",
+      "sha256": "08f418c01e658cdbf74afdf6ace8886296cf6887b9ee7fbe218143a9e86f8f35",
       "description": "Adjudicated extracted CSV for Schema A New System sessions."
     },
     {
@@ -156,8 +156,8 @@
       "name": "schema-test-B-tests.csv",
       "contentUrl": "https://raw.githubusercontent.com/MosesRahnama/PRT-Benchmark-Mirror/main/4.extracted-data/csv/schema-test-B-tests.csv",
       "encodingFormat": "text/csv",
-      "contentSize": "15709",
-      "sha256": "e9947383bc119fbfce2613013e1279fcc5fe2130e6d1e279511dae556023d672",
+      "contentSize": "15600 bytes",
+      "sha256": "8be2b78910598ceb5cd39dd9f8064ea537c9357968f9e57e2d44ba360771ac76",
       "description": "Adjudicated extracted CSV for Schema B sessions."
     },
     {
@@ -166,8 +166,8 @@
       "name": "test-01-kernel-tests.csv",
       "contentUrl": "https://raw.githubusercontent.com/MosesRahnama/PRT-Benchmark-Mirror/main/4.extracted-data/csv/test-01-kernel-tests.csv",
       "encodingFormat": "text/csv",
-      "contentSize": "189596",
-      "sha256": "490f80f20f9ef6deeddf460638f51958fa8dca3a0411c3e91d62173c7f20aaf3",
+      "contentSize": "189271 bytes",
+      "sha256": "145b5bd80826fd0d38c3e20062ef72fbb58dfb117e63a93781377eca2d516cfc",
       "description": "Adjudicated extracted CSV for Test 01 kernel sessions."
     },
     {
@@ -176,8 +176,8 @@
       "name": "test-02-completion-tests-nat-lex.csv",
       "contentUrl": "https://raw.githubusercontent.com/MosesRahnama/PRT-Benchmark-Mirror/main/4.extracted-data/csv/test-02-completion-tests-nat-lex.csv",
       "encodingFormat": "text/csv",
-      "contentSize": "26636",
-      "sha256": "e73ac699449476340e833eaacf8108d43ec1c95811f51928a8553d77fc63ec91",
+      "contentSize": "26527 bytes",
+      "sha256": "382c1d2ed923c6784c9e533531b08449913a460aab36aaa86877e2e3e9799e5f",
       "description": "Adjudicated extracted CSV for Test 02 nat-lex scaffold completion sessions."
     },
     {
@@ -186,8 +186,8 @@
       "name": "test-03-completion-tests-ordinal.csv",
       "contentUrl": "https://raw.githubusercontent.com/MosesRahnama/PRT-Benchmark-Mirror/main/4.extracted-data/csv/test-03-completion-tests-ordinal.csv",
       "encodingFormat": "text/csv",
-      "contentSize": "15231",
-      "sha256": "ad28a49ffeb51d8a50afa1ccbab071da56862b46778a79ddb8cc29aaa827ae11",
+      "contentSize": "15122 bytes",
+      "sha256": "fd53cc3c53eaddd5a21f67d61caff49baa8f533e044c4d28c6f69ba4a2374229",
       "description": "Adjudicated extracted CSV for Test 03 ordinal scaffold completion sessions."
     },
     {
@@ -196,8 +196,8 @@
       "name": "test-04-measure-verification-tests.csv",
       "contentUrl": "https://raw.githubusercontent.com/MosesRahnama/PRT-Benchmark-Mirror/main/4.extracted-data/csv/test-04-measure-verification-tests.csv",
       "encodingFormat": "text/csv",
-      "contentSize": "28156",
-      "sha256": "1a1672295541a60e7c5cbf761c499e5493af9921e4201045e586babec77598dd",
+      "contentSize": "28047 bytes",
+      "sha256": "ea87a9dc18595b94634ac0c59493e581fa64f90b60f736f6344567e079babcb2",
       "description": "Adjudicated extracted CSV for Test 04 measure verification sessions."
     },
     {
@@ -206,8 +206,8 @@
       "name": "test-05-candidate-class-reasoning-tests.csv",
       "contentUrl": "https://raw.githubusercontent.com/MosesRahnama/PRT-Benchmark-Mirror/main/4.extracted-data/csv/test-05-candidate-class-reasoning-tests.csv",
       "encodingFormat": "text/csv",
-      "contentSize": "17937",
-      "sha256": "263ce8b520f6d2e8962749c811c7d274a96cd9725c447dc5c2dc111d993cd4f6",
+      "contentSize": "17828 bytes",
+      "sha256": "89909d6fb5a8fa2e2e82f4e69de177f7c3b2abf8363abf8b3d6edb7ca9200f2f",
       "description": "Adjudicated extracted CSV for Test 05 candidate class reasoning sessions."
     },
     {
@@ -216,8 +216,8 @@
       "name": "test-06-branch-realism-tests.csv",
       "contentUrl": "https://raw.githubusercontent.com/MosesRahnama/PRT-Benchmark-Mirror/main/4.extracted-data/csv/test-06-branch-realism-tests.csv",
       "encodingFormat": "text/csv",
-      "contentSize": "30316",
-      "sha256": "0d6dfacab622149e247063f31cfd203e235b5031f126db46a18d57720c60430e",
+      "contentSize": "30204 bytes",
+      "sha256": "918f916cc653b6e641e231520868dd5d00cd92d64bbd196811b1b87a362d0664",
       "description": "Adjudicated extracted CSV for Test 06 branch realism sessions."
     },
     {
@@ -226,8 +226,8 @@
       "name": "ALL_TESTS_schema.md",
       "contentUrl": "https://raw.githubusercontent.com/MosesRahnama/PRT-Benchmark-Mirror/main/4.extracted-data/schemas/ALL_TESTS_schema.md",
       "encodingFormat": "text/markdown",
-      "contentSize": "37462",
-      "sha256": "e7218342f9ef1f88d826118baf8290a88c2055201a802f87f81a129ee03adedd",
+      "contentSize": "37041 bytes",
+      "sha256": "c537c060368e16fec3f40572ff41614cde0479e0a390a4ae0d9377994d347bd5",
       "description": "Combined master schema for every per-test CSV."
     },
     {
@@ -236,8 +236,8 @@
       "name": "answer_key_audit_notes.md",
       "contentUrl": "https://raw.githubusercontent.com/MosesRahnama/PRT-Benchmark-Mirror/main/7.scoring/answer-key/answer_key_audit_notes.md",
       "encodingFormat": "text/markdown",
-      "contentSize": "19369",
-      "sha256": "8e0fd639d548dae4bc2c4c1c3f7c3fdc0cbff9cd807c57839803c610e55b2385",
+      "contentSize": "19068 bytes",
+      "sha256": "e2df7f2917c3d19250e8c74296661e5f36920725c44eaa62fc5edd8a156686e5",
       "description": "Per-surface audit log for Lean/TTT2 coverage and verdict-column cross-checks."
     },
     {
@@ -256,8 +256,8 @@
       "name": "answer_keys.md",
       "contentUrl": "https://raw.githubusercontent.com/MosesRahnama/PRT-Benchmark-Mirror/main/7.scoring/answer-key/answer_keys.md",
       "encodingFormat": "text/markdown",
-      "contentSize": "48505",
-      "sha256": "fb2dd9bdfb7b678e6bd41303344dd719061ce08cc111a4ad40e6079982ccacc1",
+      "contentSize": "47448 bytes",
+      "sha256": "d91aef85a94bfa637f993d038fe1c21f7fdb82f03dd83fa3bbd4a434598bf29c",
       "description": "Internal answer-key reference with sources for every gold target."
     },
     {
@@ -266,8 +266,8 @@
       "name": "answer_keys_simplified.md",
       "contentUrl": "https://raw.githubusercontent.com/MosesRahnama/PRT-Benchmark-Mirror/main/7.scoring/answer-key/answer_keys_simplified.md",
       "encodingFormat": "text/markdown",
-      "contentSize": "3603",
-      "sha256": "e5546314c06d9cf9ff8b527946ae464ddb17025e4506908a09a92625917a4936",
+      "contentSize": "3518 bytes",
+      "sha256": "0305fe612abca0d1608e657c610e73905d3579cc58a5fc019821c26f5f59c33d",
       "description": "Public-facing simplified answer-key summary."
     },
     {
@@ -276,8 +276,8 @@
       "name": "CHANGELOG.md",
       "contentUrl": "https://raw.githubusercontent.com/MosesRahnama/PRT-Benchmark-Mirror/main/CHANGELOG.md",
       "encodingFormat": "text/markdown",
-      "contentSize": "1174",
-      "sha256": "2e86a2d6b7959522062daaf4c98522776cc5ea386dda16561c3b770673868655",
+      "contentSize": "1147 bytes",
+      "sha256": "98b7139ef53bd4fd164c50ec99ee369e1a329416d35b2589e175659283d3f2d8",
       "description": "Versioned changelog."
     },
     {
@@ -286,8 +286,8 @@
       "name": "CITATION.cff",
       "contentUrl": "https://raw.githubusercontent.com/MosesRahnama/PRT-Benchmark-Mirror/main/CITATION.cff",
       "encodingFormat": "application/yaml",
-      "contentSize": "1624",
-      "sha256": "3ca17b4fdda646a45085f44e095019991960393fc7636612dd000613f3b6ea53",
+      "contentSize": "1577 bytes",
+      "sha256": "8c3cab9c3d299d06e30b5a6c07805e1a1f504d52188f4e526542dc8d6d7484c7",
       "description": "Citation File Format record."
     },
     {
@@ -296,8 +296,8 @@
       "name": "DATA_DICTIONARY.md",
       "contentUrl": "https://raw.githubusercontent.com/MosesRahnama/PRT-Benchmark-Mirror/main/4.extracted-data/DATA_DICTIONARY.md",
       "encodingFormat": "text/markdown",
-      "contentSize": "2636",
-      "sha256": "46541d6dd3a52de53baf1127b80d9615f0f404212d1d4f0e43ba81490b66ae1f",
+      "contentSize": "2585 bytes",
+      "sha256": "3de2d0c309f04f0ff66389daed254a026bd3a0b636eb5d0313e96bdbc461c117",
       "description": "Public data dictionary defining shared field semantics."
     },
     {
@@ -306,8 +306,8 @@
       "name": "DATA_STATEMENT.md",
       "contentUrl": "https://raw.githubusercontent.com/MosesRahnama/PRT-Benchmark-Mirror/main/DATA_STATEMENT.md",
       "encodingFormat": "text/markdown",
-      "contentSize": "3246",
-      "sha256": "f8f8c12e212fa5261aa106eeb5e4bc30baf7f4c7d8aa06ff7297a8f11d89038f",
+      "contentSize": "3170 bytes",
+      "sha256": "e075fbccff386ac943976e5d49a8d9313af7bde1d13e8d4ef28e5b2350860bbe",
       "description": "Short data statement."
     },
     {
@@ -316,8 +316,8 @@
       "name": "DATASHEET.md",
       "contentUrl": "https://raw.githubusercontent.com/MosesRahnama/PRT-Benchmark-Mirror/main/DATASHEET.md",
       "encodingFormat": "text/markdown",
-      "contentSize": "8387",
-      "sha256": "f327ee36ce383316a890ec887a81b1979d5d0dff91938c0c521112a5768b71d2",
+      "contentSize": "8168 bytes",
+      "sha256": "e5324547e6ae6d87b96c2e9692e893a5569145b1698162e68dd7125a0b02cb63",
       "description": "Datasheet for the dataset (Gebru et al. style)."
     },
     {
@@ -326,8 +326,8 @@
       "name": "LICENSE",
       "contentUrl": "https://raw.githubusercontent.com/MosesRahnama/PRT-Benchmark-Mirror/main/LICENSE",
       "encodingFormat": "text/plain",
-      "contentSize": "6659",
-      "sha256": "db33aa17e7072e24c8a68e2d14518400e383b780a905601c471d88466ee5a968",
+      "contentSize": "6480 bytes",
+      "sha256": "cba2aa6cf9cefc211dfc251611a3fa3d9f9d6e6b1f39d7add9cd527317a5ca8e",
       "description": "Dual-license: PolyForm Noncommercial 1.0.0 plus commercial-by-contact."
     },
     {
@@ -336,8 +336,8 @@
       "name": "models-list.md",
       "contentUrl": "https://raw.githubusercontent.com/MosesRahnama/PRT-Benchmark-Mirror/main/models-list.md",
       "encodingFormat": "text/markdown",
-      "contentSize": "6117",
-      "sha256": "49cb6781123317b4afc24d96232003717f395a3bdc3b61e0da79bb43f801a194",
+      "contentSize": "5998 bytes",
+      "sha256": "16f3c07808e1c36df8e5a9339365182e1c839da58135979e40fcdbb286eadfa3",
       "description": "Model-test session count ledger."
     },
     {
@@ -346,8 +346,8 @@
       "name": "schema_a_method_review_overrides.csv",
       "contentUrl": "https://raw.githubusercontent.com/MosesRahnama/PRT-Benchmark-Mirror/main/4.extracted-data/normalization/overrides/schema_a_method_review_overrides.csv",
       "encodingFormat": "text/csv",
-      "contentSize": "4832",
-      "sha256": "bdf13802f5ff80d90dbf101ced3dc9fa2cbedf8f9ab6ba59865fcc267750b9d9",
+      "contentSize": "4815 bytes",
+      "sha256": "7c7d3de369037e53dbb7272e449c6b810c417e7b17d472e720f99c99410c45b8",
       "description": "Active Schema A manual method-review override ledger. Each row records a session whose `turn1_method_mathematical_validity` was set by manual review rather than by the mechanical method-class rule, with a `turn1_method_review_note` citing the rationale (typically a Lean theorem reference). The decisions are already applied in the released `4.extracted-data/csv/schema-test-A-tests.csv`; this file is the public provenance trail for those decisions."
     },
     {
@@ -529,6 +529,65 @@
         "3.test-sessions/test-06-branch-realism-tests/*/session.json"
       ],
       "description": "Per-session JSON metadata + full transcript records for Test 06 branch realism sessions."
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "test_sessions_full",
+      "name": "test sessions (full transcript bundle)",
+      "description": "All per-session transcript files across the 9 task families: prompt(s), response(s), thinking transcripts, and session.json provenance records. Covers the full 1,188 sessions.",
+      "encodingFormat": "text/plain",
+      "includes": [
+        "3.test-sessions/**/*"
+      ]
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "extraction_prompts",
+      "name": "extraction prompts",
+      "description": "Per-test raw-response extraction prompt templates used by the in-repository extraction pipeline.",
+      "encodingFormat": "text/markdown",
+      "includes": [
+        "4.extracted-data/extraction-prompts/**/*.md"
+      ]
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "scoring_pipeline",
+      "name": "scoring pipeline",
+      "description": "Answer-key derivation scripts, answer-key JSON, theory-check scripts, and pipeline reports.",
+      "includes": [
+        "7.scoring/**/*"
+      ]
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "prepare_review_workspace_py",
+      "name": "prepare_review_workspace.py",
+      "description": "Helper script that materializes a reviewer-friendly workspace from the public archive.",
+      "contentUrl": "https://raw.githubusercontent.com/MosesRahnama/PRT-Benchmark-Mirror/main/prepare_review_workspace.py",
+      "encodingFormat": "text/x-python",
+      "sha256": "6df9e8a19089f8094fe825e99e86a2fb117e808f901f105370098848cca0365f",
+      "contentSize": "3128 bytes"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "public_repo_manifest_json",
+      "name": "public_repo_manifest.json",
+      "description": "Machine-readable provenance manifest for the public release: per-folder build modes and source paths.",
+      "contentUrl": "https://raw.githubusercontent.com/MosesRahnama/PRT-Benchmark-Mirror/main/public_repo_manifest.json",
+      "encodingFormat": "application/json",
+      "sha256": "cf0a04ca2d49ab503e59ae63c1df0229d93749e36dd8b256969b8d3c9645e0b8",
+      "contentSize": "25874 bytes"
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "docs_pages",
+      "name": "docs landing pages",
+      "description": "GitHub Pages landing page (docs/index.html) and any companion HTML/markdown.",
+      "encodingFormat": "text/html",
+      "includes": [
+        "docs/**/*"
+      ]
     }
   ],
   "recordSet": [
@@ -587,7 +646,7 @@
           "@type": "cr:Field",
           "@id": "schema_a_sessions/turn1_sn_verdict",
           "name": "turn1_sn_verdict",
-          "description": "Turn 1 verdict on whether SN holds from the rules alone — `yes`, `no`, `unclear`.",
+          "description": "Turn 1 verdict on whether SN holds from the rules alone \u2014 `yes`, `no`, `unclear`.",
           "dataType": "sc:Text",
           "source": {
             "fileObject": {
@@ -617,7 +676,7 @@
           "@type": "cr:Field",
           "@id": "schema_a_sessions/turn1_sn_verdict_quote",
           "name": "turn1_sn_verdict_quote",
-          "description": "Verbatim quote (≤300 chars) stating the verdict.",
+          "description": "Verbatim quote (\u2264300 chars) stating the verdict.",
           "dataType": "sc:Text",
           "source": {
             "fileObject": {
@@ -872,7 +931,7 @@
           "@type": "cr:Field",
           "@id": "schema_a_sessions/turn2_q4_still_sn",
           "name": "turn2_q4_still_sn",
-          "description": "Q4 verdict on whether the system is still SN — `yes`, `no`, `unclear`.",
+          "description": "Q4 verdict on whether the system is still SN \u2014 `yes`, `no`, `unclear`.",
           "dataType": "sc:Text",
           "source": {
             "fileObject": {
@@ -887,7 +946,7 @@
           "@type": "cr:Field",
           "@id": "schema_a_sessions/turn2_q4_quote",
           "name": "turn2_q4_quote",
-          "description": "Verbatim quote (≤300 chars) supporting `turn2_q4_still_sn`.",
+          "description": "Verbatim quote (\u2264300 chars) supporting `turn2_q4_still_sn`.",
           "dataType": "sc:Text",
           "source": {
             "fileObject": {
@@ -947,7 +1006,7 @@
           "@type": "cr:Field",
           "@id": "schema_a_sessions/turn1_negative_verdict_subtype",
           "name": "turn1_negative_verdict_subtype",
-          "description": "Subtype when verdict is negative — `cannot_establish`, `claims_nontermination`, `none` (positive/unclear verdict), or `unclear`.",
+          "description": "Subtype when verdict is negative \u2014 `cannot_establish`, `claims_nontermination`, `none` (positive/unclear verdict), or `unclear`.",
           "dataType": "sc:Text",
           "source": {
             "fileObject": {
@@ -962,7 +1021,7 @@
           "@type": "cr:Field",
           "@id": "schema_a_sessions/turn1_peripheral_quote",
           "name": "turn1_peripheral_quote",
-          "description": "Verbatim quote (≤300 chars) supporting the highest-priority Turn 1 signal. Priority: duplication > W2 method > negative verdict subtype > subterm descent.",
+          "description": "Verbatim quote (\u2264300 chars) supporting the highest-priority Turn 1 signal. Priority: duplication > W2 method > negative verdict subtype > subterm descent.",
           "dataType": "sc:Text",
           "source": {
             "fileObject": {
@@ -1022,7 +1081,7 @@
           "@type": "cr:Field",
           "@id": "schema_a_sessions/turn2_original_question_restated_verdict",
           "name": "turn2_original_question_restated_verdict",
-          "description": "Restated answer to the original bounded question — `yes`, `no`, `unclear`, or `none`. Fires only when the response uses a meta-marker (`the original question`, `within the stated boundary`, `from the rules alone`, `under a strict reading`, `corrected assessment`).",
+          "description": "Restated answer to the original bounded question \u2014 `yes`, `no`, `unclear`, or `none`. Fires only when the response uses a meta-marker (`the original question`, `within the stated boundary`, `from the rules alone`, `under a strict reading`, `corrected assessment`).",
           "dataType": "sc:Text",
           "source": {
             "fileObject": {
@@ -1037,7 +1096,7 @@
           "@type": "cr:Field",
           "@id": "schema_a_sessions/turn2_peripheral_quote",
           "name": "turn2_peripheral_quote",
-          "description": "Verbatim quote (≤300 chars) supporting the highest-priority Turn 2 signal. Priority: restated verdict > retraction marker > meta-boundary argument > Q4 hedged.",
+          "description": "Verbatim quote (\u2264300 chars) supporting the highest-priority Turn 2 signal. Priority: restated verdict > retraction marker > meta-boundary argument > Q4 hedged.",
           "dataType": "sc:Text",
           "source": {
             "fileObject": {
@@ -1123,7 +1182,7 @@
           "@type": "cr:Field",
           "@id": "schema_a_new_system_sessions/turn1_sn_verdict",
           "name": "turn1_sn_verdict",
-          "description": "Turn 1 verdict on whether SN holds from the rules alone — `yes`, `no`, `unclear`.",
+          "description": "Turn 1 verdict on whether SN holds from the rules alone \u2014 `yes`, `no`, `unclear`.",
           "dataType": "sc:Text",
           "source": {
             "fileObject": {
@@ -1153,7 +1212,7 @@
           "@type": "cr:Field",
           "@id": "schema_a_new_system_sessions/turn1_sn_verdict_quote",
           "name": "turn1_sn_verdict_quote",
-          "description": "Verbatim quote (≤300 chars) stating the verdict.",
+          "description": "Verbatim quote (\u2264300 chars) stating the verdict.",
           "dataType": "sc:Text",
           "source": {
             "fileObject": {
@@ -1393,7 +1452,7 @@
           "@type": "cr:Field",
           "@id": "schema_a_new_system_sessions/turn2_q4_still_sn",
           "name": "turn2_q4_still_sn",
-          "description": "Q4 verdict on whether the system is still SN — `yes`, `no`, `unclear`.",
+          "description": "Q4 verdict on whether the system is still SN \u2014 `yes`, `no`, `unclear`.",
           "dataType": "sc:Text",
           "source": {
             "fileObject": {
@@ -1408,7 +1467,7 @@
           "@type": "cr:Field",
           "@id": "schema_a_new_system_sessions/turn2_q4_quote",
           "name": "turn2_q4_quote",
-          "description": "Verbatim quote (≤300 chars) supporting `turn2_q4_still_sn`.",
+          "description": "Verbatim quote (\u2264300 chars) supporting `turn2_q4_still_sn`.",
           "dataType": "sc:Text",
           "source": {
             "fileObject": {
@@ -1468,7 +1527,7 @@
           "@type": "cr:Field",
           "@id": "schema_a_new_system_sessions/turn1_negative_verdict_subtype",
           "name": "turn1_negative_verdict_subtype",
-          "description": "Subtype when verdict is negative — `cannot_establish`, `claims_nontermination`, `none` (positive/unclear verdict), or `unclear`.",
+          "description": "Subtype when verdict is negative \u2014 `cannot_establish`, `claims_nontermination`, `none` (positive/unclear verdict), or `unclear`.",
           "dataType": "sc:Text",
           "source": {
             "fileObject": {
@@ -1483,7 +1542,7 @@
           "@type": "cr:Field",
           "@id": "schema_a_new_system_sessions/turn1_peripheral_quote",
           "name": "turn1_peripheral_quote",
-          "description": "Verbatim quote (≤300 chars) supporting the highest-priority Turn 1 signal. Priority: W2 method > negative verdict subtype > G inert > subterm descent.",
+          "description": "Verbatim quote (\u2264300 chars) supporting the highest-priority Turn 1 signal. Priority: W2 method > negative verdict subtype > G inert > subterm descent.",
           "dataType": "sc:Text",
           "source": {
             "fileObject": {
@@ -1543,7 +1602,7 @@
           "@type": "cr:Field",
           "@id": "schema_a_new_system_sessions/turn2_original_question_restated_verdict",
           "name": "turn2_original_question_restated_verdict",
-          "description": "Restated answer to the original bounded question — `yes`, `no`, `unclear`, or `none`. Fires only when the response uses a meta-marker (`the original question`, `within the stated boundary`, `from the rules alone`, `under a strict reading`, `corrected assessment`).",
+          "description": "Restated answer to the original bounded question \u2014 `yes`, `no`, `unclear`, or `none`. Fires only when the response uses a meta-marker (`the original question`, `within the stated boundary`, `from the rules alone`, `under a strict reading`, `corrected assessment`).",
           "dataType": "sc:Text",
           "source": {
             "fileObject": {
@@ -1558,7 +1617,7 @@
           "@type": "cr:Field",
           "@id": "schema_a_new_system_sessions/turn2_peripheral_quote",
           "name": "turn2_peripheral_quote",
-          "description": "Verbatim quote (≤300 chars) supporting the highest-priority Turn 2 signal. Priority: restated verdict > retraction marker > meta-boundary argument > Q4 hedged.",
+          "description": "Verbatim quote (\u2264300 chars) supporting the highest-priority Turn 2 signal. Priority: restated verdict > retraction marker > meta-boundary argument > Q4 hedged.",
           "dataType": "sc:Text",
           "source": {
             "fileObject": {
@@ -1955,7 +2014,7 @@
           "@type": "cr:Field",
           "@id": "test01_sessions/prompt_variant",
           "name": "prompt_variant",
-          "description": "Condition label derived from `session_slug` — `regular` for KO7 rows and `control` for Fruit rows.",
+          "description": "Condition label derived from `session_slug` \u2014 `regular` for KO7 rows and `control` for Fruit rows.",
           "dataType": "sc:Text",
           "source": {
             "fileObject": {
@@ -1970,7 +2029,7 @@
           "@type": "cr:Field",
           "@id": "test01_sessions/sn_verdict",
           "name": "sn_verdict",
-          "description": "Committed verdict on whether SN holds within the stated boundary — `yes`, `no`, `unclear`.",
+          "description": "Committed verdict on whether SN holds within the stated boundary \u2014 `yes`, `no`, `unclear`.",
           "dataType": "sc:Text",
           "source": {
             "fileObject": {
@@ -2000,7 +2059,7 @@
           "@type": "cr:Field",
           "@id": "test01_sessions/sn_verdict_quote",
           "name": "sn_verdict_quote",
-          "description": "Verbatim quote (≤300 chars) stating the verdict.",
+          "description": "Verbatim quote (\u2264300 chars) stating the verdict.",
           "dataType": "sc:Text",
           "source": {
             "fileObject": {
@@ -2120,7 +2179,7 @@
           "@type": "cr:Field",
           "@id": "test01_sessions/primary_answer_mode",
           "name": "primary_answer_mode",
-          "description": "Shape of the answer — `method` (supports the answer with a recoverable proof device), `objection` (main basis is that SN cannot be established within the boundary), `shortcut_or_local` (purely informal local argument), or `unclear`.",
+          "description": "Shape of the answer \u2014 `method` (supports the answer with a recoverable proof device), `objection` (main basis is that SN cannot be established within the boundary), `shortcut_or_local` (purely informal local argument), or `unclear`.",
           "dataType": "sc:Text",
           "source": {
             "fileObject": {
@@ -2150,7 +2209,7 @@
           "@type": "cr:Field",
           "@id": "test01_sessions/claims_method_in_boundary",
           "name": "claims_method_in_boundary",
-          "description": "Model's own claim about whether its method stays within the boundary — `yes`, `no`, `unclear`, or `na` (set to `na` when `primary_answer_mode != method`).",
+          "description": "Model's own claim about whether its method stays within the boundary \u2014 `yes`, `no`, `unclear`, or `na` (set to `na` when `primary_answer_mode != method`).",
           "dataType": "sc:Text",
           "source": {
             "fileObject": {
@@ -2165,7 +2224,7 @@
           "@type": "cr:Field",
           "@id": "test01_sessions/transformed_call_signal",
           "name": "transformed_call_signal",
-          "description": "W2 retrieval indicator — `explicit_w2_method` (explicitly names a W2-family method), `subterm_containment_only` (appeals to subterm containment without naming the framework), or `none`.",
+          "description": "W2 retrieval indicator \u2014 `explicit_w2_method` (explicitly names a W2-family method), `subterm_containment_only` (appeals to subterm containment without naming the framework), or `none`.",
           "dataType": "sc:Text",
           "source": {
             "fileObject": {
@@ -2180,7 +2239,7 @@
           "@type": "cr:Field",
           "@id": "test01_sessions/boundary_or_w2_quote",
           "name": "boundary_or_w2_quote",
-          "description": "Verbatim quote (≤300 chars) supporting the highest-priority signal. Priority: explicit W2 method > subterm containment > boundary claim.",
+          "description": "Verbatim quote (\u2264300 chars) supporting the highest-priority signal. Priority: explicit W2 method > subterm containment > boundary claim.",
           "dataType": "sc:Text",
           "source": {
             "fileObject": {
@@ -2255,7 +2314,7 @@
           "@type": "cr:Field",
           "@id": "test01_sessions/peripheral_quote",
           "name": "peripheral_quote",
-          "description": "Verbatim quote (≤300 chars) supporting the highest-priority active flag. Priority: W2 named > root-only > external framework > size-growing rule.",
+          "description": "Verbatim quote (\u2264300 chars) supporting the highest-priority active flag. Priority: W2 named > root-only > external framework > size-growing rule.",
           "dataType": "sc:Text",
           "source": {
             "fileObject": {
@@ -2270,7 +2329,7 @@
           "@type": "cr:Field",
           "@id": "test01_sessions/negative_verdict_subtype",
           "name": "negative_verdict_subtype",
-          "description": "Subtype when verdict is negative — `cannot_establish`, `claims_nontermination`, `none` (positive/unclear verdict), or `unclear`.",
+          "description": "Subtype when verdict is negative \u2014 `cannot_establish`, `claims_nontermination`, `none` (positive/unclear verdict), or `unclear`.",
           "dataType": "sc:Text",
           "source": {
             "fileObject": {
@@ -2285,7 +2344,7 @@
           "@type": "cr:Field",
           "@id": "test01_sessions/primary_objection_type",
           "name": "primary_objection_type",
-          "description": "Taxonomic label when the main basis is an objection — `congruence_missing`, `meta_framework_needed`, `inert_constructor_objection`, `size_growth_rule`, `decidability_of_equality`, `type_theoretic`, `other`, or `none`.",
+          "description": "Taxonomic label when the main basis is an objection \u2014 `congruence_missing`, `meta_framework_needed`, `inert_constructor_objection`, `size_growth_rule`, `decidability_of_equality`, `type_theoretic`, `other`, or `none`.",
           "dataType": "sc:Text",
           "source": {
             "fileObject": {
@@ -2315,7 +2374,7 @@
           "@type": "cr:Field",
           "@id": "test01_sessions/peripheral_quote_b",
           "name": "peripheral_quote_b",
-          "description": "Verbatim quote (≤300 chars) supporting the highest-priority active field. Priority: negative verdict subtype > primary objection type > boundary self-acknowledgment.",
+          "description": "Verbatim quote (\u2264300 chars) supporting the highest-priority active field. Priority: negative verdict subtype > primary objection type > boundary self-acknowledgment.",
           "dataType": "sc:Text",
           "source": {
             "fileObject": {
