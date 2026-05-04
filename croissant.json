@@ -557,7 +557,8 @@
       "description": "Answer-key derivation scripts, answer-key JSON, theory-check scripts, and pipeline reports.",
       "includes": [
         "7.scoring/**/*"
-      ]
+      ],
+      "encodingFormat": "text/x-python"
     },
     {
       "@type": "cr:FileObject",
