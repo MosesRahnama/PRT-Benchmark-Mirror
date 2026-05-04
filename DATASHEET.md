@@ -2,7 +2,7 @@
 
 Version: 1.0.0
 Date published: 2026-04-25
-Citation: Anonymous Authors (2026). The Primitive Recursor and the Representation-Shift Bottleneck in Frontier LLM Termination Reasoning. PRT-Benchmark v1.0.0.
+Citation: Anonymous Authors (2026). Failing at the Floor: LLM Formal Reasoning Collapse on the Primitive Duplicating Recursor. PRT-Benchmark v1.0.0.
 License: Polyform Noncommercial 1.0.0 with Commercial License Available (<DATASET_FILE_URL_PLACEHOLDER>/LICENSE)
 Contact: anonymized@neurips.invalid
 
@@ -20,10 +20,11 @@ PRT-Benchmark was created to evaluate frontier large language model
 behavior at the smallest natural first-order proof obligation where the
 termination verdict, witness adequacy, rule-extracted boundary
 admissibility, and supervisory typing first become separable. The
-benchmark fixes the orientation boundary of the step-duplicating
-primitive recursor as the test interface and grades model responses on
-three answer-key axes against externally-checkable artifacts (TTT2 / CeTA
-certifications and a companion mechanized Lean 4 theorem stack).
+benchmark fixes the rule-extracted termination boundary of the
+step-duplicating primitive recursor as the test interface and grades
+model responses on three answer-key axes against externally-checkable
+artifacts (TTT2 / CeTA termination certifications and an anonymous
+Lean 4 verification mirror released alongside this archive).
 
 **Who created the dataset?**
 
@@ -80,7 +81,7 @@ correctness columns (e.g. `termination_correctness`,
 `method_mathematical_validity`, `method_correct_and_admissible`,
 `overall_test02_correctness`, etc.). Answer-key targets are fixed by
 externally-checkable artifacts (TTT2/CeTA termination certifications and
-the companion Lean 4 theorem stack), not by author judgment.
+the released anonymous Lean 4 verification mirror), not by author judgment.
 
 **Is any information missing from individual records?**
 
@@ -154,16 +155,14 @@ the extracted CSVs carry the adjudicated projected columns.
 
 **Has the dataset been used for any tasks already?**
 
-The PRT-Benchmark companion paper (Anonymous, "The Primitive Recursor and
-the Representation-Shift Bottleneck in Frontier LLM Termination
-Reasoning") reports the headline empirical findings on this dataset.
+The PRT-Benchmark accompanying manuscript (anonymous review build)
+reports the headline empirical findings on this dataset.
 
 **What other tasks could the dataset be used for?**
 
-- benchmarking new frontier LLMs at the same orientation-boundary
+- benchmarking new frontier LLMs at the same rule-extracted termination
   interface;
-- studying confession-method retrieval (W2-family witness selection)
-  under controlled conditions;
+- studying named-rival retrieval under controlled conditions;
 - auditing model outputs for false formal legitimacy on formal-methods
   obligations;
 - training and evaluating discriminative annotators for proof-shaped

@@ -45,9 +45,9 @@ reload the public answer key in `answer-key/answer_key.json`, recompute
 the verdict logic, and emit audit reports under `pipeline_reports/`.
 
 This folder also ships a separate reviewer-facing checker for the
-theorem-oriented `PaperB` Lean bridge. That checker lives under
-`theory_checks/` and audits the public theorem lane without feeding
-anything back into the verdict CSVs.
+theorem-bridge Lean modules. That checker lives under `theory_checks/`
+and audits the public theorem lane without feeding anything back into
+the verdict CSVs.
 
 The dataflow is:
 
@@ -94,8 +94,8 @@ updates report JSON, but does not rewrite the released CSVs. This is the
 recommended verification mode for reviewers.
 
 The last command is not a scoring script. It is the theorem-lane audit
-for the `KO7BenchmarkTheory` / `PaperB` bridge and regenerates the
-summary reports in `theory_checks/`.
+for the released theorem-bridge modules and regenerates the summary
+reports in `theory_checks/`.
 
 ## Inputs
 

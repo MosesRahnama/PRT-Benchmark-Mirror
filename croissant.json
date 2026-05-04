@@ -95,7 +95,7 @@
     "PRT",
     "KO7"
   ],
-  "citeAs": "Anonymous Authors (2026). The Primitive Recursor and the Representation-Shift Bottleneck in Frontier LLM Termination Reasoning. PRT-Benchmark v1.0.0.",
+  "citeAs": "Anonymous Authors (2026). Failing at the Floor: LLM Formal Reasoning Collapse on the Primitive Duplicating Recursor. PRT-Benchmark v1.0.0.",
   "rai:dataCollection": "PRT-Benchmark is a benchmark of large language model behavior on nine formal-methods and termination-reasoning task families. Public records were collected as benchmark sessions pairing prompt templates and formal test artifacts with model responses. The public release includes structured extracted CSVs, raw session provenance folders, prompt and test files, formal reproducibility artifacts (Lean 4 proofs and TTT2 termination certificates), and per-test analytics summaries.",
   "rai:dataCollectionType": [
     "Experiments",

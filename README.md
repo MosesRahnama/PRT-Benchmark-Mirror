@@ -65,7 +65,7 @@ Included material:
 
 ## Notes
 
-- `3.lean` copies only the benchmark Lean modules that directly define test fixtures, prove answer-key rows, or exhibit counterexamples used by scoring; broader Paper A/B theory modules are deliberately excluded.
+- `3.lean` copies only the benchmark Lean modules that directly define test fixtures, prove answer-key rows, or exhibit counterexamples used by scoring; broader external theory modules are deliberately excluded.
 - `5.test-sessions` keeps each test folder mechanical and public-safe by excluding support and admin-only directories such as `1.analytics/`, `2.plots/`, and `3.extraction/`, and flattening source `4.test-sessions/` into the destination test root.
 - `6.extracted-data/csv/*.csv` copies the nine live benchmark `final_*.csv` exports and renames each file to its public test-folder slug.
 - `6.extracted-data/schemas/*schema.md` copies the live `MASTER_SCHEMAS/` files with `MASTER_SCHEMA` renamed to `schema` in the destination filenames.

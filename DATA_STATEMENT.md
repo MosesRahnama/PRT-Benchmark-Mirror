@@ -19,9 +19,9 @@ sessions across 27 frontier models and nine task families.
 
 All prompts and model responses are in English. The domain is formal
 methods: term rewriting, primitive recursion, dependency-pair
-termination methods, Lean 4 mechanized proofs, and the orientation
-boundary at the step-duplicating recursor. The dataset is **not** a
-sample of general natural-language interaction.
+termination methods, Lean 4 mechanized proofs, and the rule-extracted
+termination boundary at the step-duplicating recursor. The dataset is
+**not** a sample of general natural-language interaction.
 
 ## Populations represented
 

@@ -96,7 +96,7 @@ TRS (duplicating recursive step):
 |---|---|---|---|---|---|
 | `dependencyPairs` | yes | yes | yes | `ok` | `CandidateDBridge.candidateD_full_trs_wf` |
 | `nonlinearPoly` | yes | yes | no | `adequateNotAdmissible` | `NonlinearWitness.wf_StepRev` |
-| `mpoSpecialized` | yes | yes | no | `adequateNotAdmissible` | (Paper B) |
+| `mpoSpecialized` | yes | yes | no | `adequateNotAdmissible` | PaperB module |
 | `pathOrder` | yes | yes | no | `adequateNotAdmissible` | `CandidateA.candidateA_success_status` |
 | `polynomial` (generic) | yes | no | no | `truthOnly` | `CandidateB.interpB_not_step_orienting` plus `GCollapseBarrier` |
 | `kboStyle` | yes | no | no | `truthOnly` | `CandidateC.no_variable_condition_orientation` |
@@ -225,8 +225,8 @@ TRS (non-duplicating, unary `G`):
   - Trail: `4.TTT2-Artifacts/ttt2/schema-new-system/Schema_New_System_CeTA_certification.txt`.
   - Summary: `4.TTT2-Artifacts/ttt2/schema-new-system/schema_new_system_certification_summary.json`.
   - Unlike Schema A, POLY / KBO / MAT strategies now all succeed; this
-    confirms externally that the orientation boundary visible on Schema A
-    is absent here.
+    confirms externally that the rule-extracted termination obstruction
+    visible on Schema A is absent here.
 
 ### Correct answer substance
 

@@ -30,7 +30,7 @@ This folder has 0 direct subfolders and 12 direct files including this README.
 # TTT2 Artifacts (KO7 Full Step)
 
 Reproducibility artifacts for the KO7 full-step TRS,
-copied from the companion `KO7Lib` repository for self-contained reference.
+copied into this folder for self-contained reference.
 
 ## Input
 - `KO7_full_step.trs`: input TRS (8 rules, 7 constructors)
@@ -64,7 +64,7 @@ Note: Human-readable text outputs are preserved only for FAST and POLY. Timings 
 
 TTT2 1.20 [hg: 1ffa9886eb7f]:
 ```bash
-# Requires local TTT2 1.20 binary (originally built in KO7Lib/Comments/ttt2-1.20/)
+# Requires local TTT2 1.20 binary
 ./ttt2 -cpf <TRS>                              # FAST (default)
 ./ttt2 -cpf -s lpo <TRS>                       # LPO
 ./ttt2 -cpf -s 'dp;...' <TRS>                  # COMP (full strategy string in certification log)

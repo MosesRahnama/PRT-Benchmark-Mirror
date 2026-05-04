@@ -37,7 +37,7 @@ keywords:
   - KO7
 preferred-citation:
   type: article
-  title: "The Primitive Recursor and the Representation-Shift Bottleneck in Frontier LLM Termination Reasoning"
+  title: "Failing at the Floor: LLM Formal Reasoning Collapse on the Primitive Duplicating Recursor"
   authors:
     - family-names: Anonymous
       given-names: Anonymous

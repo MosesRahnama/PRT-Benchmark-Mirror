@@ -131,8 +131,8 @@ Concretely:
 External contrast case for the benchmark. The new
 system preserves the same two-rule recursor shape but no longer exhibits the
 original schema's resistance to direct whole-term methods. In external tool
-terms, the orientation boundary visible in `Artifacts/ttt2/schema/` is absent
-here.
+terms, the rule-extracted termination obstruction visible in
+`Artifacts/ttt2/schema/` is absent here.
 
 ## File Inventory
 
